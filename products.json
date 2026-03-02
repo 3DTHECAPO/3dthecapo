@@ -1,0 +1,23 @@
+[
+  {
+    "id": "capo-hoodie",
+    "name": "3D THE CAPO Hoodie",
+    "description": "Heavyweight hoodie \u2022 front logo print",
+    "price": 5500,
+    "image": "assets/images/hoodie.png"
+  },
+  {
+    "id": "capo-tee",
+    "name": "Classic Logo Tee",
+    "description": "Soft cotton \u2022 street fit",
+    "price": 3200,
+    "image": "assets/images/tee.png"
+  },
+  {
+    "id": "capo-hat",
+    "name": "Snapback Hat",
+    "description": "Structured snapback \u2022 logo patch",
+    "price": 2800,
+    "image": "assets/images/hat.png"
+  }
+]

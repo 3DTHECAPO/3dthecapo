@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3D THE CAPO — Music & Merch</title>
+  <meta name="description" content="Official website for 3D THE CAPO — music, merch, drops, and contact." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="#top" aria-label="3D THE CAPO home">
+        <img src="assets/images/logo.png" class="brand-logo" alt="3D THE CAPO logo" />
+        <div class="brand-text">
+          <div class="brand-name">3D THE CAPO</div>
+          <div class="brand-sub">Music • Merch • IIID Publishing</div>
+        </div>
+      </a>
+
+      <nav class="nav">
+        <a href="#music">Music</a>
+        <a href="#merch">Merch</a>
+        <a href="#contact">Contact</a>
+        <button class="pill" id="openCart">Cart <span id="cartCount">0</span></button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top" class="wrap">
+    <section class="hero">
+      <div class="hero-left">
+        <div class="tag">OFFICIAL</div>
+        <h1>Tap in with <span class="accent">3D THE CAPO</span></h1>
+        <p class="muted">
+          Stream the music, shop the official merch, and build direct-to-fan support.
+          Clean, fast, and ready to expand.
+        </p>
+        <div class="cta">
+          <a class="btn primary" href="#merch">Shop Merch</a>
+          <a class="btn" href="#music">Play Music</a>
+          <button class="btn ghost" id="openEmail">Join Email List</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-big">100%</div>
+            <div class="stat-small">Independent</div>
+          </div>
+          <div class="stat">
+            <div class="stat-big">IIID</div>
+            <div class="stat-small">Publishing LLC</div>
+          </div>
+          <div class="stat">
+            <div class="stat-big">Drops</div>
+            <div class="stat-small">Merch + Music</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="feature-card">
+          <div class="feature-top">
+            <div>
+              <div class="feature-title">New Drop</div>
+              <div class="muted">Hoodie + Hat bundle</div>
+            </div>
+            <div class="badge">Limited</div>
+          </div>
+          <div class="feature-body">
+            <p>Update this card with your newest release, bundle, or promo.</p>
+            <ul class="bullets">
+              <li>High-quality product photos</li>
+              <li>Real links to Spotify / Apple / YouTube</li>
+              <li>Checkout-ready when you add Stripe/Shopify</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="music" class="section">
+      <div class="section-head">
+        <h2>Music</h2>
+        <p class="muted">Replace these embeds with your exact artist/song links.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-head">Spotify</div>
+          <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4R7uJYf4ts6pthecl9IVBF?utm_source=generator" width="100%" height="352" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+        </div>
+        <div class="card">
+          <div class="card-head">Apple Music</div>
+          <iframe allow="autoplay *; encrypted-media *; fullscreen *" frameborder="0" height="190" style="width:100%;overflow:hidden;background:transparent;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/us/artist/3d-the-capo/1758229296"></iframe>
+        </div>
+        <div class="card">
+          <div class="card-head">YouTube</div>
+          <iframe width="100%" height="230" src="https://www.youtube.com/embed?listType=user_uploads&list=UCM6GW8j7HMhcPAplgV5Ca4A" title="3D THE CAPO YouTube" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
+
+    <section id="merch" class="section">
+      <div class="section-head">
+        <h2>Merch</h2>
+        <p class="muted">Add real photos + sizes. Prices below are placeholders you can edit.</p>
+      </div>
+
+      <div id="products" class="grid-3"></div>
+      <div class="note">
+        Want this to be a real store? Best move is Shopify + your domain <b>3dthecapo.com</b>.
+        I can wire your buttons to Shopify checkout when you're ready.
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <div class="section-head">
+        <h2>Contact</h2>
+        <p class="muted">Bookings • Features • Business</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head">Email</div>
+          <p><b>booking@3dthecapo.com</b> (change this to your real email)</p>
+          <p class="muted">Tip: Make a dedicated email like bookings@3dthecapo.com and forward it to your real inbox.</p>
+        </div>
+        <div class="card">
+          <div class="card-head">Social</div>
+          <p class="muted">Add your real links here:</p>
+          <ul class="links">
+            <li><a href="#" target="_blank" rel="noreferrer">Instagram</a></li>
+            <li><a href="#" target="_blank" rel="noreferrer">TikTok</a></li>
+            <li><a href="#" target="_blank" rel="noreferrer">YouTube</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>© <span id="year"></span> 3D THE CAPO • IIID Publishing LLC</div>
+      <div class="muted small">Background logo watermark is intentional — change opacity in styles.css.</div>
+    </footer>
+  </main>
+
+  <!-- Email modal -->
+  <div class="modal hidden" id="emailModal" role="dialog" aria-hidden="true">
+    <div class="modal-inner">
+      <button class="x" id="closeEmail">✕</button>
+      <h3>Join the Email List</h3>
+      <p class="muted">Get new music + merch drop alerts.</p>
+      <form id="emailForm">
+        <label class="lbl">Name (optional)</label>
+        <input class="inp" id="name" placeholder="Your name" />
+        <label class="lbl">Email</label>
+        <input class="inp" id="email" type="email" required placeholder="you@example.com" />
+        <button class="btn primary full" type="submit">Join</button>
+        <div class="muted small" id="emailMsg"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Cart drawer -->
+  <aside class="drawer hidden" id="cartDrawer" aria-hidden="true">
+    <div class="drawer-inner">
+      <button class="x" id="closeCart">✕</button>
+      <h3>Your Cart</h3>
+      <ul id="cartItems" class="cart"></ul>
+      <div class="row">
+        <div>Total: <b id="total">$0.00</b></div>
+        <button class="btn primary" id="checkout">Checkout</button>
+      </div>
+      <div class="muted small">Checkout is placeholder until you connect Stripe/Shopify.</div>
+    </div>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>
