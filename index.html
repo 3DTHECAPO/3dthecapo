@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3D THE CAPO — Music & Merch</title>
+  <meta name="description" content="Official site: merch drops, latest music, and updates." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <!-- CART DRAWER (demo) -->
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <div class="drawer-title">CART</div>
+      <button class="icon-btn" id="closeDrawer" aria-label="Close cart">✕</button>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+      <div class="drawer-empty">Your cart is empty.</div>
+    </div>
+    <div class="drawer-foot">
+      <div class="drawer-total">Total: <span id="drawerTotal">$0.00</span></div>
+      <button class="btn-gold wide" type="button" id="checkoutBtn">Checkout (demo)</button>
+    </div>
+  </aside>
+  <div class="backdrop" id="backdrop" aria-hidden="true"></div>
+
+  <main class="page" id="top">
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-inner">
+        <a class="brand" href="#top" aria-label="Home">
+          <img class="logo" src="assets/header_logo.jpg" alt="3D THE CAPO" />
+        </a>
+
+        <div class="header-actions">
+          <a class="mini link" href="#merch" title="Shop">🛍️</a>
+          <a class="mini link" href="#music" title="Music">🎵</a>
+          <a class="mini link" href="#mail" title="Mailing list">❤</a>
+          <button class="cart" id="cartBtn" type="button" aria-label="Open cart">
+            CART <span class="count" id="cartCount">(0)</span> <span class="caret">▾</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="tagline">Hustle, Grind, Dominate.</div>
+    </header>
+
+    <!-- HERO (placeholder stays) -->
+    <section class="hero" aria-label="Hero banner">
+      <div class="frame hero-frame">
+        <img class="hero-img" src="assets/hero.jpg" alt="Hero placeholder" />
+        <img class="watermark" src="assets/watermark.png" alt="" aria-hidden="true" />
+        <div class="hero-text">
+          <div class="hero-title">YOUR</div>
+          <div class="hero-title">IMAGE HERE</div>
+          <div class="hero-cta">
+            <a class="btn-gold" href="#music">PLAY MUSIC</a>
+            <a class="btn" href="#merch">SHOP MERCH</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW DROP -->
+    <section class="drop" aria-label="New drop">
+      <div class="frame drop-frame">
+        <div class="drop-left">
+          <div class="drop-title">NEW DROP</div>
+          <div class="drop-sub">OUT NOW</div>
+          <div class="drop-copy">
+            Replace <code>assets/drop.jpg</code> with your cover and paste your Spotify/YouTube links.
+          </div>
+          <div class="drop-actions">
+            <a class="btn-gold" href="#merch">SHOP NOW</a>
+            <a class="btn" href="#music">LISTEN</a>
+          </div>
+        </div>
+
+        <a class="drop-right" href="#music" aria-label="Go to music">
+          <img class="drop-img" src="assets/drop.jpg" alt="Drop cover placeholder" />
+          <div class="drop-overlay">
+            <div class="drop-overlay-title">DROP COVER</div>
+            <div class="drop-overlay-sub">Replace assets/drop.jpg</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- SECTION TITLE -->
+    <div class="section-title" id="music">
+      <span class="line"></span><span class="title">LATEST MUSIC</span><span class="line"></span>
+    </div>
+
+    <!-- MUSIC -->
+    <section class="music" aria-label="Latest music">
+      <div class="frame music-frame">
+        <div class="music-grid">
+          <div class="embed">
+            <div class="embed-head">AUDIO</div>
+            <div class="embed-body">
+              <div class="embed-big">SPOTIFY / YT MUSIC / SOUNDCLOUD</div>
+              <div class="embed-small">Paste an iframe embed in <code>index.html</code> when you’re ready.</div>
+            </div>
+            <div class="embed-actions">
+              <a class="btn" href="https://open.spotify.com/user/31thbrqw3vygxmwfhni7zaa5qxqa?si=0kWc6No5TjSkKP8Fc-lp0w" target="_blank" rel="noopener">Spotify</a>
+              <a class="btn" href="https://music.youtube.com/channel/UCM6GW8j7HMhcPAplgV5Ca4A?si=SxLuzKyyerdefz9a" target="_blank" rel="noopener">YT Music</a>
+              <a class="btn" href="https://music.apple.com/us/artist/3d-the-capo/1758229296" target="_blank" rel="noopener">Apple Music</a>
+            </div>
+          </div>
+
+          <div class="embed">
+            <div class="embed-head">VIDEO</div>
+            <div class="ratio">
+              <iframe
+                title="YouTube"
+                src="https://www.youtube.com/embed?listType=user_uploads&list=@iiidtv"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+              </iframe>
+            </div>
+            <div class="embed-actions">
+              <a class="btn" href="https://youtube.com/@iiidtv?si=xuHENlrbF27-2Z1x" target="_blank" rel="noopener">YouTube</a>
+              <a class="btn" href="https://www.instagram.com/3d_the_capo?igsh=NTc4MTIwNjQ2YQ%3D%3D&utm_source=qr" target="_blank" rel="noopener">Instagram</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION TITLE -->
+    <div class="section-title" id="merch">
+      <span class="line"></span><span class="title">SHOP THE MERCH</span><span class="line"></span>
+    </div>
+
+    <!-- MERCH -->
+    <section class="merch" aria-label="Merch">
+      <div class="merch-grid">
+        <article class="product frame" data-sku="shirt" data-name="3D THE CAPO Tee" data-price="30">
+          <div class="product-media">
+            <img src="assets/shirt.jpg" alt="Shirt product photo placeholder" />
+            <div class="badge">SHIRTS</div>
+          </div>
+          <div class="product-body">
+            <div class="product-name">3D THE CAPO Tee</div>
+            <div class="product-sub">Replace photo: <code>assets/shirt.jpg</code></div>
+            <div class="product-actions">
+              <button class="btn-gold small add" type="button">Add to cart</button>
+              <a class="btn small" href="#" aria-label="Shop shirts link">Shop Shirts</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="product frame" data-sku="hat" data-name="CAPO Hat" data-price="35">
+          <div class="product-media">
+            <img src="assets/hat.jpg" alt="Hat product photo placeholder" />
+            <div class="badge">HATS</div>
+          </div>
+          <div class="product-body">
+            <div class="product-name">CAPO Hat</div>
+            <div class="product-sub">Replace photo: <code>assets/hat.jpg</code></div>
+            <div class="product-actions">
+              <button class="btn-gold small add" type="button">Add to cart</button>
+              <a class="btn small" href="#" aria-label="Shop hats link">Shop Hats</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="product frame" data-sku="hoodie" data-name="3D Hoodie" data-price="65">
+          <div class="product-media">
+            <img src="assets/hoodie.jpg" alt="Hoodie product photo placeholder" />
+            <div class="badge">HOODIES</div>
+          </div>
+          <div class="product-body">
+            <div class="product-name">3D Hoodie</div>
+            <div class="product-sub">Replace photo: <code>assets/hoodie.jpg</code></div>
+            <div class="product-actions">
+              <button class="btn-gold small add" type="button">Add to cart</button>
+              <a class="btn small" href="#" aria-label="Shop hoodies link">Shop Hoodies</a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <p class="hint">
+        This cart is a demo for layout. When you’re ready, tell me which checkout you want (Shopify / Stripe / BigCartel) and I’ll wire it up.
+      </p>
+    </section>
+
+    <!-- SECTION TITLE -->
+    <div class="section-title" id="mail">
+      <span class="line"></span><span class="title">STAY CONNECTED</span><span class="line"></span>
+    </div>
+
+    <!-- MAIL -->
+    <section class="mail" aria-label="Mailing list">
+      <div class="mail-sub">JOIN THE MAILING LIST</div>
+      <form class="mail-form frame" id="mailForm">
+        <input class="mail-input" type="email" name="email" placeholder="Enter your email" required />
+        <button class="mail-btn" type="submit">SUBMIT</button>
+      </form>
+      <div class="mail-note" id="mailNote"></div>
+    </section>
+
+    <footer class="footer">
+      © <span id="year"></span> 3D THE CAPO
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
