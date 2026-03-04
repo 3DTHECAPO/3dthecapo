@@ -1,0 +1,359 @@
+:root{
+  --ink:#f4f1ea;
+  --muted:rgba(244,241,234,.78);
+  --gold:#caa24a;
+  --gold2:#b58b33;
+  --bgline:rgba(255,255,255,.12);
+  --frameBg:rgba(0,0,0,.52);
+  --shadow:0 22px 58px rgba(0,0,0,.70);
+  --radius:16px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+html{scroll-behavior:smooth}
+body{
+  margin:0; color:var(--ink);
+  background:
+    radial-gradient(1200px 720px at 50% 10%, rgba(255,255,255,.06), rgba(0,0,0,0) 55%),
+    linear-gradient(rgba(0,0,0,.58), rgba(0,0,0,.82)),
+    url("assets/bg_texture.jpg");
+  background-size:cover;
+  background-attachment:fixed;
+  font-family: Oswald, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+.noise{
+  position:fixed; inset:0; pointer-events:none;
+  opacity:.28; mix-blend-mode: overlay;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" stitchTiles="stitch"/></filter><rect width="240" height="240" filter="url(%23n)" opacity=".23"/></svg>');
+}
+.page{width:min(1100px, 92vw); margin:0 auto; padding:0 0 40px}
+.frame{
+  background:var(--frameBg);
+  border:1px solid var(--bgline);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+.topbar{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter: blur(10px);
+  background: linear-gradient(rgba(0,0,0,.50), rgba(0,0,0,0));
+  padding:14px 0 8px;
+}
+.topbar-inner{
+  width:min(1100px, 92vw);
+  margin:0 auto;
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:12px;
+}
+.brand{display:block; text-decoration:none}
+.brand-logo{
+  width:min(650px, 58vw);
+  height:auto;
+  filter: drop-shadow(0 18px 20px rgba(0,0,0,.78));
+}
+.nav{display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap}
+.navlink{
+  color:rgba(244,241,234,.85);
+  text-decoration:none;
+  font-weight:800;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  font-size:12px;
+  padding:10px 10px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.06);
+}
+.navlink:hover{background:rgba(255,255,255,.09)}
+.actions{display:flex; gap:10px; align-items:center}
+.icon{
+  width:34px; height:30px;
+  display:inline-flex; align-items:center; justify-content:center;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.06);
+  color:var(--ink);
+  text-decoration:none;
+  box-shadow:0 12px 24px rgba(0,0,0,.55);
+}
+.cartbtn{
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.12);
+  background:linear-gradient(180deg, rgba(0,0,0,.62), rgba(0,0,0,.36));
+  color:var(--ink);
+  font-weight:900;
+  letter-spacing:.9px;
+  text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 14px 30px rgba(0,0,0,.66);
+}
+.tagline{
+  width:min(1100px, 92vw);
+  margin:8px auto 0;
+  text-align:center;
+  color:rgba(244,241,234,.70);
+  font-weight:700;
+  text-shadow:0 10px 18px rgba(0,0,0,.65);
+}
+.hero{margin-top:18px}
+.hero-frame{position:relative; overflow:hidden; min-height:420px}
+.hero-img{width:100%; display:block; filter:saturate(.92) contrast(1.08)}
+.wm{
+  position:absolute; left:50%; top:50%;
+  transform:translate(-50%,-55%);
+  width:min(880px, 86%);
+  opacity:.14;
+  pointer-events:none;
+}
+.hero-overlay{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  gap:10px;
+  padding:18px;
+  text-align:center;
+}
+.kicker{
+  letter-spacing:1.2px;
+  font-weight:900;
+  text-transform:uppercase;
+  color:rgba(244,241,234,.75);
+}
+.h1{
+  margin:0;
+  font-family:"Black Ops One", system-ui, sans-serif;
+  letter-spacing:1px;
+  font-size:64px;
+  text-shadow:0 18px 32px rgba(0,0,0,.85);
+}
+.sub{margin:0; max-width:64ch; color:rgba(244,241,234,.78)}
+.cta{margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center}
+
+.btn{
+  padding:11px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  color:var(--ink);
+  text-decoration:none;
+  font-weight:900;
+  letter-spacing:.9px;
+  text-transform:uppercase;
+  font-size:12px;
+  cursor:pointer;
+  transition:transform .16s ease, background .16s ease, box-shadow .16s ease;
+}
+.btn:hover{transform:translateY(-2px); background:rgba(255,255,255,.09)}
+.btn.gold{
+  background:linear-gradient(180deg, rgba(202,162,74,.98), rgba(181,139,51,.78));
+  color:#15120e;
+  border-color:rgba(255,255,255,.16);
+  box-shadow:0 16px 30px rgba(0,0,0,.60), 0 0 20px rgba(202,162,74,.12);
+}
+.btn.gold:hover{box-shadow:0 22px 42px rgba(0,0,0,.62), 0 0 22px rgba(202,162,74,.20)}
+.btn.wide{width:100%}
+.btn.sm{padding:10px 12px; font-size:12px}
+
+.drop{margin-top:14px}
+.drop-frame{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:12px;
+  padding:12px;
+  align-items:stretch;
+}
+.drop-title{
+  font-family:"Black Ops One", system-ui, sans-serif;
+  font-size:34px;
+  letter-spacing:1px;
+}
+.drop-sub{
+  font-family:"Black Ops One", system-ui, sans-serif;
+  font-size:26px;
+  color:var(--gold);
+  letter-spacing:1px;
+}
+.drop-copy{margin:10px 0 0; color:rgba(244,241,234,.74); line-height:1.35}
+.drop-actions{margin-top:12px; display:flex; gap:10px; flex-wrap:wrap}
+.drop-right{
+  position:relative;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  overflow:hidden;
+  background:rgba(0,0,0,.18);
+  display:block;
+}
+.drop-img{width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.95) contrast(1.08)}
+.drop-shade{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:6px;
+  background:linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.42));
+}
+.drop-shade-title{
+  font-family:"Black Ops One", system-ui, sans-serif;
+  font-size:22px;
+  letter-spacing:1px;
+  text-shadow:0 14px 26px rgba(0,0,0,.78);
+}
+.drop-shade-sub{color:rgba(244,241,234,.72)}
+.section-title{
+  margin:22px 0 10px;
+  display:flex; align-items:center; justify-content:center;
+  gap:14px;
+}
+.section-title .line{height:1px; background:rgba(255,255,255,.18); flex:1}
+.section-title .title{
+  font-family:"Black Ops One", system-ui, sans-serif;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  font-size:22px;
+  text-shadow:0 10px 18px rgba(0,0,0,.6);
+}
+
+.grid2{padding:12px; display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.panel{overflow:hidden; border-radius:14px; border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.22)}
+.panel-head{padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.10); font-weight:900; letter-spacing:1px; text-transform:uppercase}
+.panel-body{padding:18px 12px 14px; min-height:190px; display:flex; flex-direction:column; justify-content:center; gap:8px}
+.big{font-family:"Black Ops One", system-ui, sans-serif; letter-spacing:.8px}
+.small{color:var(--muted)}
+.panel-actions{padding:12px; border-top:1px solid rgba(255,255,255,.10); display:flex; gap:10px; flex-wrap:wrap}
+.ratio{position:relative; width:100%; aspect-ratio:16/9; background:rgba(0,0,0,.30)}
+.ratio iframe{position:absolute; inset:0; width:100%; height:100%}
+
+.video-grid{padding:12px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
+.vcard{
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.05);
+  text-decoration:none;
+  color:var(--ink);
+  padding:14px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  transition:transform .16s ease, background .16s ease, border-color .16s ease;
+}
+.vcard:hover{transform:translateY(-2px); background:rgba(255,255,255,.07); border-color:rgba(202,162,74,.24)}
+.vcard.disabled{opacity:.70}
+.vthumb{
+  width:52px; height:52px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background:linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.25));
+  display:flex; align-items:center; justify-content:center;
+  font-weight:900;
+  box-shadow:0 14px 30px rgba(0,0,0,.55);
+}
+.vtitle{font-family:"Black Ops One", system-ui, sans-serif; letter-spacing:.6px}
+.vsub{color:rgba(244,241,234,.72)}
+
+.merch-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:12px}
+.product{overflow:hidden; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease}
+.product:hover{transform:translateY(-3px); border-color:rgba(202,162,74,.28); box-shadow:0 30px 70px rgba(0,0,0,.72), 0 0 26px rgba(202,162,74,.12)}
+.pmedia{position:relative; height:240px; overflow:hidden; border-bottom:1px solid rgba(255,255,255,.10)}
+.pmedia img{width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.95) contrast(1.07)}
+.pstamp{
+  position:absolute; right:10px; bottom:10px;
+  width:92px; height:auto;
+  opacity:.40;
+  filter:drop-shadow(0 10px 18px rgba(0,0,0,.65));
+}
+.badge{
+  position:absolute; left:12px; top:12px;
+  padding:7px 10px; border-radius:10px;
+  background:rgba(0,0,0,.56);
+  border:1px solid rgba(255,255,255,.12);
+  font-weight:900; letter-spacing:.9px;
+}
+.pbody{padding:12px}
+.pname{font-family:"Black Ops One", system-ui, sans-serif; letter-spacing:.7px; text-transform:uppercase; font-size:18px}
+.psub{color:rgba(244,241,234,.72); margin-top:4px}
+.pactions{margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+.merch-note{margin-top:12px; padding:14px}
+.merch-note-title{font-family:"Black Ops One", system-ui, sans-serif; letter-spacing:.8px}
+.merch-note-sub{color:rgba(244,241,234,.74); margin-top:4px}
+
+.mail{margin-top:4px; text-align:center}
+.mail-sub{
+  font-family:"Black Ops One", system-ui, sans-serif;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:rgba(244,241,234,.76);
+  margin-bottom:10px;
+}
+.mail-form{display:grid; grid-template-columns:1fr 220px; gap:10px; padding:12px}
+.mail-input{
+  padding:12px; border-radius:12px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  color:var(--ink); outline:none; font-size:15px;
+}
+.mail-note{margin-top:10px; color:rgba(244,241,234,.72)}
+
+.footer{
+  margin-top:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  color:rgba(244,241,234,.68);
+  padding:12px 2px;
+}
+.foot-left{display:flex; gap:10px; align-items:center}
+.foot-emblem{width:40px; height:auto; opacity:.55}
+.foot-right{display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-end}
+.footlink{color:rgba(244,241,234,.72); text-decoration:none}
+.footlink:hover{text-decoration:underline}
+
+.drawer{
+  position:fixed; top:0; right:0; height:100%;
+  width:min(420px, 92vw);
+  background:rgba(0,0,0,.82);
+  border-left:1px solid rgba(255,255,255,.12);
+  box-shadow:-24px 0 70px rgba(0,0,0,.72);
+  transform:translateX(105%);
+  transition:transform .18s ease;
+  z-index:80;
+  display:flex; flex-direction:column;
+}
+.drawer.open{transform:translateX(0)}
+.backdrop{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.55);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease;
+  z-index:70;
+}
+.backdrop.show{opacity:1; pointer-events:auto}
+.drawer-head{display:flex; align-items:center; justify-content:space-between; padding:14px; border-bottom:1px solid rgba(255,255,255,.10)}
+.drawer-title{font-family:"Black Ops One", system-ui, sans-serif; letter-spacing:1px}
+.xbtn{
+  width:36px; height:36px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  color:var(--ink);
+  cursor:pointer;
+}
+.drawer-body{padding:14px; overflow:auto; flex:1}
+.drawer-empty{color:rgba(244,241,234,.72)}
+.drawer-foot{padding:14px; border-top:1px solid rgba(255,255,255,.10)}
+.drawer-total{margin-bottom:10px; font-weight:900}
+.drawer-note{margin-top:10px; color:rgba(244,241,234,.65); font-size:13px}
+
+@media (max-width: 980px){
+  .topbar-inner{flex-direction:column; align-items:center}
+  .brand-logo{width:min(720px, 86vw)}
+  .actions{justify-content:center; flex-wrap:wrap}
+  .grid2{grid-template-columns:1fr}
+  .drop-frame{grid-template-columns:1fr}
+  .video-grid{grid-template-columns:1fr}
+  .merch-grid{grid-template-columns:1fr}
+  .mail-form{grid-template-columns:1fr}
+  .h1{font-size:44px}
+  .footer{flex-direction:column; align-items:center}
+  .foot-right{justify-content:center}
+}
