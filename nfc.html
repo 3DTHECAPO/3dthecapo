@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>3D THE CAPO — NFC</title><link rel="stylesheet" href="./styles.css"/></head>
+<body><main class="page" style="padding:18px;">
+<header class="header reveal"><div class="top-logo"><img src="./header_logo.png" alt="3D THE CAPO logo"/></div><div class="tagline">NFC ACCESS</div></header>
+<section class="section reveal"><div class="card" style="padding:18px;">
+<div class="kicker">Tap detected</div>
+<div style="font-family:'Black Ops One',system-ui,sans-serif; font-size:26px; letter-spacing:1px; text-transform:uppercase;"><span id="routeTitle">Loading…</span></div>
+<p style="color:rgba(244,241,234,.72); margin-top:8px;" id="routeDesc"></p>
+<div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+<a class="pill gold" id="routeBtn" href="./index.html#top">Go</a>
+<a class="pill" href="./index.html#mail">Get Drop Alerts</a>
+</div>
+<p style="color:rgba(244,241,234,.72); margin-top:14px;">Set routing later in <code>nfc_config.js</code>.</p>
+</div></section></main>
+<script src="./nfc_config.js"></script>
+<script>
+const params=new URLSearchParams(location.search);
+const t=(params.get('t')||'disc1').toLowerCase();
+const route=(window.NFC_ROUTES&&window.NFC_ROUTES[t])||window.NFC_ROUTES['default'];
+document.getElementById('routeTitle').textContent=route.title;
+document.getElementById('routeDesc').textContent=route.desc;
+const btn=document.getElementById('routeBtn'); btn.textContent=route.button; btn.href=route.href;
+</script></body></html>
