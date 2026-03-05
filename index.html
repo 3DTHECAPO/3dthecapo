@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>3D THE CAPO — Official</title>
+  <meta name="description" content="3D THE CAPO — music, merch, and drops." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Home">
+      <span class="brandMark">3D</span>
+      <span class="brandText">THE CAPO</span>
+    </a>
+
+    <nav class="nav">
+      <a href="#drop">Drop</a>
+      <a href="#music">Music</a>
+      <a href="#merch">Merch</a>
+      <a href="#mail">Mailing List</a>
+    </nav>
+
+    <button class="cartBtn" id="cartBtn" aria-label="Open cart">
+      <span class="cartDot" id="cartDot" aria-hidden="true"></span>
+      Cart <span class="cartCount" id="cartCount">0</span>
+    </button>
+  </header>
+
+  <main id="top" class="wrap">
+    <section class="hero">
+      <img class="watermark" src="watermark.png" alt="" aria-hidden="true">
+      <div class="heroLeft">
+        <div class="chip">10K Artist Merch Site</div>
+        <h1 class="heroTitle">
+          <span class="metal">3D THE CAPO</span>
+          <span class="sub">Music • Merch • Drops</span>
+        </h1>
+        <p class="heroCopy">
+          Official hub for the latest releases and limited merch drops. New designs, clean mockups, and a ready-to-sell shop layout.
+        </p>
+        <div class="heroCtas">
+          <a class="btn primary" href="#merch">Shop the Drop</a>
+          <a class="btn" href="#music">Listen Now</a>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><div class="k">Fast</div><div class="v">GitHub drag & drop</div></div>
+          <div class="stat"><div class="k">Merch</div><div class="v">3 collections</div></div>
+          <div class="stat"><div class="k">Built</div><div class="v">Mobile + desktop</div></div>
+        </div>
+      </div>
+
+      <div class="heroRight" id="drop">
+        <div class="panel">
+          <div class="panelTop">
+            <div class="panelTitle">NEW DROP</div>
+            <div class="panelNote">Limited run • Black on black</div>
+          </div>
+          <div class="panelMedia">
+            <img src="merch_diamond_hoodie.jpg" alt="Diamond Series hoodie mockup" />
+          </div>
+          <div class="panelBottom">
+            <div class="panelPrice">From <b>$35</b></div>
+            <a class="btn primary small" href="#merch">Shop Now</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="music" class="section">
+      <div class="sectionHead">
+        <h2>Latest Music</h2>
+        <p>Drop your Spotify / Apple Music / YouTube links anytime — the embeds are ready.</p>
+      </div>
+
+      <div class="musicGrid">
+        <div class="card">
+          <div class="cardTitle">Spotify</div>
+          <div class="embedShell">
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/2CIMQHirSU0MQqyYHq0eOx?utm_source=generator"
+              width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          </div>
+          <div class="cardHint">Replace the artist ID with yours.</div>
+        </div>
+
+        <div class="card">
+          <div class="cardTitle">YouTube</div>
+          <div class="embedShell">
+            <iframe width="100%" height="220" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video"
+              frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="cardHint">Swap the video ID for your latest visual.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="merch" class="section">
+      <div class="sectionHead row">
+        <div>
+          <h2>Merch</h2>
+          <p>Clean product tiles, variants, and a cart that works (local checkout placeholder).</p>
+        </div>
+
+        <div class="filters">
+          <button class="pill isOn" data-filter="all">All</button>
+          <button class="pill" data-filter="diamond">Diamond Series</button>
+          <button class="pill" data-filter="chip">High Rollers Chip</button>
+          <button class="pill" data-filter="classic">Classic Crown</button>
+        </div>
+      </div>
+
+      <div class="grid" id="productGrid"></div>
+
+      <div class="note">
+        <b>Drag & drop editing:</b> replace any product image file in the root (same filename) and refresh.
+      </div>
+    </section>
+
+    <section id="mail" class="section">
+      <div class="sectionHead">
+        <h2>Mailing List</h2>
+        <p>Collect emails for drops. (This is a front-end form — hook it to Mailchimp/ConvertKit later.)</p>
+      </div>
+
+      <form class="mail" id="mailForm">
+        <input type="email" id="mailEmail" placeholder="you@email.com" required />
+        <button class="btn primary" type="submit">Join</button>
+        <div class="mailMsg" id="mailMsg" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <footer class="footer">
+      <div class="footerRow">
+        <div>
+          <div class="footerBrand">3D THE CAPO</div>
+          <div class="footerSmall">© <span id="year"></span> • All rights reserved</div>
+        </div>
+        <div class="footerLinks">
+          <a href="#top">Top</a>
+          <a href="#music">Music</a>
+          <a href="#merch">Merch</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Product modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modalBackdrop" data-close="1"></div>
+    <div class="modalCard" role="dialog" aria-modal="true" aria-label="Product details">
+      <button class="x" data-close="1" aria-label="Close">✕</button>
+      <div class="modalGrid">
+        <div class="modalImg">
+          <img id="modalImg" alt="">
+        </div>
+        <div class="modalInfo">
+          <div class="tag" id="modalTag"></div>
+          <h3 id="modalTitle"></h3>
+          <div class="price" id="modalPrice"></div>
+          <p class="desc" id="modalDesc"></p>
+
+          <div class="opts">
+            <div class="opt">
+              <label>Size</label>
+              <select id="modalSize">
+                <option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option>
+              </select>
+            </div>
+            <div class="opt">
+              <label>Qty</label>
+              <input id="modalQty" type="number" min="1" value="1" />
+            </div>
+          </div>
+
+          <button class="btn primary" id="addToCart">Add to Cart</button>
+          <div class="fine">Tip: update prices + descriptions in <code>script.js</code>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart drawer -->
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawerBackdrop" data-close="1"></div>
+    <div class="drawerPanel" role="dialog" aria-modal="true" aria-label="Cart">
+      <div class="drawerTop">
+        <div class="drawerTitle">Your Cart</div>
+        <button class="x" data-close="1" aria-label="Close">✕</button>
+      </div>
+
+      <div class="cartList" id="cartList"></div>
+
+      <div class="drawerBottom">
+        <div class="totals">
+          <div>Subtotal</div>
+          <div id="cartSubtotal">$0</div>
+        </div>
+        <a class="btn primary" id="checkoutBtn" href="#" target="_blank" rel="noopener">Checkout (link)</a>
+        <div class="fine">
+          Checkout is a placeholder link — connect Stripe/Shopify later.
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <script src="script.js"></script>
+</body>
+</html>
