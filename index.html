@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="./">
+  <title>3D THE CAPO — Artist Site</title>
+  <meta name="description" content="3D THE CAPO — official music + merch. Latest drops, videos, and updates." />
+  <meta name="theme-color" content="#0b0a09" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <!-- TOP BAR -->
+  <header class="topbar" id="top">
+    <div class="topbar-inner">
+      <a class="brand" href="#top" aria-label="Home">
+        <img class="brand-logo" src="assets/brand_logo.png" alt="3D THE CAPO" loading="eager" />
+      </a>
+
+      <nav class="nav">
+        <a class="navlink" href="#music">Music</a>
+        <a class="navlink" href="#videos">Videos</a>
+        <a class="navlink" href="#merch">Merch</a>
+        <a class="navlink" href="#mail">Mail</a>
+      </nav>
+
+      <div class="actions">
+        <a class="icon" href="https://youtube.com/@iiidtv?si=xuHENlrbF27-2Z1x" target="_blank" rel="noopener" aria-label="YouTube">▶</a>
+        <a class="icon" href="https://open.spotify.com/user/31thbrqw3vygxmwfhni7zaa5qxqa?si=0kWc6No5TjSkKP8Fc-lp0w" target="_blank" rel="noopener" aria-label="Spotify">♬</a>
+        <a class="icon" href="https://www.instagram.com/3d_the_capo?igsh=NTc4MTIwNjQ2YQ%3D%3D&utm_source=qr" target="_blank" rel="noopener" aria-label="Instagram">⌁</a>
+        <a class="icon" href="https://x.com/3dthecapo?s=21" target="_blank" rel="noopener" aria-label="X">𝕏</a>
+        <a class="icon" href="https://www.tiktok.com/@3dthecapo?_r=1&_t=ZP-94UdEKU6wvv" target="_blank" rel="noopener" aria-label="TikTok">♪</a>
+        <button class="cartbtn" id="cartBtn" type="button" aria-label="Open cart">CART <span id="cartCount">(0)</span> ▾</button>
+      </div>
+    </div>
+    <div class="tagline">Hustle. Grind. Dominate.</div>
+  </header>
+
+  <!-- CART DRAWER (UI) -->
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <div class="drawer-title">CART</div>
+      <button class="xbtn" id="closeDrawer" aria-label="Close">✕</button>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+      <div class="drawer-empty">Your cart is empty.</div>
+    </div>
+    <div class="drawer-foot">
+      <div class="drawer-total">Total: <span id="drawerTotal">$0.00</span></div>
+      <button class="btn gold wide" type="button" id="checkoutBtn">Checkout (demo)</button>
+      <div class="drawer-note">When you're ready, tell me Shopify / Stripe / BigCartel and I'll connect real checkout.</div>
+    </div>
+  </aside>
+  <div class="backdrop" id="backdrop" aria-hidden="true"></div>
+
+  <main class="page">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="frame hero-frame">
+        <img class="hero-img" src="assets/hero.jpg" alt="Hero placeholder" loading="eager" />
+        <img class="wm" src="assets/watermark.png" alt="" aria-hidden="true" />
+        <div class="hero-overlay">
+          <div class="kicker">OFFICIAL ARTIST SITE</div>
+          <h1 class="h1">3D THE CAPO</h1>
+          <p class="sub">Official music, visuals, merch, and updates from 3D THE CAPO.</p>
+          <div class="cta">
+            <a class="btn gold" href="#music">Play Music</a>
+            <a class="btn" href="#merch">Shop Merch</a>
+            <a class="btn" href="#videos">Watch Videos</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW DROP -->
+    <section class="drop">
+      <div class="frame drop-frame">
+        <div class="drop-left">
+          <div class="drop-title">NEW DROP</div>
+          <div class="drop-sub">OUT NOW</div>
+          <p class="drop-copy">Stream the latest release from 3D THE CAPO.</p>
+          <div class="drop-actions">
+            <a class="btn gold" href="#music">Listen</a>
+            <a class="btn" href="#videos">Video</a>
+          </div>
+        </div>
+        <a class="drop-right" href="#music" aria-label="Go to music">
+          <img class="drop-img" src="assets/drop.jpg" alt="Latest release cover art" loading="lazy" />
+          <div class="drop-shade">
+            <div class="drop-shade-title">OUT NOW</div>
+            <div class="drop-shade-sub">Tap to open music</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="drop">
+      <div class="frame drop-frame">
+        <div class="drop-left">
+          <div class="drop-title">DROP COUNTDOWN</div>
+          <div class="drop-sub" id="releaseCountdown">Loading…</div>
+          <p class="drop-copy">Watch the clock and stay ready for the next release.</p>
+          <div class="drop-actions">
+            <a class="btn gold" href="#mail">Get Updates</a>
+            <a class="btn" href="#vault">Open Vault</a>
+          </div>
+        </div>
+        <div class="drop-right" aria-hidden="true">
+          <div class="drop-shade">
+            <div class="drop-shade-title">LIMITED DROP</div>
+            <div class="drop-shade-sub">Count it down.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MUSIC -->
+    <div class="section-title" id="music">
+      <span class="line"></span><span class="title">MUSIC</span><span class="line"></span>
+    </div>
+
+    <section class="music">
+      <div class="frame grid2">
+        <div class="panel">
+          <div class="panel-head">SPOTIFY / AUDIO</div>
+          <div class="panel-body">
+            <div class="big">Listen now on your favorite platform.</div>
+            <div class="small">Official links are live below.</div>
+          </div>
+          <div class="panel-actions">
+            <a class="btn" href="https://open.spotify.com/user/31thbrqw3vygxmwfhni7zaa5qxqa?si=0kWc6No5TjSkKP8Fc-lp0w" target="_blank" rel="noopener">Spotify</a>
+            <a class="btn" href="https://music.youtube.com/channel/UCM6GW8j7HMhcPAplgV5Ca4A?si=SxLuzKyyerdefz9a" target="_blank" rel="noopener">YT Music</a>
+            <a class="btn" href="https://music.apple.com/us/artist/3d-the-capo/1758229296" target="_blank" rel="noopener">Apple Music</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">LATEST VIDEO</div>
+          <div class="ratio">
+            <iframe
+              title="YouTube"
+              src="https://www.youtube.com/embed?listType=user_uploads&list=@iiidtv"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
+          </div>
+          <div class="panel-actions">
+            <a class="btn" href="https://youtube.com/@iiidtv?si=xuHENlrbF27-2Z1x" target="_blank" rel="noopener">YouTube</a>
+            <a class="btn" href="https://www.instagram.com/3d_the_capo?igsh=NTc4MTIwNjQ2YQ%3D%3D&utm_source=qr" target="_blank" rel="noopener">Instagram</a>
+            <a class="btn" href="https://x.com/3dthecapo?s=21" target="_blank" rel="noopener">X</a>
+            <a class="btn" href="https://www.tiktok.com/@3dthecapo?_r=1&_t=ZP-94UdEKU6wvv" target="_blank" rel="noopener">TikTok</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAN VAULT -->
+    <div class="section-title" id="vault">
+      <span class="line"></span><span class="title">CAPO VAULT</span><span class="line"></span>
+    </div>
+
+    <section class="music">
+      <div class="frame grid2">
+        <div class="panel">
+          <div class="panel-head">NFC UNLOCKS</div>
+          <div class="panel-body">
+            <div class="big">Tap your NFC merch or disc to unlock hidden content.</div>
+            <div class="small">Use your phone on a programmed tag to open secret tracks, previews, merch, and videos.</div>
+          </div>
+          <div id="vaultIntro" class="panel-body" style="display:none; padding-top:0;">
+            <div class="small">🔓 Exclusive content unlocked.</div>
+          </div>
+        </div>
+
+        <div class="panel" id="exclusiveTrack" style="display:none;">
+          <div class="panel-head">EXCLUSIVE TRACK</div>
+          <div class="panel-body">
+            <div class="big">Unlocked from your NFC tag.</div>
+            <audio controls preload="none" style="width:100%; margin-top:12px;">
+              <source src="exclusive.mp3" type="audio/mpeg">
+            </audio>
+          </div>
+        </div>
+
+        <div class="panel" id="earlyEp" style="display:none;">
+          <div class="panel-head">EARLY EP PREVIEW</div>
+          <div class="panel-body">
+            <div class="big">Private preview for NFC holders.</div>
+            <audio controls preload="none" style="width:100%; margin-top:12px;">
+              <source src="ep_preview.mp3" type="audio/mpeg">
+            </audio>
+          </div>
+        </div>
+
+        <div class="panel" id="secretVideo" style="display:none;">
+          <div class="panel-head">SECRET VIDEO</div>
+          <div class="panel-body">
+            <div class="big">Private video access unlocked.</div>
+            <div class="panel-actions" style="margin-top:12px;">
+              <a class="btn gold" href="https://youtube.com/@iiidtv?si=xuHENlrbF27-2Z1x" target="_blank" rel="noopener">Open Video</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="secretMerch" style="display:none;">
+          <div class="panel-head">SECRET MERCH</div>
+          <div class="panel-body">
+            <div class="big">Private merch access unlocked.</div>
+            <div class="panel-actions" style="margin-top:12px;">
+              <a class="btn gold" href="#merch">Open Merch</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIDEOS GRID -->
+    <div class="section-title" id="videos">
+      <span class="line"></span><span class="title">VIDEOS</span><span class="line"></span>
+    </div>
+
+    <section class="videos">
+      <div class="frame video-grid">
+        <a class="vcard" href="https://youtube.com/@iiidtv?si=xuHENlrbF27-2Z1x" target="_blank" rel="noopener">
+          <div class="vthumb">▶</div>
+          <div class="vmeta">
+            <div class="vtitle">Watch on YouTube</div>
+            <div class="vsub">Uploads • Shorts • Playlists</div>
+          </div>
+        </a>
+        <div class="vcard disabled">
+          <div class="vthumb">+</div>
+          <div class="vmeta">
+            <div class="vtitle">More videos coming</div>
+            <div class="vsub">New visuals on the way</div>
+          </div>
+        </div>
+        <div class="vcard disabled">
+          <div class="vthumb">+</div>
+          <div class="vmeta">
+            <div class="vtitle">More videos coming</div>
+            <div class="vsub">New visuals on the way</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MERCH -->
+    <div class="section-title" id="merch">
+      <span class="line"></span><span class="title">MERCH</span><span class="line"></span>
+    </div>
+
+    <section class="merch">
+      <div class="merch-grid">
+        <article class="product frame" data-sku="tee" data-name="3D THE CAPO Tee" data-price="30">
+          <div class="pmedia">
+            <img src="assets/shirt.jpg" alt="Shirt placeholder" loading="lazy" />
+            <img class="pstamp" src="assets/brand_emblem.png" alt="" aria-hidden="true" />
+            <div class="badge">SHIRTS</div>
+          </div>
+          <div class="pbody">
+            <div class="pname">3D THE CAPO Tee</div>
+            <div class="psub">Official tee</div>
+            <div class="pactions">
+              <button class="btn gold sm add" type="button">Add to cart</button>
+              <a class="btn sm" href="#" aria-label="Shop shirts link">Shop</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="product frame" data-sku="hat" data-name="CAPO Hat" data-price="35">
+          <div class="pmedia">
+            <img src="assets/hat.jpg" alt="Hat placeholder" loading="lazy" />
+            <img class="pstamp" src="assets/brand_emblem.png" alt="" aria-hidden="true" />
+            <div class="badge">HATS</div>
+          </div>
+          <div class="pbody">
+            <div class="pname">CAPO Hat</div>
+            <div class="psub">Official hat</div>
+            <div class="pactions">
+              <button class="btn gold sm add" type="button">Add to cart</button>
+              <a class="btn sm" href="#" aria-label="Shop hats link">Shop</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="product frame" data-sku="hoodie" data-name="3D Hoodie" data-price="65">
+          <div class="pmedia">
+            <img src="assets/hoodie.jpg" alt="Hoodie placeholder" loading="lazy" />
+            <img class="pstamp" src="assets/brand_emblem.png" alt="" aria-hidden="true" />
+            <div class="badge">HOODIES</div>
+          </div>
+          <div class="pbody">
+            <div class="pname">3D Hoodie</div>
+            <div class="psub">Official hoodie</div>
+            <div class="pactions">
+              <button class="btn gold sm add" type="button">Add to cart</button>
+              <a class="btn sm" href="#" aria-label="Shop hoodies link">Shop</a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="merch-note frame">
+        <div class="merch-note-title">Matching Merch Pack Included</div>
+        <div class="merch-note-sub">Your logo pack is built from your header style (no diamonds) and is print-ready.</div>
+      </div>
+    </section>
+
+    <!-- MAIL -->
+    <div class="section-title" id="mail">
+      <span class="line"></span><span class="title">UPDATES</span><span class="line"></span>
+    </div>
+
+    <section class="mail">
+      <div class="mail-sub">JOIN THE MAILING LIST</div>
+      <form class="mail-form frame" id="mailForm">
+        <input class="mail-input" type="email" name="email" placeholder="Enter your email" required />
+        <button class="btn gold wide" type="submit">Submit</button>
+      </form>
+      <div class="mail-note" id="mailNote"></div>
+      <div class="mail-note" style="margin-top:12px;">
+        NFC links: <code>?unlock=track</code> • <code>?unlock=ep</code> • <code>?unlock=video</code> • <code>?unlock=merch</code> • <code>?unlock=bundle</code>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="foot-left">
+        <img class="foot-emblem" src="assets/brand_emblem.png" alt="" aria-hidden="true" />
+        <div>© <span id="year"></span> 3D THE CAPO</div>
+      </div>
+      <div class="foot-right">
+        <a class="footlink" href="https://youtube.com/@iiidtv?si=xuHENlrbF27-2Z1x" target="_blank" rel="noopener">YouTube</a>
+        <a class="footlink" href="https://open.spotify.com/user/31thbrqw3vygxmwfhni7zaa5qxqa?si=0kWc6No5TjSkKP8Fc-lp0w" target="_blank" rel="noopener">Spotify</a>
+        <a class="footlink" href="https://music.apple.com/us/artist/3d-the-capo/1758229296" target="_blank" rel="noopener">Apple Music</a>
+        <a class="footlink" href="https://www.instagram.com/3d_the_capo?igsh=NTc4MTIwNjQ2YQ%3D%3D&utm_source=qr" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
