@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="./">
+  <title>3D THE CAPO — Official Artist Site</title>
+  <meta name="description" content="Official artist site: drops, links, music, videos, and merch." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <main class="page" id="top">
+    <header class="header reveal">
+      <div class="top-logo">
+        <img src="./header_logo.png" alt="3D THE CAPO logo" />
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <a class="pill" href="#music">MUSIC</a>
+        <a class="pill" href="#videos">VIDEOS</a>
+        <a class="pill" href="#merch">MERCH</a>
+        <a class="pill" href="#updates">UPDATES</a>
+      </nav>
+
+      <div class="nav" aria-label="Secondary">
+        <a class="pill gold" href="#drops">DROPS &amp; LINKS</a>
+      </div>
+
+      <div class="tagline">HUSTLE • GRIND • DOMINATE</div>
+    </header>
+
+    <section class="section reveal" id="drops" aria-label="Hero">
+      <div class="card hero">
+        <div class="hero-media" aria-label="Hero image">
+          <img src="./hero.jpg" alt="3D THE CAPO hero artwork" />
+          <img class="watermark" src="./watermark.png" alt="" aria-hidden="true" />
+        </div>
+
+        <div class="hero-body">
+          <div class="kicker">Official artist site</div>
+          <div class="hero-title">3D THE<br/>CAPO</div>
+          <div class="hero-sub">New drops • merch • videos • updates.</div>
+
+          <div class="cta" role="group" aria-label="Hero actions">
+            <a class="pill gold" href="#music">PLAY MUSIC</a>
+            <a class="pill" href="#merch">SHOP MERCH</a>
+          </div>
+
+          <div class="countdown">Next drop in: <span id="countdown">—</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" aria-label="Drop countdown">
+      <div class="card" style="padding:14px 18px;">
+        <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
+          <div>
+            <div class="kicker">LIMITED DROP</div>
+            <div style="font-family:'Black Ops One',system-ui,sans-serif; letter-spacing:1px; text-transform:uppercase; font-size:22px;">
+              Next drop in <span id="dropCountdown">—</span>
+            </div>
+            <div style="color:rgba(244,241,234,.72); margin-top:4px;">Music first. Merch right under it.</div>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="pill gold" href="#music">Play music</a>
+            <a class="pill" href="#merch">Shop merch</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider reveal" id="updates">
+      <span class="line"></span><span>OUT NOW</span><span class="line"></span>
+    </div>
+
+    <section class="section reveal" aria-label="New drop">
+      <div class="card drop" data-release-url="https://youtube.com/@iiidtv">
+        <div class="cover">
+          <img src="./drop.jpg" alt="Latest release artwork" />
+        </div>
+        <div class="meta">
+          <span class="badge">OUT NOW</span>
+          <div class="big-title">OUT NOW</div>
+          <p>Stream the latest release from 3D THE CAPO.</p>
+          <div class="cta">
+            <a class="pill gold small" href="#videos">WATCH</a>
+            <a class="pill small" href="#music">LISTEN</a>
+          </div>
+          <p class="note">Tap anywhere on this section to open the release.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider reveal" id="music">
+      <span class="line"></span><span>LATEST MUSIC</span><span class="line"></span>
+    </div>
+
+    <section class="section reveal" aria-label="Music">
+      <div class="card">
+        <div class="grid2" style="padding:18px;">
+          <div class="panel">
+            <h3>AUDIO</h3>
+            <p>Listen on your favorite platform and stay locked in for new releases.</p>
+            <div class="mini-actions">
+              <a class="pill small" href="https://music.apple.com/us/artist/3d-the-capo/1758229296" target="_blank" rel="noopener">Apple Music</a>
+              <a class="pill small" href="https://open.spotify.com/user/31thbrqw3vygxmwfhni7zaa5qxqa?si=0kWc6No5TjSkKP8Fc-lp0w" target="_blank" rel="noopener">Spotify</a>
+              <a class="pill small" href="https://music.youtube.com/channel/UCM6GW8j7HMhcPAplgV5Ca4A" target="_blank" rel="noopener">YT Music</a>
+            </div>
+          </div>
+
+          <div class="panel" id="videos">
+            <h3>VIDEO</h3>
+            <p>Watch the latest visuals and follow the official channels.</p>
+            <div class="mini-actions">
+              <a class="pill small gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">YouTube</a>
+              <a class="pill small" href="https://www.instagram.com/3d_the_capo" target="_blank" rel="noopener">Instagram</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider reveal" id="merch">
+      <span class="line"></span><span>SHOP THE MERCH</span><span class="line"></span>
+    </div>
+
+    <section class="section reveal" aria-label="Merch">
+      <div class="merch-tools">
+        <div class="filters" role="tablist" aria-label="Merch filters">
+          <button class="pill small filter active" data-filter="ALL" type="button">All</button>
+          <button class="pill small filter" data-filter="IN STOCK" type="button">In Stock</button>
+          <button class="pill small filter" data-filter="COMING SOON" type="button">Coming Soon</button>
+          <button class="pill small filter" data-filter="EP" type="button">Coming Soon EP</button>
+        </div>
+        <div class="search">
+          <input id="merchSearch" class="input" type="search" placeholder="Search merch…" aria-label="Search merch" />
+        </div>
+      </div>
+
+      <div class="merch-grid merch-grid-v26" id="merchGrid"></div>
+
+      <p class="note" style="margin-top:10px;">
+        Drag &amp; drop swap: replace <code>merch01.png</code>…<code>merch30.png</code> in your repo root. Missing images auto-fall back to <code>placeholder_merch.png</code>.
+      </p>
+    </section>
+
+    <div class="divider reveal" id="mail">
+      <span class="line"></span><span>STAY CONNECTED</span><span class="line"></span>
+    </div>
+
+    <section class="section reveal mail" aria-label="Mailing list">
+      <div class="sub">JOIN THE MAILING LIST</div>
+      <form class="form" id="mailForm">
+        <input class="input" type="email" name="email" placeholder="Enter your email" required />
+        <button class="pill gold" type="submit">SUBMIT</button>
+      </form>
+      <div id="mailNote" class="note"></div>
+    </section>
+
+    <footer class="footer">
+      © <span id="year"></span> 3D THE CAPO
+    </footer>
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+</html>
