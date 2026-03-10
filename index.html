@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="./">
+  <title>3D THE CAPO — Official Artist Site</title>
+  <meta name="description" content="Official artist site: drops, links, music, videos, and merch." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <main class="page" id="top">
+    <header class="header reveal">
+      <div class="top-logo">
+        <img src="./header_logo.png" alt="3D THE CAPO logo" />
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <a class="pill" href="#music">MUSIC</a>
+        <a class="pill" href="#videos">VIDEOS</a>
+        <a class="pill" href="#merch">MERCH</a>
+        <a class="pill" href="#mail">UPDATES</a>
+      </nav>
+
+      <div class="nav" aria-label="Secondary">
+        <a class="pill gold" href="#drops">DROPS &amp; LINKS</a>
+      </div>
+
+      <div class="tagline">HUSTLE • GRIND • DOMINATE</div>
+    </header>
+
+    <section class="section reveal" id="drops" aria-label="Hero">
+      <div class="card hero">
+        <div class="hero-media" aria-label="Hero image">
+          <img src="./hero.jpg" alt="3D THE CAPO hero image" />
+          <img class="watermark" src="./watermark.png" alt="" aria-hidden="true" />
+        </div>
+
+        <div class="hero-body">
+          <div class="kicker">Official artist site</div>
+          <div class="hero-title">3D THE<br/>CAPO</div>
+          <div class="hero-sub">New drops • merch • videos • updates.</div>
+
+          <div class="cta" role="group" aria-label="Hero actions">
+            <a class="pill gold" href="#music">PLAY MUSIC</a>
+            <a class="pill" href="#merch">SHOP MERCH</a>
+          </div>
+
+          <div class="countdown">Next drop in: <span id="countdown">—</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider reveal" id="updates">
+      <span class="line"></span><span>NEW DROP</span><span class="line"></span>
+    </div>
+
+    <section class="section reveal" aria-label="New drop">
+      <div class="card drop">
+        <div class="cover">
+          <img src="./drop.jpg" alt="Latest release cover art" />
+        </div>
+        <div class="meta">
+          <span class="badge">OUT NOW</span>
+          <div class="big-title">OUT NOW</div>
+          <p>Stream the latest release from 3D THE CAPO.</p>
+          <div class="cta">
+            <a class="pill gold small" href="#videos">WATCH</a>
+            <a class="pill small" href="#music">LISTEN</a>
+          </div>
+          <p class="note">Tap watch or listen below.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider reveal" id="music">
+      <span class="line"></span><span>LATEST MUSIC</span><span class="line"></span>
+    </div>
+
+    <section class="section reveal" aria-label="Music">
+      <div class="card">
+        <div class="grid2" style="padding:18px;">
+          <div class="panel">
+            <h3>AUDIO</h3>
+            <p>Stream the latest music from 3D THE CAPO.</p>
+            <div class="spotify-player" style="margin:12px 0 14px;">
+              <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4R7uJYf4ts6pthecl9IVBF?utm_source=generator"
+                width="100%" height="352" frameBorder="0"
+                allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"></iframe>
+            </div>
+            <div class="mini-actions">
+              <a class="pill small" href="https://music.apple.com/us/artist/3d-the-capo/1758229296" target="_blank" rel="noopener">Apple Music</a>
+              <a class="pill small" href="https://open.spotify.com/artist/4R7uJYf4ts6pthecl9IVBF?si=GoMcEWQASFKnyKxKfnAFWg" target="_blank" rel="noopener">Spotify</a>
+              <a class="pill small" href="https://music.youtube.com/channel/UCM6GW8j7HMhcPAplgV5Ca4A" target="_blank" rel="noopener">YT Music</a>
+            </div>
+          </div>
+
+          <div class="panel" id="videos">
+            <h3>VIDEO</h3>
+            <p>Watch the latest visuals and follow the official channels.</p>
+            <div class="mini-actions">
+              <a class="pill small gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">YouTube</a>
+              <a class="pill small" href="https://www.instagram.com/3d_the_capo" target="_blank" rel="noopener">Instagram</a>
+              <a class="pill small" href="https://x.com/3dthecapo?s=21" target="_blank" rel="noopener">X</a>
+              <a class="pill small" href="https://www.tiktok.com/@3dthecapo?_r=1&_t=ZP-94UdEKU6wvv" target="_blank" rel="noopener">TikTok</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider reveal" id="mail">
+      <span class="line"></span><span>UPDATES</span><span class="line"></span>
+    </div>
+
+    <section class="section reveal mail" aria-label="Mailing list">
+      <div class="sub">JOIN THE MAILING LIST</div>
+      <form class="form" id="mailForm">
+        <input class="input" type="email" name="email" placeholder="Enter your email" required />
+        <button class="pill gold" type="submit">SUBMIT</button>
+      </form>
+      <div id="mailNote" class="note"></div>
+    </section>
+
+
+    <div class="divider reveal" id="vault">
+      <span class="line"></span><span>CAPO VAULT</span><span class="line"></span>
+    </div>
+
+    <section class="section reveal" aria-label="Capo Vault">
+      <div class="card">
+        <div style="padding:18px;">
+          <div class="panel">
+            <h3>NFC UNLOCKS</h3>
+            <p>Tap your merch or mini disc to unlock exclusive content on the site.</p>
+            <div class="mini-actions">
+              <a class="pill small" href="?unlock=track">Track Unlock</a>
+              <a class="pill small" href="?unlock=ep">EP Unlock</a>
+              <a class="pill small" href="?unlock=video">Video Unlock</a>
+              <a class="pill small" href="?unlock=merch">Merch Unlock</a>
+              <a class="pill small" href="?unlock=bundle">Bundle Unlock</a>
+            </div>
+          </div>
+
+          <div id="vaultIntro" class="note" style="margin-top:12px; display:none;">
+            🔓 Exclusive content unlocked.
+          </div>
+
+          <div id="unlock-track" class="panel" style="display:none; margin-top:14px;">
+            <h3>EXCLUSIVE TRACK</h3>
+            <p>Unlocked from your NFC tap.</p>
+            <audio controls preload="none" style="width:100%;">
+              <source src="./exclusive.mp3" type="audio/mpeg">
+            </audio>
+          </div>
+
+          <div id="unlock-ep" class="panel" style="display:none; margin-top:14px;">
+            <h3>EARLY EP PREVIEW</h3>
+            <p>Private preview for NFC owners.</p>
+            <audio controls preload="none" style="width:100%;">
+              <source src="./ep_preview.mp3" type="audio/mpeg">
+            </audio>
+          </div>
+
+          <div id="unlock-video" class="panel" style="display:none; margin-top:14px;">
+            <h3>SECRET VIDEO</h3>
+            <p>Private video access unlocked.</p>
+            <div class="mini-actions" style="margin-top:10px;">
+              <a class="pill small gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">Open Video</a>
+            </div>
+          </div>
+
+          <div id="unlock-merch" class="panel" style="display:none; margin-top:14px;">
+            <h3>SECRET MERCH</h3>
+            <p>Private merch access unlocked.</p>
+            <div class="mini-actions" style="margin-top:10px;">
+              <a class="pill small gold" href="#merch">Open Merch</a>
+            </div>
+          </div>
+
+          <div id="unlock-bundle" class="panel" style="display:none; margin-top:14px;">
+            <h3>BUNDLE UNLOCK</h3>
+            <p>Your bundle unlock is active.</p>
+            <div class="mini-actions" style="margin-top:10px;">
+              <a class="pill small gold" href="#merch">Open Bundle</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider reveal" id="merch">
+      <span class="line"></span><span>SHOP THE MERCH</span><span class="line"></span>
+    </div>
+
+    <section class="section reveal" aria-label="Merch">
+      <div class="merch-tools">
+        <div class="filters" role="tablist" aria-label="Merch filters">
+          <button class="pill small filter active" data-filter="ALL" type="button">All</button>
+          <button class="pill small filter" data-filter="IN STOCK" type="button">In Stock</button>
+          <button class="pill small filter" data-filter="COMING SOON" type="button">Coming Soon</button>
+        </div>
+        <div class="search">
+          <input id="merchSearch" class="input" type="search" placeholder="Search merch…" aria-label="Search merch" />
+        </div>
+      </div>
+      <div class="merch-grid merch-grid-v22">
+        
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch01.png" alt="Drop Item 01" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 01</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 01" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch01.png" data-name="Drop Item 01" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch02.png" alt="Drop Item 02" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 02</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 02" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch02.png" data-name="Drop Item 02" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch03.png" alt="Drop Item 03" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 03</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 03" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch03.png" data-name="Drop Item 03" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch04.png" alt="Drop Item 04" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 04</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 04" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch04.png" data-name="Drop Item 04" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch05.png" alt="Drop Item 05" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 05</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 05" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch05.png" data-name="Drop Item 05" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch06.png" alt="Drop Item 06" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 06</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 06" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch06.png" data-name="Drop Item 06" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch07.png" alt="Drop Item 07" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 07</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 07" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch07.png" data-name="Drop Item 07" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch08.png" alt="Drop Item 08" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 08</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 08" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch08.png" data-name="Drop Item 08" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch09.png" alt="Drop Item 09" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 09</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 09" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch09.png" data-name="Drop Item 09" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch10.png" alt="Drop Item 10" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 10</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 10" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch10.png" data-name="Drop Item 10" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch11.png" alt="Drop Item 11" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 11</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 11" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch11.png" data-name="Drop Item 11" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch12.png" alt="Drop Item 12" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 12</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 12" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch12.png" data-name="Drop Item 12" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch13.png" alt="Drop Item 13" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 13</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 13" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch13.png" data-name="Drop Item 13" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch14.png" alt="Drop Item 14" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 14</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 14" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch14.png" data-name="Drop Item 14" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch15.png" alt="Drop Item 15" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 15</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 15" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch15.png" data-name="Drop Item 15" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="IN STOCK">
+          <div class="img">
+            <img src="./merch16.png" alt="Drop Item 16" loading="lazy" />
+            <div class="badge">IN STOCK</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 16</p>
+            <p class="price">$40</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 16" data-price="$40">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch16.png" data-name="Drop Item 16" data-price="$40">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="COMING SOON">
+          <div class="img">
+            <img src="./merch17.png" alt="Drop Item 17" loading="lazy" />
+            <div class="badge">COMING SOON</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 17</p>
+            <p class="price">$—</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 17" data-price="$—">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch17.png" data-name="Drop Item 17" data-price="$—">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="COMING SOON">
+          <div class="img">
+            <img src="./merch18.png" alt="Drop Item 18" loading="lazy" />
+            <div class="badge">COMING SOON</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 18</p>
+            <p class="price">$—</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 18" data-price="$—">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch18.png" data-name="Drop Item 18" data-price="$—">View</button>
+            </div>
+          </div>
+        </article>
+    
+        
+        <article class="card product featured" data-tag="COMING SOON">
+          <div class="img">
+            <img src="./comingsoon_ep.jpg" alt="Coming Soon EP" loading="lazy" />
+            <div class="badge">COMING SOON EP</div>
+          </div>
+          <div class="body">
+            <p class="name">Coming Soon EP</p>
+            <p class="price">Drop Alert</p>
+            <div class="actions">
+              <a class="pill gold small" href="#mail">Notify me</a>
+              <button class="pill small quick-view" type="button" data-img="./comingsoon_ep.jpg" data-name="Coming Soon EP" data-price="—">View</button>
+            </div>
+          </div>
+        </article>
+
+        
+        <article class="card product" data-tag="COMING SOON">
+          <div class="img">
+            <img src="./merch19.png" alt="Drop Item 19" loading="lazy" />
+            <div class="badge">COMING SOON</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 19</p>
+            <p class="price">$—</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 19" data-price="$—">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch19.png" data-name="Drop Item 19" data-price="$—">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="COMING SOON">
+          <div class="img">
+            <img src="./merch20.png" alt="Drop Item 20" loading="lazy" />
+            <div class="badge">COMING SOON</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 20</p>
+            <p class="price">$—</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 20" data-price="$—">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch20.png" data-name="Drop Item 20" data-price="$—">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="COMING SOON">
+          <div class="img">
+            <img src="./merch21.png" alt="Drop Item 21" loading="lazy" />
+            <div class="badge">COMING SOON</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 21</p>
+            <p class="price">$—</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 21" data-price="$—">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch21.png" data-name="Drop Item 21" data-price="$—">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="COMING SOON">
+          <div class="img">
+            <img src="./merch22.png" alt="Drop Item 22" loading="lazy" />
+            <div class="badge">COMING SOON</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 22</p>
+            <p class="price">$—</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 22" data-price="$—">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch22.png" data-name="Drop Item 22" data-price="$—">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="COMING SOON">
+          <div class="img">
+            <img src="./merch23.png" alt="Drop Item 23" loading="lazy" />
+            <div class="badge">COMING SOON</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 23</p>
+            <p class="price">$—</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 23" data-price="$—">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch23.png" data-name="Drop Item 23" data-price="$—">View</button>
+            </div>
+          </div>
+        </article>
+    
+        <article class="card product" data-tag="COMING SOON">
+          <div class="img">
+            <img src="./merch24.png" alt="Drop Item 24" loading="lazy" />
+            <div class="badge">COMING SOON</div>
+          </div>
+          <div class="body">
+            <p class="name">Drop Item 24</p>
+            <p class="price">$—</p>
+            <div class="actions">
+              <button class="pill gold small add-to-cart" type="button" data-name="Drop Item 24" data-price="$—">Add</button>
+              <button class="pill small quick-view" type="button" data-img="./merch24.png" data-name="Drop Item 24" data-price="$—">View</button>
+            </div>
+          </div>
+        </article>
+    
+      </div>
+
+      <div class="note" style="padding: 10px 2px 0;">
+        Tip: Replace any merch image by dragging a new PNG into the repo root with the same filename (example: <code>merch07.png</code>).
+      </div>
+</section>
+
+
+
+    <footer class="footer">
+      © <span id="year"></span> 3D THE CAPO
+    </footer>
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+</html>
