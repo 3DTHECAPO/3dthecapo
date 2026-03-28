@@ -12,6 +12,38 @@
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+
+  <div class="vault-overlay" id="vaultOverlay" aria-hidden="false">
+    <div class="vault-back-glow"></div>
+    <div class="vault-shell">
+      <div class="vault-door-round">
+        <div class="vault-rim"></div>
+        <div class="vault-face-texture"></div>
+        <div class="vault-bolt bolt-1"></div>
+        <div class="vault-bolt bolt-2"></div>
+        <div class="vault-bolt bolt-3"></div>
+        <div class="vault-bolt bolt-4"></div>
+        <div class="vault-bolt bolt-5"></div>
+        <div class="vault-bolt bolt-6"></div>
+        <div class="vault-bolt bolt-7"></div>
+        <div class="vault-bolt bolt-8"></div>
+        <div class="vault-wheel">
+          <span class="spoke s1"></span>
+          <span class="spoke s2"></span>
+          <span class="spoke s3"></span>
+          <span class="spoke s4"></span>
+          <span class="hub"></span>
+        </div>
+      </div>
+      <div class="vault-status-wrap">
+        <div class="vault-status">CAPO SYSTEM</div>
+        <div class="vault-title" id="vaultTitle">AUTHORIZATION ACCEPTED</div>
+        <div class="vault-note" id="vaultNote">Unlocking vault access…</div>
+        <button class="vault-skip" id="vaultSkip" type="button">Enter</button>
+      </div>
+    </div>
+  </div>
+
   <div class="noise" aria-hidden="true"></div>
 
   <main class="page">
@@ -131,8 +163,8 @@
               <a class="pill small" href="?unlock=track#vault">Track Unlock</a>
               <a class="pill small" href="?unlock=ep#vault">EP Unlock</a>
               <a class="pill small" href="?unlock=video#vault">Video Unlock</a>
-              <a class="pill small" href="?unlock=merch#vault">Merch Unlock</a>
-              <a class="pill small" href="?unlock=bundle#vault">Bundle Unlock</a>
+              <a class="pill small" href="?unlock=merch#vault">Album Unlock</a>
+              <a class="pill small" href="?unlock=bundle#vault">Video Unlock</a>
             </div>
           </div>
 

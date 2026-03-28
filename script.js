@@ -99,9 +99,38 @@
   }
 
   applyMerchFilters();
-})();/* V15 full system fixes */
+})();/* V17 full package upgrades */
 (function(){
-  // Support multiple countdown targets
+  const overlay = document.getElementById('vaultOverlay');
+  const skip = document.getElementById('vaultSkip');
+  const title = document.getElementById('vaultTitle');
+  const note = document.getElementById('vaultNote');
+
+  if(overlay){
+    const run = () => {
+      overlay.classList.add('unlocking');
+      if(title) title.textContent = 'AUTHORIZATION ACCEPTED';
+      if(note) note.textContent = 'Retracting bolts…';
+      setTimeout(()=>{
+        overlay.classList.add('opened');
+        if(title) title.textContent = 'ACCESS GRANTED';
+        if(note) note.textContent = 'Opening vault door…';
+      }, 1450);
+      setTimeout(()=>{
+        overlay.classList.add('hidden');
+        setTimeout(()=> overlay.remove(), 650);
+      }, 3100);
+    };
+    requestAnimationFrame(run);
+    if(skip){
+      skip.addEventListener('click', ()=>{
+        overlay.classList.add('hidden');
+        setTimeout(()=> overlay.remove(), 650);
+      });
+    }
+  }
+
+  // support multiple countdown targets
   const ids = ['countdown','dropCountdown','merchCountdown'];
   const targets = ids.map(id => document.getElementById(id)).filter(Boolean);
   if(targets.length){
@@ -124,10 +153,9 @@
     tickAll();
   }
 
-  // Main-site unlock preview logic (keeps EP and Album separate)
+  // main-site unlock preview logic
   const params = new URLSearchParams(window.location.search);
   const unlock = (params.get('unlock') || '').toLowerCase();
-
   const previewPanels = {
     track: document.getElementById('unlock-track'),
     ep: document.getElementById('unlock-ep'),
@@ -136,7 +164,6 @@
     merch: document.getElementById('unlock-merch'),
     bundle: document.getElementById('unlock-bundle')
   };
-
   Object.values(previewPanels).forEach(el => el && el.classList.add('hidden'));
   if (unlock && previewPanels[unlock]) {
     const intro = document.getElementById('vaultIntro');
