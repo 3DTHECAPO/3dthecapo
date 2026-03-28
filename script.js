@@ -99,4 +99,48 @@
   }
 
   applyMerchFilters();
+})();/* V15 full system fixes */
+(function(){
+  // Support multiple countdown targets
+  const ids = ['countdown','dropCountdown','merchCountdown'];
+  const targets = ids.map(id => document.getElementById(id)).filter(Boolean);
+  if(targets.length){
+    const DROP_DATE = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    function tickAll(){
+      const now = new Date();
+      const ms = DROP_DATE - now;
+      if(ms <= 0){
+        targets.forEach(el => el.textContent = 'LIVE');
+        return;
+      }
+      const s = Math.floor(ms / 1000);
+      const d = Math.floor(s / 86400);
+      const h = Math.floor((s % 86400) / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const ss = s % 60;
+      targets.forEach(el => { el.textContent = `${d}d ${h}h ${m}m ${ss}s`; });
+      setTimeout(tickAll, 1000);
+    }
+    tickAll();
+  }
+
+  // Main-site unlock preview logic (keeps EP and Album separate)
+  const params = new URLSearchParams(window.location.search);
+  const unlock = (params.get('unlock') || '').toLowerCase();
+
+  const previewPanels = {
+    track: document.getElementById('unlock-track'),
+    ep: document.getElementById('unlock-ep'),
+    album: document.getElementById('unlock-album'),
+    video: document.getElementById('unlock-video'),
+    merch: document.getElementById('unlock-merch'),
+    bundle: document.getElementById('unlock-bundle')
+  };
+
+  Object.values(previewPanels).forEach(el => el && el.classList.add('hidden'));
+  if (unlock && previewPanels[unlock]) {
+    const intro = document.getElementById('vaultIntro');
+    if (intro) intro.classList.remove('hidden');
+    previewPanels[unlock].classList.remove('hidden');
+  }
 })();
