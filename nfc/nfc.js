@@ -3,43 +3,27 @@
   const params = new URLSearchParams(window.location.search);
   const unlock = (params.get('unlock') || '').toLowerCase();
 
-  const intro = byId('intro');
-  const vault = byId('vault');
-  const title = byId('title');
-  const subtitle = byId('subtitle');
-
-  const panels = {
-    album: byId('album'),
-    deluxe: byId('deluxe'),
-    track: byId('track'),
-    video: byId('video')
+  const status = byId('unlockStatus');
+  const sections = {
+    album: byId('albumSection'),
+    deluxe: byId('deluxeSection'),
+    track: byId('trackSection'),
+    video: byId('videoSection')
   };
 
-  Object.values(panels).forEach(el => el && el.classList.add('hidden'));
+  Object.values(sections).forEach(el => el && el.classList.add('hidden'));
 
-  setTimeout(() => {
-    if (intro) intro.style.display = 'none';
-    if (vault) vault.classList.remove('hidden');
+  let active = null;
+  if (unlock === 'album') active = 'album';
+  else if (unlock === 'deluxe' || unlock === 'album-deluxe') active = 'deluxe';
+  else if (unlock === 'track' || unlock === 'exclusive') active = 'track';
+  else if (unlock === 'video') active = 'video';
 
-    if (unlock === 'album') {
-      panels.album.classList.remove('hidden');
-      title.textContent = 'ALBUM UNLOCKED';
-      subtitle.textContent = 'Full album access is active.';
-    } else if (unlock === 'deluxe' || unlock === 'bundle') {
-      panels.deluxe.classList.remove('hidden');
-      title.textContent = 'DELUXE UNLOCKED';
-      subtitle.textContent = 'VIP deluxe content is active.';
-    } else if (unlock === 'track' || unlock === 'exclusive') {
-      panels.track.classList.remove('hidden');
-      title.textContent = 'TRACK UNLOCKED';
-      subtitle.textContent = 'Your secret track is ready.';
-    } else if (unlock === 'video') {
-      panels.video.classList.remove('hidden');
-      title.textContent = 'VIDEO UNLOCKED';
-      subtitle.textContent = 'Your private visual is ready.';
-    } else {
-      title.textContent = 'ACCESS READY';
-      subtitle.textContent = 'Choose an unlock above or tap your NFC product.';
-    }
-  }, 1800);
+  if (active && sections[active]) {
+    sections[active].classList.remove('hidden');
+    if (status) status.textContent = active.toUpperCase() + ' UNLOCKED';
+    setTimeout(() => sections[active].scrollIntoView({behavior:'smooth', block:'start'}), 120);
+  } else {
+    if (status) status.textContent = 'SELECT AN UNLOCK';
+  }
 })();
