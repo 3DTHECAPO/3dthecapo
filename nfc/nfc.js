@@ -5,17 +5,21 @@
   const unlock = (params.get('unlock') || '').toLowerCase();
   const providedKey = (hash.get('k') || params.get('key') || '').trim();
 
-  const status = byId('unlockStatus');
-  const sections = {
-    album: byId('albumSection'),
-    ep: byId('epSection'),
-    track: byId('trackSection'),
-    video: byId('videoSection')
+  const intro = byId('intro');
+  const vault = byId('vault');
+  const title = byId('title');
+  const subtitle = byId('subtitle');
+
+  const panels = {
+    album: byId('album'),
+    ep: byId('ep'),
+    track: byId('track'),
+    video: byId('video')
   };
 
-  Object.values(sections).forEach(el => el && el.classList.add('hidden'));
+  Object.values(panels).forEach(el => el && el.classList.add('hidden'));
 
-  const SECRET_SEED = 'CAPO-V15-STEALTH';
+  const SECRET_SEED = 'CAPO-V17-REAL-VAULT';
   const WINDOW_DAYS = 2;
 
   function formatDateUTC(date){
@@ -52,21 +56,29 @@
   else if (unlock === 'track' || unlock === 'exclusive') active = 'track';
   else if (unlock === 'video') active = 'video';
 
-  if (!active) {
-    if (status) status.textContent = 'Choose an unlock path.';
-    return;
-  }
+  setTimeout(() => {
+    if (intro) intro.style.display = 'none';
+    if (vault) vault.classList.remove('hidden');
 
-  const acceptedKeys = validKeysFor(active);
-  const isValid = providedKey && acceptedKeys.includes(providedKey.toUpperCase());
+    if(!active){
+      if(title) title.textContent = 'ACCESS READY';
+      if(subtitle) subtitle.textContent = 'Choose an unlock above or tap your NFC product.';
+      return;
+    }
 
-  if (!isValid) {
-    if (status) status.textContent = providedKey ? 'ACCESS DENIED' : 'WAITING FOR NFC KEY';
-    return;
-  }
+    const acceptedKeys = validKeysFor(active);
+    const isValid = providedKey && acceptedKeys.includes(providedKey.toUpperCase());
 
-  if (sections[active]) {
-    sections[active].classList.remove('hidden');
-    if (status) status.textContent = `${active.toUpperCase()} UNLOCKED`;
-  }
+    if (!isValid) {
+      if(title) title.textContent = 'ACCESS DENIED';
+      if(subtitle) subtitle.textContent = providedKey ? 'This vault key is invalid or expired.' : 'Waiting for NFC key.';
+      return;
+    }
+
+    if (panels[active]) {
+      panels[active].classList.remove('hidden');
+      if(title) title.textContent = `${active.toUpperCase()} UNLOCKED`;
+      if(subtitle) subtitle.textContent = `Protected ${active} access is active.`;
+    }
+  }, 1800);
 })();
