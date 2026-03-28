@@ -26,7 +26,7 @@ body{margin:0;color:#f4f1ea;font-family:Oswald,Arial,sans-serif;background:linea
 
 
 /* =========================
-   V7 FULL EXPERIENCE
+   V10 FULL EXPERIENCE LAYER
    ========================= */
 html{scroll-behavior:smooth}
 body::before{
@@ -39,75 +39,186 @@ body::before{
     radial-gradient(circle at 85% 30%, rgba(63,136,255,.08), transparent 22%);
   z-index:0;
 }
-.page{position:relative;z-index:1}
-.header{
-  border-bottom:1px solid rgba(255,255,255,.08);
-  box-shadow:0 10px 38px rgba(0,0,0,.35);
+.top-logo img{
+  width:min(520px,90vw);
+  max-height:120px;
+  object-fit:contain;
+  filter:drop-shadow(0 0 25px rgba(255,180,60,.15));
 }
-.nav .pill.gold{
-  box-shadow:0 0 0 1px rgba(255,255,255,.08) inset, 0 10px 28px rgba(202,162,74,.18);
+.hero-media > img:first-child{
+  filter:brightness(.56) contrast(1.08);
 }
-.hero{min-height:540px;position:relative}
-.hero-media{min-height:500px;overflow:hidden}
-.hero-media > img:first-child{transform:scale(1.015)}
 .hero-media::after{
   content:"";
-  position:absolute; inset:0;
+  position:absolute;
+  inset:0;
   background:
-    linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.50)),
-    radial-gradient(circle at 50% 50%, rgba(255,155,51,.10), transparent 36%);
-  pointer-events:none;
+    radial-gradient(circle at 50% 40%, rgba(255,150,60,.15), transparent 40%),
+    linear-gradient(to bottom, rgba(0,0,0,.20), rgba(0,0,0,.75));
 }
-.watermark{
-  opacity:.11;
-  filter:drop-shadow(0 0 24px rgba(255,180,70,.12));
+.hero-flags{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:8px;
 }
-.hero-body{padding:28px 24px;gap:12px}
-.hero-title{
-  font-size:76px;
-  text-shadow:0 8px 28px rgba(0,0,0,.58),0 0 40px rgba(255,145,40,.10);
-}
-.hero-sub{font-size:18px;max-width:520px}
-.hero-flags{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
 .flag{
-  display:inline-flex;align-items:center;justify-content:center;
-  padding:8px 12px;border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 12px;
+  border-radius:999px;
   border:1px solid rgba(255,255,255,.12);
   background:rgba(255,255,255,.05);
   color:rgba(244,241,234,.90);
-  font-size:12px;letter-spacing:.10em;font-weight:700;text-transform:uppercase;
+  font-size:12px;
+  letter-spacing:.10em;
+  font-weight:700;
+  text-transform:uppercase;
 }
-.divider{margin:34px 0 16px}
-.big-title{font-size:42px}
-.card{box-shadow:0 30px 90px rgba(0,0,0,.58)}
-.panel{background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015))}
-.spotify-player{
-  border-radius:16px;overflow:hidden;
-  box-shadow:0 18px 40px rgba(0,0,0,.25);
+.section{
+  position:relative;
+  isolation:isolate;
 }
-.merch-tools{margin-bottom:18px}
-.merch-grid-v26{gap:26px}
-.product{transition:transform .22s ease, box-shadow .22s ease}
-.product:hover{
-  transform:translateY(-6px);
-  box-shadow:0 30px 70px rgba(0,0,0,.48);
+.section::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-size:cover;
+  background-position:center;
+  opacity:.25;
+  z-index:-1;
+  border-radius:18px;
 }
-.product .img img{transition:transform .35s ease, filter .35s ease}
-.product:hover .img img{
-  transform:scale(1.04);
-  filter:contrast(1.03) brightness(1.03);
-}
-.overlay-badge{
+.section:nth-of-type(2)::before{background-image:url('./backgrounds/drop_room.jpg')}
+.section:nth-of-type(3)::before{background-image:url('./backgrounds/album_chamber.jpg')}
+.section:nth-of-type(6)::before{background-image:url('./backgrounds/vault_interface.jpg')}
+.card{
   backdrop-filter:blur(8px);
-  box-shadow:0 8px 22px rgba(0,0,0,.22);
 }
-.modal{box-shadow:0 34px 90px rgba(0,0,0,.68)}
-.footer{
-  padding-top:18px;
-  border-top:1px solid rgba(255,255,255,.08);
+.reveal-up{
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity .75s ease, transform .75s ease;
 }
-@media (max-width:980px){
-  .hero{min-height:auto}
-  .hero-title{font-size:56px}
-  .hero-media{min-height:360px}
+.reveal-up.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* vault overlay */
+.vault-overlay{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:radial-gradient(circle at center, rgba(20,15,15,.55), rgba(0,0,0,.96));
+  overflow:hidden;
+}
+.vault-bg-glow{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at center, rgba(255,170,80,.18), transparent 20%),
+    radial-gradient(circle at center, rgba(255,255,255,.05), transparent 35%);
+}
+.vault-door{
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:50%;
+  background:
+    linear-gradient(180deg,#090909,#17110f 44%,#090909),
+    radial-gradient(circle at center, rgba(255,170,80,.08), transparent 50%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.07),
+    inset 0 0 90px rgba(255,170,80,.08);
+}
+.vault-door-left{
+  left:0;
+  transform-origin:left center;
+}
+.vault-door-right{
+  right:0;
+  transform-origin:right center;
+}
+.vault-overlay.open .vault-door-left{
+  animation:vaultOpenLeft 2.2s ease forwards;
+}
+.vault-overlay.open .vault-door-right{
+  animation:vaultOpenRight 2.2s ease forwards;
+}
+.vault-core{
+  position:relative;
+  z-index:2;
+  text-align:center;
+  padding:28px 24px;
+}
+.vault-ring{
+  width:170px;height:170px;margin:0 auto 20px;
+  border-radius:999px;
+  border:3px solid rgba(216,173,88,.55);
+  box-shadow:0 0 0 10px rgba(255,255,255,.02) inset,0 0 40px rgba(255,140,50,.12);
+  animation:ringSpin 4s linear infinite;
+}
+.vault-ring.inner{
+  position:absolute;
+  left:50%;
+  top:30px;
+  transform:translateX(-50%);
+  width:110px;height:110px;
+  border-width:2px;
+  opacity:.65;
+  animation-direction:reverse;
+}
+.vault-status{
+  color:#d8ad58;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-size:12px;
+  font-weight:700;
+}
+.vault-title{
+  margin-top:14px;
+  font-family:"Black Ops One",system-ui,sans-serif;
+  font-size:clamp(34px,6vw,68px);
+  line-height:.96;
+  color:#f4f1ea;
+  text-shadow:0 8px 28px rgba(0,0,0,.56),0 0 30px rgba(255,150,60,.08);
+}
+.vault-note{
+  color:rgba(244,241,234,.72);
+  margin-top:10px;
+  font-size:16px;
+}
+.vault-skip{
+  margin-top:20px;
+  border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(180deg,rgba(202,162,74,.98),rgba(184,139,51,.82));
+  color:#17130c;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  border-radius:999px;
+  padding:12px 18px;
+  cursor:pointer;
+}
+.vault-overlay.hidden{
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .7s ease;
+}
+@keyframes ringSpin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+@keyframes vaultOpenLeft{
+  0%{transform:perspective(1200px) rotateY(0deg)}
+  100%{transform:perspective(1200px) rotateY(82deg)}
+}
+@keyframes vaultOpenRight{
+  0%{transform:perspective(1200px) rotateY(0deg)}
+  100%{transform:perspective(1200px) rotateY(-82deg)}
 }
