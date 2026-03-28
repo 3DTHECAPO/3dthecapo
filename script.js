@@ -99,13 +99,14 @@
   }
 
   applyMerchFilters();
-})();/* V17 full package upgrades */
+})();
+
+/* V18 full drag-drop upgrades */
 (function(){
   const overlay = document.getElementById('vaultOverlay');
   const skip = document.getElementById('vaultSkip');
   const title = document.getElementById('vaultTitle');
   const note = document.getElementById('vaultNote');
-
   if(overlay){
     const run = () => {
       overlay.classList.add('unlocking');
@@ -122,38 +123,26 @@
       }, 3100);
     };
     requestAnimationFrame(run);
-    if(skip){
-      skip.addEventListener('click', ()=>{
-        overlay.classList.add('hidden');
-        setTimeout(()=> overlay.remove(), 650);
-      });
-    }
+    if(skip){ skip.addEventListener('click', ()=>{ overlay.classList.add('hidden'); setTimeout(()=> overlay.remove(), 650); }); }
   }
 
   // support multiple countdown targets
   const ids = ['countdown','dropCountdown','merchCountdown'];
   const targets = ids.map(id => document.getElementById(id)).filter(Boolean);
   if(targets.length){
-    const DROP_DATE = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const DROP_DATE = new Date(Date.now() + 7*24*60*60*1000);
     function tickAll(){
       const now = new Date();
       const ms = DROP_DATE - now;
-      if(ms <= 0){
-        targets.forEach(el => el.textContent = 'LIVE');
-        return;
-      }
-      const s = Math.floor(ms / 1000);
-      const d = Math.floor(s / 86400);
-      const h = Math.floor((s % 86400) / 3600);
-      const m = Math.floor((s % 3600) / 60);
-      const ss = s % 60;
-      targets.forEach(el => { el.textContent = `${d}d ${h}h ${m}m ${ss}s`; });
+      if(ms <= 0){ targets.forEach(el => el.textContent = 'LIVE'); return; }
+      const s = Math.floor(ms/1000), d = Math.floor(s/86400), h = Math.floor((s%86400)/3600), m = Math.floor((s%3600)/60), ss = s%60;
+      targets.forEach(el => el.textContent = `${d}d ${h}h ${m}m ${ss}s`);
       setTimeout(tickAll, 1000);
     }
     tickAll();
   }
 
-  // main-site unlock preview logic
+  // main-site unlock previews
   const params = new URLSearchParams(window.location.search);
   const unlock = (params.get('unlock') || '').toLowerCase();
   const previewPanels = {
