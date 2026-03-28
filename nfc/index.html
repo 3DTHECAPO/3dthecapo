@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>3D THE CAPO — NFC Vault</title>
+  <title>3D THE CAPO — NFC Vault Locked</title>
   <meta name="description" content="Standalone NFC unlock page for 3D THE CAPO.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@
       <div class="hero-copy">
         <div class="eyebrow">NFC ACCESS</div>
         <h1>CAPO VAULT</h1>
-        <p>Private content for NFC owners only. Tap your merch, mini disc, or card to unlock music, video, and special drops.</p>
+        <p>Private content for NFC owners only. Public visitors can enter the vault, but only valid NFC keys unlock protected content.</p>
         <div class="hero-actions">
           <a class="pill gold" href="?unlock=album">Open Album</a>
           <a class="pill" href="?unlock=deluxe">Open Deluxe</a>
@@ -38,7 +38,7 @@
       <div class="hero-card">
         <div class="status">UNLOCK STATUS</div>
         <div id="unlockStatus" class="status-value">Waiting for unlock…</div>
-        <div class="status-note">Program your NFC tags to point here with unlock codes like <span class="mono">?unlock=album</span>.</div>
+        <div class="status-note">Program your NFC tags with a stealth link using a rotating key in the URL hash, like <span class="mono">?unlock=album#k=YOURKEY</span>.</div>
       </div>
     </section>
 
@@ -60,6 +60,20 @@
         <span class="tile-note">Private visual access</span>
       </a>
     </section>
+
+    
+    <section id="stealthInfo" class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="label">STEALTH ACCESS</div>
+          <h2>LOCKED VAULT</h2>
+        </div>
+        <span class="badge">PROTECTED</span>
+      </div>
+      <p>This vault uses rotating keys. Public links can open the vault shell, but protected content unlocks only when a valid key is present.</p>
+      <div class="status-note">Use NFC tags with links like <span class="mono">?unlock=album#k=...</span> so the key stays in the browser fragment instead of the normal query string.</div>
+    </section>
+    
 
     <section id="albumSection" class="panel hidden">
       <div class="panel-head">
