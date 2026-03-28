@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>3D THE CAPO — NFC Vault Locked</title>
+  <title>3D THE CAPO — NFC Vault</title>
   <meta name="description" content="Standalone NFC unlock page for 3D THE CAPO.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,7 @@
       <nav class="nav">
         <a href="./">Main Site</a>
         <a href="?unlock=album">Album</a>
-        <a href="?unlock=deluxe">Deluxe</a>
+        <a href="?unlock=ep">EP</a>
         <a href="?unlock=track">Track</a>
         <a href="?unlock=video">Video</a>
       </nav>
@@ -29,16 +29,16 @@
       <div class="hero-copy">
         <div class="eyebrow">NFC ACCESS</div>
         <h1>CAPO VAULT</h1>
-        <p>Private content for NFC owners only. Public visitors can enter the vault, but only valid NFC keys unlock protected content.</p>
+        <p>Private content for NFC owners only. Tap your merch, mini disc, or card to unlock music, video, and special drops.</p>
         <div class="hero-actions">
           <a class="pill gold" href="?unlock=album">Open Album</a>
-          <a class="pill" href="?unlock=deluxe">Open Deluxe</a>
+          <a class="pill" href="?unlock=ep">Open EP</a>
         </div>
       </div>
       <div class="hero-card">
         <div class="status">UNLOCK STATUS</div>
         <div id="unlockStatus" class="status-value">Waiting for unlock…</div>
-        <div class="status-note">Program your NFC tags with a stealth link using a rotating key in the URL hash, like <span class="mono">?unlock=album#k=YOURKEY</span>.</div>
+        <div class="status-note">Program your NFC tags to point here with unlock codes like <span class="mono">?unlock=album</span>.</div>
       </div>
     </section>
 
@@ -47,9 +47,9 @@
         <span class="tile-title">FULL ALBUM</span>
         <span class="tile-note">Main album access</span>
       </a>
-      <a class="tile" href="?unlock=deluxe">
-        <span class="tile-title">DELUXE</span>
-        <span class="tile-note">Bonus music and extras</span>
+      <a class="tile" href="?unlock=ep">
+        <span class="tile-title">EP</span>
+        <span class="tile-note">Future EP unlock</span>
       </a>
       <a class="tile" href="?unlock=track">
         <span class="tile-title">SECRET TRACK</span>
@@ -60,20 +60,6 @@
         <span class="tile-note">Private visual access</span>
       </a>
     </section>
-
-    
-    <section id="stealthInfo" class="panel">
-      <div class="panel-head">
-        <div>
-          <div class="label">STEALTH ACCESS</div>
-          <h2>LOCKED VAULT</h2>
-        </div>
-        <span class="badge">PROTECTED</span>
-      </div>
-      <p>This vault uses rotating keys. Public links can open the vault shell, but protected content unlocks only when a valid key is present.</p>
-      <div class="status-note">Use NFC tags with links like <span class="mono">?unlock=album#k=...</span> so the key stays in the browser fragment instead of the normal query string.</div>
-    </section>
-    
 
     <section id="albumSection" class="panel hidden">
       <div class="panel-head">
@@ -101,17 +87,17 @@
       </div>
     </section>
 
-    <section id="deluxeSection" class="panel hidden">
+    <section id="epSection" class="panel hidden">
       <div class="panel-head">
         <div>
-          <div class="label">DELUXE UNLOCK</div>
-          <h2>DELUXE EDITION</h2>
+          <div class="label">EP UNLOCK</div>
+          <h2>FUTURE EP ACCESS</h2>
         </div>
-        <span class="badge">VIP</span>
+        <span class="badge">READY</span>
       </div>
-      <p>Use this area for deluxe tracks, alternate covers, downloads, behind-the-scenes media, or private merch codes.</p>
+      <p>Use this area for a future EP, bonus pack, alternate release, or separate short project.</p>
       <div class="action-row">
-        <a class="pill gold" href="#playerArea">Play Deluxe</a>
+        <a class="pill gold" href="#playerArea">Open EP Area</a>
       </div>
     </section>
 
@@ -160,9 +146,10 @@
       <div>Program your tags like:</div>
       <div class="codes">
         <span>?unlock=album</span>
-        <span>?unlock=deluxe</span>
+        <span>?unlock=ep</span>
         <span>?unlock=track</span>
         <span>?unlock=video</span>
+        <span>?unlock=merch</span>
       </div>
     </footer>
   </main>

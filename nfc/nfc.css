@@ -128,10 +128,7 @@ body{
   .hero{grid-template-columns:1fr}
   .hero-copy h1{font-size:54px}
 }
-
-
-/* V14 stealth locked vault */
-.status-note .mono, .mono{
+.mono{
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.10);

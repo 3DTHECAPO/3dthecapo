@@ -8,15 +8,15 @@
   const status = byId('unlockStatus');
   const sections = {
     album: byId('albumSection'),
-    deluxe: byId('deluxeSection'),
+    ep: byId('epSection'),
     track: byId('trackSection'),
     video: byId('videoSection')
   };
 
   Object.values(sections).forEach(el => el && el.classList.add('hidden'));
 
-  const SECRET_SEED = 'CAPO-V14-STEALTH';
-  const WINDOW_DAYS = 2; // allow +/- 2 days for easier tag deployment
+  const SECRET_SEED = 'CAPO-V15-STEALTH';
+  const WINDOW_DAYS = 2;
 
   function formatDateUTC(date){
     const y = date.getUTCFullYear();
@@ -48,12 +48,12 @@
 
   let active = null;
   if (unlock === 'album') active = 'album';
-  else if (unlock === 'deluxe' || unlock === 'album-deluxe') active = 'deluxe';
+  else if (unlock === 'ep') active = 'ep';
   else if (unlock === 'track' || unlock === 'exclusive') active = 'track';
   else if (unlock === 'video') active = 'video';
 
-  if(!active){
-    if(status) status.textContent = 'Choose an unlock path.';
+  if (!active) {
+    if (status) status.textContent = 'Choose an unlock path.';
     return;
   }
 
@@ -61,14 +61,12 @@
   const isValid = providedKey && acceptedKeys.includes(providedKey.toUpperCase());
 
   if (!isValid) {
-    if(status){
-      status.textContent = providedKey ? 'ACCESS DENIED' : 'WAITING FOR NFC KEY';
-    }
+    if (status) status.textContent = providedKey ? 'ACCESS DENIED' : 'WAITING FOR NFC KEY';
     return;
   }
 
   if (sections[active]) {
     sections[active].classList.remove('hidden');
-    if(status) status.textContent = `${active.toUpperCase()} UNLOCKED`;
+    if (status) status.textContent = `${active.toUpperCase()} UNLOCKED`;
   }
 })();
