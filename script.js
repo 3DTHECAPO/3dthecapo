@@ -100,16 +100,3 @@
 
   applyMerchFilters();
 })();
-(function(){
-  const overlay=document.getElementById('vaultOverlay'),skip=document.getElementById('vaultSkip'),title=document.getElementById('vaultTitle'),note=document.getElementById('vaultNote');
-  if(overlay){
-    requestAnimationFrame(()=>{
-      overlay.classList.add('unlocking');
-      if(title) title.textContent='AUTHORIZATION ACCEPTED';
-      if(note) note.textContent='Retracting bolts…';
-      setTimeout(()=>{overlay.classList.add('opened'); if(title) title.textContent='ACCESS GRANTED'; if(note) note.textContent='Opening vault door…';},1450);
-      setTimeout(()=>{overlay.classList.add('hidden'); setTimeout(()=>overlay.remove(),650);},3100);
-    });
-    if(skip){skip.addEventListener('click',()=>{overlay.classList.add('hidden'); setTimeout(()=>overlay.remove(),650);});}
-  }
-})();
