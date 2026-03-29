@@ -1,45 +1,23 @@
-(function(){
-  const byId = (id) => document.getElementById(id);
-  const params = new URLSearchParams(window.location.search);
-  const unlock = (params.get('unlock') || '').toLowerCase();
+const boot=document.getElementById('boot');
+const scan=document.getElementById('scan');
+const auth=document.getElementById('auth');
+const granted=document.getElementById('granted');
+const content=document.getElementById('content');
+const title=document.getElementById('title');
 
-  const intro = byId('intro');
-  const vault = byId('vault');
-  const title = byId('title');
-  const subtitle = byId('subtitle');
+setTimeout(()=>{boot.style.display='none';scan.classList.remove('hidden')},1000);
+setTimeout(()=>{scan.style.display='none';auth.classList.remove('hidden')},2000);
+setTimeout(()=>{auth.style.display='none';granted.classList.remove('hidden')},3000);
+setTimeout(()=>{
+granted.style.display='none';
+content.classList.remove('hidden');
 
-  const panels = {
-    album: byId('album'),
-    ep: byId('ep'),
-    track: byId('track'),
-    video: byId('video')
-  };
+const u=new URLSearchParams(location.search).get('unlock');
 
-  Object.values(panels).forEach(el => el && el.classList.add('hidden'));
+if(u==='album'){title.innerText='ALBUM UNLOCKED'}
+else if(u==='ep'){title.innerText='EP UNLOCKED'}
+else if(u==='track'){title.innerText='TRACK UNLOCKED'}
+else if(u==='video'){title.innerText='VIDEO UNLOCKED'}
+else{title.innerText='ACCESS READY'}
 
-  setTimeout(() => {
-    if (intro) intro.style.display = 'none';
-    if (vault) vault.classList.remove('hidden');
-
-    if (unlock === 'album') {
-      if (panels.album) panels.album.classList.remove('hidden');
-      if (title) title.textContent = 'ALBUM UNLOCKED';
-      if (subtitle) subtitle.textContent = 'Full album access is active.';
-    } else if (unlock === 'ep') {
-      if (panels.ep) panels.ep.classList.remove('hidden');
-      if (title) title.textContent = 'EP UNLOCKED';
-      if (subtitle) subtitle.textContent = 'Future EP access is active.';
-    } else if (unlock === 'track' || unlock === 'exclusive') {
-      if (panels.track) panels.track.classList.remove('hidden');
-      if (title) title.textContent = 'TRACK UNLOCKED';
-      if (subtitle) subtitle.textContent = 'Your secret track is ready.';
-    } else if (unlock === 'video') {
-      if (panels.video) panels.video.classList.remove('hidden');
-      if (title) title.textContent = 'VIDEO UNLOCKED';
-      if (subtitle) subtitle.textContent = 'Your private visual is ready.';
-    } else {
-      if (title) title.textContent = 'ACCESS READY';
-      if (subtitle) subtitle.textContent = 'Choose an unlock above or tap your NFC product.';
-    }
-  }, 1800);
-})();
+},4500);
