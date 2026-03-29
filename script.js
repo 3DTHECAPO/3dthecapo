@@ -160,3 +160,45 @@
     previewPanels[unlock].classList.remove('hidden');
   }
 })();
+
+
+/* V21 full real experience */
+(function(){
+  const enterBtn = document.getElementById('enterSiteBtn');
+  const body = document.body;
+  const intro = document.getElementById('vaultIntroScreen');
+  if (enterBtn && intro) {
+    enterBtn.addEventListener('click', () => {
+      body.classList.add('vault-open');
+      setTimeout(() => {
+        intro.remove();
+      }, 650);
+    });
+  }
+
+  // support multiple countdowns without breaking older logic
+  const extraCountdowns = ['dropCountdown','merchCountdown']
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  const baseCountdown = document.getElementById('countdown');
+  const allCountdowns = [baseCountdown, ...extraCountdowns].filter(Boolean);
+  if (allCountdowns.length) {
+    const DROP_DATE = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    function tickAll(){
+      const now = new Date();
+      const ms = DROP_DATE - now;
+      if (ms <= 0){
+        allCountdowns.forEach(el => el.textContent = 'LIVE');
+        return;
+      }
+      const s = Math.floor(ms / 1000);
+      const d = Math.floor(s / 86400);
+      const h = Math.floor((s % 86400) / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const ss = s % 60;
+      allCountdowns.forEach(el => el.textContent = `${d}d ${h}h ${m}m ${ss}s`);
+      setTimeout(tickAll, 1000);
+    }
+    tickAll();
+  }
+})();
