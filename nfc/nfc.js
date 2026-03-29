@@ -1,10 +1,7 @@
-
 (function(){
   const byId = (id) => document.getElementById(id);
   const params = new URLSearchParams(window.location.search);
-  const hash = new URLSearchParams((window.location.hash || '').replace(/^#/, ''));
   const unlock = (params.get('unlock') || '').toLowerCase();
-  const providedKey = (hash.get('k') || params.get('key') || '').trim();
 
   const intro = byId('intro');
   const vault = byId('vault');
@@ -20,64 +17,29 @@
 
   Object.values(panels).forEach(el => el && el.classList.add('hidden'));
 
-  const SECRET_SEED = 'CAPO-V18-FULL';
-  const WINDOW_DAYS = 2;
+  setTimeout(() => {
+    if (intro) intro.style.display = 'none';
+    if (vault) vault.classList.remove('hidden');
 
-  function formatDateUTC(date){
-    const y = date.getUTCFullYear();
-    const m = String(date.getUTCMonth()+1).padStart(2,'0');
-    const d = String(date.getUTCDate()).padStart(2,'0');
-    return `${y}${m}${d}`;
-  }
-
-  function hashString(input){
-    let h = 2166136261 >>> 0;
-    for(let i=0;i<input.length;i++){
-      h ^= input.charCodeAt(i);
-      h = Math.imul(h, 16777619) >>> 0;
-    }
-    return h.toString(36).toUpperCase().padStart(7,'0').slice(0,7);
-  }
-
-  function validKeysFor(type){
-    const keys = [];
-    const now = new Date();
-    for(let offset=-WINDOW_DAYS; offset<=WINDOW_DAYS; offset++){
-      const d = new Date(now);
-      d.setUTCDate(now.getUTCDate()+offset);
-      keys.push(hashString(`${SECRET_SEED}:${type}:${formatDateUTC(d)}`));
-    }
-    return keys;
-  }
-
-  let active = null;
-  if(unlock === 'album') active = 'album';
-  else if(unlock === 'ep') active = 'ep';
-  else if(unlock === 'track' || unlock === 'exclusive') active = 'track';
-  else if(unlock === 'video') active = 'video';
-
-  setTimeout(()=>{
-    if(intro) intro.style.display = 'none';
-    if(vault) vault.classList.remove('hidden');
-
-    if(!active){
-      if(title) title.textContent = 'ACCESS READY';
-      if(subtitle) subtitle.textContent = 'Choose an unlock above or tap your NFC product.';
-      return;
-    }
-
-    const accepted = validKeysFor(active);
-    const valid = providedKey && accepted.includes(providedKey.toUpperCase());
-    if(!valid){
-      if(title) title.textContent = 'ACCESS DENIED';
-      if(subtitle) subtitle.textContent = providedKey ? 'This vault key is invalid or expired.' : 'Waiting for NFC key.';
-      return;
-    }
-
-    if(panels[active]){
-      panels[active].classList.remove('hidden');
-      if(title) title.textContent = `${active.toUpperCase()} UNLOCKED`;
-      if(subtitle) subtitle.textContent = `Protected ${active} access is active.`;
+    if (unlock === 'album') {
+      if (panels.album) panels.album.classList.remove('hidden');
+      if (title) title.textContent = 'ALBUM UNLOCKED';
+      if (subtitle) subtitle.textContent = 'Full album access is active.';
+    } else if (unlock === 'ep') {
+      if (panels.ep) panels.ep.classList.remove('hidden');
+      if (title) title.textContent = 'EP UNLOCKED';
+      if (subtitle) subtitle.textContent = 'Future EP access is active.';
+    } else if (unlock === 'track' || unlock === 'exclusive') {
+      if (panels.track) panels.track.classList.remove('hidden');
+      if (title) title.textContent = 'TRACK UNLOCKED';
+      if (subtitle) subtitle.textContent = 'Your secret track is ready.';
+    } else if (unlock === 'video') {
+      if (panels.video) panels.video.classList.remove('hidden');
+      if (title) title.textContent = 'VIDEO UNLOCKED';
+      if (subtitle) subtitle.textContent = 'Your private visual is ready.';
+    } else {
+      if (title) title.textContent = 'ACCESS READY';
+      if (subtitle) subtitle.textContent = 'Choose an unlock above or tap your NFC product.';
     }
   }, 1800);
 })();
