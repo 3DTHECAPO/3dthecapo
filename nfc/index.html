@@ -3,69 +3,154 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CAPO VAULT — V7 EXPERIENCE</title>
-  <meta name="description" content="V7 NFC experience for 3D THE CAPO.">
+  <title>3D THE CAPO — NFC Vault</title>
+  <meta name="description" content="Standalone NFC unlock page for 3D THE CAPO.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./nfc.css">
 </head>
 <body>
-  <div class="intro" id="intro">
-    <div class="intro-box">
-      <div class="intro-kicker">CAPO SYSTEM</div>
-      <div class="intro-title">SCANNING ACCESS</div>
-      <div class="scan-ring"></div>
-      <div class="scan-bar"><span></span></div>
-      <div class="intro-note">Verifying your unlock…</div>
-    </div>
-  </div>
+  <div class="noise" aria-hidden="true"></div>
 
-  <main class="vault hidden" id="vault">
-    <header class="top">
-      <a class="back" href="/">← Main Site</a>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="./">3D THE CAPO</a>
       <nav class="nav">
+        <a href="./">Main Site</a>
         <a href="?unlock=album">Album</a>
-        <a href="?unlock=deluxe">Deluxe</a>
+        <a href="?unlock=ep">EP</a>
         <a href="?unlock=track">Track</a>
         <a href="?unlock=video">Video</a>
       </nav>
     </header>
 
     <section class="hero">
-      <div class="hero-art">
-        <img src="../hero.jpg" alt="Vault hero">
-      </div>
       <div class="hero-copy">
-        <div class="eyebrow">NFC EXPERIENCE V7</div>
-        <h1 id="title">ACCESS READY</h1>
-        <p id="subtitle">Choose an unlock above or tap your product to enter private content.</p>
-        <div class="actions">
-          <a class="pill gold" href="?unlock=album">FULL ALBUM</a>
-          <a class="pill" href="?unlock=deluxe">DELUXE DROP</a>
+        <div class="eyebrow">NFC ACCESS</div>
+        <h1>CAPO VAULT</h1>
+        <p>Private content for NFC owners only. Tap your merch, mini disc, or card to unlock music, video, and special drops.</p>
+        <div class="hero-actions">
+          <a class="pill gold" href="?unlock=album">Open Album</a>
+          <a class="pill" href="?unlock=ep">Open Deluxe</a>
         </div>
       </div>
+      <div class="hero-card">
+        <div class="status">UNLOCK STATUS</div>
+        <div id="unlockStatus" class="status-value">Waiting for unlock…</div>
+        <div class="status-note">Program your NFC tags to point here with unlock codes like <span class="mono">?unlock=album</span>.</div>
+      </div>
     </section>
 
-    <section id="album" class="panel hidden">
-      <div class="panel-head"><div><div class="label">FULL ACCESS</div><h2>ALBUM UNLOCKED</h2></div><span class="badge">LIVE</span></div>
-      <div class="embed">Drop your album player, tracklist, files, and bonus content here.</div>
+    <section class="quick-links">
+      <a class="tile" href="?unlock=album">
+        <span class="tile-title">FULL ALBUM</span>
+        <span class="tile-note">Main album access</span>
+      </a>
+      <a class="tile" href="?unlock=ep">
+        <span class="tile-title">EP</span>
+        <span class="tile-note">Bonus music and extras</span>
+      </a>
+      <a class="tile" href="?unlock=track">
+        <span class="tile-title">SECRET TRACK</span>
+        <span class="tile-note">Single-track unlock</span>
+      </a>
+      <a class="tile" href="?unlock=video">
+        <span class="tile-title">VIDEO</span>
+        <span class="tile-note">Private visual access</span>
+      </a>
     </section>
 
-    <section id="deluxe" class="panel hidden">
-      <div class="panel-head"><div><div class="label">VIP</div><h2>DELUXE UNLOCKED</h2></div><span class="badge">PREMIUM</span></div>
-      <div class="embed">Use this for deluxe tracks, private merch codes, and hidden drops.</div>
+    <section id="albumSection" class="panel hidden">
+      <div class="panel-head">
+        <div>
+          <div class="label">ALBUM UNLOCK</div>
+          <h2>FULL NFC ALBUM</h2>
+        </div>
+        <span class="badge">LIVE</span>
+      </div>
+      <p>Replace this section with your album stream, tracklist, album artwork, download button, or private embedded player.</p>
+      <div class="album-grid">
+        <div class="cover-art">ALBUM<br>COVER</div>
+        <div class="tracklist">
+          <div class="track">01. Intro</div>
+          <div class="track">02. Track Name</div>
+          <div class="track">03. Track Name</div>
+          <div class="track">04. Track Name</div>
+          <div class="track">05. Track Name</div>
+          <div class="track">06. Bonus</div>
+        </div>
+      </div>
+      <div class="action-row">
+        <a class="pill gold" href="#playerArea">Open Player</a>
+        <a class="pill" href="./">Back to Main Site</a>
+      </div>
     </section>
 
-    <section id="track" class="panel hidden">
-      <div class="panel-head"><div><div class="label">SECRET</div><h2>TRACK UNLOCKED</h2></div><span class="badge">PRIVATE</span></div>
-      <audio controls preload="none" class="player"><source src="../exclusive.mp3" type="audio/mpeg"></audio>
+    <section id="epSection" class="panel hidden">
+      <div class="panel-head">
+        <div>
+          <div class="label">EP UNLOCK</div>
+          <h2>EP EDITION</h2>
+        </div>
+        <span class="badge">VIP</span>
+      </div>
+      <p>Use this area for ep tracks, alternate covers, downloads, behind-the-scenes media, or private merch codes.</p>
+      <div class="action-row">
+        <a class="pill gold" href="#playerArea">Play Deluxe</a>
+      </div>
     </section>
 
-    <section id="video" class="panel hidden">
-      <div class="panel-head"><div><div class="label">VISUAL</div><h2>VIDEO UNLOCKED</h2></div><span class="badge">LOCKED IN</span></div>
-      <div class="actions"><a class="pill gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">WATCH NOW</a></div>
+    <section id="trackSection" class="panel hidden">
+      <div class="panel-head">
+        <div>
+          <div class="label">TRACK UNLOCK</div>
+          <h2>SECRET TRACK</h2>
+        </div>
+        <span class="badge">PRIVATE</span>
+      </div>
+      <p>Replace this audio player source with your private track file.</p>
+      <audio controls preload="none" class="player">
+        <source src="./exclusive.mp3" type="audio/mpeg">
+      </audio>
     </section>
+
+    <section id="videoSection" class="panel hidden">
+      <div class="panel-head">
+        <div>
+          <div class="label">VIDEO UNLOCK</div>
+          <h2>PRIVATE VIDEO ACCESS</h2>
+        </div>
+        <span class="badge">LOCKED IN</span>
+      </div>
+      <p>Use this for private visual drops, YouTube unlisted links, or behind-the-scenes clips.</p>
+      <div class="action-row">
+        <a class="pill gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">Open Video</a>
+      </div>
+    </section>
+
+    <section id="playerArea" class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="label">EMBED AREA</div>
+          <h2>PLAYER / DOWNLOAD ZONE</h2>
+        </div>
+      </div>
+      <p>Drop your album embed, playlist, download buttons, bonus files, or hidden merch code here.</p>
+      <div class="embed-box">
+        Replace this block with your real album embed or download tools.
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>Program your tags like:</div>
+      <div class="codes">
+        <span>?unlock=album</span>
+        <span>?unlock=ep</span>
+        <span>?unlock=track</span>
+        <span>?unlock=video</span>
+      </div>
+    </footer>
   </main>
 
   <script src="./nfc.js"></script>
