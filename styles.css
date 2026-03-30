@@ -111,3 +111,35 @@ body::before{
   .hero-title{font-size:56px}
   .hero-media{min-height:360px}
 }
+
+
+/* V18 full drag-drop upgrades */
+.hero-flags{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.flag{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(244,241,234,.90);font-size:12px;letter-spacing:.10em;font-weight:700;text-transform:uppercase}
+.youtube-preview{margin:12px 0 14px;border-radius:14px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.25)}
+/* vault intro overlay */
+.vault-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at center, rgba(18,14,14,.50), rgba(0,0,0,.95));overflow:hidden}
+.vault-back-glow{position:absolute;inset:0;background:radial-gradient(circle at center, rgba(255,170,80,.18), transparent 18%),radial-gradient(circle at center, rgba(255,255,255,.05), transparent 36%)}
+.vault-shell{position:relative;z-index:2;width:min(860px,92vw);min-height:520px;display:grid;place-items:center}
+.vault-door-round{position:relative;width:min(420px,72vw);aspect-ratio:1/1;border-radius:999px;background:radial-gradient(circle at 35% 30%, rgba(255,255,255,.12), transparent 18%),radial-gradient(circle at 55% 58%, rgba(0,0,0,.20), transparent 42%),linear-gradient(145deg,#5b514c 0%, #2d2724 28%, #7b6d65 50%, #1b1715 74%, #5a4e48 100%);border:10px solid rgba(205,172,111,.55);box-shadow:0 0 0 14px rgba(255,255,255,.03),inset 0 0 40px rgba(255,255,255,.06),inset 0 0 110px rgba(0,0,0,.30),0 30px 80px rgba(0,0,0,.55);transform-origin:18% 50%}
+.vault-rim{position:absolute;inset:22px;border-radius:999px;border:6px solid rgba(20,18,18,.8);box-shadow:inset 0 0 0 2px rgba(255,255,255,.05)}
+.vault-face-texture{position:absolute;inset:34px;border-radius:999px;background:repeating-radial-gradient(circle at center, rgba(255,255,255,.035) 0 3px, rgba(0,0,0,0) 3px 18px),linear-gradient(160deg, rgba(255,255,255,.03), rgba(0,0,0,.18));opacity:.7}
+.vault-wheel{position:absolute;left:50%;top:50%;width:148px;height:148px;transform:translate(-50%,-50%);border-radius:999px;border:6px solid rgba(216,173,88,.62);box-shadow:0 0 0 10px rgba(255,255,255,.02), inset 0 0 24px rgba(0,0,0,.25);background:radial-gradient(circle at center, rgba(255,255,255,.05), rgba(0,0,0,.15))}
+.spoke{position:absolute;left:50%;top:50%;width:8px;height:60px;background:linear-gradient(180deg,#d8ad58,#7d5d20);border-radius:999px;transform-origin:50% 100%;box-shadow:0 0 10px rgba(216,173,88,.18)}
+.spoke.s1{transform:translate(-50%,-100%) rotate(0deg)} .spoke.s2{transform:translate(-50%,-100%) rotate(90deg)} .spoke.s3{transform:translate(-50%,-100%) rotate(45deg)} .spoke.s4{transform:translate(-50%,-100%) rotate(-45deg)}
+.hub{position:absolute;left:50%;top:50%;width:34px;height:34px;transform:translate(-50%,-50%);border-radius:999px;background:radial-gradient(circle at 35% 30%, #f1d08c, #7f6226 70%);box-shadow:0 0 10px rgba(216,173,88,.18)}
+.vault-bolt{position:absolute;width:18px;height:18px;border-radius:999px;background:radial-gradient(circle at 35% 30%, #f0d698, #82652a 72%);box-shadow:0 0 8px rgba(216,173,88,.15)}
+.bolt-1{left:50%;top:20px;transform:translateX(-50%)} .bolt-2{right:72px;top:72px} .bolt-3{right:20px;top:50%;transform:translateY(-50%)} .bolt-4{right:72px;bottom:72px}
+.bolt-5{left:50%;bottom:20px;transform:translateX(-50%)} .bolt-6{left:72px;bottom:72px} .bolt-7{left:20px;top:50%;transform:translateY(-50%)} .bolt-8{left:72px;top:72px}
+.vault-status-wrap{text-align:center;margin-top:28px}
+.vault-status{color:#d8ad58;letter-spacing:.18em;text-transform:uppercase;font-size:12px;font-weight:700}
+.vault-title{margin-top:14px;font-family:"Black Ops One",system-ui,sans-serif;font-size:clamp(34px,6vw,68px);line-height:.96;color:#f4f1ea;text-shadow:0 8px 28px rgba(0,0,0,.56),0 0 30px rgba(255,150,60,.08)}
+.vault-note{color:rgba(244,241,234,.72);margin-top:10px;font-size:16px}
+.vault-skip{margin-top:20px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(202,162,74,.98),rgba(184,139,51,.82));color:#17130c;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:12px 18px;cursor:pointer}
+.vault-overlay.unlocking .vault-wheel{animation:wheelSpin 1.5s ease-in-out forwards}
+.vault-overlay.unlocking .vault-bolt{animation:boltRetract .65s ease-in forwards}
+.vault-overlay.opened .vault-door-round{animation:roundDoorOpen 1.15s ease forwards}
+.vault-overlay.hidden{opacity:0;pointer-events:none;transition:opacity .6s ease}
+@keyframes wheelSpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(720deg)}}
+@keyframes boltRetract{0%{opacity:1;filter:brightness(1)}100%{opacity:.15;transform:scale(.3)}}
+@keyframes roundDoorOpen{0%{transform:perspective(1200px) rotateY(0deg)}100%{transform:perspective(1200px) rotateY(-78deg) translateX(-10px)}}

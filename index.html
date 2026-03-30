@@ -3,157 +3,238 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>3D THE CAPO — NFC Vault</title>
-  <meta name="description" content="Standalone NFC unlock page for 3D THE CAPO.">
+  <base href="./">
+  <title>3D THE CAPO — Official Artist Site</title>
+  <meta name="description" content="Official artist site: drops, links, music, videos, merch, and vault unlocks.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./nfc.css">
+  <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+
+  <div class="vault-overlay" id="vaultOverlay" aria-hidden="false">
+    <div class="vault-back-glow"></div>
+    <div class="vault-shell">
+      <div class="vault-door-round">
+        <div class="vault-rim"></div>
+        <div class="vault-face-texture"></div>
+        <div class="vault-bolt bolt-1"></div><div class="vault-bolt bolt-2"></div><div class="vault-bolt bolt-3"></div><div class="vault-bolt bolt-4"></div>
+        <div class="vault-bolt bolt-5"></div><div class="vault-bolt bolt-6"></div><div class="vault-bolt bolt-7"></div><div class="vault-bolt bolt-8"></div>
+        <div class="vault-wheel">
+          <span class="spoke s1"></span><span class="spoke s2"></span><span class="spoke s3"></span><span class="spoke s4"></span><span class="hub"></span>
+        </div>
+      </div>
+      <div class="vault-status-wrap">
+        <div class="vault-status">CAPO SYSTEM</div>
+        <div class="vault-title" id="vaultTitle">AUTHORIZATION ACCEPTED</div>
+        <div class="vault-note" id="vaultNote">Unlocking vault access…</div>
+        <button class="vault-skip" id="vaultSkip" type="button">Enter</button>
+      </div>
+    </div>
+  </div>
+
   <div class="noise" aria-hidden="true"></div>
 
   <main class="page">
-    <header class="topbar">
-      <a class="brand" href="./">3D THE CAPO</a>
-      <nav class="nav">
-        <a href="./">Main Site</a>
-        <a href="?unlock=album">Album</a>
-        <a href="?unlock=ep">EP</a>
-        <a href="?unlock=track">Track</a>
-        <a href="?unlock=video">Video</a>
+    <header class="header">
+      <div class="top-logo">
+        <img src="./header_logo.png" alt="3D THE CAPO logo">
+      </div>
+      <nav class="nav" aria-label="Primary">
+        <a class="pill" href="#music">Music</a>
+        <a class="pill" href="#videos">Videos</a>
+        <a class="pill" href="#merch">Merch</a>
+        <a class="pill" href="#mail">Updates</a>
       </nav>
+      <div class="tagline">HUSTLE • GRIND • DOMINATE</div>
     </header>
-<a href="./nfc/?unlock=album" class="pill gold" style="display:block;text-align:center;margin:20px auto;">ENTER VAULT</a>
 
-    <section class="hero">
-      <div class="hero-copy">
-        <div class="eyebrow">NFC ACCESS</div>
-        <h1>CAPO VAULT</h1>
-        <p>Private content for NFC owners only. Tap your merch, mini disc, or card to unlock music, video, and special drops.</p>
-        <div class="hero-actions">
-          <a class="pill gold" href="?unlock=album">Open Album</a>
-          <a class="pill" href="?unlock=ep">Open Deluxe</a>
+    <section class="section">
+      <div class="card hero">
+        <div class="hero-media">
+          <img src="./hero.jpg" alt="3D THE CAPO hero image">
+          <img class="watermark" src="./watermark.png" alt="" aria-hidden="true">
         </div>
-      </div>
-      <div class="hero-card">
-        <div class="status">UNLOCK STATUS</div>
-        <div id="unlockStatus" class="status-value">Waiting for unlock…</div>
-        <div class="status-note">Program your NFC tags to point here with unlock codes like <span class="mono">?unlock=album</span>.</div>
+        <div class="hero-body">
+          <div class="kicker">Official artist site</div>
+          <h1 class="hero-title">3D THE<br>CAPO</h1>
+          <p class="hero-sub">New album • merch • videos • exclusives.</p>
+          <div class="cta">
+            <a class="pill gold" href="#music">Play Music</a>
+            <a class="pill" href="#merch">Shop Merch</a>
+          </div>
+          <div class="countdown">Album drops in: <span id="countdown">—</span></div>
+          <div class="hero-flags"><span class="flag">NEW ALBUM</span><span class="flag">EP READY</span><span class="flag">VAULT ACTIVE</span></div>
+        </div>
       </div>
     </section>
 
-    <section class="quick-links">
-      <a class="tile" href="?unlock=album">
-        <span class="tile-title">FULL ALBUM</span>
-        <span class="tile-note">Main album access</span>
-      </a>
-      <a class="tile" href="?unlock=ep">
-        <span class="tile-title">EP</span>
-        <span class="tile-note">Bonus music and extras</span>
-      </a>
-      <a class="tile" href="?unlock=track">
-        <span class="tile-title">SECRET TRACK</span>
-        <span class="tile-note">Single-track unlock</span>
-      </a>
-      <a class="tile" href="?unlock=video">
-        <span class="tile-title">VIDEO</span>
-        <span class="tile-note">Private visual access</span>
-      </a>
-    </section>
+    <div class="divider"><span class="line"></span><span>NEW DROP</span><span class="line"></span></div>
 
-    <section id="albumSection" class="panel hidden">
-      <div class="panel-head">
-        <div>
-          <div class="label">ALBUM UNLOCK</div>
-          <h2>FULL NFC ALBUM</h2>
+    <section class="section">
+      <div class="card drop">
+        <div class="cover">
+          <img src="./drop.jpg" alt="Latest release cover art">
         </div>
-        <span class="badge">LIVE</span>
-      </div>
-      <p>Replace this section with your album stream, tracklist, album artwork, download button, or private embedded player.</p>
-      <div class="album-grid">
-        <div class="cover-art">ALBUM<br>COVER</div>
-        <div class="tracklist">
-          <div class="track">01. Intro</div>
-          <div class="track">02. Track Name</div>
-          <div class="track">03. Track Name</div>
-          <div class="track">04. Track Name</div>
-          <div class="track">05. Track Name</div>
-          <div class="track">06. Bonus</div>
+        <div class="meta">
+          <span class="badge">OUT NOW</span>
+          <div class="big-title">OUT NOW</div>
+          <p>Stream the latest release from 3D THE CAPO.</p>
+          <div class="cta">
+            <a class="pill gold small" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">Watch</a>
+            <a class="pill small" href="#music">Listen</a>
+          </div>
+          <p class="note">Tap watch or listen below.</p>
         </div>
-      </div>
-      <div class="action-row">
-        <a class="pill gold" href="#playerArea">Open Player</a>
-        <a class="pill" href="./">Back to Main Site</a>
       </div>
     </section>
 
-    <section id="epSection" class="panel hidden">
-      <div class="panel-head">
-        <div>
-          <div class="label">EP UNLOCK</div>
-          <h2>EP EDITION</h2>
+    <div class="divider" id="music"><span class="line"></span><span>LATEST MUSIC</span><span class="line"></span></div>
+
+    <section class="section">
+      <div class="card">
+        <div class="grid2 pad">
+          <div class="panel">
+            <h3>Audio</h3>
+            <p>Stream the latest music from 3D THE CAPO.</p>
+            <div class="spotify-player">
+              <iframe
+                style="border-radius:12px"
+                src="https://open.spotify.com/embed/artist/4R7uJYf4ts6pthecl9IVBF?utm_source=generator"
+                width="100%"
+                height="352"
+                frameborder="0"
+                allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"></iframe>
+            </div>
+            <div class="mini-actions">
+              <a class="pill small" href="https://music.apple.com/us/artist/3d-the-capo/1758229296" target="_blank" rel="noopener">Apple Music</a>
+              <a class="pill small" href="https://open.spotify.com/artist/4R7uJYf4ts6pthecl9IVBF?si=GoMcEWQASFKnyKxKfnAFWg" target="_blank" rel="noopener">Spotify</a>
+              <a class="pill small" href="https://music.youtube.com/channel/UCM6GW8j7HMhcPAplgV5Ca4A" target="_blank" rel="noopener">YT Music</a>
+            </div>
+          </div>
+          <div class="panel" id="videos">
+            <h3>Video</h3>
+            <p>Watch the latest visuals and follow the official channels.</p>
+            <div class="youtube-preview"><iframe width="100%" height="250" src="https://www.youtube.com/embed?listType=user_uploads&list=UCM6GW8j7HMhcPAplgV5Ca4A" title="3D THE CAPO YouTube preview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>
+            <div class="mini-actions">
+              <a class="pill small gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">YouTube</a>
+              <a class="pill small" href="https://www.instagram.com/3d_the_capo" target="_blank" rel="noopener">Instagram</a>
+              <a class="pill small" href="https://x.com/3dthecapo?s=21" target="_blank" rel="noopener">X</a>
+              <a class="pill small" href="https://www.tiktok.com/@3dthecapo?_r=1&_t=ZP-94UdEKU6wvv" target="_blank" rel="noopener">TikTok</a>
+            </div>
+          </div>
         </div>
-        <span class="badge">VIP</span>
-      </div>
-      <p>Use this area for ep tracks, alternate covers, downloads, behind-the-scenes media, or private merch codes.</p>
-      <div class="action-row">
-        <a class="pill gold" href="#playerArea">Play Deluxe</a>
       </div>
     </section>
 
-    <section id="trackSection" class="panel hidden">
-      <div class="panel-head">
-        <div>
-          <div class="label">TRACK UNLOCK</div>
-          <h2>SECRET TRACK</h2>
-        </div>
-        <span class="badge">PRIVATE</span>
-      </div>
-      <p>Replace this audio player source with your private track file.</p>
-      <audio controls preload="none" class="player">
-        <source src="./exclusive.mp3" type="audio/mpeg">
-      </audio>
+    <div class="divider" id="mail"><span class="line"></span><span>UPDATES</span><span class="line"></span></div>
+
+    <section class="section mail">
+      <div class="sub">JOIN THE MAILING LIST</div>
+      <form class="form" id="mailForm">
+        <input class="input" type="email" name="email" placeholder="Enter your email" required>
+        <button class="pill gold" type="submit">Submit</button>
+      </form>
+      <div id="mailNote" class="note"></div>
     </section>
 
-    <section id="videoSection" class="panel hidden">
-      <div class="panel-head">
-        <div>
-          <div class="label">VIDEO UNLOCK</div>
-          <h2>PRIVATE VIDEO ACCESS</h2>
+    <div class="divider" id="vault"><span class="line"></span><span>CAPO VAULT</span><span class="line"></span></div>
+
+    <section class="section">
+      <div class="card">
+        <div class="pad">
+          <div class="panel">
+            <h3>NFC Unlocks</h3>
+            <p>Tap your merch or mini disc to unlock exclusive content on the site.</p>
+            <div class="mini-actions">
+              <a class="pill small" href="?unlock=track#vault">Track Unlock</a>
+              <a class="pill small" href="?unlock=ep#vault">EP Unlock</a>
+              <a class="pill small" href="?unlock=video#vault">Video Unlock</a>
+              <a class="pill small" href="?unlock=merch#vault">Merch Unlock</a>
+              <a class="pill small" href="?unlock=bundle#vault">Bundle Unlock</a>
+            </div>
+          </div>
+
+          <div id="vaultIntro" class="note hidden">🔓 Exclusive content unlocked.</div>
+          <div id="unlock-track" class="panel hidden"><h3>Exclusive Track</h3><p>Unlocked from your NFC tap.</p><audio controls preload="none" class="audio-player"><source src="./exclusive.mp3" type="audio/mpeg"></audio></div>
+          <div id="unlock-ep" class="panel hidden"><h3>EP Unlock</h3><p>Private EP preview for NFC owners.</p><audio controls preload="none" class="audio-player"><source src="./ep_preview.mp3" type="audio/mpeg"></audio></div>
+          <div id="unlock-album" class="panel hidden"><h3>Album Unlock</h3><p>Private album access unlocked.</p><div class="mini-actions"><a class="pill small gold" href="./nfc/?unlock=album">Open Album Vault</a></div></div>
+          <div id="unlock-video" class="panel hidden"><h3>Secret Video</h3><p>Private video access unlocked.</p><div class="mini-actions"><a class="pill small gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">Open Video</a></div></div>
+          <div id="unlock-merch" class="panel hidden"><h3>Secret Merch</h3><p>Private merch access unlocked.</p><div class="mini-actions"><a class="pill small gold" href="#merch">Open Merch</a></div></div>
+          <div id="unlock-bundle" class="panel hidden"><h3>Bundle Unlock</h3><p>Your bundle unlock is active.</p><div class="mini-actions"><a class="pill small gold" href="#merch">Open Bundle</a></div></div>
         </div>
-        <span class="badge">LOCKED IN</span>
-      </div>
-      <p>Use this for private visual drops, YouTube unlisted links, or behind-the-scenes clips.</p>
-      <div class="action-row">
-        <a class="pill gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">Open Video</a>
       </div>
     </section>
 
-    <section id="playerArea" class="panel">
-      <div class="panel-head">
-        <div>
-          <div class="label">EMBED AREA</div>
-          <h2>PLAYER / DOWNLOAD ZONE</h2>
+    <div class="divider" id="ep"><span class="line"></span><span>COMING SOON ALBUM</span><span class="line"></span></div>
+
+    <section class="section">
+      <div class="card">
+        <div class="single-card">
+          <article class="card product featured">
+            <div class="img">
+              <img src="./comingsoon_ep.jpg" alt="Coming Soon Album" loading="lazy">
+              <div class="badge overlay-badge">COMING SOON ALBUM</div>
+            </div>
+            <div class="body">
+              <p class="name">Coming Soon Album</p>
+              <p class="price">Album Drop</p>
+              <div class="actions">
+                <a class="pill gold small" href="#mail">Notify me</a>
+                <button class="pill small quick-view" type="button" data-img="./comingsoon_ep.jpg" data-name="Coming Soon Album" data-price="—">View</button>
+              </div>
+            </div>
+          </article>
         </div>
       </div>
-      <p>Drop your album embed, playlist, download buttons, bonus files, or hidden merch code here.</p>
-      <div class="embed-box">
-        Replace this block with your real album embed or download tools.
+    </section>
+
+    <div class="divider" id="merch"><span class="line"></span><span>SHOP THE MERCH</span><span class="line"></span></div>
+
+    <section class="section">
+      <div class="merch-tools">
+        <div class="filters" role="tablist" aria-label="Merch filters">
+          <button class="pill small filter active" data-filter="ALL" type="button">All</button>
+          <button class="pill small filter" data-filter="IN STOCK" type="button">In Stock</button>
+          <button class="pill small filter" data-filter="COMING SOON" type="button">Coming Soon</button>
+        </div>
+        <div class="search">
+          <input id="merchSearch" class="input" type="search" placeholder="Search merch…" aria-label="Search merch">
+        </div>
+      </div>
+
+      <div class="merch-grid merch-grid-v26">
+        <article class="card product" data-tag="IN STOCK"><div class="img"><img src="./merch01.png" alt="Capo Hat" loading="lazy"><div class="badge overlay-badge">IN STOCK</div></div><div class="body"><p class="name">Capo Hat</p><p class="price">$25</p><div class="actions"><button class="pill gold small add-to-cart" type="button" data-name="Capo Hat" data-price="$25">Add</button><button class="pill small quick-view" type="button" data-img="./merch01.png" data-name="Capo Hat" data-price="$25">View</button><a class="pill small" href="?unlock=merch#vault">Unlock</a></div></div></article>
+        <article class="card product" data-tag="IN STOCK"><div class="img"><img src="./merch02.png" alt="Capo Hoodie" loading="lazy"><div class="badge overlay-badge">IN STOCK</div></div><div class="body"><p class="name">Capo Hoodie</p><p class="price">$40</p><div class="actions"><button class="pill gold small add-to-cart" type="button" data-name="Capo Hoodie" data-price="$40">Add</button><button class="pill small quick-view" type="button" data-img="./merch02.png" data-name="Capo Hoodie" data-price="$40">View</button><a class="pill small" href="?unlock=video#vault">Unlock</a></div></div></article>
+        <article class="card product" data-tag="IN STOCK"><div class="img"><img src="./merch03.png" alt="Capo Bundle" loading="lazy"><div class="badge overlay-badge">IN STOCK</div></div><div class="body"><p class="name">Capo Bundle</p><p class="price">$60</p><div class="actions"><button class="pill gold small add-to-cart" type="button" data-name="Capo Bundle" data-price="$60">Add</button><button class="pill small quick-view" type="button" data-img="./merch03.png" data-name="Capo Bundle" data-price="$60">View</button><a class="pill small" href="?unlock=bundle#vault">Unlock</a></div></div></article>
+        <article class="card product" data-tag="IN STOCK"><div class="img"><img src="./merch04.png" alt="Capo Bundle" loading="lazy"><div class="badge overlay-badge">IN STOCK</div></div><div class="body"><p class="name">Capo Bundle</p><p class="price">$60</p><div class="actions"><button class="pill gold small add-to-cart" type="button" data-name="Capo Bundle" data-price="$60">Add</button><button class="pill small quick-view" type="button" data-img="./merch04.png" data-name="Capo Bundle" data-price="$60">View</button><a class="pill small" href="?unlock=bundle#vault">Unlock</a></div></div></article>
       </div>
     </section>
+
+    <div class="modal-backdrop" id="productModal" aria-hidden="true">
+      <div class="modal">
+        <div class="modal-head">
+          <strong id="modalName">Product</strong>
+          <button class="modal-close" id="closeModal" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <img id="modalImage" src="./merch01.png" alt="Product preview">
+          <div class="modal-info">
+            <p id="modalPrice" class="price modal-price"></p>
+            <p class="note">Preview item details.</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <footer class="footer">
-      <div>Program your tags like:</div>
-      <div class="codes">
-        <span>?unlock=album</span>
-        <span>?unlock=ep</span>
-        <span>?unlock=track</span>
-        <span>?unlock=video</span>
-      </div>
+      © <span id="year"></span> 3D THE CAPO
     </footer>
   </main>
 
-  <script src="./nfc.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
