@@ -102,7 +102,7 @@
 })();
 
 
-/* B version whole-site upgrades */
+/* recreated whole-site upgrades */
 (function(){
   window.requestAnimationFrame(() => {
     document.body.classList.add('site-loaded');
