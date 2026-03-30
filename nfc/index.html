@@ -3,253 +3,243 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>3D THE CAPO — CAPO VAULT</title>
-  <meta name="description" content="CAPO VAULT unlock page for exclusive music, merch, and video drops.">
+  <title>3D THE CAPO — Luxury Trap Vault</title>
+  <meta name="description" content="Luxury trap NFC vault for exclusive 3D THE CAPO drops.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./nfc.css">
 </head>
-<body class="vault-body">
-  <div class="noise" aria-hidden="true"></div>
+<body>
+  <div class="grain" aria-hidden="true"></div>
 
   <div class="vault-overlay" id="vaultOverlay" aria-hidden="true">
-    <div class="door door-left"></div>
-    <div class="door door-right"></div>
-    <div class="vault-center-glow"></div>
-    <div class="grant-card" id="grantCard">
-      <div class="grant-label">ACCESS GRANTED</div>
-      <div class="grant-sub" id="grantSub">CAPO VAULT UNLOCKED</div>
+    <div class="vault-door left">
+      <div class="door-skin"></div>
+      <div class="door-frame"></div>
+      <div class="door-wheel">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="door-bolts"></div>
+    </div>
+
+    <div class="vault-door right">
+      <div class="door-skin"></div>
+      <div class="door-frame"></div>
+      <div class="door-wheel">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="door-bolts"></div>
+    </div>
+
+    <div class="overlay-glow"></div>
+
+    <div class="grant-panel">
+      <div class="grant-top">NFC VERIFIED</div>
+      <div class="grant-title">ACCESS GRANTED</div>
+      <div class="grant-sub" id="grantSub">LUXURY TRAP VAULT OPEN</div>
     </div>
   </div>
 
-  <main class="page vault-page">
-    <header class="header vault-header">
-      <div class="top-logo">
-        <img src="../header_logo.png" alt="3D THE CAPO logo">
-      </div>
-      <nav class="nav" aria-label="Primary">
-        <a class="pill" href="../index.html">Home</a>
-        <a class="pill" href="#vaultMusic">Music</a>
-        <a class="pill" href="#vaultVideo">Video</a>
-        <a class="pill" href="#vaultMerch">Merch</a>
-        <a class="pill gold" href="#unlockGrid">Unlocks</a>
+  <main class="site-shell">
+    <header class="vault-header">
+      <a href="../index.html" class="logo-link"><img src="../header_logo.png" alt="3D THE CAPO"></a>
+
+      <nav class="top-nav" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="#musicRoom">Music</a>
+        <a href="#videoRoom">Video</a>
+        <a href="#merchRoom">Merch</a>
+        <a href="#unlockGrid" class="gold">Unlocks</a>
       </nav>
-      <div class="tagline">CAPO VAULT • NFC ACCESS ONLY</div>
+
+      <div class="header-tag">LUXURY TRAP • PRIVATE NFC VAULT</div>
     </header>
 
-    <section class="section">
-      <div class="card hero vault-hero">
-        <div class="hero-media vault-visual">
-          <img src="../hero.jpg" alt="3D THE CAPO hero image">
-          <img class="watermark" src="../watermark.png" alt="" aria-hidden="true">
-          <div class="scan-sheen"></div>
+    <section class="hero-wrap">
+      <div class="hero-card">
+        <div class="hero-media">
+          <img src="../hero.jpg" alt="3D THE CAPO">
+          <img class="hero-watermark" src="../watermark.png" alt="" aria-hidden="true">
+          <div class="hero-shine"></div>
+          <div class="hero-vignette"></div>
           <div class="status-chip" id="statusChip">LOCKED</div>
         </div>
-        <div class="hero-body">
-          <div class="kicker">NFC private access</div>
-          <h1 class="hero-title">CAPO<br>VAULT</h1>
-          <p class="hero-sub">Exclusive doors for tracks, video drops, merch access, and deluxe bundle content.</p>
-          <div class="cta">
-            <a class="pill gold" href="./index.html?unlock=album">Unlock Album</a>
-            <a class="pill" href="./index.html?unlock=track">Unlock Track</a>
-            <a class="pill" href="./index.html?unlock=video">Unlock Video</a>
-            <a class="pill" href="./index.html?unlock=deluxe">Unlock Deluxe</a>
+
+        <div class="hero-copy">
+          <div class="eyebrow">PRIVATE NFC ACCESS</div>
+          <h1>LUXURY TRAP<br>VAULT</h1>
+          <p>Dark chrome, gold pressure, exclusive access. This vault page is built for private drops, hidden content, premium merch, and cinematic unlock moments.</p>
+
+          <div class="cta-row">
+            <a href="./index.html?unlock=album" class="btn gold">Unlock Album</a>
+            <a href="./index.html?unlock=track" class="btn">Unlock Track</a>
+            <a href="./index.html?unlock=video" class="btn">Unlock Video</a>
+            <a href="./index.html?unlock=deluxe" class="btn">Unlock Deluxe</a>
           </div>
-          <div class="countdown">Vault status: <span id="vaultStateText">Waiting for scan</span></div>
-          <div class="hero-flags">
-            <span class="flag">NFC ONLY</span>
-            <span class="flag">PRIVATE DROP</span>
-            <span class="flag" id="flagActive">LOCKED</span>
+
+          <div class="cta-row secondary">
+            <button class="btn preview-btn" id="previewOverlayBtn" type="button">Preview Vault Doors</button>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <div class="divider" id="unlockGrid"><span class="line"></span><span>UNLOCK PATHS</span><span class="line"></span></div>
+          <div class="state-line">Vault status: <span id="vaultStateText">Waiting for scan</span></div>
 
-    <section class="section">
-      <div class="card">
-        <div class="vault-grid pad">
-          <a class="vault-tile" href="./index.html?unlock=album">
-            <div class="vault-tile-top">01</div>
-            <h3>Album Access</h3>
-            <p>Open the merch-side vault flow with exclusive album lane access.</p>
-          </a>
-          <a class="vault-tile" href="./index.html?unlock=track">
-            <div class="vault-tile-top">02</div>
-            <h3>Exclusive Track</h3>
-            <p>Reveal the private track section and behind-the-door player lane.</p>
-          </a>
-          <a class="vault-tile" href="./index.html?unlock=video">
-            <div class="vault-tile-top">03</div>
-            <h3>Video Room</h3>
-            <p>Open the visual chamber for hidden video content and links.</p>
-          </a>
-          <a class="vault-tile" href="./index.html?unlock=deluxe">
-            <div class="vault-tile-top">04</div>
-            <h3>Deluxe Bundle</h3>
-            <p>Trigger the full bundle door with music, video, and merch routes.</p>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <div class="divider"><span class="line"></span><span>VAULT STATUS</span><span class="line"></span></div>
-
-    <section class="section">
-      <div class="card">
-        <div class="pad">
-          <div class="vault-status">
-            <div class="status-block">
-              <div class="status-label">Current key</div>
-              <div class="status-value" id="unlockName">No key detected</div>
-            </div>
-            <div class="status-block">
-              <div class="status-label">Door state</div>
-              <div class="status-value" id="doorState">Standby</div>
-            </div>
-            <div class="status-block">
-              <div class="status-label">Access level</div>
-              <div class="status-value" id="accessLevel">Locked</div>
-            </div>
+          <div class="flag-row">
+            <span>NFC ONLY</span>
+            <span>LUXURY TRAP</span>
+            <span id="flagActive">LOCKED</span>
           </div>
         </div>
       </div>
     </section>
 
-    <div class="divider" id="vaultMusic"><span class="line"></span><span>VAULT MUSIC</span><span class="line"></span></div>
+    <section class="divider" id="unlockGrid"><span></span><strong>UNLOCK PATHS</strong><span></span></section>
 
-    <section class="section">
-      <div class="card vault-content hidden" id="panel-track">
-        <div class="grid2 pad">
-          <div class="panel">
-            <h3>Exclusive Track Unlocked</h3>
-            <p>Private track lane opened. Use this area for an exclusive audio file, snippet, or secret drop.</p>
-            <audio class="audio-player" controls preload="none">
-              <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b28f9f4d.mp3?filename=hip-hop-beat-11283.mp3" type="audio/mpeg">
-            </audio>
-            <div class="mini-actions">
-              <a class="pill small gold" href="https://music.apple.com/us/artist/3d-the-capo/1758229296" target="_blank" rel="noopener">Apple Music</a>
-              <a class="pill small" href="https://open.spotify.com/artist/4R7uJYf4ts6pthecl9IVBF" target="_blank" rel="noopener">Spotify</a>
-            </div>
-          </div>
-          <div class="panel">
-            <h3>Vault Notes</h3>
-            <p>This zone is built for your NFC-only record reveal. Swap this audio source later with your real file.</p>
-            <div class="vault-mini-card">Exclusive access lane active.</div>
-          </div>
-        </div>
+    <section class="tiles-wrap">
+      <a class="tile" href="./index.html?unlock=album">
+        <b>01</b>
+        <h3>Album Lane</h3>
+        <p>Open the album side and route fans into previews and merch.</p>
+      </a>
+      <a class="tile" href="./index.html?unlock=track">
+        <b>02</b>
+        <h3>Track Chamber</h3>
+        <p>Reveal the private player with a locked-room audio feel.</p>
+      </a>
+      <a class="tile" href="./index.html?unlock=video">
+        <b>03</b>
+        <h3>Visual Room</h3>
+        <p>Open the cinematic video chamber and social links.</p>
+      </a>
+      <a class="tile" href="./index.html?unlock=deluxe">
+        <b>04</b>
+        <h3>Deluxe Bundle</h3>
+        <p>Full access to merch, video, music, and bundle-only drops.</p>
+      </a>
+    </section>
+
+    <section class="divider"><span></span><strong>VAULT STATUS</strong><span></span></section>
+
+    <section class="status-wrap">
+      <div class="status-box">
+        <label>Current key</label>
+        <div id="unlockName">No key detected</div>
       </div>
+      <div class="status-box">
+        <label>Door state</label>
+        <div id="doorState">Standby</div>
+      </div>
+      <div class="status-box">
+        <label>Access level</label>
+        <div id="accessLevel">Locked</div>
+      </div>
+    </section>
 
-      <div class="card vault-content hidden" id="panel-album">
-        <div class="grid2 pad">
-          <div class="panel">
-            <h3>Album / Merch Access</h3>
-            <p>Album-tier access is active. This screen can push users into merch, private EP previews, or a drop timer.</p>
-            <div class="mini-actions">
-              <a class="pill small gold" href="#vaultMerch">Open Merch</a>
-              <a class="pill small" href="#vaultMusic">Stay Here</a>
-            </div>
-          </div>
-          <div class="panel">
-            <h3>Preview Loop</h3>
-            <audio class="audio-player" controls preload="none">
-              <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_3c0a25f56b.mp3?filename=old-school-hip-hop-126227.mp3" type="audio/mpeg">
-            </audio>
+    <section class="divider" id="musicRoom"><span></span><strong>VAULT MUSIC</strong><span></span></section>
+
+    <section class="panel locked-note" id="vaultPlaceholder">
+      <div class="placeholder-icon">◈</div>
+      <h3>SCAN TO OPEN THE CHAMBER</h3>
+      <p>Use an unlock key above or test with the preview button to see the cinematic vault sequence.</p>
+    </section>
+
+    <section class="panel hidden" id="panel-album">
+      <div class="panel-grid">
+        <div class="subpanel">
+          <h3>Album / Merch Access</h3>
+          <p>Album lane is active. This is where your preview track, countdown, or drop instructions can live.</p>
+          <audio controls preload="none" class="audio-player">
+            <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_3c0a25f56b.mp3?filename=old-school-hip-hop-126227.mp3" type="audio/mpeg">
+          </audio>
+        </div>
+        <div class="subpanel">
+          <h3>Quick Actions</h3>
+          <div class="action-row">
+            <a class="btn gold small" href="#merchRoom">Open Merch</a>
+            <a class="btn small" href="https://music.apple.com/us/artist/3d-the-capo/1758229296" target="_blank" rel="noopener">Apple Music</a>
           </div>
         </div>
       </div>
     </section>
 
-    <div class="divider" id="vaultVideo"><span class="line"></span><span>VAULT VIDEO</span><span class="line"></span></div>
-
-    <section class="section">
-      <div class="card vault-content hidden" id="panel-video">
-        <div class="grid2 pad">
-          <div class="panel">
-            <h3>Visual Chamber Unlocked</h3>
-            <p>Private visual lane opened. Replace or add your exclusive YouTube video embed here later.</p>
-            <div class="youtube-preview">
-              <iframe width="100%" height="250" src="https://www.youtube.com/embed?listType=user_uploads&list=UCM6GW8j7HMhcPAplgV5Ca4A" title="3D THE CAPO YouTube preview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
-            </div>
-          </div>
-          <div class="panel">
-            <h3>Video Links</h3>
-            <div class="mini-actions">
-              <a class="pill small gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">YouTube</a>
-              <a class="pill small" href="https://www.instagram.com/3d_the_capo" target="_blank" rel="noopener">Instagram</a>
-              <a class="pill small" href="https://www.tiktok.com/@3dthecapo?_r=1&_t=ZP-94UdEKU6wvv" target="_blank" rel="noopener">TikTok</a>
-            </div>
+    <section class="panel hidden" id="panel-track">
+      <div class="panel-grid">
+        <div class="subpanel">
+          <h3>Exclusive Track Unlocked</h3>
+          <p>Private music lane opened. Replace this temporary source with your real exclusive file later.</p>
+          <audio controls preload="none" class="audio-player">
+            <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b28f9f4d.mp3?filename=hip-hop-beat-11283.mp3" type="audio/mpeg">
+          </audio>
+        </div>
+        <div class="subpanel">
+          <h3>Streaming Links</h3>
+          <div class="action-row">
+            <a class="btn gold small" href="https://open.spotify.com/artist/4R7uJYf4ts6pthecl9IVBF" target="_blank" rel="noopener">Spotify</a>
+            <a class="btn small" href="https://music.youtube.com/channel/UCM6GW8j7HMhcPAplgV5Ca4A" target="_blank" rel="noopener">YouTube Music</a>
           </div>
         </div>
       </div>
     </section>
 
-    <div class="divider" id="vaultMerch"><span class="line"></span><span>VAULT MERCH</span><span class="line"></span></div>
+    <section class="divider" id="videoRoom"><span></span><strong>VAULT VIDEO</strong><span></span></section>
 
-    <section class="section">
-      <div class="card vault-content hidden" id="panel-deluxe">
-        <div class="pad">
-          <div class="bundle-banner">
-            <div>
-              <div class="kicker">Deluxe lane opened</div>
-              <h3>Bundle Access Granted</h3>
-              <p>Full chamber is live. Use this area for deluxe-only merch, bundle codes, hidden downloads, or private drop instructions.</p>
-            </div>
-            <a class="pill gold" href="../index.html#merch">Open Main Merch</a>
-          </div>
-
-          <div class="merch-grid merch-grid-v26 vault-merch-grid">
-            <article class="card product" data-tag="IN STOCK">
-              <div class="img">
-                <img src="../merch_hat.jpg" alt="Capo Hat" loading="lazy">
-                <div class="badge overlay-badge">VAULT</div>
-              </div>
-              <div class="body">
-                <p class="name">Capo Hat</p>
-                <p class="price">$25</p>
-              </div>
-            </article>
-
-            <article class="card product" data-tag="IN STOCK">
-              <div class="img">
-                <img src="../merch_hoodie.jpg" alt="Capo Hoodie" loading="lazy">
-                <div class="badge overlay-badge">VAULT</div>
-              </div>
-              <div class="body">
-                <p class="name">Capo Hoodie</p>
-                <p class="price">$40</p>
-              </div>
-            </article>
-
-            <article class="card product" data-tag="IN STOCK">
-              <div class="img">
-                <img src="../merch_shirt.jpg" alt="Capo Shirt" loading="lazy">
-                <div class="badge overlay-badge">VAULT</div>
-              </div>
-              <div class="body">
-                <p class="name">Capo Shirt</p>
-                <p class="price">$35</p>
-              </div>
-            </article>
+    <section class="panel hidden" id="panel-video">
+      <div class="panel-grid">
+        <div class="subpanel">
+          <h3>Visual Chamber Unlocked</h3>
+          <p>Drop your private YouTube embed or secret visual here.</p>
+          <div class="video-frame">
+            <iframe width="100%" height="260" src="https://www.youtube.com/embed?listType=user_uploads&list=UCM6GW8j7HMhcPAplgV5Ca4A" title="3D THE CAPO preview" frameborder="0" allowfullscreen loading="lazy"></iframe>
           </div>
         </div>
-      </div>
-
-      <div class="card vault-placeholder" id="vaultPlaceholder">
-        <div class="pad centered">
-          <div class="lock-icon">◈</div>
-          <h3>SCAN TO OPEN THE CHAMBER</h3>
-          <p>Use an unlock key from the buttons above or an NFC-triggered URL to open the private sections.</p>
+        <div class="subpanel">
+          <h3>Video Links</h3>
+          <div class="action-row">
+            <a class="btn gold small" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">YouTube</a>
+            <a class="btn small" href="https://www.instagram.com/3d_the_capo" target="_blank" rel="noopener">Instagram</a>
+          </div>
         </div>
       </div>
     </section>
 
-    <footer class="footer">
-      © <span id="year"></span> 3D THE CAPO • CAPO VAULT
-    </footer>
+    <section class="divider" id="merchRoom"><span></span><strong>VAULT MERCH</strong><span></span></section>
+
+    <section class="panel hidden" id="panel-deluxe">
+      <div class="bundle-head">
+        <div>
+          <div class="eyebrow">DELUXE LANE OPEN</div>
+          <h3>Bundle Access Granted</h3>
+          <p>Use this area for bundle-only merch, secret codes, private instructions, or direct drop links.</p>
+        </div>
+        <a class="btn gold small" href="../index.html#merch">Open Main Merch</a>
+      </div>
+
+      <div class="merch-grid">
+        <article class="product-card">
+          <img src="../merch_hat.jpg" alt="Capo Hat">
+          <div class="product-body">
+            <h4>Capo Hat</h4>
+            <p>$25</p>
+          </div>
+        </article>
+        <article class="product-card">
+          <img src="../merch_hoodie.jpg" alt="Capo Hoodie">
+          <div class="product-body">
+            <h4>Capo Hoodie</h4>
+            <p>$40</p>
+          </div>
+        </article>
+        <article class="product-card">
+          <img src="../merch_shirt.jpg" alt="Capo Shirt">
+          <div class="product-body">
+            <h4>Capo Shirt</h4>
+            <p>$35</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="vault-footer">© <span id="year"></span> 3D THE CAPO • LUXURY TRAP VAULT</footer>
   </main>
 
   <script src="./nfc.js"></script>
