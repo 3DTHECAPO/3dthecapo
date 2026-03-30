@@ -129,19 +129,4 @@ body{
   .hero-copy h1{font-size:54px}
 }
 
-
-/* B version vault polish */
-.back,.nav a,.pill{
-  transition:transform .18s ease, box-shadow .18s ease;
-}
-.back:hover,.nav a:hover,.pill:hover{
-  transform:translateY(-2px);
-  box-shadow:0 0 18px rgba(216,173,88,.22);
-}
-.hero-copy,.panel{
-  animation:nfcPanelIn .65s ease both;
-}
-@keyframes nfcPanelIn{
-  from{opacity:0;transform:translateY(16px)}
-  to{opacity:1;transform:translateY(0)}
-}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:8px;padding:2px 6px}
