@@ -2,27 +2,21 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>3D THE CAPO</title>
-<style>
-body{margin:0;background:#000;color:#fff;font-family:sans-serif;text-align:center}
-.hero{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:url('hero.jpg')center/cover}
-.btn{padding:15px 25px;border:1px solid gold;color:gold;text-decoration:none;margin-top:20px}
-img{width:200px;margin:10px}
-</style>
+<link rel="stylesheet" href="nfc.css">
 </head>
 <body>
 
-<div class="hero">
-<h1>3D THE CAPO</h1>
-<a href="./nfc/?unlock=album" class="btn">ENTER VAULT</a>
+<div class="vault-bg"></div>
+
+<div id="boot" class="layer active">INITIALIZING SYSTEM</div>
+<div id="scan" class="layer">SCANNING...</div>
+<div id="auth" class="layer">AUTHORIZATION ACCEPTED</div>
+<div id="granted" class="layer">ACCESS GRANTED</div>
+
+<div id="content" class="layer">
+<h1 id="title"></h1>
 </div>
 
-<section>
-<h2>Merch</h2>
-<img src="merch_hat.jpg">
-<img src="merch_hoodie.jpg">
-<img src="merch_shirt.jpg">
-</section>
-
+<script src="nfc.js"></script>
 </body>
 </html>

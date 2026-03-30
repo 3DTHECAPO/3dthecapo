@@ -1,5 +1,6 @@
-body{margin:0;background:black;color:#d8ad58;font-family:sans-serif}
-.screen{height:100vh;display:flex;align-items:center;justify-content:center;font-size:32px;letter-spacing:2px}
-.hidden{display:none}
-#granted{font-size:40px;color:gold;animation:pulse 1s infinite}
+body{margin:0;background:black;color:#d8ad58;font-family:sans-serif;overflow:hidden}
+.vault-bg{position:fixed;inset:0;background:radial-gradient(circle at center, rgba(255,200,0,0.1), transparent 60%);z-index:0;}
+.layer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;letter-spacing:2px;opacity:0;transition:opacity .6s ease;z-index:2;}
+.layer.active{opacity:1}
+#granted{font-size:42px;color:gold;animation:pulse 1s infinite;}
 @keyframes pulse{0%{opacity:1}50%{opacity:.5}100%{opacity:1}}
