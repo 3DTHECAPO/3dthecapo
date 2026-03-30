@@ -1,24 +1,99 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CAPO VAULT</title>
-<link rel="stylesheet" href="./nfc.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3D THE CAPO — CAPO VAULT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./nfc.css">
 </head>
 <body>
 
-<section id="intro" class="intro">
-  <div class="intro-box">
-    <div class="intro-title">ACCESS GRANTED</div>
-    <div class="scan-bar"><span></span></div>
-  </div>
-</section>
+  <section class="intro" id="intro">
+    <div class="intro-box">
+      <div class="intro-kicker">CAPO SYSTEM</div>
+      <div class="intro-title">ACCESS GRANTED</div>
+      <div class="scan-ring"></div>
+      <div class="scan-bar"><span></span></div>
+      <div class="intro-note">Loading vault environment…</div>
+    </div>
+  </section>
 
-<main id="vault" class="vault">
-  <h1 id="status">LOADING...</h1>
-</main>
+  <main class="vault hidden" id="vault">
+    <header class="top">
+      <a class="back" href="../index.html">← Main Site</a>
+      <nav class="nav">
+        <a href="?unlock=album">Album</a>
+        <a href="?unlock=ep">EP</a>
+        <a href="?unlock=track">Track</a>
+        <a href="?unlock=video">Video</a>
+      </nav>
+    </header>
 
-<script src="./nfc.js"></script>
+    <section class="hero">
+      <div class="hero-art">
+        <img src="../hero.jpg" alt="CAPO VAULT hero image">
+      </div>
+      <div class="hero-copy">
+        <div class="eyebrow">CAPO VAULT</div>
+        <h1 id="unlockStatus">SELECT AN UNLOCK</h1>
+        <p id="subtitle">Enter the private content system for album, EP, track, and video unlocks.</p>
+        <div class="actions">
+          <a class="pill gold" href="?unlock=album">ALBUM</a>
+          <a class="pill" href="?unlock=ep">EP</a>
+          <a class="pill" href="?unlock=track">TRACK</a>
+          <a class="pill" href="?unlock=video">VIDEO</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="albumSection" class="panel hidden">
+      <div class="panel-head">
+        <div>
+          <div class="label">FULL ACCESS</div>
+          <h2>ALBUM UNLOCKED</h2>
+        </div>
+        <span class="badge">LIVE</span>
+      </div>
+      <div class="embed">Drop your full album player, tracklist, files, and bonus content here.</div>
+    </section>
+
+    <section id="epSection" class="panel hidden">
+      <div class="panel-head">
+        <div>
+          <div class="label">READY</div>
+          <h2>EP UNLOCKED</h2>
+        </div>
+        <span class="badge">SOON</span>
+      </div>
+      <div class="embed">Use this area for your future EP or alternate release.</div>
+    </section>
+
+    <section id="trackSection" class="panel hidden">
+      <div class="panel-head">
+        <div>
+          <div class="label">SECRET</div>
+          <h2>TRACK UNLOCKED</h2>
+        </div>
+        <span class="badge">PRIVATE</span>
+      </div>
+      <audio controls preload="none" class="player"><source src="../exclusive.mp3" type="audio/mpeg"></audio>
+    </section>
+
+    <section id="videoSection" class="panel hidden">
+      <div class="panel-head">
+        <div>
+          <div class="label">VISUAL</div>
+          <h2>VIDEO UNLOCKED</h2>
+        </div>
+        <span class="badge">LOCKED</span>
+      </div>
+      <div class="embed">Add your private video player or private link here.</div>
+    </section>
+  </main>
+
+  <script src="./nfc.js"></script>
 </body>
 </html>
