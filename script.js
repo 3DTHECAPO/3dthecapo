@@ -97,8 +97,8 @@
   if (unlock === 'track' || unlock === 'exclusive') show('unlock-track');
   if (unlock === 'ep' || unlock === 'preview') show('unlock-ep');
   if (unlock === 'video') show('unlock-video');
-  if (unlock === 'merch') show('unlock-merch');
-  if (unlock === 'bundle') show('unlock-bundle');
+  if (unlock === 'merch' || unlock === 'album') show('unlock-merch');
+  if (unlock === 'bundle' || unlock === 'deluxe') show('unlock-bundle');
 })();
 
 
