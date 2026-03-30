@@ -3,13 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <base href="./">
-  <title>3D THE CAPO — Official Artist Site</title>
+    <title>3D THE CAPO — Official Artist Site</title>
   <meta name="description" content="Official artist site: drops, links, music, videos, merch, and vault unlocks.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
@@ -17,14 +16,15 @@
   <main class="page">
     <header class="header">
       <div class="top-logo">
-        <img src="./header_logo.png" alt="3D THE CAPO logo">
+        <img src="../header_logo.png" alt="3D THE CAPO logo">
       </div>
       <nav class="nav" aria-label="Primary">
+        <a class="pill" href="../index.html">Home</a>
         <a class="pill" href="#music">Music</a>
         <a class="pill" href="#videos">Videos</a>
         <a class="pill" href="#merch">Merch</a>
         <a class="pill" href="#mail">Updates</a>
-        <a class="pill gold" href="/nfc/?unlock=album">NFC</a>
+        <a class="pill gold" href="./index.html?unlock=album">NFC</a>
       </nav>
       <div class="tagline">HUSTLE • GRIND • DOMINATE</div>
     </header>
@@ -32,8 +32,8 @@
     <section class="section">
       <div class="card hero">
         <div class="hero-media">
-          <img src="./hero.jpg" alt="3D THE CAPO hero image">
-          <img class="watermark" src="./watermark.png" alt="" aria-hidden="true">
+          <img src="../hero.jpg" alt="3D THE CAPO hero image">
+          <img class="watermark" src="../watermark.png" alt="" aria-hidden="true">
         </div>
         <div class="hero-body">
           <div class="kicker">Official artist site</div>
@@ -54,7 +54,7 @@
     <section class="section">
       <div class="card drop">
         <div class="cover">
-          <img src="./drop.jpg" alt="Latest release cover art">
+          <img src="../drop.jpg" alt="Latest release cover art">
         </div>
         <div class="meta">
           <span class="badge">OUT NOW</span>
@@ -128,17 +128,17 @@
             <h3>NFC Unlocks</h3>
             <p>Tap your merch or mini disc to unlock exclusive content on the site.</p>
             <div class="mini-actions">
-              <a class="pill small" href="/nfc/?unlock=track">Track Unlock</a>
-              <a class="pill small" href="/nfc/?unlock=album">EP Unlock</a>
-              <a class="pill small" href="/nfc/?unlock=video">Video Unlock</a>
-              <a class="pill small" href="/nfc/?unlock=album">Merch Unlock</a>
-              <a class="pill small" href="/nfc/?unlock=deluxe">Bundle Unlock</a>
+              <a class="pill small" href="./index.html?unlock=track">Track Unlock</a>
+              <a class="pill small" href="./index.html?unlock=album">EP Unlock</a>
+              <a class="pill small" href="./index.html?unlock=video">Video Unlock</a>
+              <a class="pill small" href="./index.html?unlock=album">Merch Unlock</a>
+              <a class="pill small" href="./index.html?unlock=deluxe">Bundle Unlock</a>
             </div>
           </div>
 
           <div id="vaultIntro" class="note hidden">🔓 Exclusive content unlocked.</div>
-          <div id="unlock-track" class="panel hidden"><h3>Exclusive Track</h3><p>Unlocked from your NFC tap.</p><audio controls preload="none" class="audio-player"><source src="./exclusive.mp3" type="audio/mpeg"></audio></div>
-          <div id="unlock-ep" class="panel hidden"><h3>Early EP Preview</h3><p>Private preview for NFC owners.</p><audio controls preload="none" class="audio-player"><source src="./ep_preview.mp3" type="audio/mpeg"></audio></div>
+          <div id="unlock-track" class="panel hidden"><h3>Exclusive Track</h3><p>Unlocked from your NFC tap.</p><audio controls preload="none" class="audio-player"><source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b28f9f4d.mp3?filename=hip-hop-beat-11283.mp3" type="audio/mpeg"></audio></div>
+          <div id="unlock-ep" class="panel hidden"><h3>Early EP Preview</h3><p>Private preview for NFC owners.</p><audio controls preload="none" class="audio-player"><source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_3c0a25f56b.mp3?filename=old-school-hip-hop-126227.mp3" type="audio/mpeg"></audio></div>
           <div id="unlock-video" class="panel hidden"><h3>Secret Video</h3><p>Private video access unlocked.</p><div class="mini-actions"><a class="pill small gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">Open Video</a></div></div>
           <div id="unlock-merch" class="panel hidden"><h3>Secret Merch</h3><p>Private merch access unlocked.</p><div class="mini-actions"><a class="pill small gold" href="#merch">Open Merch</a></div></div>
           <div id="unlock-bundle" class="panel hidden"><h3>Bundle Unlock</h3><p>Your bundle unlock is active.</p><div class="mini-actions"><a class="pill small gold" href="#merch">Open Bundle</a></div></div>
@@ -153,7 +153,7 @@
         <div class="single-card">
           <article class="card product featured">
             <div class="img">
-              <img src="./comingsoon_ep.jpg" alt="Coming Soon Album" loading="lazy">
+              <img src="../drop.jpg" alt="Coming Soon Album" loading="lazy">
               <div class="badge overlay-badge">COMING SOON ALBUM</div>
             </div>
             <div class="body">
@@ -184,10 +184,10 @@
       </div>
 
       <div class="merch-grid merch-grid-v26">
-        <article class="card product" data-tag="IN STOCK"><div class="img"><img src="./merch01.png" alt="Capo Hat" loading="lazy"><div class="badge overlay-badge">IN STOCK</div></div><div class="body"><p class="name">Capo Hat</p><p class="price">$25</p><div class="actions"><button class="pill gold small add-to-cart" type="button" data-name="Capo Hat" data-price="$25">Add</button><button class="pill small quick-view" type="button" data-img="./merch01.png" data-name="Capo Hat" data-price="$25">View</button><a class="pill small" href="/nfc/?unlock=album">Unlock</a></div></div></article>
-        <article class="card product" data-tag="IN STOCK"><div class="img"><img src="./merch02.png" alt="Capo Hoodie" loading="lazy"><div class="badge overlay-badge">IN STOCK</div></div><div class="body"><p class="name">Capo Hoodie</p><p class="price">$40</p><div class="actions"><button class="pill gold small add-to-cart" type="button" data-name="Capo Hoodie" data-price="$40">Add</button><button class="pill small quick-view" type="button" data-img="./merch02.png" data-name="Capo Hoodie" data-price="$40">View</button><a class="pill small" href="/nfc/?unlock=video">Unlock</a></div></div></article>
-        <article class="card product" data-tag="IN STOCK"><div class="img"><img src="./merch03.png" alt="Capo Bundle" loading="lazy"><div class="badge overlay-badge">IN STOCK</div></div><div class="body"><p class="name">Capo Bundle</p><p class="price">$60</p><div class="actions"><button class="pill gold small add-to-cart" type="button" data-name="Capo Bundle" data-price="$60">Add</button><button class="pill small quick-view" type="button" data-img="./merch03.png" data-name="Capo Bundle" data-price="$60">View</button><a class="pill small" href="/nfc/?unlock=deluxe">Unlock</a></div></div></article>
-        <article class="card product" data-tag="IN STOCK"><div class="img"><img src="./merch04.png" alt="Capo Bundle" loading="lazy"><div class="badge overlay-badge">IN STOCK</div></div><div class="body"><p class="name">Capo Bundle</p><p class="price">$60</p><div class="actions"><button class="pill gold small add-to-cart" type="button" data-name="Capo Bundle" data-price="$60">Add</button><button class="pill small quick-view" type="button" data-img="./merch04.png" data-name="Capo Bundle" data-price="$60">View</button><a class="pill small" href="/nfc/?unlock=deluxe">Unlock</a></div></div></article>
+        <article class="card product" data-tag="IN STOCK"><div class="img"><img src="../merch_hat.jpg" alt="Capo Hat" loading="lazy"><div class="badge overlay-badge">IN STOCK</div></div><div class="body"><p class="name">Capo Hat</p><p class="price">$25</p><div class="actions"><button class="pill gold small add-to-cart" type="button" data-name="Capo Hat" data-price="$25">Add</button><button class="pill small quick-view" type="button" data-img="./merch01.png" data-name="Capo Hat" data-price="$25">View</button><a class="pill small" href="./index.html?unlock=album">Unlock</a></div></div></article>
+        <article class="card product" data-tag="IN STOCK"><div class="img"><img src="../merch_hoodie.jpg" alt="Capo Hoodie" loading="lazy"><div class="badge overlay-badge">IN STOCK</div></div><div class="body"><p class="name">Capo Hoodie</p><p class="price">$40</p><div class="actions"><button class="pill gold small add-to-cart" type="button" data-name="Capo Hoodie" data-price="$40">Add</button><button class="pill small quick-view" type="button" data-img="./merch02.png" data-name="Capo Hoodie" data-price="$40">View</button><a class="pill small" href="./index.html?unlock=video">Unlock</a></div></div></article>
+        <article class="card product" data-tag="IN STOCK"><div class="img"><img src="../merch_shirt.jpg" alt="Capo Bundle" loading="lazy"><div class="badge overlay-badge">IN STOCK</div></div><div class="body"><p class="name">Capo Bundle</p><p class="price">$60</p><div class="actions"><button class="pill gold small add-to-cart" type="button" data-name="Capo Bundle" data-price="$60">Add</button><button class="pill small quick-view" type="button" data-img="./merch03.png" data-name="Capo Bundle" data-price="$60">View</button><a class="pill small" href="./index.html?unlock=deluxe">Unlock</a></div></div></article>
+        <article class="card product" data-tag="IN STOCK"><div class="img"><img src="../drop.jpg" alt="Capo Bundle" loading="lazy"><div class="badge overlay-badge">IN STOCK</div></div><div class="body"><p class="name">Capo Bundle</p><p class="price">$60</p><div class="actions"><button class="pill gold small add-to-cart" type="button" data-name="Capo Bundle" data-price="$60">Add</button><button class="pill small quick-view" type="button" data-img="./merch04.png" data-name="Capo Bundle" data-price="$60">View</button><a class="pill small" href="./index.html?unlock=deluxe">Unlock</a></div></div></article>
       </div>
     </section>
 
@@ -198,7 +198,7 @@
           <button class="modal-close" id="closeModal" type="button">✕</button>
         </div>
         <div class="modal-body">
-          <img id="modalImage" src="./merch01.png" alt="Product preview">
+          <img id="modalImage" src="../merch_hat.jpg" alt="Product preview">
           <div class="modal-info">
             <p id="modalPrice" class="price modal-price"></p>
             <p class="note">Preview item details.</p>
@@ -212,6 +212,6 @@
     </footer>
   </main>
 
-  <script src="./script.js"></script>
+  <script src="../script.js"></script>
 </body>
 </html>
