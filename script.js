@@ -202,3 +202,24 @@
     tickAll();
   }
 })();
+
+
+/* ===== V23 FULL EXPERIENCE UPGRADE ===== */
+(function(){
+  const enterBtn = document.getElementById('enterSiteBtn');
+  const intro = document.getElementById('vaultIntroScreen');
+  document.body.classList.add('site-entering');
+  if (enterBtn && intro) {
+    enterBtn.addEventListener('click', () => {
+      document.body.classList.add('vault-open');
+      setTimeout(() => {
+        if (intro.parentNode) intro.remove();
+        document.body.classList.remove('site-entering');
+        document.body.classList.add('site-loaded');
+      }, 650);
+    });
+  } else {
+    document.body.classList.remove('site-entering');
+    document.body.classList.add('site-loaded');
+  }
+})();

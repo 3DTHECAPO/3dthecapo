@@ -202,3 +202,156 @@ body.vault-open #vaultIntroScreen{
   pointer-events:none;
   transition:opacity .55s ease;
 }
+
+
+/* ===== V23 FULL EXPERIENCE UPGRADE ===== */
+body{opacity:1}
+body.site-entering #mainSite,
+body.site-entering .page{
+  opacity:0;
+}
+body.site-loaded #mainSite,
+body.site-loaded .page{
+  animation:siteFadeIn .7s ease both;
+}
+@keyframes siteFadeIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.youtube-preview{
+  margin:12px 0 14px;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 18px 40px rgba(0,0,0,.25);
+}
+
+.pill, .quick-view, .filter{
+  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+.pill:hover, .quick-view:hover, .filter:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 18px rgba(216,173,88,.22);
+}
+.product{
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.product:hover{
+  transform:translateY(-6px);
+  box-shadow:0 26px 76px rgba(0,0,0,.88);
+}
+.product .img img{
+  transition:transform .3s ease, filter .3s ease;
+}
+.product:hover .img img{
+  transform:scale(1.03);
+  filter:brightness(1.04);
+}
+
+.hero-flags{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.flag{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.05);
+  color:rgba(244,241,234,.90);
+  font-size:12px;
+  letter-spacing:.10em;
+  font-weight:700;
+  text-transform:uppercase;
+}
+
+/* Premium intro overlay */
+.vault-intro-screen{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255,145,40,.10), transparent 28%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.03), transparent 42%),
+    linear-gradient(180deg, rgba(0,0,0,.92), rgba(0,0,0,.98));
+  backdrop-filter: blur(6px);
+}
+.vault-intro-box{
+  width:min(720px,92vw);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:28px;
+  background:linear-gradient(180deg, rgba(11,8,8,.74), rgba(8,5,5,.88));
+  box-shadow:0 26px 90px rgba(0,0,0,.62);
+  padding:42px 30px;
+  text-align:center;
+  animation:vaultBoxIn .8s ease both;
+}
+.vault-intro-kicker{
+  color:#d8ad58;
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  font-size:12px;
+  font-weight:700;
+}
+.vault-intro-title{
+  margin-top:12px;
+  font-family:"Black Ops One",system-ui,sans-serif;
+  font-size:clamp(38px,7vw,76px);
+  line-height:.95;
+}
+.vault-intro-sub{
+  margin-top:10px;
+  color:rgba(244,241,234,.82);
+  font-size:18px;
+  letter-spacing:.06em;
+}
+.vault-loader{
+  width:66px;
+  height:66px;
+  margin:20px auto 18px;
+  border:3px solid rgba(255,255,255,.08);
+  border-top:3px solid #d8ad58;
+  border-radius:50%;
+  animation:vaultSpin 1s linear infinite;
+}
+@keyframes vaultSpin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+@keyframes vaultBoxIn{
+  from{opacity:0;transform:translateY(20px) scale(.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+body.vault-open #vaultIntroScreen{
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .55s ease;
+}
+
+/* Reveal sections */
+.section, .divider, .mail, .single-card, .grid2, .merch-tools{
+  opacity:0;
+  transform:translateY(18px);
+}
+body.site-loaded .section,
+body.site-loaded .divider,
+body.site-loaded .mail,
+body.site-loaded .single-card,
+body.site-loaded .grid2,
+body.site-loaded .merch-tools{
+  animation:revealUp .7s ease forwards;
+}
+body.site-loaded .section:nth-of-type(2){animation-delay:.06s}
+body.site-loaded .section:nth-of-type(3){animation-delay:.12s}
+body.site-loaded .section:nth-of-type(4){animation-delay:.18s}
+@keyframes revealUp{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
