@@ -6,18 +6,13 @@
 </head>
 <body>
 
-<div class="intro" id="intro">
-  <div class="intro-box">
-    <div class="intro-kicker">CAPO SYSTEM</div>
-    <div class="intro-title">ACCESS GRANTED</div>
-    <div class="scan-ring"></div>
-    <div class="scan-bar"><span></span></div>
-    <div class="intro-note">Loading vault...</div>
-  </div>
-</div>
+<div id="boot" class="screen active">INITIALIZING</div>
+<div id="scan" class="screen">SCANNING</div>
+<div id="auth" class="screen">AUTHORIZED</div>
+<div id="grant" class="screen">ACCESS GRANTED</div>
 
-<div id="vault" class="vault hidden">
-  <h1 id="title">ACCESS READY</h1>
+<div id="content" class="screen">
+<h1 id="title"></h1>
 </div>
 
 <script src="nfc.js"></script>
