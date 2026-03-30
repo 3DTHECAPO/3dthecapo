@@ -10,7 +10,7 @@
 
   const panels = {
     album: byId('album'),
-    ep: byId('ep'),
+    deluxe: byId('deluxe'),
     track: byId('track'),
     video: byId('video')
   };
@@ -22,24 +22,24 @@
     if (vault) vault.classList.remove('hidden');
 
     if (unlock === 'album') {
-      if (panels.album) panels.album.classList.remove('hidden');
-      if (title) title.textContent = 'ALBUM UNLOCKED';
-      if (subtitle) subtitle.textContent = 'Full album access is active.';
-    } else if (unlock === 'ep') {
-      if (panels.ep) panels.ep.classList.remove('hidden');
-      if (title) title.textContent = 'EP UNLOCKED';
-      if (subtitle) subtitle.textContent = 'Future EP access is active.';
+      panels.album.classList.remove('hidden');
+      title.textContent = 'ALBUM UNLOCKED';
+      subtitle.textContent = 'Full album access is active.';
+    } else if (unlock === 'deluxe' || unlock === 'bundle') {
+      panels.deluxe.classList.remove('hidden');
+      title.textContent = 'DELUXE UNLOCKED';
+      subtitle.textContent = 'VIP deluxe content is active.';
     } else if (unlock === 'track' || unlock === 'exclusive') {
-      if (panels.track) panels.track.classList.remove('hidden');
-      if (title) title.textContent = 'TRACK UNLOCKED';
-      if (subtitle) subtitle.textContent = 'Your secret track is ready.';
+      panels.track.classList.remove('hidden');
+      title.textContent = 'TRACK UNLOCKED';
+      subtitle.textContent = 'Your secret track is ready.';
     } else if (unlock === 'video') {
-      if (panels.video) panels.video.classList.remove('hidden');
-      if (title) title.textContent = 'VIDEO UNLOCKED';
-      if (subtitle) subtitle.textContent = 'Your private visual is ready.';
+      panels.video.classList.remove('hidden');
+      title.textContent = 'VIDEO UNLOCKED';
+      subtitle.textContent = 'Your private visual is ready.';
     } else {
-      if (title) title.textContent = 'ACCESS READY';
-      if (subtitle) subtitle.textContent = 'Choose an unlock above or tap your NFC product.';
+      title.textContent = 'ACCESS READY';
+      subtitle.textContent = 'Choose an unlock above or tap your NFC product.';
     }
   }, 1800);
 })();
