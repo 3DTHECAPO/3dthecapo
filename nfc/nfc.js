@@ -5,40 +5,40 @@
 
   const intro = byId('intro');
   const vault = byId('vault');
-  const title = byId('title');
+  const status = byId('unlockStatus');
   const subtitle = byId('subtitle');
 
-  const panels = {
-    album: byId('album'),
-    ep: byId('ep'),
-    track: byId('track'),
-    video: byId('video')
+  const sections = {
+    album: byId('albumSection'),
+    ep: byId('epSection'),
+    track: byId('trackSection'),
+    video: byId('videoSection')
   };
 
-  Object.values(panels).forEach(el => el && el.classList.add('hidden'));
+  Object.values(sections).forEach(el => el && el.classList.add('hidden'));
 
   setTimeout(() => {
     if (intro) intro.style.display = 'none';
     if (vault) vault.classList.remove('hidden');
 
-    if (unlock === 'album') {
-      if (panels.album) panels.album.classList.remove('hidden');
-      if (title) title.textContent = 'ALBUM UNLOCKED';
-      if (subtitle) subtitle.textContent = 'Full album access is active.';
-    } else if (unlock === 'ep') {
-      if (panels.ep) panels.ep.classList.remove('hidden');
-      if (title) title.textContent = 'EP UNLOCKED';
-      if (subtitle) subtitle.textContent = 'Future EP access is active.';
-    } else if (unlock === 'track' || unlock === 'exclusive') {
-      if (panels.track) panels.track.classList.remove('hidden');
-      if (title) title.textContent = 'TRACK UNLOCKED';
-      if (subtitle) subtitle.textContent = 'Your secret track is ready.';
-    } else if (unlock === 'video') {
-      if (panels.video) panels.video.classList.remove('hidden');
-      if (title) title.textContent = 'VIDEO UNLOCKED';
-      if (subtitle) subtitle.textContent = 'Your private visual is ready.';
+    let active = null;
+    if (unlock === 'album') active = 'album';
+    else if (unlock === 'ep') active = 'ep';
+    else if (unlock === 'track' || unlock === 'exclusive') active = 'track';
+    else if (unlock === 'video') active = 'video';
+
+    if (active && sections[active]) {
+      sections[active].classList.remove('hidden');
+      if (status) status.textContent = active.toUpperCase() + ' UNLOCKED';
+      if (subtitle) {
+        if (active === 'album') subtitle.textContent = 'Full album access is active.';
+        else if (active === 'ep') subtitle.textContent = 'Future EP access is active.';
+        else if (active === 'track') subtitle.textContent = 'Your secret track is ready.';
+        else if (active === 'video') subtitle.textContent = 'Your private visual is ready.';
+      }
+      setTimeout(() => sections[active].scrollIntoView({behavior:'smooth', block:'start'}), 120);
     } else {
-      if (title) title.textContent = 'ACCESS READY';
+      if (status) status.textContent = 'SELECT AN UNLOCK';
       if (subtitle) subtitle.textContent = 'Choose an unlock above or tap your NFC product.';
     }
   }, 1800);
