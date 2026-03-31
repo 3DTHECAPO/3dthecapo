@@ -31,7 +31,7 @@
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (note) note.textContent = 'Thanks for signing up. You'll be first to know when the next drop hits.';
+      if (note) note.textContent = 'Locked in. Drop alerts coming.';
       form.reset();
     });
   }
