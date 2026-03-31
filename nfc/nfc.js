@@ -5,7 +5,7 @@
   const params = new URLSearchParams(window.location.search);
   const unlock = (params.get('unlock') || '').toLowerCase();
 
-  const overlay = byId('overlay');
+  const overlay = byId('vaultOverlay');
   const accessSub = byId('accessSub');
   const previewBtn = byId('previewBtn');
   const statusPill = byId('statusPill');
@@ -17,7 +17,7 @@
   if (year) year.textContent = new Date().getFullYear();
 
   const rooms = ['room-entry','room-gold','room-elite'];
-  rooms.forEach(id => {
+  rooms.forEach((id) => {
     const el = byId(id);
     if (el) el.classList.add('hidden');
   });
@@ -53,6 +53,7 @@
     overlay.classList.remove('playing');
     void overlay.offsetWidth;
     overlay.classList.add('playing');
+
     window.setTimeout(() => overlay.classList.remove('playing'), 2200);
     window.setTimeout(() => overlay.classList.remove('active'), 3400);
   }
