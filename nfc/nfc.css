@@ -7,7 +7,7 @@
 }
 html{scroll-behavior:smooth}
 body{
-  margin:0; color:var(--text); font-family:Oswald,Arial,sans-serif;
+  margin:0; color:var(--text); font-family:'Oswald',Arial,sans-serif;
   background:
     radial-gradient(circle at 50% 0%, rgba(210,167,79,.16), transparent 35%),
     linear-gradient(180deg, rgba(0,0,0,.56), rgba(0,0,0,.9)),
@@ -16,6 +16,7 @@ body{
 img{max-width:100%;display:block}
 a{text-decoration:none;color:inherit}
 button{font:inherit}
+h1,h2,h3,strong,.nav a,.btn,.access-title,.header-tag,.tier-tag,.room-tag,.benefit-top{font-family:'Black Ops One',sans-serif}
 .noise{position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.1; background-image:radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px); background-size:3px 3px; mix-blend-mode:soft-light}
 .shell{position:relative; z-index:2; width:min(1180px,92vw); margin:0 auto; padding:18px 0 56px}
 .header{position:sticky; top:0; z-index:30; padding:12px 0 14px; backdrop-filter:blur(12px); background:linear-gradient(rgba(0,0,0,.86), rgba(0,0,0,.22))}
@@ -40,7 +41,7 @@ button{font:inherit}
 .status-pill{position:absolute; right:18px; top:18px; z-index:3; border-radius:999px; padding:9px 13px; border:1px solid rgba(255,255,255,.16); background:rgba(0,0,0,.72); font-weight:700; letter-spacing:1px}
 .hero-copy{padding:28px 22px; display:flex; flex-direction:column; justify-content:center; gap:12px}
 .eyebrow{color:var(--muted); letter-spacing:1.6px; text-transform:uppercase; font-size:13px}
-.hero-copy h1{margin:0; font-family:Cinzel,serif; font-weight:800; font-size:clamp(42px,6vw,80px); line-height:.94; letter-spacing:1px; text-transform:uppercase; text-shadow:0 0 28px rgba(210,167,79,.16)}
+.hero-copy h1{margin:0; font-size:clamp(50px,7vw,86px); line-height:.92; letter-spacing:2px; text-transform:uppercase; text-shadow:0 0 28px rgba(210,167,79,.16)}
 .hero-copy p{margin:0; color:var(--muted); font-size:17px; line-height:1.5}
 .cta-row,.action-row{display:flex; flex-wrap:wrap; gap:10px}
 .state-line{color:var(--muted)}
@@ -49,15 +50,15 @@ button{font:inherit}
 .room-tag,.tier-tag{color:var(--gold); border-color:rgba(210,167,79,.35)}
 .divider{margin:28px 0 14px; display:flex; align-items:center; gap:12px}
 .divider span{height:1px; flex:1; background:var(--line)}
-.divider strong{font-family:Cinzel,serif; letter-spacing:1.4px; font-size:18px; color:var(--gold)}
+.divider strong{letter-spacing:1.4px; font-size:18px; color:var(--gold)}
 .tiers-grid,.benefits-grid,.merch-grid{display:grid; gap:14px}
 .tiers-grid{grid-template-columns:repeat(3,1fr)}
 .benefits-grid{grid-template-columns:repeat(4,1fr)}
 .merch-grid{grid-template-columns:repeat(3,1fr)}
-.tier-card,.benefit-card,.placeholder-room,.room,.product-card{border:1px solid var(--line); border-radius:20px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); box-shadow:var(--shadow)}
+.tier-card,.benefit-card,.placeholder-room,.room,.product-card,.connect-card{border:1px solid var(--line); border-radius:20px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); box-shadow:var(--shadow)}
 .tier-card,.benefit-card,.placeholder-room,.room{padding:18px}
 .featured{border-color:rgba(210,167,79,.42); box-shadow:0 18px 80px rgba(210,167,79,.08)}
-.tier-card h3,.benefit-card h3,.room h3,.placeholder-room h3,.product-body h4{margin:0 0 8px; font-family:Cinzel,serif; text-transform:uppercase}
+.tier-card h3,.benefit-card h3,.room h3,.placeholder-room h3,.product-body h4{margin:0 0 8px; text-transform:uppercase}
 .tier-card p,.benefit-card p,.room p,.placeholder-room p,.product-body p{margin:0; color:var(--muted); line-height:1.5}
 .benefit-top{color:var(--gold); font-size:12px; letter-spacing:1.4px; margin-bottom:10px}
 .placeholder-room{text-align:center}
@@ -70,6 +71,8 @@ button{font:inherit}
 .product-card{overflow:hidden}
 .product-card img{width:100%; aspect-ratio:1/1; object-fit:cover}
 .product-body{padding:12px}
+.connect-card{padding:18px; display:flex; flex-wrap:wrap; gap:12px}
+.connect-card a{border:1px solid var(--line); border-radius:999px; padding:10px 14px; background:rgba(255,255,255,.04)}
 .footer{text-align:center; margin-top:24px; color:var(--muted)}
 
 .vault-overlay{position:fixed; inset:0; z-index:9999; display:none; overflow:hidden; background:#000}
@@ -137,9 +140,9 @@ box-shadow:0 0 0 10px rgba(0,0,0,.34), inset 0 0 28px rgba(255,255,255,.04), ins
 .access-card::before{left:-88px}
 .access-card::after{right:-88px}
 .access-top{font-size:12px; letter-spacing:4px; color:var(--muted); text-transform:uppercase}
-.access-title{margin-top:8px; font-family:Cinzel,serif; font-size:clamp(34px,6vw,76px); line-height:1; text-transform:uppercase; color:#ffe9bf; text-shadow:0 0 28px rgba(210,167,79,.22)}
+.access-title{margin-top:8px; font-size:clamp(34px,6vw,76px); line-height:1; text-transform:uppercase; color:#ffe9bf; text-shadow:0 0 28px rgba(210,167,79,.22)}
 .access-sub{margin-top:10px; color:var(--gold); letter-spacing:2px; text-transform:uppercase; font-size:14px}
-.access-caption{position:absolute; bottom:7vh; left:50%; transform:translateX(-50%) translateY(10px); font-family:Cinzel,serif; letter-spacing:1.5px; font-size:clamp(20px,3vw,36px); color:#f1ece3; opacity:0}
+.access-caption{position:absolute; bottom:7vh; left:50%; transform:translateX(-50%) translateY(10px); font-size:clamp(20px,3vw,36px); color:#f1ece3; opacity:0}
 
 .vault-overlay.playing .seam-light{animation:seamLeak 2.6s ease forwards}
 .vault-overlay.playing .center-flash{animation:flash 2.6s ease forwards}
