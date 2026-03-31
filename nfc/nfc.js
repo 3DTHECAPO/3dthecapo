@@ -1,6 +1,5 @@
 (function(){
   'use strict';
-
   const byId = (id) => document.getElementById(id);
   const params = new URLSearchParams(window.location.search);
   const unlock = (params.get('unlock') || '').toLowerCase();
@@ -23,27 +22,9 @@
   });
 
   const states = {
-    entry: {
-      room: 'room-entry',
-      chip: 'ENTRY',
-      state: 'Entry room active',
-      flag: 'ENTRY LIVE',
-      sub: 'ENTRY ACCESS VERIFIED'
-    },
-    gold: {
-      room: 'room-gold',
-      chip: 'GOLD',
-      state: 'Gold tier active',
-      flag: 'GOLD LIVE',
-      sub: 'GOLD MEMBERSHIP VERIFIED'
-    },
-    elite: {
-      room: 'room-elite',
-      chip: 'ELITE',
-      state: 'Elite holder active',
-      flag: 'ELITE LIVE',
-      sub: 'ELITE HOLDER VERIFIED'
-    }
+    entry: { room: 'room-entry', chip: 'ENTRY', state: 'Entry room active', flag: 'ENTRY LIVE', sub: 'ENTRY ACCESS VERIFIED' },
+    gold: { room: 'room-gold', chip: 'GOLD', state: 'Gold tier active', flag: 'GOLD LIVE', sub: 'GOLD MEMBERSHIP VERIFIED' },
+    elite:{ room: 'room-elite', chip: 'ELITE', state: 'Elite holder active', flag: 'ELITE LIVE', sub: 'ELITE HOLDER VERIFIED' }
   };
 
   function playOverlay(text){
@@ -53,14 +34,13 @@
     overlay.classList.remove('playing');
     void overlay.offsetWidth;
     overlay.classList.add('playing');
-
-    window.setTimeout(() => overlay.classList.remove('playing'), 2200);
-    window.setTimeout(() => overlay.classList.remove('active'), 3400);
+    window.setTimeout(() => overlay.classList.remove('playing'), 2400);
+    window.setTimeout(() => overlay.classList.remove('active'), 3600);
   }
 
   if (previewBtn){
     previewBtn.addEventListener('click', function(){
-      playOverlay('CINEMATIC PREVIEW MODE');
+      playOverlay('STAMP DOOR PREVIEW MODE');
     });
   }
 
