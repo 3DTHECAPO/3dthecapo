@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3D THE CAPO — NFC Vault</title>
+  <meta name="description" content="Realistic cinematic NFC vault experience for 3D THE CAPO.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./nfc.css">
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div class="vault-overlay" id="vaultOverlay" aria-hidden="true">
+    <div class="overlay-dark"></div>
+    <div class="seam-light"></div>
+
+    <div class="vault-door left">
+      <div class="metal-skin"></div>
+      <div class="door-panel outer"></div>
+      <div class="door-panel inner"></div>
+      <div class="bolt-column outer-bolts"></div>
+      <div class="bolt-column inner-bolts"></div>
+      <div class="stamp-plate">
+        <div class="stamp-bevel"></div>
+        <div class="stamp-mark"></div>
+      </div>
+      <div class="hinge-strip"></div>
+      <div class="lock-wheel">
+        <span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <div class="vault-door right">
+      <div class="metal-skin"></div>
+      <div class="door-panel outer"></div>
+      <div class="door-panel inner"></div>
+      <div class="bolt-column outer-bolts"></div>
+      <div class="bolt-column inner-bolts"></div>
+      <div class="stamp-plate">
+        <div class="stamp-bevel"></div>
+        <div class="stamp-mark"></div>
+      </div>
+      <div class="hinge-strip"></div>
+      <div class="lock-wheel">
+        <span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <div class="center-flash"></div>
+
+    <div class="access-screen">
+      <div class="hud-grid"></div>
+      <div class="hud-rings"></div>
+      <div class="access-card">
+        <div class="access-top">NFC VERIFIED</div>
+        <div class="access-title">ACCESS GRANTED</div>
+        <div class="access-sub" id="accessSub">VAULT INTERFACE</div>
+      </div>
+      <div class="access-caption">VAULT INTERFACE</div>
+    </div>
+  </div>
+
+  <main class="shell">
+    <header class="header">
+      <a class="logo-link" href="../index.html">
+        <img src="../header_logo.png" alt="3D THE CAPO">
+      </a>
+
+      <nav class="nav" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="#tiers">Tiers</a>
+        <a href="#vaultRooms">Rooms</a>
+        <a href="#holderBenefits">Benefits</a>
+        <a href="#entryActions" class="gold">Access</a>
+      </nav>
+
+      <div class="header-tag">NFC PRIVATE ACCESS • REALISTIC VAULT EXPERIENCE</div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-card">
+        <div class="hero-media">
+          <img src="../hero.jpg" alt="3D THE CAPO">
+          <img class="watermark" src="../watermark.png" alt="" aria-hidden="true">
+          <div class="hero-vignette"></div>
+          <div class="hero-scan"></div>
+          <div class="status-pill" id="statusPill">LOCKED</div>
+        </div>
+
+        <div class="hero-copy">
+          <div class="eyebrow">PRIVATE NFC VAULT</div>
+          <h1>REALISTIC<br>VAULT<br>V3</h1>
+          <p>This version simulates a real vault door with your stamp built into the metal. Heavier motion, deeper shadows, stronger seams, and a more physical branded-door feel.</p>
+
+          <div class="cta-row" id="entryActions">
+            <a class="btn gold" href="./index.html?unlock=entry">Entry Access</a>
+            <a class="btn" href="./index.html?unlock=gold">Gold Access</a>
+            <a class="btn" href="./index.html?unlock=elite">Elite Access</a>
+            <button class="btn" type="button" id="previewBtn">Preview Cinematic</button>
+          </div>
+
+          <div class="state-line">Vault state: <span id="vaultState">Waiting for scan</span></div>
+
+          <div class="flag-row">
+            <span>NFC ONLY</span>
+            <span>REALISTIC DOORS</span>
+            <span id="flagState">LOCKED</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="divider" id="tiers"><span></span><strong>ACCESS TIERS</strong><span></span></section>
+
+    <section class="tiers-grid">
+      <article class="tier-card">
+        <div class="tier-tag">ENTRY</div>
+        <h3>Tap-In Access</h3>
+        <p>First layer access for previews, public-private rooms, and membership invites.</p>
+        <a class="btn small gold" href="./index.html?unlock=entry">Open Entry</a>
+      </article>
+
+      <article class="tier-card featured">
+        <div class="tier-tag">GOLD</div>
+        <h3>Monthly Vault Pass</h3>
+        <p>Private music, hidden visual content, early merch access, and a stronger holder lane.</p>
+        <a class="btn small gold" href="./index.html?unlock=gold">Open Gold</a>
+      </article>
+
+      <article class="tier-card">
+        <div class="tier-tag">ELITE</div>
+        <h3>Premium Holder</h3>
+        <p>Top-tier vault lane with premium drops, bundle perks, and priority holder access.</p>
+        <a class="btn small gold" href="./index.html?unlock=elite">Open Elite</a>
+      </article>
+    </section>
+
+    <section class="divider" id="holderBenefits"><span></span><strong>HOLDER BENEFITS</strong><span></span></section>
+
+    <section class="benefits-grid">
+      <article class="benefit-card">
+        <div class="benefit-top">BENEFIT 01</div>
+        <h3>Exclusive Music</h3>
+        <p>Rotate unreleased tracks, private snippets, and member-only previews.</p>
+      </article>
+
+      <article class="benefit-card">
+        <div class="benefit-top">BENEFIT 02</div>
+        <h3>Video Drops</h3>
+        <p>Unlock hidden visuals, behind-the-scenes content, or early release screens.</p>
+      </article>
+
+      <article class="benefit-card">
+        <div class="benefit-top">BENEFIT 03</div>
+        <h3>Vault Merch</h3>
+        <p>Push premium product links, merch claims, timed drops, or early-buy windows.</p>
+      </article>
+
+      <article class="benefit-card">
+        <div class="benefit-top">BENEFIT 04</div>
+        <h3>Subscription Locker</h3>
+        <p>Turn the vault into a recurring experience that updates over time for holders.</p>
+      </article>
+    </section>
+
+    <section class="divider" id="vaultRooms"><span></span><strong>VAULT ROOMS</strong><span></span></section>
+
+    <section class="placeholder-room" id="placeholderRoom">
+      <div class="placeholder-icon">◈</div>
+      <h3>CHOOSE A VAULT TIER</h3>
+      <p>Use the access buttons above or trigger the vault from your NFC tag.</p>
+    </section>
+
+    <section class="room hidden" id="room-entry">
+      <div class="room-grid">
+        <div class="subpanel">
+          <div class="room-tag">ENTRY ROOM</div>
+          <h3>Tap-In Room</h3>
+          <p>Use this room for teaser content, onboarding copy, and a clean invitation into paid membership.</p>
+          <div class="action-row">
+            <a class="btn small gold" href="#tiers">View Tiers</a>
+            <a class="btn small" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">YouTube</a>
+          </div>
+        </div>
+        <div class="subpanel">
+          <h3>Preview Audio</h3>
+          <audio controls preload="none" class="audio-player">
+            <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_3c0a25f56b.mp3?filename=old-school-hip-hop-126227.mp3" type="audio/mpeg">
+          </audio>
+        </div>
+      </div>
+    </section>
+
+    <section class="room hidden" id="room-gold">
+      <div class="room-grid">
+        <div class="subpanel">
+          <div class="room-tag">GOLD ROOM</div>
+          <h3>Monthly Vault Pass</h3>
+          <p>Gold is built for recurring premium value: private songs, extra visuals, and locked merch routes.</p>
+          <audio controls preload="none" class="audio-player">
+            <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b28f9f4d.mp3?filename=hip-hop-beat-11283.mp3" type="audio/mpeg">
+          </audio>
+        </div>
+        <div class="subpanel">
+          <h3>Gold Actions</h3>
+          <div class="action-row">
+            <a class="btn small gold" href="https://open.spotify.com/artist/4R7uJYf4ts6pthecl9IVBF" target="_blank" rel="noopener">Spotify</a>
+            <a class="btn small" href="https://music.apple.com/us/artist/3d-the-capo/1758229296" target="_blank" rel="noopener">Apple Music</a>
+            <a class="btn small" href="https://www.instagram.com/3d_the_capo" target="_blank" rel="noopener">Instagram</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="room hidden" id="room-elite">
+      <div class="bundle-head">
+        <div>
+          <div class="room-tag">ELITE ROOM</div>
+          <h3>Premium Holder Experience</h3>
+          <p>Top tier room for bundle access, premium merch windows, and stronger vault-holder value.</p>
+        </div>
+        <a class="btn small gold" href="../index.html#merch">Open Main Merch</a>
+      </div>
+      <div class="merch-grid">
+        <article class="product-card">
+          <img src="../merch_hat.jpg" alt="Capo Hat">
+          <div class="product-body">
+            <h4>Capo Hat</h4>
+            <p>Elite Holder Access</p>
+          </div>
+        </article>
+        <article class="product-card">
+          <img src="../merch_hoodie.jpg" alt="Capo Hoodie">
+          <div class="product-body">
+            <h4>Capo Hoodie</h4>
+            <p>Premium Window</p>
+          </div>
+        </article>
+        <article class="product-card">
+          <img src="../merch_shirt.jpg" alt="Capo Shirt">
+          <div class="product-body">
+            <h4>Capo Shirt</h4>
+            <p>Vault Release</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer">© <span id="year"></span> 3D THE CAPO • NFC FINAL V3</footer>
+  </main>
+
+  <script src="./nfc.js"></script>
+</body>
+</html>
