@@ -2,11 +2,10 @@
   'use strict';
   const byId = (id) => document.getElementById(id);
   const params = new URLSearchParams(window.location.search);
-  const unlock = (params.get('unlock') || '').toLowerCase();
+  const unlock = (params.get('unlock') || 'entry').toLowerCase();
 
   const overlay = byId('vaultOverlay');
   const accessSub = byId('accessSub');
-  const previewBtn = byId('previewBtn');
   const statusPill = byId('statusPill');
   const vaultState = byId('vaultState');
   const flagState = byId('flagState');
@@ -29,7 +28,7 @@
 
   function playOverlay(text){
     if (!overlay) return;
-    if (accessSub) accessSub.textContent = text || 'VAULT INTERFACE';
+    if (accessSub) accessSub.textContent = text || 'THE CAPO VAULT';
     overlay.classList.add('active');
     overlay.classList.remove('playing');
     void overlay.offsetWidth;
@@ -38,19 +37,7 @@
     window.setTimeout(() => overlay.classList.remove('active'), 4100);
   }
 
-  if (previewBtn){
-    previewBtn.addEventListener('click', function(){
-      playOverlay('REALISTIC VAULT PREVIEW');
-    });
-  }
-
-  const cfg = states[unlock];
-  if (!cfg){
-    if (statusPill) statusPill.textContent = 'LOCKED';
-    if (vaultState) vaultState.textContent = 'Waiting for scan';
-    if (flagState) flagState.textContent = 'LOCKED';
-    return;
-  }
+  const cfg = states[unlock] || states.entry;
 
   const activeRoom = byId(cfg.room);
   if (activeRoom) activeRoom.classList.remove('hidden');
@@ -60,5 +47,7 @@
   if (vaultState) vaultState.textContent = cfg.state;
   if (flagState) flagState.textContent = cfg.flag;
 
-  playOverlay(cfg.sub);
+  window.addEventListener('load', () => {
+    playOverlay(cfg.sub);
+  });
 })();
