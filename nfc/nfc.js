@@ -1,3 +1,4 @@
+
 (function(){
 'use strict';
 const byId=(id)=>document.getElementById(id);
@@ -5,23 +6,26 @@ const params=new URLSearchParams(window.location.search);
 const hasNfc=params.get('nfc')==='1';
 const explicitUnlock=(params.get('unlock')||'').toLowerCase();
 const code=(params.get('code')||'').toUpperCase().trim();
+
 const statusPill=byId('statusPill');
 const vaultState=byId('vaultState');
 const flagState=byId('flagState');
 const lockedActions=byId('lockedActions');
-const accessActions=byId('accessActions');
+const activeActions=byId('activeActions');
 const lockedRoom=byId('lockedRoom');
 const sequence=byId('vaultSequence');
 const year=byId('year');
+const connect=byId('connect');
+const lockables=[...document.querySelectorAll('.lockable')];
 
 if(year) year.textContent=new Date().getFullYear();
 
 const codeMap={
-  ENTRY001:{tier:'entry',title:'ENTRY ACCESS',copy:'Entry access unlocks a teaser music lane, private preview content, and first-level vault rewards.',chips:['snippet','video preview','music-only code']},
-  GOLD001:{tier:'gold',title:'GOLD ACCESS',copy:'Gold access unlocks private music, early merch access, hidden product links, and premium vault content.',chips:['full private track','hidden merch','private video','discount code']},
-  ELITE001:{tier:'elite',title:'ELITE ACCESS',copy:'Elite access unlocks all-access rewards including private music, premium merch, hidden bundles, and future rotating perks.',chips:['all-access','bundle offer','premium merch','bonus perks','future rewards']},
-  DROP777:{tier:'gold',title:'SPECIAL DROP ACCESS',copy:'This one-off drop code opens a limited campaign package with exclusive music, merch, and video access.',chips:['special drop','limited merch','private visual']},
-  MERCH999:{tier:'elite',title:'MERCH VAULT ACCESS',copy:'This code is tuned for hidden merch access, bundle offers, early windows, and premium product drops.',chips:['merch-only code','bundle offer','early access']}
+  ENTRY001:{tier:'entry',title:'ENTRY ACCESS',copy:'Entry access opens the first premium lane with coded music, visuals, and vault rewards.',chips:['music lane','private visuals','coded rewards']},
+  GOLD001:{tier:'gold',title:'GOLD ACCESS',copy:'Gold access unlocks private music, coded visuals, hidden merch access, and stronger vault rewards.',chips:['private music','hidden merch','coded visuals','discount lane']},
+  ELITE001:{tier:'elite',title:'ELITE ACCESS',copy:'Elite access is reserved for premium holders with all-access rewards, hidden bundles, and future vault-only perks.',chips:['all-access','hidden bundles','premium merch','future perks']},
+  DROP777:{tier:'gold',title:'SPECIAL DROP ACCESS',copy:'This drop code opens a limited campaign package with coded music, hidden merch, and private visual access.',chips:['special drop','limited merch','private visual']},
+  MERCH999:{tier:'elite',title:'MERCH VAULT ACCESS',copy:'This code is tuned for hidden merch access, bundle offers, premium windows, and top-tier product drops.',chips:['merch-only','bundle offer','early window']}
 };
 
 function fillChips(targetId, items){
@@ -38,11 +42,21 @@ function fillChips(targetId, items){
 
 function showLocked(){
   if(statusPill) statusPill.textContent='LOCKED';
-  if(vaultState) vaultState.textContent='NFC scan required';
+  if(vaultState) vaultState.textContent='NFC access required';
   if(flagState) flagState.textContent='LOCKED';
   if(lockedActions) lockedActions.classList.remove('hidden');
-  if(accessActions) accessActions.classList.add('hidden');
+  if(activeActions) activeActions.classList.add('hidden');
   if(lockedRoom) lockedRoom.classList.remove('hidden');
+  if(connect) connect.classList.add('hidden');
+  lockables.forEach(el=>el.classList.remove('hidden'));
+}
+
+function showUnlockedChrome(){
+  if(lockedActions) lockedActions.classList.add('hidden');
+  if(activeActions) activeActions.classList.remove('hidden');
+  if(lockedRoom) lockedRoom.classList.add('hidden');
+  if(connect) connect.classList.remove('hidden');
+  lockables.forEach(el=>el.classList.add('hidden'));
 }
 
 function runSequence(){
@@ -51,16 +65,13 @@ function runSequence(){
   sequence.classList.add('active');
   void sequence.offsetWidth;
   sequence.classList.add('playing-doors');
-
   window.setTimeout(()=>{
     sequence.classList.remove('playing-doors');
     sequence.classList.add('show-access');
   }, 3300);
-
   window.setTimeout(()=>{
     sequence.classList.add('fadeout');
   }, 4450);
-
   window.setTimeout(()=>{
     sequence.classList.remove('active','show-access','fadeout');
   }, 5200);
@@ -86,9 +97,7 @@ if(!hasNfc || !activePackage){
 const roomId='room-'+activePackage.tier;
 const activeRoom=byId(roomId);
 if(activeRoom) activeRoom.classList.remove('hidden');
-if(lockedRoom) lockedRoom.classList.add('hidden');
-if(lockedActions) lockedActions.classList.add('hidden');
-if(accessActions) accessActions.classList.remove('hidden');
+showUnlockedChrome();
 
 if(statusPill) statusPill.textContent=activePackage.tier.toUpperCase();
 if(vaultState) vaultState.textContent=activePackage.title;

@@ -63,38 +63,35 @@
         <a href="#tiers">Tiers</a>
         <a href="#benefits">Benefits</a>
         <a href="#rooms">Rooms</a>
-        <a href="#connect">Connect</a>
       </nav>
 
-      <div class="header-tag">PRIVATE VAULT • NFC ACCESS</div>
+      <div class="header-tag">PRIVATE NFC VAULT</div>
     </header>
 
     <section class="hero">
       <div class="hero-card">
-        <div class="hero-media">
-          <img src="./assets/hero.jpg" alt="3D THE CAPO">
-          <img class="watermark" src="./assets/watermark.png" alt="" aria-hidden="true">
+        <div class="hero-media hero-bridge">
+          <img src="./assets/nfc_vallejo_night.jpg" alt="Vallejo bridge at night">
           <div class="hero-vignette"></div>
           <div class="hero-scan"></div>
           <div class="status-pill" id="statusPill">LOCKED</div>
         </div>
 
         <div class="hero-copy">
-          <div class="eyebrow">PRIVATE NFC VAULT</div>
+          <div class="eyebrow">CODED ACCESS ONLY</div>
           <h1>THE CAPO VAULT</h1>
-          <p>A locked artist-world experience built for exclusive music, hidden visuals, premium merch access, coded rewards, and private vault drops.</p>
+          <p>A private artist-world built for exclusive music, hidden visuals, premium merch access, coded rewards, and vault-only drops.</p>
 
           <div class="cta-row" id="lockedActions">
             <a class="btn gold" href="../index.html">Return Home</a>
           </div>
 
-          <div class="cta-row hidden" id="accessActions">
-            <a class="btn gold" href="./index.html?nfc=1&code=ENTRY001">Entry Access</a>
-            <a class="btn" href="./index.html?nfc=1&code=GOLD001">Gold Access</a>
-            <a class="btn" href="./index.html?nfc=1&code=ELITE001">Elite Access</a>
+          <div class="cta-row hidden" id="activeActions">
+            <a class="btn gold" href="#rooms">Open Room</a>
+            <a class="btn" href="#benefits">View Benefits</a>
           </div>
 
-          <div class="state-line">Vault state: <span id="vaultState">NFC scan required</span></div>
+          <div class="state-line"><span id="vaultState">NFC access required</span></div>
 
           <div class="flag-row">
             <span>NFC ONLY</span>
@@ -105,15 +102,15 @@
       </div>
     </section>
 
-    <section class="divider" id="tiers"><span></span><strong>ACCESS TIERS</strong><span></span></section>
-    <section class="tiers-grid">
-      <article class="tier-card"><div class="tier-tag">ENTRY</div><h3>TAP-IN ACCESS</h3><p>First access tier for coded vault content, private media, and the opening premium lane.</p></article>
-      <article class="tier-card featured"><div class="tier-tag">GOLD</div><h3>MONTHLY VAULT PASS</h3><p>Private music, hidden visuals, early merch windows, and stronger coded holder value.</p></article>
-      <article class="tier-card"><div class="tier-tag">ELITE</div><h3>PREMIUM HOLDER</h3><p>Top tier access for premium drops, coded bundles, and elite artist-world entry.</p></article>
+    <section class="divider lockable" id="tiers"><span></span><strong>ACCESS TIERS</strong><span></span></section>
+    <section class="tiers-grid lockable">
+      <article class="tier-card"><div class="tier-tag">ENTRY</div><h3>ENTRY</h3><p>Coded first-lane access for music, visuals, and opening rewards.</p></article>
+      <article class="tier-card featured"><div class="tier-tag">GOLD</div><h3>GOLD</h3><p>Private music, coded visuals, hidden merch access, and stronger vault value.</p></article>
+      <article class="tier-card"><div class="tier-tag">ELITE</div><h3>ELITE</h3><p>Premium drops, hidden bundles, and top-tier all-access rewards.</p></article>
     </section>
 
-    <section class="divider" id="benefits"><span></span><strong>HOLDER BENEFITS</strong><span></span></section>
-    <section class="benefits-grid">
+    <section class="divider lockable" id="benefits"><span></span><strong>HOLDER BENEFITS</strong><span></span></section>
+    <section class="benefits-grid lockable">
       <article class="benefit-card"><div class="benefit-top">01</div><h3>Exclusive Music</h3><p>Private music drops, coded releases, and recurring vault-only records.</p></article>
       <article class="benefit-card"><div class="benefit-top">02</div><h3>Private Visuals</h3><p>Private video lanes, behind-the-scenes content, and hidden visual access.</p></article>
       <article class="benefit-card"><div class="benefit-top">03</div><h3>Vault Merch</h3><p>Premium product windows, coded merch privileges, and hidden drop access.</p></article>
@@ -128,68 +125,77 @@
       <p>This vault stays locked until a valid NFC code opens the correct access path.</p>
     </section>
 
-    <section class="room hidden" id="room-entry">
-      <div class="room-grid">
-        <div class="subpanel">
-          <div class="room-tag">ENTRY ROOM</div>
-          <h3 id="entryTitle">ENTRY ACCESS</h3>
-          <p id="entryCopy">Entry access opens the first premium lane with coded music, visuals, and vault rewards.</p>
-          <div class="chip-row" id="entryChips"></div>
-        </div>
-        <div class="subpanel">
-          <h3>Music Unlock</h3>
-          <audio controls preload="none" class="audio-player">
-            <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_3c0a25f56b.mp3?filename=old-school-hip-hop-126227.mp3" type="audio/mpeg">
-          </audio>
-        </div>
-      </div>
-    </section>
-
-    <section class="room hidden" id="room-gold">
-      <div class="room-grid">
-        <div class="subpanel">
-          <div class="room-tag">GOLD ROOM</div>
-          <h3 id="goldTitle">GOLD ACCESS</h3>
-          <p id="goldCopy">Gold access unlocks private music, coded visuals, hidden merch access, and stronger vault rewards.</p>
-          <div class="chip-row" id="goldChips"></div>
-        </div>
-        <div class="subpanel">
-          <h3>Music Unlock</h3>
-          <audio controls preload="none" class="audio-player">
-            <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b28f9f4d.mp3?filename=hip-hop-beat-11283.mp3" type="audio/mpeg">
-          </audio>
+    <section class="room room-entry hidden" id="room-entry">
+      <div class="room-bg"></div><div class="room-overlay"></div><div class="room-glow"></div>
+      <div class="room-content">
+        <div class="room-grid">
+          <div class="subpanel">
+            <div class="room-tag">ENTRY ROOM</div>
+            <h3 id="entryTitle">ENTRY ACCESS</h3>
+            <p id="entryCopy">Entry access opens the first premium lane with coded music, visuals, and vault rewards.</p>
+            <div class="chip-row" id="entryChips"></div>
+            <div class="action-row top-space">
+              <a class="btn small gold" href="./entry-backdrop.html">Entry Backdrop</a>
+            </div>
+          </div>
+          <div class="subpanel">
+            <h3>Music Unlock</h3>
+            <audio controls preload="none" class="audio-player">
+              <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_3c0a25f56b.mp3?filename=old-school-hip-hop-126227.mp3" type="audio/mpeg">
+            </audio>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="room hidden" id="room-elite">
-      <div class="bundle-head">
-        <div>
-          <div class="room-tag">ELITE ROOM</div>
-          <h3 id="eliteTitle">ELITE ACCESS</h3>
-          <p id="eliteCopy">Elite access is reserved for premium holders with all-access rewards, hidden bundles, and future vault-only perks.</p>
-          <div class="chip-row" id="eliteChips"></div>
+    <section class="room room-gold hidden" id="room-gold">
+      <div class="room-bg"></div><div class="room-overlay"></div><div class="room-glow"></div>
+      <div class="room-content">
+        <div class="room-grid">
+          <div class="subpanel">
+            <div class="room-tag">GOLD ROOM</div>
+            <h3 id="goldTitle">GOLD ACCESS</h3>
+            <p id="goldCopy">Gold access unlocks private music, coded visuals, hidden merch access, and stronger vault rewards.</p>
+            <div class="chip-row" id="goldChips"></div>
+            <div class="action-row top-space">
+              <a class="btn small gold" href="./album-chamber.html">Album Chamber</a>
+              <a class="btn small" href="./vault-interface.html">Vault Interface</a>
+            </div>
+          </div>
+          <div class="subpanel">
+            <h3>Music Unlock</h3>
+            <audio controls preload="none" class="audio-player">
+              <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b28f9f4d.mp3?filename=hip-hop-beat-11283.mp3" type="audio/mpeg">
+            </audio>
+          </div>
         </div>
       </div>
-      <div class="merch-grid">
-        <article class="product-card"><img src="./assets/merch_hat.jpg" alt="Capo Hat"><div class="product-body"><h4>Capo Hat</h4><p>Hidden merch access</p></div></article>
-        <article class="product-card"><img src="./assets/merch_hoodie.jpg" alt="Capo Hoodie"><div class="product-body"><h4>Capo Hoodie</h4><p>Premium window</p></div></article>
-        <article class="product-card"><img src="./assets/merch_shirt.jpg" alt="Capo Shirt"><div class="product-body"><h4>Capo Shirt</h4><p>Vault release</p></div></article>
+    </section>
+
+    <section class="room room-elite hidden" id="room-elite">
+      <div class="room-bg"></div><div class="room-overlay"></div><div class="room-glow"></div>
+      <div class="room-content">
+        <div class="bundle-head">
+          <div>
+            <div class="room-tag">ELITE ROOM</div>
+            <h3 id="eliteTitle">ELITE ACCESS</h3>
+            <p id="eliteCopy">Elite access is reserved for premium holders with all-access rewards, hidden bundles, and future vault-only perks.</p>
+            <div class="chip-row" id="eliteChips"></div>
+          </div>
+        </div>
+        <div class="action-row elite-links">
+          <a class="btn small gold" href="./merch-drop-room.html">Merch Drop Room</a>
+          <a class="btn small" href="./secret-page.html">Secret Page</a>
+        </div>
+        <div class="merch-grid">
+          <article class="product-card"><img src="./assets/merch_hat.jpg" alt="Capo Hat"><div class="product-body"><h4>Capo Hat</h4><p>Hidden merch access</p></div></article>
+          <article class="product-card"><img src="./assets/merch_hoodie.jpg" alt="Capo Hoodie"><div class="product-body"><h4>Capo Hoodie</h4><p>Premium window</p></div></article>
+          <article class="product-card"><img src="./assets/merch_shirt.jpg" alt="Capo Shirt"><div class="product-body"><h4>Capo Shirt</h4><p>Vault release</p></div></article>
+        </div>
       </div>
     </section>
 
-    
-    <section class="divider" id="addons"><span></span><strong>VAULT ADD-ONS</strong><span></span></section>
-    <section class="connect-card addon-grid">
-      <a href="./entry-backdrop.html">Entry Backdrop</a>
-      <a href="./album-chamber.html">Album Chamber</a>
-      <a href="./merch-drop-room.html">Merch Drop Room</a>
-      <a href="./vault-interface.html">Vault Interface</a>
-      <a href="./secret-page.html">Secret Page Backdrop</a>
-    </section>
-
-    <section class="divider" id="connect"><span></span><strong>CONNECT</strong><span></span></section>
-    <section class="connect-card">
+    <section class="connect-card unlock-only hidden" id="connect">
       <a href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">YouTube</a>
       <a href="https://music.apple.com/us/artist/3d-the-capo/1758229296" target="_blank" rel="noopener">Apple Music</a>
       <a href="https://open.spotify.com/artist/4R7uJYf4ts6pthecl9IVBF?si=GoMcEWQASFKnyKxKfnAFWg" target="_blank" rel="noopener">Spotify</a>
