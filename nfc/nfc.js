@@ -49,6 +49,7 @@ function fillChips(targetId, items){
   });
 }
 
+document.body.classList.add('locked');
 function showLocked(){
   if(statusPill) statusPill.textContent='LOCKED';
   if(vaultState) vaultState.textContent='NFC access required';
@@ -94,6 +95,7 @@ else if(hasNfc && ['entry','gold','elite'].includes(explicitUnlock))
 if(!hasNfc || !activePackage){ showLocked(); return; }
 
 const activeRoom=byId('room-'+activePackage.tier);
+document.body.classList.remove('locked');
 if(activeRoom) activeRoom.classList.remove('hidden');
 if(lockedRoom) lockedRoom.classList.add('hidden');
 if(lockedActions) lockedActions.classList.add('hidden');

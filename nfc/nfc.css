@@ -101,3 +101,15 @@ linear-gradient(180deg, rgba(0,0,0,.96), rgba(0,0,0,.99))}
   .merch-placeholder-grid{grid-template-columns:1fr}
   .bundle-head{flex-direction:column;align-items:flex-start}
 }
+
+
+/* Hard lock clean state */
+body.locked #sessionLane,
+body.locked #sessionDivider,
+body.locked #connect,
+body.locked #connectDivider,
+body.locked #room-entry,
+body.locked #room-gold,
+body.locked #room-elite{
+  display:none !important;
+}
