@@ -80,3 +80,13 @@ body.site-loaded .single-card{
 @media (max-width: 900px){
   .drop-stack{grid-template-columns:1fr;}
 }
+
+
+.coming-soon-card{
+  overflow:hidden;
+}
+.coming-soon-card .cover img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
