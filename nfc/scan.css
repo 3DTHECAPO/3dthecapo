@@ -38,3 +38,4 @@ url("./assets/vault_interface.jpg") center/cover no-repeat;overflow:hidden;margi
 .notes{padding-left:18px}
 .small-panel{margin-top:16px}
 @media (max-width:900px){.grid,.form-grid{grid-template-columns:1fr}}
+/* sim/test buttons removed in public build */

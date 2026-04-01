@@ -6,9 +6,6 @@ const sessionStatus = document.getElementById('sessionStatus');
 const enterVault = document.getElementById('enterVault');
 const saveSession = document.getElementById('saveSession');
 const clearSession = document.getElementById('clearSession');
-const simEntry = document.getElementById('simulateEntry');
-const simGold = document.getElementById('simulateGold');
-const simElite = document.getElementById('simulateElite');
 const SESSION_KEY = 'capo_vault_session_v1';
 function normalizeCode(value){ return (value || '').trim().toUpperCase(); }
 function buildVaultUrl(code){ return './index.html?nfc=1&code=' + encodeURIComponent(normalizeCode(code)); }
@@ -34,9 +31,6 @@ saveSession.addEventListener('click', () => {
   setSession(code, parseInt(sessionMinutes.value, 10));
 });
 clearSession.addEventListener('click', clearVaultSession);
-simEntry.addEventListener('click', () => goWithCode('ENTRY001'));
-simGold.addEventListener('click', () => goWithCode('GOLD001'));
-simElite.addEventListener('click', () => goWithCode('ELITE001'));
 renderSession();
 const session = getSession();
 if(session && session.code && session.expiresAt && Date.now() < session.expiresAt){
