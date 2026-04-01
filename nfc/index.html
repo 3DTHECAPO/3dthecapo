@@ -41,8 +41,8 @@
     <header class="header">
       <a class="vault-logo-link" href="../index.html"><img src="./assets/vault_stamp_gold.png" class="vault-logo" alt="Vault Seal"></a>
       <nav class="nav public-nav" id="publicNav" aria-label="Primary">
-        <a href="#lockedGate">Access</a>
-        <a href="#connect">Connect</a>
+        <a href="#lockedGate">Enter</a>
+        <a href="../index.html">Main Site</a>
       </nav>
       <nav class="nav private-nav hidden" id="privateNav" aria-label="Unlocked">
         <a href="#room-entry" data-tier="entry">Entry</a>
@@ -50,7 +50,6 @@
         <a href="#room-elite" data-tier="elite">Elite</a>
         <a href="#connect">Connect</a>
       </nav>
-      <div class="header-tag">PRIVATE NFC VAULT</div>
     </header>
 
     <section class="hero" id="lockedGate">
@@ -62,12 +61,11 @@
           <div class="status-pill" id="statusPill">LOCKED</div>
         </div>
         <div class="hero-copy">
-          <div class="eyebrow">PRIVATE NFC VAULT</div>
+          <div class="eyebrow">PRIVATE NFC ACCESS</div>
           <h1>THE CAPO VAULT</h1>
-          <p>A locked artist-world experience built for exclusive music, hidden visuals, premium merch access, coded rewards, and private vault drops.</p>
+          <p>A private artist-world built for coded access, unreleased music lanes, hidden visuals, premium merch moments, and vault-only rewards.</p>
           <div class="cta-row" id="lockedActions"><a class="btn gold" href="../index.html">Return Home</a></div>
-          <div class="state-line">Vault state: <span id="vaultState">NFC access required</span></div>
-          <div class="flag-row"><span>NFC ONLY</span><span>PRIVATE ACCESS</span><span id="flagState">LOCKED</span></div>
+          <div class="state-line"><span id="vaultState">NFC access required</span></div>
         </div>
       </div>
     </section>
@@ -81,22 +79,34 @@
     <section class="room room-entry hidden" id="room-entry">
       <div class="room-bg"></div><div class="room-overlay"></div><div class="room-glow"></div>
       <div class="room-content">
+        <div class="bundle-head glass compact-head">
+          <div>
+            <div class="room-tag">ENTRY</div>
+            <h3 id="entryTitle">ENTRY ACCESS</h3>
+            <p id="entryCopy">The opening lane for coded audio access, artist-world visuals, and the first private room.</p>
+            <div class="chip-row" id="entryChips"></div>
+          </div>
+          <div class="action-row">
+            <a class="btn small gold" href="./entry-backdrop.html">Scene</a>
+            <a class="btn small" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">Channel</a>
+          </div>
+        </div>
         <div class="room-grid">
           <div class="subpanel glass">
-            <div class="room-tag">ENTRY ROOM</div>
-            <h3 id="entryTitle">ENTRY ACCESS</h3>
-            <p id="entryCopy">Entry access opens the first premium lane with coded music, visuals, and vault rewards.</p>
-            <div class="chip-row" id="entryChips"></div>
-            <div class="action-row">
-              <a class="btn small gold" href="./entry-backdrop.html">Entry Scene</a>
-              <a class="btn small" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">YouTube</a>
+            <h3>Music</h3>
+            <div class="embed-frame">
+              <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4R7uJYf4ts6pthecl9IVBF?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
           </div>
           <div class="subpanel glass">
-            <h3>Music Unlock</h3>
-            <audio controls preload="none" class="audio-player">
-              <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_3c0a25f56b.mp3?filename=old-school-hip-hop-126227.mp3" type="audio/mpeg">
-            </audio>
+            <h3>Visual</h3>
+            <div class="video-card">
+              <div class="video-copy">
+                <strong>Vault visual lane</strong>
+                <p>Use this room as the first coded visual stop. Link directly into your latest visual or artist channel.</p>
+              </div>
+              <a class="btn gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">Open Visuals</a>
+            </div>
           </div>
         </div>
       </div>
@@ -105,22 +115,37 @@
     <section class="room room-gold hidden" id="room-gold">
       <div class="room-bg"></div><div class="room-overlay"></div><div class="room-glow"></div>
       <div class="room-content">
+        <div class="bundle-head glass compact-head">
+          <div>
+            <div class="room-tag">GOLD</div>
+            <h3 id="goldTitle">GOLD ACCESS</h3>
+            <p id="goldCopy">Private music, coded visual access, and hidden route-ins for stronger vault value.</p>
+            <div class="chip-row" id="goldChips"></div>
+          </div>
+          <div class="action-row">
+            <a class="btn small gold" href="./album-chamber.html">Album Chamber</a>
+            <a class="btn small" href="./vault-interface.html">System Layer</a>
+          </div>
+        </div>
         <div class="room-grid">
           <div class="subpanel glass">
-            <div class="room-tag">GOLD ROOM</div>
-            <h3 id="goldTitle">GOLD ACCESS</h3>
-            <p id="goldCopy">Gold access unlocks private music, coded visuals, hidden merch access, and stronger vault rewards.</p>
-            <div class="chip-row" id="goldChips"></div>
-            <div class="action-row">
-              <a class="btn small gold" href="./album-chamber.html">Album Chamber</a>
-              <a class="btn small" href="./vault-interface.html">Vault Interface</a>
+            <h3>Music</h3>
+            <div class="embed-frame">
+              <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4R7uJYf4ts6pthecl9IVBF?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
           </div>
           <div class="subpanel glass">
-            <h3>Music Unlock</h3>
-            <audio controls preload="none" class="audio-player">
-              <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b28f9f4d.mp3?filename=hip-hop-beat-11283.mp3" type="audio/mpeg">
-            </audio>
+            <h3>Video</h3>
+            <div class="video-card">
+              <div class="video-copy">
+                <strong>Gold visual lane</strong>
+                <p>Use this section for hidden videos, behind-the-scenes drops, or direct visual routing from your NFC code.</p>
+              </div>
+              <div class="action-row">
+                <a class="btn gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">YouTube</a>
+                <a class="btn" href="https://www.instagram.com/3d_the_capo" target="_blank" rel="noopener">Instagram</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -131,20 +156,41 @@
       <div class="room-content">
         <div class="bundle-head glass">
           <div>
-            <div class="room-tag">ELITE ROOM</div>
+            <div class="room-tag">ELITE</div>
             <h3 id="eliteTitle">ELITE ACCESS</h3>
-            <p id="eliteCopy">Elite access is reserved for premium holders with all-access rewards, hidden bundles, and future vault-only perks.</p>
+            <p id="eliteCopy">The premium room for music, visuals, merch placeholders, hidden bundles, and future holder perks.</p>
             <div class="chip-row" id="eliteChips"></div>
           </div>
           <div class="action-row elite-actions">
-            <a class="btn small gold" href="./merch-drop-room.html">Merch Drop</a>
+            <a class="btn small gold" href="./merch-drop-room.html">Merch Room</a>
             <a class="btn small" href="./secret-page.html">Secret Page</a>
           </div>
         </div>
-        <div class="merch-grid">
-          <article class="product-card glass"><img src="./assets/merch_hat.jpg" alt="Capo Hat"><div class="product-body"><h4>Capo Hat</h4><p>Hidden merch access</p></div></article>
-          <article class="product-card glass"><img src="./assets/merch_hoodie.jpg" alt="Capo Hoodie"><div class="product-body"><h4>Capo Hoodie</h4><p>Premium window</p></div></article>
-          <article class="product-card glass"><img src="./assets/merch_shirt.jpg" alt="Capo Shirt"><div class="product-body"><h4>Capo Shirt</h4><p>Vault release</p></div></article>
+        <div class="room-grid triple-grid">
+          <div class="subpanel glass">
+            <h3>Music</h3>
+            <div class="embed-frame">
+              <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4R7uJYf4ts6pthecl9IVBF?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+          </div>
+          <div class="subpanel glass">
+            <h3>Video</h3>
+            <div class="video-card">
+              <div class="video-copy">
+                <strong>Elite visual lane</strong>
+                <p>Best for full private visuals, coded premiere links, and your strongest hidden media route.</p>
+              </div>
+              <a class="btn gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">Open Visuals</a>
+            </div>
+          </div>
+          <div class="subpanel glass">
+            <h3>Merch</h3>
+            <div class="merch-placeholder-grid">
+              <article class="product-card mini"><img src="./assets/merch_hat.jpg" alt="Capo Hat"><div class="product-body"><h4>Cap</h4><p>Placeholder</p></div></article>
+              <article class="product-card mini"><img src="./assets/merch_hoodie.jpg" alt="Capo Hoodie"><div class="product-body"><h4>Hoodie</h4><p>Placeholder</p></div></article>
+              <article class="product-card mini"><img src="./assets/merch_shirt.jpg" alt="Capo Shirt"><div class="product-body"><h4>Shirt</h4><p>Placeholder</p></div></article>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -160,7 +206,7 @@
       <a href="https://www.tiktok.com/@3dthecapo?_r=1&_t=ZP-94UdEKU6wvv" target="_blank" rel="noopener">TikTok</a>
     </section>
 
-    <footer class="footer">© <span id="year"></span> 3D THE CAPO • THE CAPO VAULT</footer>
+    <footer class="footer">© <span id="year"></span> 3D THE CAPO</footer>
   </main>
   <script src="./nfc.js"></script>
 </body>

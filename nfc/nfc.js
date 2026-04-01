@@ -8,7 +8,6 @@ const explicitUnlock=(params.get('unlock')||'').toLowerCase();
 const code=(params.get('code')||'').toUpperCase().trim();
 const statusPill=byId('statusPill');
 const vaultState=byId('vaultState');
-const flagState=byId('flagState');
 const lockedActions=byId('lockedActions');
 const lockedRoom=byId('lockedRoom');
 const sequence=byId('vaultSequence');
@@ -21,9 +20,9 @@ const connectDivider=byId('connectDivider');
 if(year) year.textContent=new Date().getFullYear();
 
 const codeMap={
-  ENTRY001:{tier:'entry',title:'ENTRY ACCESS',copy:'Entry access opens the first premium lane with coded music, visuals, and vault rewards.',chips:['music lane','private visual','coded access']},
-  GOLD001:{tier:'gold',title:'GOLD ACCESS',copy:'Gold access unlocks private music, coded visuals, hidden merch access, and premium vault content.',chips:['private music','hidden merch','private visual','coded reward']},
-  ELITE001:{tier:'elite',title:'ELITE ACCESS',copy:'Elite access unlocks all-access rewards including private music, premium merch, hidden bundles, and future vault-only perks.',chips:['all-access','premium merch','hidden bundle','future perk']},
+  ENTRY001:{tier:'entry',title:'ENTRY ACCESS',copy:'The opening lane for coded audio access, artist-world visuals, and the first private room.',chips:['music lane','private visual','coded access']},
+  GOLD001:{tier:'gold',title:'GOLD ACCESS',copy:'Private music, coded visual access, and hidden route-ins for stronger vault value.',chips:['private music','hidden merch','private visual','coded reward']},
+  ELITE001:{tier:'elite',title:'ELITE ACCESS',copy:'The premium room for music, visuals, merch placeholders, hidden bundles, and future holder perks.',chips:['all-access','premium merch','hidden bundle','future perk']},
   DROP777:{tier:'gold',title:'SPECIAL DROP ACCESS',copy:'This one-off drop code opens a limited campaign package with coded music, hidden merch, and private visual access.',chips:['special drop','limited merch','private visual']},
   MERCH999:{tier:'elite',title:'MERCH VAULT ACCESS',copy:'This code is tuned for hidden merch access, bundle offers, early windows, and premium product drops.',chips:['merch-only','bundle offer','early access']}
 };
@@ -43,7 +42,6 @@ function fillChips(targetId, items){
 function showLocked(){
   if(statusPill) statusPill.textContent='LOCKED';
   if(vaultState) vaultState.textContent='NFC access required';
-  if(flagState) flagState.textContent='LOCKED';
   if(lockedActions) lockedActions.classList.remove('hidden');
   if(lockedRoom) lockedRoom.classList.remove('hidden');
   if(publicNav) publicNav.classList.remove('hidden');
@@ -79,7 +77,6 @@ if(lockedRoom) lockedRoom.classList.add('hidden');
 if(lockedActions) lockedActions.classList.add('hidden');
 if(statusPill) statusPill.textContent=activePackage.tier.toUpperCase();
 if(vaultState) vaultState.textContent=activePackage.title;
-if(flagState) flagState.textContent=activePackage.tier.toUpperCase()+' LIVE';
 if(publicNav) publicNav.classList.add('hidden');
 if(privateNav) privateNav.classList.remove('hidden');
 if(connect) connect.classList.remove('hidden');

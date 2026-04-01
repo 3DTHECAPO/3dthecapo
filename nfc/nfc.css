@@ -7,7 +7,7 @@ radial-gradient(circle at 50% 0%, rgba(210,167,79,.14), transparent 35%),
 linear-gradient(180deg, rgba(0,0,0,.40), rgba(0,0,0,.92)),
 url("./assets/nfc_vallejo_night.jpg") center/cover fixed no-repeat}
 img{max-width:100%;display:block} a{text-decoration:none;color:inherit} button{font:inherit}
-h1,h2,h3,strong,.nav a,.btn,.access-title,.header-tag,.tier-tag,.room-tag,.benefit-top{font-family:'Black Ops One',sans-serif}
+h1,h2,h3,strong,.nav a,.btn,.access-title,.header-tag,.tier-tag,.room-tag,.chip{font-family:'Black Ops One',sans-serif}
 .noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.08;background-image:radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);background-size:3px 3px;mix-blend-mode:soft-light}
 .shell{position:relative;z-index:2;width:min(1180px,92vw);margin:0 auto;padding:18px 0 56px}
 .header{position:sticky;top:0;z-index:30;padding:12px 0 14px;backdrop-filter:blur(12px);background:linear-gradient(rgba(0,0,0,.86), rgba(0,0,0,.22))}
@@ -17,7 +17,6 @@ h1,h2,h3,strong,.nav a,.btn,.access-title,.header-tag,.tier-tag,.room-tag,.benef
 .nav a,.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 16px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05);text-transform:uppercase;letter-spacing:1px;font-weight:700}
 .btn.gold,.nav a.gold{background:linear-gradient(180deg, rgba(210,167,79,1), rgba(153,105,25,.92));color:#130f08;border-color:rgba(210,167,79,.45)}
 .btn.small{min-height:40px;padding:10px 13px;font-size:13px}
-.header-tag{text-align:center;margin-top:10px;color:var(--muted);letter-spacing:1.5px;font-size:15px}
 .hero{margin-top:12px}.hero-card{display:grid;grid-template-columns:1.02fr .98fr;border:1px solid var(--line);border-radius:24px;overflow:hidden;background:rgba(0,0,0,.55);box-shadow:var(--shadow)}
 .hero-media{position:relative;min-height:520px;background:#000}.hero-media>img:first-child{width:100%;height:100%;object-fit:cover}
 .watermark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(520px,70%);opacity:.12;pointer-events:none}
@@ -28,15 +27,14 @@ h1,h2,h3,strong,.nav a,.btn,.access-title,.header-tag,.tier-tag,.room-tag,.benef
 .hero-copy{padding:28px 22px;display:flex;flex-direction:column;justify-content:center;gap:12px}
 .eyebrow{color:var(--muted);letter-spacing:1.6px;text-transform:uppercase;font-size:13px}
 .hero-copy h1{margin:0;font-size:clamp(48px,7vw,86px);line-height:.92;letter-spacing:2px;text-transform:uppercase;text-shadow:0 0 28px rgba(210,167,79,.16)}
-.hero-copy p{margin:0;color:var(--muted);font-size:17px;line-height:1.5}
+.hero-copy p,.state-line,.locked-room p,.subpanel p,.bundle-head p,.product-body p,.video-copy p{margin:0;color:var(--muted);font-size:17px;line-height:1.5}
 .cta-row,.action-row,.chip-row{display:flex;flex-wrap:wrap;gap:10px}
-.state-line{color:var(--muted)}
 .flag-row{display:flex;flex-wrap:wrap;gap:10px}
-.flag-row span,.tier-tag,.room-tag,.chip{border:1px solid var(--line);border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.04);letter-spacing:1px;text-transform:uppercase;font-size:12px}
-.room-tag,.tier-tag,.chip{color:var(--gold);border-color:rgba(210,167,79,.35)}
+.room-tag,.chip{border:1px solid rgba(210,167,79,.35);border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.04);letter-spacing:1px;text-transform:uppercase;font-size:12px;color:var(--gold)}
 .divider{margin:28px 0 14px;display:flex;align-items:center;gap:12px}.divider span{height:1px;flex:1;background:var(--line)}.divider strong{letter-spacing:1.4px;font-size:18px;color:var(--gold)}
 .locked-room{text-align:center;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));box-shadow:var(--shadow);padding:18px}
 .placeholder-icon{width:74px;height:74px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(210,167,79,1), rgba(153,105,25,.92));color:#130f08;font-size:30px}
+
 .room{position:relative;min-height:100vh;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);margin-top:18px}
 .room.hidden{display:none !important}
 .room-bg,.room-overlay,.room-glow{position:absolute;inset:0}
@@ -49,14 +47,20 @@ h1,h2,h3,strong,.nav a,.btn,.access-title,.header-tag,.tier-tag,.room-tag,.benef
 .room-gold .room-bg{background-image:url("./assets/album_chamber.jpg")}
 .room-elite .room-bg{background-image:url("./assets/merch_drop_room.jpg")}
 .room-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.triple-grid{grid-template-columns:1fr 1fr 1fr}
 .glass,.product-card,.connect-card{border:1px solid rgba(255,255,255,.14);border-radius:20px;background:linear-gradient(180deg, rgba(8,8,8,.46), rgba(14,14,14,.22));backdrop-filter:blur(12px);box-shadow:var(--shadow)}
 .subpanel{padding:16px}
-.audio-player{width:100%;margin-top:10px}
 .bundle-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px;margin-bottom:16px}
+.compact-head{margin-bottom:14px}
+.embed-frame{overflow:hidden;border-radius:14px}
+.video-card{display:flex;flex-direction:column;gap:14px;min-height:352px;justify-content:center}
+.video-copy strong{display:block;margin-bottom:8px;text-transform:uppercase}
 .elite-actions{justify-content:flex-end}
 .merch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.merch-placeholder-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .product-card{overflow:hidden}.product-card img{width:100%;aspect-ratio:1/1;object-fit:cover}.product-body{padding:12px}
-.product-body h4,.subpanel h3,.bundle-head h3{margin:0 0 8px;text-transform:uppercase}.product-body p,.subpanel p,.bundle-head p,.locked-room p{margin:0;color:var(--muted);line-height:1.5}
+.product-body h4,.subpanel h3,.bundle-head h3{margin:0 0 8px;text-transform:uppercase}
+.product-card.mini .product-body{padding:8px}
 .connect-card{padding:18px;display:flex;flex-wrap:wrap;gap:12px}.connect-card a{border:1px solid var(--line);border-radius:999px;padding:10px 14px;background:rgba(255,255,255,.04)}
 .footer{text-align:center;margin-top:24px;color:var(--muted)}
 .hidden{display:none !important}
@@ -87,5 +91,5 @@ h1,h2,h3,strong,.nav a,.btn,.access-title,.header-tag,.tier-tag,.room-tag,.benef
 .center-flash{position:absolute;inset:0;background:radial-gradient(circle at center, rgba(210,167,79,.38), transparent 24%);opacity:0}
 .vault-sequence.playing-doors .seam-light{animation:seamLeak 3.2s ease forwards}.vault-sequence.playing-doors .center-flash{animation:flash 3.2s ease forwards}.vault-sequence.playing-doors .left{animation:openLeft 3.25s cubic-bezier(.16,.80,.14,1) forwards}.vault-sequence.playing-doors .right{animation:openRight 3.25s cubic-bezier(.16,.80,.14,1) forwards}.vault-sequence.playing-doors .lock-wheel{animation:wheelTurn 1.9s ease forwards}
 @keyframes seamLeak{0%{opacity:0}14%{opacity:1}70%{opacity:1}100%{opacity:0}}@keyframes wheelTurn{from{transform:translateY(-50%) rotate(0)}to{transform:translateY(-50%) rotate(145deg)}}@keyframes openLeft{0%{transform:translateX(0)}100%{transform:translateX(-118%)}}@keyframes openRight{0%{transform:translateX(0)}100%{transform:translateX(118%)}}@keyframes flash{0%{opacity:0}26%{opacity:1}100%{opacity:.18}}
-@media (max-width:980px){.hero-card,.room-grid{grid-template-columns:1fr}.merch-grid{grid-template-columns:1fr}.stamp-plate{width:min(300px,66%)}.lock-wheel{width:118px;height:118px}.bundle-head{flex-direction:column;align-items:flex-start}}
+@media (max-width:980px){.hero-card,.room-grid,.triple-grid{grid-template-columns:1fr}.merch-grid,.merch-placeholder-grid{grid-template-columns:1fr}.bundle-head{flex-direction:column;align-items:flex-start}.stamp-plate{width:min(300px,66%)}.lock-wheel{width:118px;height:118px}}
 @media (max-width:640px){.access-title{letter-spacing:2px}}
