@@ -31,7 +31,7 @@
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (note) note.textContent = 'Thanks for signing up. You'll be first to know when the next drop hits.';
+      if (note) note.textContent = 'You're locked in. Updates will hit your inbox first.';
       form.reset();
     });
   }
@@ -65,7 +65,7 @@
   const modalPrice = byId('modalPrice');
   const closeModal = byId('closeModal');
 
-  qsa('.quick-view').forEach(btn => {
+  qsa('.quick-view, .add-to-cart').forEach(btn => {
     btn.addEventListener('click', () => {
       if (!modal) return;
       if (modalImage) modalImage.src = btn.dataset.img || './merch_hat.jpg';

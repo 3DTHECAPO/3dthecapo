@@ -151,3 +151,28 @@ body.site-loaded .single-card{
     margin:18px 0 10px;
   }
 }
+
+
+/* Site repair pass */
+.top-logo img{max-width:min(540px,88vw);height:auto;object-fit:contain}
+.hero-media{min-height:320px;background:#060606}
+.hero-media img{display:block}
+.watermark{max-width:min(420px,58vw)}
+.note{line-height:1.5}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+@media (max-width:980px){
+  .hero{grid-template-columns:1fr}
+  .hero-media{min-height:280px}
+}
+@media (max-width:640px){
+  .page{width:min(94vw,1120px);padding:10px 0 42px}
+  .header{padding:8px 0 10px}
+  .top-logo img{width:min(300px,82vw)}
+  .tagline{font-size:14px;line-height:1.3;padding-top:8px}
+  .hero-media{min-height:230px}
+  .hero-title{font-size:38px}
+  .hero-body{padding:18px 14px;gap:8px}
+  .cta{gap:8px}
+  .divider{margin:18px 0 10px}
+  .cover img{max-height:420px}
+}
