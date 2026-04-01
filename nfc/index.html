@@ -14,26 +14,17 @@
   <div class="noise" aria-hidden="true"></div>
 
   <div class="vault-sequence" id="vaultSequence" aria-hidden="true">
-    <div class="sequence-stage stage-doors">
-      <div class="overlay-dark"></div>
-      <div class="seam-light"></div>
-      <div class="vault-door left">
-        <div class="metal-skin"></div><div class="door-panel outer"></div><div class="door-panel inner"></div>
-        <div class="bolt-column outer-bolts"></div><div class="bolt-column inner-bolts"></div>
-        <div class="stamp-plate"><div class="stamp-bevel"></div><div class="stamp-mark"></div></div>
-        <div class="hinge-strip"></div><div class="lock-wheel"><span></span><span></span><span></span><span></span></div>
-      </div>
-      <div class="vault-door right">
-        <div class="metal-skin"></div><div class="door-panel outer"></div><div class="door-panel inner"></div>
-        <div class="bolt-column outer-bolts"></div><div class="bolt-column inner-bolts"></div>
-        <div class="stamp-plate"><div class="stamp-bevel"></div><div class="stamp-mark"></div></div>
-        <div class="hinge-strip"></div><div class="lock-wheel"><span></span><span></span><span></span><span></span></div>
-      </div>
-      <div class="center-flash"></div>
+    <div class="door-cinematic" id="doorCinematic">
+      <div class="door-backglow"></div>
+      <div class="door-light-spill"></div>
+      <div class="door-half left" id="doorLeft"></div>
+      <div class="door-half right" id="doorRight"></div>
     </div>
-    <div class="sequence-stage stage-access">
-      <div class="access-backdrop"></div><div class="access-grid"></div><div class="access-rings"></div>
-      <div class="access-fullscreen"><div class="access-title">ACCESS GRANTED</div></div>
+
+    <div class="access-overlay" id="accessOverlay">
+      <div class="access-backdrop"></div>
+      <img src="./assets/vault_access_granted_v2.png" class="access-graphic" alt="Access Granted">
+      <div class="access-fallback">ACCESS GRANTED</div>
     </div>
   </div>
 
@@ -46,26 +37,29 @@
         <a href="../index.html">Main Site</a>
       </nav>
       <nav class="nav private-nav hidden" id="privateNav" aria-label="Unlocked">
-        <a href="#room-entry" data-tier="entry">Entry</a>
-        <a href="#room-gold" data-tier="gold">Gold</a>
-        <a href="#room-elite" data-tier="elite">Elite</a>
+        <a href="#room-entry">Entry</a>
+        <a href="#room-gold">Gold</a>
+        <a href="#room-elite">Elite</a>
         <a href="#connect">Connect</a>
       </nav>
     </header>
 
     <section class="hero" id="lockedGate">
       <div class="hero-card">
-        <div class="hero-media">
-          <img src="./assets/hero.jpg" alt="3D THE CAPO">
-          <img class="watermark" src="./assets/watermark.png" alt="" aria-hidden="true">
-          <div class="hero-vignette"></div><div class="hero-scan"></div>
+        <div class="hero-media vault-only-media">
+          <img src="./assets/vault_door_main_v3.png" alt="Vault Door">
+          <div class="hero-vignette"></div>
+          <div class="hero-scan"></div>
           <div class="status-pill" id="statusPill">LOCKED</div>
         </div>
         <div class="hero-copy">
           <div class="eyebrow">PRIVATE NFC ACCESS</div>
           <h1>THE CAPO VAULT</h1>
           <p>A private artist-world built for coded access, unreleased music lanes, hidden visuals, premium merch moments, and vault-only rewards.</p>
-          <div class="cta-row" id="lockedActions"><a class="btn gold" href="./scan.html">Scan / Login</a><a class="btn" href="../index.html">Return Home</a></div>
+          <div class="cta-row" id="lockedActions">
+            <a class="btn gold" href="./scan.html">Scan / Login</a>
+            <a class="btn" href="../index.html">Return Home</a>
+          </div>
           <div class="state-line"><span id="vaultState">NFC access required</span></div>
         </div>
       </div>
@@ -196,7 +190,6 @@
       </div>
     </section>
 
-    
     <section class="divider hidden" id="sessionDivider"><span></span><strong>VAULT SESSION</strong><span></span></section>
     <section class="connect-card hidden" id="sessionLane">
       <a href="./scan.html?auto=1">Resume Saved Session</a>
@@ -204,7 +197,7 @@
       <a href="./vault-interface.html">System Layer</a>
     </section>
 
-<section class="divider hidden" id="connectDivider"><span></span><strong>CONNECT</strong><span></span></section>
+    <section class="divider hidden" id="connectDivider"><span></span><strong>CONNECT</strong><span></span></section>
     <section class="connect-card hidden" id="connect">
       <a href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">YouTube</a>
       <a href="https://music.apple.com/us/artist/3d-the-capo/1758229296" target="_blank" rel="noopener">Apple Music</a>
@@ -217,6 +210,7 @@
 
     <footer class="footer">© <span id="year"></span> 3D THE CAPO</footer>
   </main>
+
   <script src="./nfc.js"></script>
 </body>
 </html>

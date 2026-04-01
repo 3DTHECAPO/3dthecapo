@@ -1,4 +1,3 @@
-
 (function(){
 'use strict';
 const byId=(id)=>document.getElementById(id);
@@ -6,11 +5,11 @@ const params=new URLSearchParams(window.location.search);
 const hasNfc=params.get('nfc')==='1';
 const explicitUnlock=(params.get('unlock')||'').toLowerCase();
 const code=(params.get('code')||'').toUpperCase().trim();
+
 const statusPill=byId('statusPill');
 const vaultState=byId('vaultState');
 const lockedActions=byId('lockedActions');
 const lockedRoom=byId('lockedRoom');
-const sequence=byId('vaultSequence');
 const year=byId('year');
 const publicNav=byId('publicNav');
 const privateNav=byId('privateNav');
@@ -19,7 +18,16 @@ const connectDivider=byId('connectDivider');
 const sessionLane=byId('sessionLane');
 const sessionDivider=byId('sessionDivider');
 
+const sequence=byId('vaultSequence');
+const accessOverlay=byId('accessOverlay');
+const accessGraphic=document.querySelector('.access-graphic');
+
 if(year) year.textContent=new Date().getFullYear();
+
+if(accessGraphic){
+  accessGraphic.addEventListener('load',()=>accessOverlay.classList.add('image-loaded'));
+  if(accessGraphic.complete) accessOverlay.classList.add('image-loaded');
+}
 
 const codeMap={
   ENTRY001:{tier:'entry',title:'ENTRY ACCESS',copy:'The opening lane for coded audio access, artist-world visuals, and the first private room.',chips:['music lane','private visual','coded access']},
@@ -55,14 +63,25 @@ function showLocked(){
 }
 
 function runSequence(){
-  if(!sequence) return;
-  sequence.classList.remove('fadeout','show-access','playing-doors');
+  if(!sequence || !accessOverlay) return;
+  sequence.classList.remove('fadeout');
+  accessOverlay.classList.remove('show');
   sequence.classList.add('active');
   void sequence.offsetWidth;
-  sequence.classList.add('playing-doors');
-  window.setTimeout(()=>{sequence.classList.remove('playing-doors'); sequence.classList.add('show-access');},3300);
-  window.setTimeout(()=>{sequence.classList.add('fadeout');},4450);
-  window.setTimeout(()=>{sequence.classList.remove('active','show-access','fadeout');},5200);
+  sequence.classList.add('play');
+
+  setTimeout(()=>{
+    accessOverlay.classList.add('show');
+  }, 3050);
+
+  setTimeout(()=>{
+    sequence.classList.add('fadeout');
+  }, 4500);
+
+  setTimeout(()=>{
+    sequence.classList.remove('active','play','fadeout');
+    accessOverlay.classList.remove('show');
+  }, 5300);
 }
 
 ['room-entry','room-gold','room-elite'].forEach(id=>{const el=byId(id); if(el) el.classList.add('hidden');});
@@ -74,8 +93,7 @@ else if(hasNfc && ['entry','gold','elite'].includes(explicitUnlock))
 
 if(!hasNfc || !activePackage){ showLocked(); return; }
 
-const roomId='room-'+activePackage.tier;
-const activeRoom=byId(roomId);
+const activeRoom=byId('room-'+activePackage.tier);
 if(activeRoom) activeRoom.classList.remove('hidden');
 if(lockedRoom) lockedRoom.classList.add('hidden');
 if(lockedActions) lockedActions.classList.add('hidden');
