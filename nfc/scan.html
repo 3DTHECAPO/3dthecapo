@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Capo Vault Access</title>
+  <meta name="description" content="Vault access screen for 3D THE CAPO NFC system.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./scan.css">
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <main class="shell">
+    <header class="topbar">
+      <a class="logo-link" href="../index.html"><img class="logo" src="./assets/vault_stamp_gold.png" alt="Vault Seal"></a>
+      <a class="back-btn" href="../index.html">Main Site</a>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">PRIVATE ACCESS GATE</div>
+      <h1>THE CAPO VAULT</h1>
+      <p>Tap your NFC item, scan your vault token, or enter an access code to open the correct room. This build stores a local vault session in the browser for repeat-entry convenience.</p>
+    </section>
+
+    <section class="grid">
+      <article class="panel feature">
+        <div class="panel-top">NFC TAP</div>
+        <h2>Tap Your NFC Item</h2>
+        <p>Physical NFC items should open a coded vault link directly. Use this page as the premium access screen and fallback entry point.</p>
+        <div class="chip-row">
+          <span class="chip">Entry</span>
+          <span class="chip">Gold</span>
+          <span class="chip">Elite</span>
+        </div>
+        <a class="btn gold" href="./index.html">Open Locked Vault</a>
+      </article>
+
+      <article class="panel camera-panel">
+        <div class="panel-top">CAMERA SCAN UI</div>
+        <h2>Scan Interface</h2>
+        <p>This camera layer is a premium frontend scan experience, ready for a real camera scanner upgrade later.</p>
+        <div class="scanner">
+          <div class="scan-frame"></div>
+          <div class="scan-line"></div>
+          <div class="scan-text">SCAN READY</div>
+        </div>
+        <div class="action-row">
+          <button class="btn" id="simulateEntry" type="button">Sim Entry</button>
+          <button class="btn" id="simulateGold" type="button">Sim Gold</button>
+          <button class="btn" id="simulateElite" type="button">Sim Elite</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel code-panel">
+      <div class="panel-top">CODE LOGIN</div>
+      <h2>Enter Access Code</h2>
+      <p>Use a vault code for manual entry. Codes can also create a timed local browser session so the holder does not need to re-enter every time.</p>
+      <div class="form-grid">
+        <div>
+          <label for="vaultCode">Vault Code</label>
+          <input id="vaultCode" type="text" placeholder="ENTRY001 / GOLD001 / ELITE001 / custom code">
+        </div>
+        <div>
+          <label for="sessionMinutes">Session Length</label>
+          <select id="sessionMinutes">
+            <option value="15">15 minutes</option>
+            <option value="60" selected>1 hour</option>
+            <option value="240">4 hours</option>
+            <option value="1440">24 hours</option>
+          </select>
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn gold" id="enterVault" type="button">Enter Vault</button>
+        <button class="btn" id="saveSession" type="button">Save Session</button>
+        <button class="btn" id="clearSession" type="button">Clear Session</button>
+      </div>
+      <div class="result-box">
+        <strong>Session Status</strong>
+        <p id="sessionStatus">No active vault session.</p>
+      </div>
+    </section>
+
+    <section class="panel small-panel">
+      <div class="panel-top">OWNERSHIP / EXPIRY READY</div>
+      <h2>System Notes</h2>
+      <ul class="notes">
+        <li>Local session persistence is live in this build.</li>
+        <li>Timed expiry is simulated in-browser and can be upgraded to a real backend later.</li>
+        <li>NFT or wallet validation is represented as a frontend-ready lane and needs real wallet/backend integration for true verification.</li>
+      </ul>
+    </section>
+  </main>
+  <script src="./scan.js"></script>
+</body>
+</html>

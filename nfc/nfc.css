@@ -93,3 +93,5 @@ h1,h2,h3,strong,.nav a,.btn,.access-title,.header-tag,.tier-tag,.room-tag,.chip{
 @keyframes seamLeak{0%{opacity:0}14%{opacity:1}70%{opacity:1}100%{opacity:0}}@keyframes wheelTurn{from{transform:translateY(-50%) rotate(0)}to{transform:translateY(-50%) rotate(145deg)}}@keyframes openLeft{0%{transform:translateX(0)}100%{transform:translateX(-118%)}}@keyframes openRight{0%{transform:translateX(0)}100%{transform:translateX(118%)}}@keyframes flash{0%{opacity:0}26%{opacity:1}100%{opacity:.18}}
 @media (max-width:980px){.hero-card,.room-grid,.triple-grid{grid-template-columns:1fr}.merch-grid,.merch-placeholder-grid{grid-template-columns:1fr}.bundle-head{flex-direction:column;align-items:flex-start}.stamp-plate{width:min(300px,66%)}.lock-wheel{width:118px;height:118px}}
 @media (max-width:640px){.access-title{letter-spacing:2px}}
+
+#sessionLane{margin-bottom:14px}

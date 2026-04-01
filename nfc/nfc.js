@@ -16,6 +16,8 @@ const publicNav=byId('publicNav');
 const privateNav=byId('privateNav');
 const connect=byId('connect');
 const connectDivider=byId('connectDivider');
+const sessionLane=byId('sessionLane');
+const sessionDivider=byId('sessionDivider');
 
 if(year) year.textContent=new Date().getFullYear();
 
@@ -48,6 +50,8 @@ function showLocked(){
   if(privateNav) privateNav.classList.add('hidden');
   if(connect) connect.classList.add('hidden');
   if(connectDivider) connectDivider.classList.add('hidden');
+  if(sessionLane) sessionLane.classList.add('hidden');
+  if(sessionDivider) sessionDivider.classList.add('hidden');
 }
 
 function runSequence(){
@@ -81,6 +85,8 @@ if(publicNav) publicNav.classList.add('hidden');
 if(privateNav) privateNav.classList.remove('hidden');
 if(connect) connect.classList.remove('hidden');
 if(connectDivider) connectDivider.classList.remove('hidden');
+if(sessionLane) sessionLane.classList.remove('hidden');
+if(sessionDivider) sessionDivider.classList.remove('hidden');
 
 if(activePackage.tier==='entry'){
   byId('entryTitle').textContent=activePackage.title;

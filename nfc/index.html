@@ -41,7 +41,8 @@
     <header class="header">
       <a class="vault-logo-link" href="../index.html"><img src="./assets/vault_stamp_gold.png" class="vault-logo" alt="Vault Seal"></a>
       <nav class="nav public-nav" id="publicNav" aria-label="Primary">
-        <a href="#lockedGate">Enter</a>
+        <a href="./scan.html">Scan / Login</a>
+        <a href="#lockedGate">Vault</a>
         <a href="../index.html">Main Site</a>
       </nav>
       <nav class="nav private-nav hidden" id="privateNav" aria-label="Unlocked">
@@ -64,7 +65,7 @@
           <div class="eyebrow">PRIVATE NFC ACCESS</div>
           <h1>THE CAPO VAULT</h1>
           <p>A private artist-world built for coded access, unreleased music lanes, hidden visuals, premium merch moments, and vault-only rewards.</p>
-          <div class="cta-row" id="lockedActions"><a class="btn gold" href="../index.html">Return Home</a></div>
+          <div class="cta-row" id="lockedActions"><a class="btn gold" href="./scan.html">Scan / Login</a><a class="btn" href="../index.html">Return Home</a></div>
           <div class="state-line"><span id="vaultState">NFC access required</span></div>
         </div>
       </div>
@@ -195,7 +196,15 @@
       </div>
     </section>
 
-    <section class="divider hidden" id="connectDivider"><span></span><strong>CONNECT</strong><span></span></section>
+    
+    <section class="divider hidden" id="sessionDivider"><span></span><strong>VAULT SESSION</strong><span></span></section>
+    <section class="connect-card hidden" id="sessionLane">
+      <a href="./scan.html?auto=1">Resume Saved Session</a>
+      <a href="./scan.html">Scan / Login</a>
+      <a href="./vault-interface.html">System Layer</a>
+    </section>
+
+<section class="divider hidden" id="connectDivider"><span></span><strong>CONNECT</strong><span></span></section>
     <section class="connect-card hidden" id="connect">
       <a href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">YouTube</a>
       <a href="https://music.apple.com/us/artist/3d-the-capo/1758229296" target="_blank" rel="noopener">Apple Music</a>
