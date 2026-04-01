@@ -31,7 +31,7 @@
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (note) note.textContent = 'Locked in. Drop alerts coming.';
+      if (note) note.textContent = 'Thanks for signing up. You'll be first to know when the next drop hits.';
       form.reset();
     });
   }
@@ -87,18 +87,6 @@
       if (e.target === modal) hideModal();
     });
   }
-
-  const params = new URLSearchParams(window.location.search);
-  const unlock = (params.get('unlock') || '').toLowerCase();
-  const ids = ['vaultIntro', 'unlock-track', 'unlock-ep', 'unlock-video', 'unlock-merch', 'unlock-bundle'];
-  ids.forEach(id => { const el = byId(id); if (el) el.classList.add('hidden'); });
-  const show = (id) => { const el = byId(id); if (el) el.classList.remove('hidden'); };
-  if (unlock) show('vaultIntro');
-  if (unlock === 'track' || unlock === 'exclusive') show('unlock-track');
-  if (unlock === 'ep' || unlock === 'preview') show('unlock-ep');
-  if (unlock === 'video') show('unlock-video');
-  if (unlock === 'merch') show('unlock-merch');
-  if (unlock === 'bundle') show('unlock-bundle');
 })();
 
 
