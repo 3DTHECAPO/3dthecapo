@@ -23,14 +23,29 @@ input{width:100%;min-height:56px;border-radius:18px;border:1px solid rgba(255,25
 .action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
 .scanner{position:relative;min-height:340px;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:
 linear-gradient(180deg, rgba(0,0,0,.30), rgba(0,0,0,.60)),
-url("./assets/vault_interface.jpg") center/cover no-repeat;overflow:hidden}
+url("./assets/vault_interface.jpg") center/cover no-repeat;overflow:hidden;cursor:pointer}
+.scan-aura{position:absolute;inset:0;background:radial-gradient(circle at center, rgba(210,167,79,.10), transparent 45%);mix-blend-mode:screen;animation:auraPulse 2.8s ease-in-out infinite}
 .scan-frame{position:absolute;left:50%;top:50%;width:min(470px,76%);height:min(470px,76%);transform:translate(-50%,-50%);border:2px solid rgba(210,167,79,.7);box-shadow:0 0 0 9999px rgba(0,0,0,.12),0 0 26px rgba(210,167,79,.18) inset}
 .scan-line{position:absolute;left:50%;top:22%;width:min(470px,76%);height:2px;background:rgba(210,167,79,.92);transform:translateX(-50%);box-shadow:0 0 14px rgba(210,167,79,.7);animation:scanMove 2.2s ease-in-out infinite}
-.scan-text{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 16px;border-radius:999px;border:1px solid rgba(210,167,79,.35);background:rgba(0,0,0,.5);font-family:'Black Ops One',sans-serif;color:#ffe9bf;letter-spacing:1px;text-transform:uppercase}
+.scan-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);padding:12px 20px;border-radius:999px;border:1px solid rgba(210,167,79,.4);background:rgba(0,0,0,.55);font-family:'Black Ops One',sans-serif;color:#f3efe8;letter-spacing:2px;text-transform:uppercase;box-shadow:0 0 12px rgba(210,167,79,.25),0 0 30px rgba(210,167,79,.15);backdrop-filter:blur(6px);animation:textPulse 2.6s ease-in-out infinite;z-index:3;text-align:center}
+.tap-flash{position:absolute;inset:0;background:
+radial-gradient(circle at center, rgba(255,227,171,.75), rgba(210,167,79,.20) 22%, rgba(0,0,0,0) 44%);
+opacity:0;pointer-events:none}
+.scanner.tap-active .tap-flash{animation:tapFlash .95s ease-out forwards}
+.scanner.tap-active .scan-frame{animation:frameHit .95s ease-out forwards}
+.scanner.tap-active .scan-text{animation:tapText .95s ease-out forwards}
 @keyframes scanMove{0%{top:22%}50%{top:78%}100%{top:22%}}
+@keyframes auraPulse{0%{opacity:.65}50%{opacity:1}100%{opacity:.65}}
+@keyframes textPulse{0%{opacity:.85;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.025)}100%{opacity:.85;transform:translate(-50%,-50%) scale(1)}}
+@keyframes tapFlash{0%{opacity:0}20%{opacity:1}100%{opacity:0}}
+@keyframes frameHit{0%{box-shadow:0 0 0 9999px rgba(0,0,0,.12),0 0 26px rgba(210,167,79,.18) inset;transform:translate(-50%,-50%) scale(1)}
+35%{box-shadow:0 0 0 9999px rgba(0,0,0,.08),0 0 40px rgba(255,219,145,.55),0 0 26px rgba(210,167,79,.25) inset;transform:translate(-50%,-50%) scale(1.03)}
+100%{box-shadow:0 0 0 9999px rgba(0,0,0,.12),0 0 26px rgba(210,167,79,.18) inset;transform:translate(-50%,-50%) scale(1)}}
+@keyframes tapText{0%{transform:translate(-50%,-50%) scale(1)}35%{transform:translate(-50%,-50%) scale(1.05)}100%{transform:translate(-50%,-50%) scale(1)}}
 @media (max-width:640px){
   .shell{width:min(92vw,860px)}
   .scanner{min-height:300px}
   .scan-frame{width:min(340px,78%);height:min(340px,78%)}
   .scan-line{width:min(340px,78%)}
+  .scan-text{font-size:12px;padding:10px 14px;width:min(260px,76%)}
 }
