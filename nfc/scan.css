@@ -1,35 +1,23 @@
-*{box-sizing:border-box}
-:root{--text:#f3efe8;--muted:rgba(243,239,232,.78);--gold:#d2a74f;--line:rgba(255,255,255,.12);--shadow:0 24px 80px rgba(0,0,0,.58)}
-html{scroll-behavior:smooth}
-body{margin:0;color:var(--text);font-family:'Oswald',Arial,sans-serif;background:
-radial-gradient(circle at 50% 0%, rgba(210,167,79,.16), transparent 34%),
-linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.94)),
-url("./assets/scan_bg.jpg") center/cover fixed no-repeat}
-.noise{position:fixed;inset:0;pointer-events:none;opacity:.08;background-image:radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);background-size:3px 3px;mix-blend-mode:soft-light}
-.shell{position:relative;width:min(860px,92vw);margin:0 auto;padding:18px 0 56px}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 0 14px}
-.logo{width:clamp(120px,18vw,190px);filter:drop-shadow(0 0 10px rgba(210,167,79,.36)) drop-shadow(0 0 24px rgba(210,167,79,.22))}
-.logo-link,.back-btn,.btn{text-decoration:none;color:inherit}
-.back-btn,.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 18px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05);text-transform:uppercase;letter-spacing:1px;font-family:'Black Ops One',sans-serif}
-.btn.gold{background:linear-gradient(180deg, rgba(210,167,79,1), rgba(153,105,25,.92));color:#130f08;border-color:rgba(210,167,79,.45)}
-.hero,.panel{border:1px solid var(--line);border-radius:24px;background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));box-shadow:var(--shadow)}
-.hero{padding:26px 22px;margin-bottom:16px;text-align:left}
-.eyebrow,label{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(243,239,232,.68)}
-h1{font-family:'Black Ops One',sans-serif;text-transform:uppercase;letter-spacing:1px;margin:6px 0 10px;font-size:clamp(42px,6vw,72px);line-height:.94}
-p{margin:0;color:var(--muted);line-height:1.55}
-.panel{padding:20px;margin-bottom:16px}
-.form-stack{display:grid;grid-template-columns:1fr;gap:16px}
-input{width:100%;min-height:56px;border-radius:18px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#f3efe8;padding:0 18px;font-family:Oswald,Arial,sans-serif;font-size:18px}
-.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-.scanner{position:relative;min-height:340px;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:
-linear-gradient(180deg, rgba(0,0,0,.30), rgba(0,0,0,.60)),
-url("./assets/vault_interface.jpg") center/cover no-repeat;overflow:hidden}
-.scan-frame{position:absolute;left:50%;top:50%;width:min(470px,76%);height:min(470px,76%);transform:translate(-50%,-50%);border:2px solid rgba(210,167,79,.7);box-shadow:0 0 0 9999px rgba(0,0,0,.12),0 0 26px rgba(210,167,79,.18) inset}
-.scan-line{position:absolute;left:50%;top:22%;width:min(470px,76%);height:2px;background:rgba(210,167,79,.92);transform:translateX(-50%);box-shadow:0 0 14px rgba(210,167,79,.7);animation:scanMove 2.2s ease-in-out infinite}
-@keyframes scanMove{0%{top:22%}50%{top:78%}100%{top:22%}}
-@media (max-width:640px){
-  .shell{width:min(92vw,860px)}
-  .scanner{min-height:300px}
-  .scan-frame{width:min(340px,78%);height:min(340px,78%)}
-  .scan-line{width:min(340px,78%)}
+body{
+  margin:0;
+  font-family:Arial;
+  color:#fff;
+  text-align:center;
+  background:url('./assets/scan_bg.jpg') center/cover no-repeat;
+}
+.container{
+  margin-top:20vh;
+}
+input{
+  padding:15px;
+  width:250px;
+  margin-top:20px;
+}
+button{
+  display:block;
+  margin:20px auto;
+  padding:15px 30px;
+  background:gold;
+  border:none;
+  cursor:pointer;
 }
