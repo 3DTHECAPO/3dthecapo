@@ -1,21 +1,51 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vault Access</title>
-<link rel="stylesheet" href="./scan.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Capo Vault Access</title>
+  <meta name="description" content="Private vault access for 3D THE CAPO.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./scan.css">
 </head>
 <body>
+  <div class="noise" aria-hidden="true"></div>
 
-<div class="container">
-  <h1>PRIVATE ACCESS</h1>
-  <p class="sub">TAP YOUR MERCH OR ENTER ACCESS CODE</p>
+  <main class="shell">
+    <header class="topbar">
+      <a class="logo-link" href="../index.html"><img class="logo" src="./assets/vault_stamp_gold.png" alt="Vault Seal"></a>
+      <a class="back-btn" href="../index.html">Main Site</a>
+    </header>
 
-  <input id="code" placeholder="ENTER CODE">
-  <button onclick="enterVault()">ENTER VAULT</button>
-</div>
+    <section class="hero">
+      <div class="eyebrow">PRIVATE ACCESS</div>
+      <h1>TAP MERCH OR ENTER CODE</h1>
+      <p>Tap your merch to unlock the vault automatically, or enter your access code to continue.</p>
+    </section>
 
-<script src="./scan.js"></script>
+    <section class="panel camera-panel">
+      <div class="scanner">
+        <div class="scan-frame"></div>
+        <div class="scan-line"></div>
+        <div class="scan-text">TAP MERCH OR ENTER CODE</div>
+      </div>
+    </section>
+
+    <section class="panel code-panel">
+      <div class="form-stack">
+        <div>
+          <label for="vaultCode">Access Code</label>
+          <input id="vaultCode" type="text" placeholder="ENTER CODE">
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn gold" id="enterVault" type="button">Enter Vault</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="./scan.js"></script>
 </body>
 </html>
