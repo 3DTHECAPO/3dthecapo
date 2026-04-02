@@ -14,21 +14,18 @@ url("./assets/scan_bg.jpg") center/cover fixed no-repeat}
 .btn.gold{background:linear-gradient(180deg, rgba(210,167,79,1), rgba(153,105,25,.92));color:#130f08;border-color:rgba(210,167,79,.45)}
 .hero,.panel{border:1px solid var(--line);border-radius:24px;background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));box-shadow:var(--shadow)}
 .hero{padding:26px 22px;margin-bottom:16px;text-align:left}
-.eyebrow,.panel-top,label{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(243,239,232,.68)}
-h1,h2{font-family:'Black Ops One',sans-serif;text-transform:uppercase;letter-spacing:1px}
-h1{margin:6px 0 10px;font-size:clamp(42px,6vw,72px);line-height:.94}
-h2{margin:8px 0 12px;font-size:clamp(26px,4vw,40px)}
+.eyebrow,label{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(243,239,232,.68)}
+h1{font-family:'Black Ops One',sans-serif;text-transform:uppercase;letter-spacing:1px;margin:6px 0 10px;font-size:clamp(42px,6vw,72px);line-height:.94}
 p{margin:0;color:var(--muted);line-height:1.55}
 .panel{padding:20px;margin-bottom:16px}
-.form-stack{display:grid;grid-template-columns:1fr;gap:16px;margin-top:16px}
+.form-stack{display:grid;grid-template-columns:1fr;gap:16px}
 input{width:100%;min-height:56px;border-radius:18px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#f3efe8;padding:0 18px;font-family:Oswald,Arial,sans-serif;font-size:18px}
 .action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
 .scanner{position:relative;min-height:340px;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:
 linear-gradient(180deg, rgba(0,0,0,.30), rgba(0,0,0,.60)),
-url("./assets/vault_interface.jpg") center/cover no-repeat;overflow:hidden;margin-top:14px}
+url("./assets/vault_interface.jpg") center/cover no-repeat;overflow:hidden}
 .scan-frame{position:absolute;left:50%;top:50%;width:min(470px,76%);height:min(470px,76%);transform:translate(-50%,-50%);border:2px solid rgba(210,167,79,.7);box-shadow:0 0 0 9999px rgba(0,0,0,.12),0 0 26px rgba(210,167,79,.18) inset}
 .scan-line{position:absolute;left:50%;top:22%;width:min(470px,76%);height:2px;background:rgba(210,167,79,.92);transform:translateX(-50%);box-shadow:0 0 14px rgba(210,167,79,.7);animation:scanMove 2.2s ease-in-out infinite}
-.scan-text{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 16px;border-radius:999px;border:1px solid rgba(210,167,79,.35);background:rgba(0,0,0,.5);font-family:'Black Ops One',sans-serif;color:#ffe9bf}
 @keyframes scanMove{0%{top:22%}50%{top:78%}100%{top:22%}}
 @media (max-width:640px){
   .shell{width:min(92vw,860px)}

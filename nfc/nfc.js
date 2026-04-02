@@ -30,11 +30,11 @@ if(accessGraphic){
 }
 
 const codeMap={
-  ENTRY001:{tier:'entry',title:'ENTRY ACCESS',copy:'The opening lane for coded audio access, artist-world visuals, and the first private room.',chips:['music lane','private visual','coded access']},
-  GOLD001:{tier:'gold',title:'GOLD ACCESS',copy:'Private music, coded visual access, and hidden route-ins for stronger vault value.',chips:['private music','hidden merch','private visual','coded reward']},
-  ELITE001:{tier:'elite',title:'ELITE ACCESS',copy:'The premium room for music, visuals, merch placeholders, hidden bundles, and future holder perks.',chips:['all-access','premium merch','hidden bundle','future perk']},
-  DROP777:{tier:'gold',title:'SPECIAL DROP ACCESS',copy:'This one-off drop code opens a limited campaign package with coded music, hidden merch, and private visual access.',chips:['special drop','limited merch','private visual']},
-  MERCH999:{tier:'elite',title:'MERCH VAULT ACCESS',copy:'This code is tuned for hidden merch access, bundle offers, early windows, and premium product drops.',chips:['merch-only','bundle offer','early access']}
+  ENTRY001:{tier:'entry',title:'ENTRY ROOM',copy:'The opening lane for coded audio access, artist-world visuals, and the first private room.',chips:['music lane','private visual','coded access']},
+  GOLD001:{tier:'gold',title:'GOLD ROOM',copy:'Private music, coded visual access, and hidden route-ins for stronger vault value.',chips:['private music','hidden merch','private visual','coded reward']},
+  ELITE001:{tier:'elite',title:'ELITE ROOM',copy:'The premium room for music, visuals, merch placeholders, hidden bundles, and future holder perks.',chips:['all-access','premium merch','hidden bundle','future perk']},
+  DROP777:{tier:'gold',title:'SPECIAL DROP ROOM',copy:'This one-off drop code opens a limited campaign package with coded music, hidden merch, and private visual access.',chips:['special drop','limited merch','private visual']},
+  MERCH999:{tier:'elite',title:'MERCH ROOM',copy:'This code is tuned for hidden merch access, bundle offers, early windows, and premium product drops.',chips:['merch-only','bundle offer','early access']}
 };
 
 function fillChips(targetId, items){
