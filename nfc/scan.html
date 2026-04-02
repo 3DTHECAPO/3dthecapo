@@ -1,1 +1,49 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>The Capo Vault Access</title><meta name="description" content="Private vault access for 3D THE CAPO."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./nfc.css"></head><body><div class="noise" aria-hidden="true"></div><main class="shell"><header class="topbar"><a class="logo-link" href="../index.html"><img class="logo" src="./assets/vault_stamp_gold.png" alt="Vault Seal"></a><a class="back-btn" href="../index.html">Main Site</a></header><section class="hero"><div class="eyebrow">Private Access</div><h1>Tap Merch Or Enter Code</h1><p>Tap your merch to unlock the vault automatically, or enter your access code to continue.</p></section><section class="panel camera-panel"><div class="scanner" id="scannerBox"><div class="scan-aura"></div><div class="scan-frame"></div><div class="scan-line"></div><div class="scan-text">Tap Merch Or Enter Code</div><div class="tap-flash"></div></div></section><section class="panel code-panel"><div class="form-stack"><div><label for="vaultCode">Access Code</label><input id="vaultCode" type="text" placeholder="ENTER CODE"></div></div><div class="action-row"><button class="btn gold" id="enterVault" type="button">Enter Vault</button></div></section></main><script src="./scan.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Capo Vault Access</title>
+  <meta name="description" content="Private vault access for 3D THE CAPO.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./scan.css">
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <main class="shell">
+    <header class="topbar">
+      <a class="logo-link" href="../index.html"><img class="logo" src="./assets/vault_stamp_gold.png" alt="Vault Seal"></a>
+      <a class="back-btn" href="../index.html">Main Site</a>
+    </header>
+
+    <section class="scan-hero">
+      <div class="scan-box" id="scannerBox">
+        <div class="scan-aura"></div>
+        <div class="scan-frame"></div>
+        <div class="scan-line"></div>
+        <div class="scan-text">Tap Merch Or Enter Code</div>
+        <div class="tap-flash"></div>
+      </div>
+
+      <div class="entry-panel">
+        <div class="eyebrow">Private Access</div>
+        <h1>Tap Merch Or Enter Code</h1>
+        <p>Use your merch tap or enter your access code below.</p>
+
+        <label for="vaultCode">Access Code</label>
+        <input id="vaultCode" type="text" placeholder="ENTER CODE" autocomplete="off" autocapitalize="characters" spellcheck="false">
+
+        <div class="action-row">
+          <button class="btn gold" id="enterVault" type="button">Enter Vault</button>
+          <a class="btn" href="../index.html">Main Site</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./scan.js"></script>
+</body>
+</html>
