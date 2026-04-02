@@ -1,6 +1,6 @@
 body{
   margin:0;
-  font-family:Arial;
+  font-family:Arial, sans-serif;
   color:#fff;
   text-align:center;
   background:url('./assets/scan_bg.jpg') center/cover no-repeat;
@@ -8,10 +8,21 @@ body{
 .container{
   margin-top:20vh;
 }
+h1{
+  font-size:48px;
+  margin-bottom:10px;
+}
+.sub{
+  font-size:14px;
+  letter-spacing:2px;
+  margin-bottom:30px;
+}
 input{
   padding:15px;
-  width:250px;
-  margin-top:20px;
+  width:260px;
+  background:rgba(0,0,0,0.6);
+  border:1px solid gold;
+  color:#fff;
 }
 button{
   display:block;
@@ -19,5 +30,6 @@ button{
   padding:15px 30px;
   background:gold;
   border:none;
+  font-weight:bold;
   cursor:pointer;
 }
