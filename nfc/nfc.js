@@ -52,7 +52,7 @@ function fillChips(targetId, items){
 document.body.classList.add('locked');
 function showLocked(){
   if(statusPill) statusPill.textContent='LOCKED';
-  if(vaultState) vaultState.textContent='NFC access required';
+  if(vaultState) vaultState.textContent='Access code required';
   if(lockedActions) lockedActions.classList.remove('hidden');
   if(lockedRoom) lockedRoom.classList.remove('hidden');
   if(publicNav) publicNav.classList.remove('hidden');
@@ -71,14 +71,8 @@ function runSequence(){
   void sequence.offsetWidth;
   sequence.classList.add('play');
 
-  setTimeout(()=>{
-    accessOverlay.classList.add('show');
-  }, 3050);
-
-  setTimeout(()=>{
-    sequence.classList.add('fadeout');
-  }, 4500);
-
+  setTimeout(()=>{ accessOverlay.classList.add('show'); }, 3050);
+  setTimeout(()=>{ sequence.classList.add('fadeout'); }, 4500);
   setTimeout(()=>{
     sequence.classList.remove('active','play','fadeout');
     accessOverlay.classList.remove('show');
@@ -87,15 +81,51 @@ function runSequence(){
 
 ['room-entry','room-gold','room-elite'].forEach(id=>{const el=byId(id); if(el) el.classList.add('hidden');});
 
+function inferTierFromCode(rawCode){
+  const c = (rawCode || '').toUpperCase();
+  if(!c) return null;
+  if(c.startsWith('ELITE') || c.startsWith('MERCH') || c.includes('ELITE') || c.includes('VIP') || c.includes('ALL')) return 'elite';
+  if(c.startsWith('GOLD') || c.startsWith('DROP') || c.startsWith('MUSIC') || c.includes('GOLD')) return 'gold';
+  if(c.startsWith('ENTRY') || c.startsWith('LOCK') || c.startsWith('CAPO') || c.startsWith('VAULT')) return 'entry';
+  return 'entry';
+}
+
+function buildDynamicPackage(rawCode){
+  const tier = inferTierFromCode(rawCode);
+  const normalized = (rawCode || '').toUpperCase();
+  const title = tier === 'elite' ? 'ELITE ROOM' : tier === 'gold' ? 'GOLD ROOM' : 'ENTRY ROOM';
+  const chips = tier === 'elite'
+    ? ['all-access','premium merch','exclusive media', normalized]
+    : tier === 'gold'
+    ? ['private music','coded visual','special drop', normalized]
+    : ['vault access','entry lane','coded unlock', normalized];
+  const copy = tier === 'elite'
+    ? 'This code opened the elite lane with premium merch moments, hidden media, and higher-level vault rewards.'
+    : tier === 'gold'
+    ? 'This code opened the gold lane with private music, coded visuals, and stronger vault value.'
+    : 'This code opened the entry lane with first-access music, visuals, and private vault access.';
+  return { tier, title, copy, chips };
+}
+
 let activePackage=null;
-if(code && codeMap[code]) activePackage=codeMap[code];
-else if(hasNfc && ['entry','gold','elite'].includes(explicitUnlock))
-  activePackage={tier:explicitUnlock,title:explicitUnlock.toUpperCase()+' ACCESS',copy:'Verified access unlocked the '+explicitUnlock+' room.',chips:[explicitUnlock+' tier']};
 
-if(!hasNfc || !activePackage){ showLocked(); return; }
+// known exact codes first
+if(code && codeMap[code]) {
+  activePackage=codeMap[code];
+} else if(hasNfc && code) {
+  // any non-empty NFC code opens vault and gets a tier
+  activePackage = buildDynamicPackage(code);
+} else if(hasNfc && ['entry','gold','elite'].includes(explicitUnlock)) {
+  activePackage={tier:explicitUnlock,title:explicitUnlock.toUpperCase()+' ROOM',copy:'Verified access unlocked the '+explicitUnlock+' room.',chips:[explicitUnlock+' tier']};
+}
 
-const activeRoom=byId('room-'+activePackage.tier);
+if(!hasNfc || !activePackage){
+  showLocked();
+  return;
+}
+
 document.body.classList.remove('locked');
+const activeRoom=byId('room-'+activePackage.tier);
 if(activeRoom) activeRoom.classList.remove('hidden');
 if(lockedRoom) lockedRoom.classList.add('hidden');
 if(lockedActions) lockedActions.classList.add('hidden');
