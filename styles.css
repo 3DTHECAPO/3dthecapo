@@ -178,3 +178,8 @@ body.site-loaded .single-card{
 }
 
 .actions,.cta{gap:10px;flex-wrap:wrap}
+
+/* live final sweep fixes */
+.hero-media{display:block}
+.hero-media img{display:block}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
