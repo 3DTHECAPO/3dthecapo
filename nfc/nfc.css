@@ -107,3 +107,10 @@ body.locked #connectDivider{
 .entry-panel input{width:100%;min-height:58px;border-radius:18px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#f3efe8;padding:0 18px;font-family:Oswald,Arial,sans-serif;font-size:18px;outline:none}
 .entry-panel input:focus{border-color:rgba(210,167,79,.55);box-shadow:0 0 0 3px rgba(210,167,79,.12)}
 @media (max-width:980px){.scan-hero{grid-template-columns:1fr}}
+
+/* Proper NFC repair: force scanner background */
+.scan-box{
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.54)),
+    url("./assets/scan_bg.jpg") center/cover no-repeat !important;
+}
