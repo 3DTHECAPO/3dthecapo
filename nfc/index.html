@@ -1,70 +1,86 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Game Vault</title>
-  <link rel="stylesheet" href="./styles.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vault Heist</title>
+  <link rel="stylesheet" href="../../styles.css">
 </head>
-<body>
+<body class="game-page">
   <div class="wrap">
     <div class="topbar">
-      <a class="logo-link" href="../index.html"><img class="logo" src="../assets/vault_stamp_gold.png?v=4" alt="Vault Seal"></a>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <a class="btn" href="../index.html">Back To Vault</a>
-        <a class="btn" href="../../index.html?v=4">Main Site</a>
-      </div>
+      <a class="btn" href="../../index.html">Back To Game Vault</a>
+      <a class="btn" href="../../../index.html?v=4">Back To Vault</a>
     </div>
-
     <section class="hero">
-      <div class="eyebrow">Arcade Access</div>
-      <h1>Game Vault</h1>
-      <p>Public games are open to everyone. NFC holders unlock bonus lanes, better rewards, and hidden routes inside the same arcade.</p>
+      <div class="eyebrow">Heist Route</div>
+      <h1>Vault Heist</h1>
+      <p>Pick the correct sequence to breach the inner layer. Bonus mode changes the reward if you win.</p>
     </section>
-
-    <div class="divider"><span class="line"></span><strong>Core Games</strong><span class="line"></span></div>
-    <section class="grid">
-      <article class="card">
-        <span class="tag">Main Game</span>
-        <h3>Vault Heist</h3>
-        <p>Choose the right heist path and break into the inner vault. Wrong route and the run ends.</p>
-        <div class="actions"><a class="btn gold" href="./games/vault-heist/index.html">Play</a></div>
-      </article>
-      <article class="card">
-        <span class="tag">Fast Skill</span>
-        <h3>Reaction Lock</h3>
-        <p>Stop the lock needle in the gold zone three times to crack the mechanism.</p>
-        <div class="actions"><a class="btn gold" href="./games/reaction-lock/index.html">Play</a></div>
-      </article>
-      <article class="card">
-        <span class="tag">Arcade</span>
-        <h3>Gold Rush</h3>
-        <p>Catch the gold, avoid the dead drops, and chase a higher score.</p>
-        <div class="actions"><a class="btn gold" href="./games/gold-rush/index.html">Play</a></div>
-      </article>
-    </section>
-
-    <div class="divider"><span class="line"></span><strong>NFC Bonus</strong><span class="line"></span></div>
-    <section class="grid">
-      <article class="card bonus" id="bonusCard">
-        <span class="tag">Holder Access</span>
-        <h3>Bonus Lane</h3>
-        <p id="bonusCopy">Tap merch or enter your NFC code first to enable bonus rewards and hidden game outcomes.</p>
-        <div class="actions" id="bonusActions">
-          <a class="btn" href="../scan.html?v=4">Unlock Bonus</a>
-        </div>
-      </article>
+    <section class="game-shell">
+      <div class="scorebar">
+        <div class="pill">Stage: <span id="stage" style="margin-left:8px">1</span></div>
+        <div class="pill">Bonus: <span id="bonus" style="margin-left:8px">Off</span></div>
+      </div>
+      <p class="status" id="status">Choose your first move.</p>
+      <div class="choice-grid" id="choices">
+        <button class="choice" data-pick="hack">Hack Panel</button>
+        <button class="choice" data-pick="brute">Break Lock</button>
+        <button class="choice" data-pick="code">Run Code</button>
+      </div>
+      <div class="actions" style="margin-top:18px">
+        <a class="btn gold hidden" id="winBtn" href="../../../../index.html?v=4">Reward Ready</a>
+        <button class="btn hidden" id="resetBtn" type="button">Run Again</button>
+      </div>
     </section>
   </div>
-  <script src="./shared.js"></script>
+  <script src="../../shared.js"></script>
   <script>
+    const stages = ['hack','code','brute'];
+    let step = 0;
     const bonus = GV.isBonus();
-    const copy = document.getElementById('bonusCopy');
-    const actions = document.getElementById('bonusActions');
-    if (bonus) {
-      copy.textContent = 'Bonus mode is active. Your games now unlock hidden rewards, extra copy, and holder-only outcomes.';
-      actions.innerHTML = '<a class="btn gold" href="./games/vault-heist/index.html?nfc=1">Play Bonus Heist</a><a class="btn" href="./games/reaction-lock/index.html?nfc=1">Bonus Reaction Lock</a>';
+    document.getElementById('bonus').textContent = bonus ? 'On' : 'Off';
+    const statusEl = document.getElementById('status');
+    const stageEl = document.getElementById('stage');
+    const resetBtn = document.getElementById('resetBtn');
+    const winBtn = document.getElementById('winBtn');
+
+    function resetGame(){
+      step = 0;
+      stageEl.textContent = '1';
+      statusEl.textContent = 'Choose your first move.';
+      document.querySelectorAll('.choice').forEach(b => b.disabled = false);
+      resetBtn.classList.add('hidden');
+      winBtn.classList.add('hidden');
     }
+
+    function fail(){
+      statusEl.textContent = 'Tripwire hit. The vault sealed. Run it back.';
+      document.querySelectorAll('.choice').forEach(b => b.disabled = true);
+      resetBtn.classList.remove('hidden');
+    }
+
+    function win(){
+      const msg = bonus ? 'Heist complete. Bonus lane unlocked for NFC holder reward.' : 'Heist complete. Core vault reward unlocked.';
+      statusEl.textContent = msg;
+      document.querySelectorAll('.choice').forEach(b => b.disabled = true);
+      GV.setReward('heist', bonus ? 'bonus' : 'core');
+      winBtn.classList.remove('hidden');
+      winBtn.textContent = bonus ? 'Bonus Reward Ready' : 'Reward Ready';
+      resetBtn.classList.remove('hidden');
+    }
+
+    document.querySelectorAll('.choice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pick = btn.dataset.pick;
+        if (pick !== stages[step]) { fail(); return; }
+        step++;
+        if (step >= stages.length) { win(); return; }
+        stageEl.textContent = String(step + 1);
+        statusEl.textContent = 'Correct. Choose the next move.';
+      });
+    });
+
+    resetBtn.addEventListener('click', resetGame);
   </script>
 </body>
 </html>
