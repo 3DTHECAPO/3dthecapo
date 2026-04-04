@@ -1,4 +1,4 @@
-body{margin:0;color:#f4f1ea;font-family:Oswald,Arial,sans-serif;background:linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,.88)),url('./bg_texture.jpg');background-size:cover;background-position:center;background-attachment:fixed}
+body{margin:0;color:#f4f1ea;font-family:Oswald,Arial,sans-serif;background:linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,.88)),url('./bg_texture.jpg?v=4');background-size:cover;background-position:center;background-attachment:fixed}
 .page{position:relative;z-index:1;width:min(1120px,92vw);margin:0 auto;padding:18px 0 54px}
 .noise{position:fixed;inset:0;pointer-events:none;opacity:.18;mix-blend-mode:overlay;z-index:0}
 .card{background:rgba(0,0,0,.58);border:1px solid rgba(255,255,255,.14);border-radius:18px;box-shadow:0 26px 76px rgba(0,0,0,.8);overflow:hidden}
@@ -178,8 +178,3 @@ body.site-loaded .single-card{
 }
 
 .actions,.cta{gap:10px;flex-wrap:wrap}
-
-/* live final sweep fixes */
-.hero-media{display:block}
-.hero-media img{display:block}
-.actions{display:flex;gap:10px;flex-wrap:wrap}

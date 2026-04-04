@@ -6,7 +6,7 @@ body{
   color:#f4f1ea;
   background:
     linear-gradient(rgba(0,0,0,.34), rgba(0,0,0,.72)),
-    url('./hero.jpg') center center / cover no-repeat fixed;
+    url('./hero.jpg?v=4') center center / cover no-repeat fixed;
 }
 .entry-shell{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}
 .entry-card{
