@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reaction Lock</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="game-page">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="btn" href="../../index.html">Back To Game Vault</a>
+      <a class="btn" href="../../../index.html?v=4">Back To Vault</a>
+    </div>
+    <section class="hero">
+      <div class="eyebrow">Timing Trial</div>
+      <h1>Reaction Lock</h1>
+      <p>Hit stop inside the gold zone three times to crack the lock. Bonus mode shrinks the zone but gives a stronger reward.</p>
+    </section>
+    <section class="game-shell">
+      <div class="scorebar">
+        <div class="pill">Hits: <span id="hits" style="margin-left:8px">0 / 3</span></div>
+        <div class="pill">Bonus: <span id="bonus" style="margin-left:8px">Off</span></div>
+      </div>
+      <div class="reaction-wrap">
+        <div class="ring" id="ring">
+          <div class="zone" id="zone"></div>
+          <div class="needle" id="needle"></div>
+        </div>
+      </div>
+      <p class="status" id="status">Press stop when the needle enters the gold zone.</p>
+      <div class="actions">
+        <button class="btn gold" id="stopBtn" type="button">Stop</button>
+        <button class="btn hidden" id="restartBtn" type="button">Restart</button>
+      </div>
+    </section>
+  </div>
+  <script src="../../shared.js"></script>
+  <script>
+    const bonus = GV.isBonus();
+    document.getElementById('bonus').textContent = bonus ? 'On' : 'Off';
+    const needle = document.getElementById('needle');
+    const zone = document.getElementById('zone');
+    const statusEl = document.getElementById('status');
+    const hitsEl = document.getElementById('hits');
+    const stopBtn = document.getElementById('stopBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+    let angle = 0;
+    let speed = bonus ? 4.2 : 3.3;
+    let hits = 0;
+    let running = true;
+    let loop = null;
+
+    zone.style.background = bonus
+      ? 'conic-gradient(from -90deg, transparent 0 308deg, rgba(210,167,79,.82) 308deg 324deg, transparent 324deg 360deg)'
+      : 'conic-gradient(from -90deg, transparent 0 300deg, rgba(210,167,79,.82) 300deg 330deg, transparent 330deg 360deg)';
+
+    function draw(){
+      angle = (angle + speed) % 360;
+      needle.style.transform = 'translate(0,-50%) rotate(' + angle + 'deg)';
+      loop = requestAnimationFrame(draw);
+    }
+    function zoneHit(){
+      const a = angle % 360;
+      return bonus ? (a >= 308 && a <= 324) : (a >= 300 && a <= 330);
+    }
+    function resetRound(){
+      running = true;
+      cancelAnimationFrame(loop);
+      loop = requestAnimationFrame(draw);
+      statusEl.textContent = 'Press stop when the needle enters the gold zone.';
+    }
+    stopBtn.addEventListener('click', () => {
+      if (!running) return;
+      running = false;
+      cancelAnimationFrame(loop);
+      if (zoneHit()) {
+        hits++;
+        hitsEl.textContent = hits + ' / 3';
+        if (hits >= 3) {
+          GV.setReward('reaction', bonus ? 'bonus' : 'core');
+          statusEl.textContent = bonus ? 'Lock cracked. Bonus reaction reward unlocked.' : 'Lock cracked. Core reaction reward unlocked.';
+          stopBtn.disabled = true;
+          restartBtn.classList.remove('hidden');
+          return;
+        }
+        statusEl.textContent = 'Hit confirmed. Lock shifted. Keep going.';
+        setTimeout(resetRound, 800);
+      } else {
+        statusEl.textContent = 'Missed the zone. The lock reset.';
+        hits = 0;
+        hitsEl.textContent = '0 / 3';
+        setTimeout(resetRound, 900);
+      }
+    });
+    restartBtn.addEventListener('click', () => {
+      hits = 0;
+      angle = 0;
+      stopBtn.disabled = false;
+      restartBtn.classList.add('hidden');
+      hitsEl.textContent = '0 / 3';
+      resetRound();
+    });
+    draw();
+  </script>
+</body>
+</html>
