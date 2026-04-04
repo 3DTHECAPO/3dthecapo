@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{background:#000;color:#fff;text-align:center;font-family:Arial;margin:0}
+h2{margin:40px 0 20px;font-size:48px}
+.viewer{width:min(900px,90vw);margin:20px auto}
+img{width:100%;height:auto;display:block}
+</style>
+</head>
+<body>
+<h2>360 MOTION TEST</h2>
+<div class="viewer">
+  <img id="spin" alt="360 motion test">
+</div>
+<script>
+let frames=[];
+for(let i=1;i<=24;i++){
+  frames.push("./assets/spins/hoodie/frame_"+String(i).padStart(2,'0')+".png");
+}
+let img=document.getElementById("spin");
+let index=0;
+img.src = frames[0];
+setInterval(()=>{
+  index=(index+1)%frames.length;
+  img.src=frames[index];
+},120);
+</script>
+</body>
+</html>
