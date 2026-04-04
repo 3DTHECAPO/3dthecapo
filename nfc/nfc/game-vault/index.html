@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Game Vault</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="logo-link" href="../index.html"><img class="logo" src="../assets/vault_stamp_gold.png?v=4" alt="Vault Seal"></a>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn" href="../index.html">Back To Vault</a>
+        <a class="btn" href="../../index.html?v=4">Main Site</a>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">Arcade Access</div>
+      <h1>Game Vault</h1>
+      <p>Public games are open to everyone. NFC holders unlock bonus lanes, better rewards, and hidden routes inside the same arcade.</p>
+    </section>
+
+    <div class="divider"><span class="line"></span><strong>Core Games</strong><span class="line"></span></div>
+    <section class="grid">
+      <article class="card">
+        <span class="tag">Main Game</span>
+        <h3>Vault Heist</h3>
+        <p>Choose the right heist path and break into the inner vault. Wrong route and the run ends.</p>
+        <div class="actions"><a class="btn gold" href="./games/vault-heist/index.html">Play</a></div>
+      </article>
+      <article class="card">
+        <span class="tag">Fast Skill</span>
+        <h3>Reaction Lock</h3>
+        <p>Stop the lock needle in the gold zone three times to crack the mechanism.</p>
+        <div class="actions"><a class="btn gold" href="./games/reaction-lock/index.html">Play</a></div>
+      </article>
+      <article class="card">
+        <span class="tag">Arcade</span>
+        <h3>Gold Rush</h3>
+        <p>Catch the gold, avoid the dead drops, and chase a higher score.</p>
+        <div class="actions"><a class="btn gold" href="./games/gold-rush/index.html">Play</a></div>
+      </article>
+    </section>
+
+    <div class="divider"><span class="line"></span><strong>NFC Bonus</strong><span class="line"></span></div>
+    <section class="grid">
+      <article class="card bonus" id="bonusCard">
+        <span class="tag">Holder Access</span>
+        <h3>Bonus Lane</h3>
+        <p id="bonusCopy">Tap merch or enter your NFC code first to enable bonus rewards and hidden game outcomes.</p>
+        <div class="actions" id="bonusActions">
+          <a class="btn" href="../scan.html?v=4">Unlock Bonus</a>
+        </div>
+      </article>
+    </section>
+  </div>
+  <script src="./shared.js"></script>
+  <script>
+    const bonus = GV.isBonus();
+    const copy = document.getElementById('bonusCopy');
+    const actions = document.getElementById('bonusActions');
+    if (bonus) {
+      copy.textContent = 'Bonus mode is active. Your games now unlock hidden rewards, extra copy, and holder-only outcomes.';
+      actions.innerHTML = '<a class="btn gold" href="./games/vault-heist/index.html?nfc=1">Play Bonus Heist</a><a class="btn" href="./games/reaction-lock/index.html?nfc=1">Bonus Reaction Lock</a>';
+    }
+  </script>
+</body>
+</html>
