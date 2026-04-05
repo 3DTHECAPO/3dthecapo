@@ -2,7 +2,7 @@
 *{box-sizing:border-box}
 :root{--text:#f3efe8;--muted:rgba(243,239,232,.76);--gold:#d2a74f;--line:rgba(255,255,255,.12);--shadow:0 24px 80px rgba(0,0,0,.58)}
 html{scroll-behavior:smooth}
-body{margin:0;color:var(--text);font-family:'Oswald',Arial,sans-serif;background:radial-gradient(circle at 50% 0%, rgba(210,167,79,.15), transparent 34%),linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.94)),url("./assets/nfc_vallejo_night.jpg?v=4") center/cover fixed no-repeat}
+body{margin:0;color:var(--text);font-family:'Oswald',Arial,sans-serif;background:radial-gradient(circle at 50% 0%, rgba(210,167,79,.15), transparent 34%),linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.94)),url("./assets/nfc_vallejo_night.jpg") center/cover fixed no-repeat}
 img{max-width:100%;display:block} a{text-decoration:none;color:inherit}
 h1,h2,h3,strong,.nav a,.btn,.chip,.room-tag,.scan-text,.access-fallback{font-family:'Black Ops One',sans-serif;letter-spacing:1px;text-transform:uppercase}
 .noise{position:fixed;inset:0;pointer-events:none;opacity:.08;background-image:radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);background-size:3px 3px;mix-blend-mode:soft-light;z-index:1}
@@ -40,9 +40,9 @@ p,.state-line,.locked-room p,.subpanel p,.bundle-head p,.product-body p,.video-c
 @keyframes slowPan{0%{transform:scale(1.05) translateY(0)}100%{transform:scale(1.10) translateY(-10px)}}
 .room-overlay{background:linear-gradient(to bottom, rgba(0,0,0,.42), rgba(0,0,0,.88)),radial-gradient(circle at center, transparent 40%, rgba(0,0,0,.86))}
 .room-glow{background:radial-gradient(circle at center, rgba(212,175,55,.12), transparent 60%);mix-blend-mode:screen;pointer-events:none}
-.room-entry .room-bg{background-image:url("./assets/entry_bg.jpg?v=4")}
-.room-gold .room-bg{background-image:url("./assets/gold_bg.jpg?v=4")}
-.room-elite .room-bg{background-image:url("./assets/elite_bg.jpg?v=4")}
+.room-entry .room-bg{background-image:url("./assets/entry_bg.jpg")}
+.room-gold .room-bg{background-image:url("./assets/gold_bg.jpg")}
+.room-elite .room-bg{background-image:url("./assets/elite_bg.jpg")}
 .room-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.triple-grid{grid-template-columns:1fr 1fr 1fr}
 .subpanel,.page-card,.panel{padding:18px}
 .bundle-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px;margin-bottom:16px}
@@ -56,7 +56,7 @@ p,.state-line,.locked-room p,.subpanel p,.bundle-head p,.product-body p,.video-c
 .footer{text-align:center;margin-top:24px;color:var(--muted)}
 .hidden{display:none!important}
 body.locked #sessionLane,body.locked #sessionDivider,body.locked #connect,body.locked #connectDivider,body.locked #room-entry,body.locked #room-gold,body.locked #room-elite{display:none!important}
-.scanner{position:relative;min-height:340px;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg, rgba(0,0,0,.30), rgba(0,0,0,.60)),url("./assets/vault_interface.jpg?v=4") center/cover no-repeat;overflow:hidden;cursor:pointer}
+.scanner{position:relative;min-height:340px;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg, rgba(0,0,0,.30), rgba(0,0,0,.60)),url("./assets/vault_interface.jpg") center/cover no-repeat;overflow:hidden;cursor:pointer}
 .scan-aura{position:absolute;inset:0;background:radial-gradient(circle at center, rgba(210,167,79,.10), transparent 45%);mix-blend-mode:screen;animation:auraPulse 2.8s ease-in-out infinite}
 .scan-frame{position:absolute;left:50%;top:50%;width:min(470px,76%);height:min(470px,76%);transform:translate(-50%,-50%);border:2px solid rgba(210,167,79,.7);box-shadow:0 0 0 9999px rgba(0,0,0,.12),0 0 26px rgba(210,167,79,.18) inset}
 .scan-line{position:absolute;left:50%;top:22%;width:min(470px,76%);height:2px;background:rgba(210,167,79,.92);transform:translateX(-50%);box-shadow:0 0 14px rgba(210,167,79,.7);animation:scanMove 2.2s ease-in-out infinite}
@@ -73,7 +73,7 @@ body.locked #sessionLane,body.locked #sessionDivider,body.locked #connect,body.l
 @keyframes tapText{0%{transform:translate(-50%,-50%) scale(1)}35%{transform:translate(-50%,-50%) scale(1.05)}100%{transform:translate(-50%,-50%) scale(1)}}
 .vault-sequence{position:fixed;inset:0;z-index:99999;display:none;opacity:1}.vault-sequence.active{display:block}
 .door-cinematic{position:absolute;inset:0;background:#000;overflow:hidden}
-.door-half{position:absolute;top:0;bottom:0;width:50%;background-image:url("./assets/vault_door_main_v3.png?v=4");background-size:200% 100%;background-repeat:no-repeat;will-change:transform}
+.door-half{position:absolute;top:0;bottom:0;width:50%;background-image:url("./assets/vault_door_main_v3.png");background-size:200% 100%;background-repeat:no-repeat;will-change:transform}
 .door-half.left{left:0;background-position:left center}.door-half.right{right:0;background-position:right center}
 .door-backglow{position:absolute;inset:0;background:radial-gradient(circle at center, rgba(212,175,55,.08), transparent 35%), #000;opacity:0}
 .door-light-spill{position:absolute;inset:0;background:radial-gradient(circle at center, rgba(255,219,145,.52), rgba(212,175,55,.15) 22%, rgba(0,0,0,0) 42%),linear-gradient(180deg, rgba(255,216,133,.08), rgba(0,0,0,0));opacity:0;filter:blur(2px)}
@@ -112,7 +112,7 @@ body.locked #connectDivider{
 .scan-box{
   background:
     linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.54)),
-    url("./assets/scan_bg.jpg?v=4") center/cover no-repeat !important;
+    url("./assets/scan_bg.jpg") center/cover no-repeat !important;
 }
 
 
@@ -133,7 +133,7 @@ body{position:relative}
 .cinematic-fog-front{
   position:absolute;
   inset:-20%;
-  background:url("./assets/fog.png?v=4") center/cover repeat;
+  background:url("./assets/fog.png") center/cover repeat;
   opacity:.10;
   mix-blend-mode:screen;
 }
@@ -150,7 +150,7 @@ body{position:relative}
 .cinematic-particles{
   position:absolute;
   inset:-10%;
-  background:url("./assets/gold_particles.png?v=4") center/contain repeat;
+  background:url("./assets/gold_particles.png") center/contain repeat;
   opacity:.12;
   animation:particleFloat 38s linear infinite;
   filter:blur(.2px);
