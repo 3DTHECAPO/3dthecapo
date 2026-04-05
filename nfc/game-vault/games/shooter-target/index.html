@@ -1,0 +1,38 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Shooter Target</title>
+<style>
+body{background:black;color:white;text-align:center;font-family:sans-serif}
+canvas{background:#111;margin-top:20px}
+</style></head>
+<body>
+<h1>Shooter Target</h1>
+<canvas id="c" width="400" height="400"></canvas>
+<script>
+let c=document.getElementById('c'),ctx=c.getContext('2d');
+let targets=[],score=0;
+function spawn(){targets.push({x:Math.random()*380,y:Math.random()*380})}
+setInterval(spawn,800);
+c.onclick=e=>{
+let rect=c.getBoundingClientRect();
+let x=e.clientX-rect.left,y=e.clientY-rect.top;
+targets=targets.filter(t=>{
+let hit=Math.hypot(t.x-x,t.y-y)<20;
+if(hit) score++;
+return !hit;
+});
+};
+function draw(){
+ctx.clearRect(0,0,400,400);
+targets.forEach(t=>{
+ctx.beginPath();
+ctx.arc(t.x,t.y,20,0,Math.PI*2);
+ctx.fillStyle="gold";
+ctx.fill();
+});
+ctx.fillStyle="white";
+ctx.fillText("Score: "+score,10,20);
+requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body></html>
