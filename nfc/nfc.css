@@ -40,9 +40,9 @@ p,.state-line,.locked-room p,.subpanel p,.bundle-head p,.product-body p,.video-c
 @keyframes slowPan{0%{transform:scale(1.05) translateY(0)}100%{transform:scale(1.10) translateY(-10px)}}
 .room-overlay{background:linear-gradient(to bottom, rgba(0,0,0,.42), rgba(0,0,0,.88)),radial-gradient(circle at center, transparent 40%, rgba(0,0,0,.86))}
 .room-glow{background:radial-gradient(circle at center, rgba(212,175,55,.12), transparent 60%);mix-blend-mode:screen;pointer-events:none}
-.room-entry .room-bg{background-image:url("./assets/entry_bg.jpg")}
-.room-gold .room-bg{background-image:url("./assets/gold_bg.jpg")}
-.room-elite .room-bg{background-image:url("./assets/elite_bg.jpg")}
+.room-entry .room-bg{background-image:url("./assets/entry_backdrop.jpg")}
+.room-gold .room-bg{background-image:url("./assets/album_chamber.jpg")}
+.room-elite .room-bg{background-image:url("./assets/merch_drop_room.jpg")}
 .room-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.triple-grid{grid-template-columns:1fr 1fr 1fr}
 .subpanel,.page-card,.panel{padding:18px}
 .bundle-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px;margin-bottom:16px}
@@ -116,9 +116,9 @@ body.locked #connectDivider{
 }
 
 
-/* === FINAL CINEMATIC FX === */
+/* === ANIMATED VAULT ROOM FX (ALL ROOMS, SCAN UNTOUCHED) === */
 body{position:relative}
-.shell,.page-wrap,.page,.hero-card,.page-card,.viewer-card,.hero,.room-content,.header,.topbar,.locked-room,.connect-card{
+.shell,.page-wrap,.page,.hero-card,.page-card,.viewer-card,.hero,.room-content,.header,.topbar,.locked-room,.connect-card,.bundle-head,.music-grid,.media-grid{
   position:relative;
   z-index:2;
 }
@@ -134,26 +134,31 @@ body{position:relative}
   position:absolute;
   inset:-20%;
   background:url("./assets/fog.png") center/cover repeat;
-  opacity:.10;
   mix-blend-mode:screen;
 }
-.cinematic-fog-back{animation:fogDriftA 70s linear infinite;}
-.cinematic-fog-front{opacity:.06;animation:fogDriftB 95s linear infinite;}
+.cinematic-fog-back{
+  opacity:.10;
+  animation:fogDriftA 70s linear infinite;
+}
+.cinematic-fog-front{
+  opacity:.06;
+  animation:fogDriftB 95s linear infinite;
+}
 .cinematic-glow{
   position:absolute;
   inset:0;
   background:
-    radial-gradient(circle at 50% 20%, rgba(210,167,79,.12), transparent 34%),
-    radial-gradient(circle at 50% 78%, rgba(210,167,79,.08), transparent 24%);
+    radial-gradient(circle at 50% 18%, rgba(210,167,79,.10), transparent 34%),
+    radial-gradient(circle at 50% 78%, rgba(210,167,79,.06), transparent 24%);
   animation:glowPulse 5.5s ease-in-out infinite;
 }
 .cinematic-particles{
   position:absolute;
   inset:-10%;
   background:url("./assets/gold_particles.png") center/contain repeat;
-  opacity:.12;
+  opacity:.10;
   animation:particleFloat 38s linear infinite;
-  filter:blur(.2px);
+  filter:blur(.25px);
 }
 .cinematic-vignette{
   position:absolute;
