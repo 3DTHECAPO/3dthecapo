@@ -1,0 +1,78 @@
+
+/* SAFE final vault polish patch */
+body{
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+.noise{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.05;
+  background-image:radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);
+  background-size:3px 3px;
+  mix-blend-mode:soft-light;
+  z-index:0;
+}
+.room-cinematic::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(circle at 50% 14%, rgba(210,167,79,.10), transparent 32%),
+    radial-gradient(circle at 50% 78%, rgba(210,167,79,.07), transparent 24%),
+    linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,.62));
+}
+.room-cinematic::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:radial-gradient(circle at center, transparent 44%, rgba(0,0,0,.18) 72%, rgba(0,0,0,.46) 100%);
+}
+.page-wrap,.page-card,.page-grid,.topbar,.product-grid,.hero-card,.viewer-card{
+  position:relative;
+  z-index:2;
+}
+.page-card,.hero-card,.viewer-card,.product-card{
+  border:1px solid rgba(255,255,255,.14) !important;
+  border-radius:24px !important;
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)) !important;
+  box-shadow:0 24px 80px rgba(0,0,0,.58) !important;
+  backdrop-filter:blur(10px);
+}
+.btn,.back-btn{border-radius:999px !important;}
+.merch-stage .product-card{overflow:hidden;}
+.merch-stage .product-card img{
+  width:100%;
+  aspect-ratio:4/5;
+  object-fit:cover;
+  object-position:center;
+  background:rgba(0,0,0,.15);
+}
+.room-merch::before{
+  background:
+    radial-gradient(circle at 50% 16%, rgba(210,167,79,.15), transparent 28%),
+    radial-gradient(circle at 50% 82%, rgba(210,167,79,.09), transparent 24%),
+    linear-gradient(180deg, rgba(0,0,0,.24), rgba(0,0,0,.64));
+}
+.room-interface::before{
+  background:
+    radial-gradient(circle at 50% 18%, rgba(210,167,79,.08), transparent 30%),
+    radial-gradient(circle at 68% 30%, rgba(210,167,79,.06), transparent 22%),
+    linear-gradient(180deg, rgba(0,0,0,.30), rgba(0,0,0,.68));
+}
+.room-secret::before{
+  background:
+    radial-gradient(circle at 50% 18%, rgba(210,167,79,.08), transparent 30%),
+    linear-gradient(180deg, rgba(0,0,0,.34), rgba(0,0,0,.72));
+}
+.room-album::before{
+  background:
+    radial-gradient(circle at 50% 18%, rgba(210,167,79,.12), transparent 32%),
+    linear-gradient(180deg, rgba(0,0,0,.26), rgba(0,0,0,.60));
+}
