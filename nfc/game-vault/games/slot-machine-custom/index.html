@@ -3,61 +3,102 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>3D THE CAPO — Slot Machine</title>
+  <title>3D THE CAPO — Capo Casino</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <div class="page-shell">
-    <div class="ambient ambient-a"></div>
-    <div class="ambient ambient-b"></div>
+    <div class="lux-orb orb-a"></div>
+    <div class="lux-orb orb-b"></div>
+    <div class="grid-overlay"></div>
 
-    <main class="machine-wrap">
-      <header class="machine-top">
-        <p class="eyebrow">GAME VAULT</p>
-        <h1>3D THE CAPO</h1>
-        <div class="subline">BLACK GOLD JACKPOT MACHINE</div>
+    <main class="cabinet-wrap">
+      <header class="hero-top">
+        <p class="eyebrow">NFC GAME VAULT</p>
+        <h1>CAPO CASINO</h1>
+        <p class="subhead">Luxury black &amp; gold slot room built for 3D THE CAPO</p>
       </header>
 
-      <section class="machine-frame">
-        <div class="machine-glow"></div>
+      <section class="cabinet">
+        <div class="cabinet-trim"></div>
+        <div class="cabinet-topbar">
+          <div class="brand-stamp">
+            <span class="stamp-mini">3D THE CAPO</span>
+            <strong>BLACK GOLD JACKPOT</strong>
+          </div>
+          <div class="status-pill" id="statusPill">VAULT LIVE</div>
+        </div>
 
-        <div class="top-panels">
-          <div class="panel stat-panel">
-            <span class="label">BALANCE</span>
+        <div class="display-row">
+          <article class="display-card">
+            <span class="display-label">Credits</span>
             <strong id="balanceDisplay">1000</strong>
-          </div>
-          <div class="panel jackpot-panel">
-            <span class="label">JACKPOT</span>
+          </article>
+          <article class="display-card display-jackpot">
+            <span class="display-label">Vault Jackpot</span>
             <strong id="jackpotDisplay">5000</strong>
-          </div>
-          <div class="panel stat-panel">
-            <span class="label">BET</span>
+          </article>
+          <article class="display-card">
+            <span class="display-label">Bet</span>
             <strong id="betDisplay">50</strong>
+          </article>
+        </div>
+
+        <div class="machine-stage">
+          <aside class="stage-side left-side">
+            <div class="side-panel">
+              <span class="side-label">MODE</span>
+              <strong>PREMIUM</strong>
+            </div>
+            <div class="side-panel">
+              <span class="side-label">MAX HIT</span>
+              <strong>777 + JACKPOT</strong>
+            </div>
+          </aside>
+
+          <div class="reel-chamber">
+            <div class="chamber-toplight"></div>
+            <div class="reel-header">
+              <span>Vault Reel 01</span>
+              <span>Vault Reel 02</span>
+              <span>Vault Reel 03</span>
+            </div>
+            <div class="reels" aria-label="Slot machine reels">
+              <div class="reel-window"><div class="reel-face" id="reel1">👑</div></div>
+              <div class="reel-window"><div class="reel-face" id="reel2">💎</div></div>
+              <div class="reel-window"><div class="reel-face" id="reel3">🪙</div></div>
+            </div>
+            <div class="reel-footer">
+              <span>Hit matching icons to trigger payout multipliers.</span>
+            </div>
           </div>
+
+          <aside class="stage-side right-side">
+            <div class="side-panel small-meter">
+              <span class="side-label">Heat</span>
+              <div class="meter"><i id="heatMeter"></i></div>
+            </div>
+            <div class="side-panel small-meter">
+              <span class="side-label">Luck</span>
+              <div class="meter"><i id="luckMeter"></i></div>
+            </div>
+          </aside>
         </div>
 
-        <div class="reels-shell">
-          <div class="reels" aria-label="Slot machine reels">
-            <div class="reel-window"><div class="reel" id="reel1">💎</div></div>
-            <div class="reel-window"><div class="reel" id="reel2">👑</div></div>
-            <div class="reel-window"><div class="reel" id="reel3">💰</div></div>
-          </div>
+        <div class="control-deck">
+          <button class="deck-btn subtle" id="betDownBtn" type="button">- BET</button>
+          <button class="deck-btn spin-main" id="spinBtn" type="button">SPIN THE VAULT</button>
+          <button class="deck-btn subtle" id="betUpBtn" type="button">+ BET</button>
         </div>
 
-        <div class="controls-row">
-          <button class="control-btn" id="betDownBtn" type="button">- BET</button>
-          <button class="spin-btn" id="spinBtn" type="button">SPIN</button>
-          <button class="control-btn" id="betUpBtn" type="button">+ BET</button>
-        </div>
+        <div class="message-box" id="messageBox">Press SPIN THE VAULT to chase the black gold jackpot.</div>
 
-        <div class="message-box" id="messageBox">Press SPIN to chase the vault jackpot.</div>
-
-        <div class="paytable">
-          <div class="pay-item"><span>💎💎💎</span><strong>10x BET</strong></div>
-          <div class="pay-item"><span>👑👑👑</span><strong>8x BET</strong></div>
-          <div class="pay-item"><span>💰💰💰</span><strong>6x BET</strong></div>
-          <div class="pay-item"><span>🎵🎵🎵</span><strong>5x BET</strong></div>
-          <div class="pay-item"><span>Any 2 Match</span><strong>2x BET</strong></div>
+        <div class="pay-row">
+          <div class="pay-card"><span>7 7 7</span><strong>12x + Jackpot</strong></div>
+          <div class="pay-card"><span>👑 👑 👑</span><strong>10x Bet</strong></div>
+          <div class="pay-card"><span>💎 💎 💎</span><strong>8x Bet</strong></div>
+          <div class="pay-card"><span>💰 💰 💰</span><strong>6x Bet</strong></div>
+          <div class="pay-card"><span>Any 2 Match</span><strong>2x Bet</strong></div>
         </div>
       </section>
     </main>
