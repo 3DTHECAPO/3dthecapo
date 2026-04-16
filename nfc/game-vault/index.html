@@ -1,15 +1,26 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CAPO VAULT ARCADE</title><link rel="stylesheet" href="./shared.css"><style>
-.hero{position:relative;overflow:hidden;padding:28px;border-radius:28px;min-height:320px}.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.82)),url('./assets/vault-bg.jpg') center/cover no-repeat;opacity:.52}.hero>*{position:relative;z-index:1}
-.chip{display:inline-flex;align-items:center;gap:12px;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(0,0,0,.42)}.chip img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:24px}.card{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:18px;padding:22px;min-height:250px}.card:after{content:"";position:absolute;inset:auto -44px -44px auto;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle, rgba(201,152,69,.18), transparent 72%)}.card>*{position:relative;z-index:1}
-.tag{display:inline-block;padding:7px 10px;border-radius:999px;border:1px solid var(--line);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f0cb7e;background:rgba(201,152,69,.06)}.card h3{font-size:30px;margin:10px 0 8px}.card p{min-height:68px}
-.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:22px}.kpi{padding:14px;border-radius:18px;border:1px solid var(--line);background:rgba(0,0,0,.22)}.kpi b{display:block;font-size:22px;color:var(--gold2);margin-bottom:4px}.kpi span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.13em}
-@media(max-width:720px){.kpis{grid-template-columns:1fr}}
-</style></head><body><div class="wrap"><section class="hero metal-panel"><div class="chip"><img src="./assets/logo.jpg" alt="3D THE CAPO logo"><span>3D THE CAPO • CAPO VAULT</span></div><div class="topbar" style="margin-top:18px"><div class="title-block"><div class="kicker">Premium Game Vault</div><h1><span class="gold-text">Capo</span> Arcade</h1><p>Luxury black-and-gold games built around your brand, your music, and your vault vibe.</p></div><div class="hud"><div class="pill">Reward Slot</div><div class="pill">Hood Maze</div><div class="pill">Pool</div><div class="pill">Night Run</div><div class="pill">Chess</div><div class="pill">Vault Defense</div></div></div><div class="kpis"><div class="kpi"><b>6</b><span>Games Live</span></div><div class="kpi"><b>Black / Gold</b><span>Unified Theme</span></div><div class="kpi"><b>Mobile Ready</b><span>Touch Controls Added</span></div></div><div class="grid">
-<article class="card metal-panel"><div><span class="tag">Main Event</span><h3>Reward Slot</h3><p>Cinematic 5-reel machine with your art, weighted odds, and premium machine styling.</p></div><a class="play-btn" href="./games/slot-machine-custom/index.html">Play Slot</a></article>
-<article class="card metal-panel"><div><span class="tag">Street Maze</span><h3>Hood Maze</h3><p>Pacman-style block run with money pickups, patrol heat, and mobile d-pad controls.</p></div><a class="play-btn" href="./games/hood-maze/index.html">Run Hood Maze</a></article>
-<article class="card metal-panel"><div><span class="tag">Table Game</span><h3>Pool</h3><p>Dark luxury billiards table with cleaner layout, touch aiming, and shot tracking.</p></div><a class="play-btn" href="./games/pool/index.html">Play Pool</a></article>
-<article class="card metal-panel"><div><span class="tag">Bay Run</span><h3>Night Run</h3><p>Bridge skyline highway dodge game with touch steering, boost, and rep score.</p></div><a class="play-btn" href="./games/racing/index.html">Start Race</a></article>
-<article class="card metal-panel"><div><span class="tag">Luxury</span><h3>Chess</h3><p>Premium two-player board with cleaner controls, legal moves, and refined board styling.</p></div><a class="play-btn" href="./games/chess/index.html">Open Chess</a></article>
-<article class="card metal-panel"><div><span class="tag">Training</span><h3>Vault Defense</h3><p>Target drill with cleaner controls, combo tracking, and improved arena styling.</p></div><a class="play-btn" href="./games/vault-defense/index.html">Run Drill</a></article>
-</div></section></div></body></html>
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAPO VAULT</title><link rel="stylesheet" href="./shared.css">
+<style>
+.hero{position:relative;overflow:hidden;padding:28px;border-radius:30px}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,.26), rgba(0,0,0,.66)), url('./assets/vault-bg.jpg') center/cover no-repeat;opacity:.42;filter:saturate(.76) contrast(1.05)}
+.hero>*{position:relative;z-index:1}.chip{display:inline-flex;gap:10px;align-items:center;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:rgba(0,0,0,.28)}
+.chip img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:22px}
+.card{padding:20px;display:flex;flex-direction:column;justify-content:space-between;min-height:280px;position:relative;overflow:hidden}
+.card::after{content:"";position:absolute;inset:auto -40px 62% auto;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle, rgba(211,165,75,.20), transparent 68%);filter:blur(10px)}
+.card>*{position:relative;z-index:1}.tag{display:inline-block;padding:8px 11px;border-radius:999px;border:1px solid var(--line);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f0cb7e;background:rgba(211,165,75,.06)}
+.card h3{margin:16px 0 10px;font-size:32px}.card p{margin:0 0 16px;color:var(--muted);line-height:1.6}
+.info{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px}.info .panel{padding:14px;text-align:center}.info span{display:block;color:var(--muted);font-size:11px;letter-spacing:.18em;text-transform:uppercase}.info strong{font-size:24px;display:block;margin-top:6px}
+@media (max-width:760px){.info{grid-template-columns:1fr}.card h3{font-size:28px}}
+</style></head><body><div class="wrap">
+<section class="hero panel">
+<div class="chip"><img src="./assets/logo.jpg" alt="3D THE CAPO"><span>3D THE CAPO • CAPO VAULT</span></div>
+<div class="header" style="margin-top:16px"><div><div class="kicker">Premium Game Vault</div><h1 class="title"><span class="gold">Two Games.</span> No filler.</h1><p class="subtitle">The vault is now built around two polished experiences only: a cinematic reward slot and a street-edition chess board. Everything else is cut so the whole room feels tighter and more premium.</p></div><div class="pills"><div class="pill">Elite Slot</div><div class="pill">Capo Chess</div></div></div>
+<div class="grid">
+<article class="card panel"><div><span class="tag">Centerpiece</span><h3>Capo Casino</h3><p>5 reels, 3 rows, cinematic intro, weighted odds, no public dev text, and one fixed credit bank that starts the same for everybody.</p></div><div><a class="btn" href="./games/slot-machine-custom/index.html">Enter Slot</a></div></article>
+<article class="card panel"><div><span class="tag">Street Edition</span><h3>Capo Chess</h3><p>Graffiti-inspired board styling, gold highlights, smooth local play, captured-piece display, and a much cleaner mobile layout.</p></div><div><a class="btn" href="./games/capo-chess/index.html">Open Chess</a></div></article>
+</div>
+<div class="info"><div class="panel"><span>Games</span><strong>2</strong></div><div class="panel"><span>Vault Style</span><strong>Premium</strong></div><div class="panel"><span>Filler Cut</span><strong>100%</strong></div></div>
+</section></div></body></html>
