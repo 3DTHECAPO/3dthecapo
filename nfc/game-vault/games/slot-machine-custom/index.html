@@ -1,109 +1,20 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>3D THE CAPO — Capo Casino</title>
-  <link rel="stylesheet" href="./style.css" />
-</head>
-<body>
-  <div class="page-shell">
-    <div class="lux-orb orb-a"></div>
-    <div class="lux-orb orb-b"></div>
-    <div class="grid-overlay"></div>
-
-    <main class="cabinet-wrap">
-      <header class="hero-top">
-        <p class="eyebrow">NFC GAME VAULT</p>
-        <h1>CAPO CASINO</h1>
-        <p class="subhead">Luxury black &amp; gold slot room built for 3D THE CAPO</p>
-      </header>
-
-      <section class="cabinet">
-        <div class="cabinet-trim"></div>
-        <div class="cabinet-topbar">
-          <div class="brand-stamp">
-            <span class="stamp-mini">3D THE CAPO</span>
-            <strong>BLACK GOLD JACKPOT</strong>
-          </div>
-          <div class="status-pill" id="statusPill">VAULT LIVE</div>
-        </div>
-
-        <div class="display-row">
-          <article class="display-card">
-            <span class="display-label">Credits</span>
-            <strong id="balanceDisplay">1000</strong>
-          </article>
-          <article class="display-card display-jackpot">
-            <span class="display-label">Vault Jackpot</span>
-            <strong id="jackpotDisplay">5000</strong>
-          </article>
-          <article class="display-card">
-            <span class="display-label">Bet</span>
-            <strong id="betDisplay">50</strong>
-          </article>
-        </div>
-
-        <div class="machine-stage">
-          <aside class="stage-side left-side">
-            <div class="side-panel">
-              <span class="side-label">MODE</span>
-              <strong>PREMIUM</strong>
-            </div>
-            <div class="side-panel">
-              <span class="side-label">MAX HIT</span>
-              <strong>777 + JACKPOT</strong>
-            </div>
-          </aside>
-
-          <div class="reel-chamber">
-            <div class="chamber-toplight"></div>
-            <div class="reel-header">
-              <span>Vault Reel 01</span>
-              <span>Vault Reel 02</span>
-              <span>Vault Reel 03</span>
-            </div>
-            <div class="reels" aria-label="Slot machine reels">
-              <div class="reel-window"><div class="reel-face" id="reel1">👑</div></div>
-              <div class="reel-window"><div class="reel-face" id="reel2">💎</div></div>
-              <div class="reel-window"><div class="reel-face" id="reel3">🪙</div></div>
-            </div>
-            <div class="reel-footer">
-              <span>Hit matching icons to trigger payout multipliers.</span>
-            </div>
-          </div>
-
-          <aside class="stage-side right-side">
-            <div class="side-panel small-meter">
-              <span class="side-label">Heat</span>
-              <div class="meter"><i id="heatMeter"></i></div>
-            </div>
-            <div class="side-panel small-meter">
-              <span class="side-label">Luck</span>
-              <div class="meter"><i id="luckMeter"></i></div>
-            </div>
-          </aside>
-        </div>
-
-        <div class="control-deck">
-          <button class="deck-btn subtle" id="betDownBtn" type="button">- BET</button>
-          <button class="deck-btn spin-main" id="spinBtn" type="button">SPIN THE VAULT</button>
-          <button class="deck-btn subtle" id="betUpBtn" type="button">+ BET</button>
-        </div>
-
-        <div class="message-box" id="messageBox">Press SPIN THE VAULT to chase the black gold jackpot.</div>
-
-        <div class="pay-row">
-          <div class="pay-card"><span>7 7 7</span><strong>12x + Jackpot</strong></div>
-          <div class="pay-card"><span>👑 👑 👑</span><strong>10x Bet</strong></div>
-          <div class="pay-card"><span>💎 💎 💎</span><strong>8x Bet</strong></div>
-          <div class="pay-card"><span>💰 💰 💰</span><strong>6x Bet</strong></div>
-          <div class="pay-card"><span>Any 2 Match</span><strong>2x Bet</strong></div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <script src="./script.js"></script>
-</body>
-</html>
+<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>CAPO CASINO</title><link rel='stylesheet' href='style.css'></head><body>
+<div class='app'>
+  <header><a class='back' href='../../index.html'>← Back</a><div><div class='kicker'>3D THE CAPO</div><h1>CAPO CASINO</h1><p>Luxury vault slot machine.</p></div></header>
+  <section class='machine'>
+    <div class='topbar'><div><span>Credits</span><strong id='credits'>500</strong></div><div><span>Bet</span><strong id='bet'>25</strong></div><div><span>Jackpot</span><strong id='jackpot'>2500</strong></div></div>
+    <div class='reels' id='reels'>
+      <div class='reel'><div class='symbol' id='r0'>👑</div></div>
+      <div class='reel'><div class='symbol' id='r1'>💰</div></div>
+      <div class='reel'><div class='symbol' id='r2'>🔊</div></div>
+    </div>
+    <div class='controls'>
+      <button id='minus'>- Bet</button>
+      <button id='spin' class='spin'>Spin</button>
+      <button id='plus'>+ Bet</button>
+    </div>
+    <div class='message' id='msg'>Hit spin to run the vault.</div>
+    <div class='pay'>Match 3 for a win • 👑 jackpot • 💿 music reward • 👕 merch vibe</div>
+  </section>
+</div>
+<script src='script.js'></script></body></html>
