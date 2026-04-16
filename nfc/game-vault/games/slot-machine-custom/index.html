@@ -2,80 +2,113 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>CAPO CASINO — Reward Slot</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CAPO CASINO — Elite Slot</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="bg-fx"></div>
-  <div class="intro-overlay" id="introOverlay" aria-hidden="false">
-    <div class="intro-card">
-      <div class="intro-kicker">3D THE CAPO PRESENTS</div>
-      <h1>CAPO CASINO</h1>
-      <p>Luxury vault slot experience. Five reels. Cinematic lights. Controlled reward odds.</p>
-      <button id="enterBtn" class="primary-btn">ENTER THE VAULT</button>
+  <div id="intro" class="intro show" aria-hidden="false">
+    <div class="intro-glow"></div>
+    <div class="intro-panel">
+      <div class="intro-kicker">CAPO VAULT</div>
+      <h1>ENTERING CAPO CASINO</h1>
+      <p>Luxury reward slot experience loading...</p>
+      <button id="enterBtn" class="cta">ENTER</button>
     </div>
   </div>
-  <main class="machine-wrap">
-    <header class="topbar">
-      <a href="../../index.html" class="back-link">← BACK TO VAULT</a>
-      <div class="brand-badge">3D THE CAPO</div>
-    </header>
-    <section class="machine-shell">
-      <div class="marquee">
-        <div class="marquee-top">CINEMATIC REWARD SLOT</div>
-        <div class="marquee-title">CAPO CASINO</div>
-        <div class="marquee-sub">5 REELS • 3 ROWS • ELITE VAULT ODDS</div>
-      </div>
-      <div class="status-strip">
-        <div class="status-box"><span class="label">CREDITS</span><strong id="creditsValue">500</strong></div>
-        <div class="status-box"><span class="label">BET</span><strong id="betValue">25</strong></div>
-        <div class="status-box jackpot-box"><span class="label">JACKPOT</span><strong id="jackpotValue">25000</strong></div>
-      </div>
-      <div class="cabinet">
-        <div class="cabinet-lights left"></div>
-        <div class="cabinet-lights right"></div>
-        <div class="screen-frame">
-          <div class="payline payline-top"></div>
-          <div class="payline payline-mid active"></div>
-          <div class="payline payline-bot"></div>
-          <div class="reels" id="reels">
-            <div class="reel-window"><div class="reel-strip" id="reel0"></div></div>
-            <div class="reel-window"><div class="reel-strip" id="reel1"></div></div>
-            <div class="reel-window"><div class="reel-strip" id="reel2"></div></div>
-            <div class="reel-window"><div class="reel-strip" id="reel3"></div></div>
-            <div class="reel-window"><div class="reel-strip" id="reel4"></div></div>
+
+  <div class="bg-particles" aria-hidden="true"></div>
+
+  <main class="scene">
+    <section class="machine-wrap">
+      <header class="top-marquee">
+        <div class="marquee-corner left">3D THE CAPO</div>
+        <div class="marquee-center">
+          <div class="brand-row">
+            <span class="brand-pill">CAPO CASINO</span>
+            <span class="brand-pill soft">REWARD SLOT</span>
           </div>
-          <div class="screen-glass"></div>
-        </div>
-        <div class="message-board" id="messageBoard">READY TO SPIN</div>
-        <div class="controls">
-          <div class="control-cluster">
-            <button class="control-btn" id="minusBetBtn" aria-label="Decrease bet">−</button>
-            <button class="control-btn" id="plusBetBtn" aria-label="Increase bet">+</button>
+          <div class="jackpot-board">
+            <span class="label">JACKPOT</span>
+            <span id="jackpotValue" class="value">125,000</span>
           </div>
-          <button class="spin-btn" id="spinBtn"><span class="spin-top">SPIN</span><span class="spin-sub">CINEMATIC REELS</span></button>
-          <button class="control-btn ghost" id="autoBtn">AUTO x5</button>
         </div>
-      </div>
-      <section class="reward-panel">
-        <div class="panel-card"><div class="panel-title">BEST HIT</div><div class="panel-value" id="bestHit">—</div></div>
-        <div class="panel-card"><div class="panel-title">LAST WIN</div><div class="panel-value" id="lastWin">0</div></div>
-        <div class="panel-card odds"><div class="panel-title">ODDS</div><div class="odds-copy">small hits are common, big rewards stay rare</div></div>
+        <div class="marquee-corner right">VAULT ACCESS</div>
+      </header>
+
+      <section class="machine-shell">
+        <div class="machine-glow"></div>
+        <div class="machine-head">
+          <div class="logo-lockup">
+            <div class="logo-crown">♛</div>
+            <div>
+              <div class="logo-title">3D THE CAPO</div>
+              <div class="logo-sub">ELITE VAULT EDITION</div>
+            </div>
+          </div>
+          <div class="status-panel">
+            <div><span>BET</span><strong id="betValue">25</strong></div>
+            <div><span>CREDITS</span><strong id="creditsValue">2500</strong></div>
+            <div><span>LAST WIN</span><strong id="lastWinValue">0</strong></div>
+          </div>
+        </div>
+
+        <div class="reel-chamber">
+          <div class="glass-reflection"></div>
+          <div class="win-line row1"></div>
+          <div class="win-line row2"></div>
+          <div class="win-line row3"></div>
+          <div id="reels" class="reels"></div>
+        </div>
+
+        <div class="control-deck">
+          <div class="deck-left">
+            <button id="betDownBtn" class="metal-btn small">BET -</button>
+            <button id="betUpBtn" class="metal-btn small">BET +</button>
+          </div>
+          <button id="spinBtn" class="spin-btn">SPIN</button>
+          <div class="deck-right">
+            <button id="maxBetBtn" class="metal-btn small">MAX BET</button>
+            <button id="resetBtn" class="metal-btn small">RESET</button>
+          </div>
+        </div>
       </section>
+
+      <footer class="machine-footer">
+        <div class="pay-hint">5 REELS · 3 ROWS · CINEMATIC MODE</div>
+        <div class="pay-hint">Rare rewards tuned low on purpose</div>
+      </footer>
     </section>
-    <div class="reward-modal" id="rewardModal" aria-hidden="true">
-      <div class="reward-card">
-        <div class="reward-kicker">ACCESS GRANTED</div>
-        <h2 id="rewardTitle">BIG WIN</h2>
-        <p id="rewardCopy">You hit a reward combo.</p>
-        <button class="primary-btn" id="closeRewardBtn">KEEP SPINNING</button>
+
+    <aside class="side-panel left-panel">
+      <div class="panel-card">
+        <div class="panel-title">PAYLINES</div>
+        <ul>
+          <li>3 logo / crown / key = big win</li>
+          <li>3 covers = music unlock tier</li>
+          <li>3 merch icons = merch tier</li>
+          <li>Any 3 matching = payout</li>
+        </ul>
       </div>
-    </div>
+    </aside>
+
+    <aside class="side-panel right-panel">
+      <div class="panel-card">
+        <div class="panel-title">VAULT FEED</div>
+        <div id="feedText" class="feed-text">System ready. Press spin.</div>
+      </div>
+    </aside>
   </main>
-  <script src="./script.js"></script>
+
+  <div id="winOverlay" class="win-overlay" aria-hidden="true">
+    <div class="win-panel">
+      <div id="winTier" class="tier">WIN</div>
+      <div id="winText" class="message">CAPO REWARD</div>
+      <div id="winAmount" class="amount">+0</div>
+      <button id="closeWinBtn" class="cta ghost">CONTINUE</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
