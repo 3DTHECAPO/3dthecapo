@@ -1,242 +1,49 @@
 
-const SYMBOLS = [
-  {id:'logo', label:'3D Logo', type:'image', src:'../../assets/logo.jpg', tier:'jackpot'},
-  {id:'vault', label:'Vault', type:'image', src:'../../assets/vault-bg.jpg', tier:'rare'},
-  {id:'grammy', label:'Grammy', type:'image', src:'../../assets/cover-fgrammy.jpg', tier:'music'},
-  {id:'x100', label:'100x3', type:'image', src:'../../assets/cover-100x3.jpg', tier:'music'},
-  {id:'resume', label:'My Resume', type:'image', src:'../../assets/cover-resume.jpg', tier:'music'},
-  {id:'crown', label:'Crown', type:'icon', icon:'👑', tier:'rare'},
-  {id:'speaker', label:'Speaker', type:'icon', icon:'🔊', tier:'common'},
-  {id:'hoodie', label:'Merch', type:'icon', icon:'🧥', tier:'merch'},
-  {id:'cash', label:'Cash', type:'icon', icon:'💰', tier:'common'},
-  {id:'key', label:'Vault Key', type:'icon', icon:'🔐', tier:'rare'},
+const SYMBOLS=[
+{id:'logo',label:'Capo',type:'image',src:'../../assets/logo.jpg',tier:'jackpot'},
+{id:'vault',label:'Vault',type:'image',src:'../../assets/vault-bg.jpg',tier:'rare'},
+{id:'grammy',label:'Grammy',type:'image',src:'../../assets/cover-fgrammy.jpg',tier:'music'},
+{id:'x100',label:'100x3',type:'image',src:'../../assets/cover-100x3.jpg',tier:'music'},
+{id:'resume',label:'Resume',type:'image',src:'../../assets/cover-resume.jpg',tier:'music'},
+{id:'hoodie',label:'Hoodie',type:'icon',icon:'🧥',tier:'merch'},
+{id:'hat',label:'Hat',type:'icon',icon:'🧢',tier:'merch'},
+{id:'speaker',label:'Speaker',type:'icon',icon:'🔊',tier:'common'},
+{id:'crown',label:'Crown',type:'icon',icon:'👑',tier:'rare'},
+{id:'cash',label:'Cash',type:'icon',icon:'💰',tier:'common'},
+{id:'key',label:'Key',type:'icon',icon:'🔐',tier:'rare'}
 ];
-const WEIGHTS = {
-  logo: 1,
-  vault: 3,
-  grammy: 7,
-  x100: 7,
-  resume: 7,
-  crown: 4,
-  speaker: 13,
-  hoodie: 6,
-  cash: 18,
-  key: 4,
-};
-// common small hit around 10-12%, medium around 3%, rare around 1%, merch about 0.3%, jackpot very rare.
-const PAYLINES = [[0,0,0,0,0],[1,1,1,1,1],[2,2,2,2,2]];
-const REELS = 5;
-const ROWS = 3;
-let credits = 1000;
-let bet = 25;
-let jackpot = 25000;
-let lastWin = 0;
-let spinning = false;
-
-const reelsEl = document.getElementById('reels');
-const messageEl = document.getElementById('message');
-const statusEl = document.getElementById('status');
-const spinBtn = document.getElementById('spinBtn');
-
-function weightedPick(){
-  const entries = Object.entries(WEIGHTS);
-  const total = entries.reduce((a,[,w])=>a+w,0);
-  let r = Math.random()*total;
-  for(const [id,w] of entries){
-    if((r -= w) <= 0) return SYMBOLS.find(s=>s.id===id);
-  }
-  return SYMBOLS[SYMBOLS.length-1];
+const weights={logo:1,vault:3,grammy:6,x100:6,resume:6,hoodie:5,hat:5,speaker:13,crown:3,cash:17,key:3};
+const REELS=5, ROWS=3, PAYLINES=[[0,0,0,0,0],[1,1,1,1,1],[2,2,2,2,2]];
+const reelsEl=document.getElementById('reels'), msgEl=document.getElementById('message'), statusEl=document.getElementById('status'), screenEl=document.getElementById('screen');
+const spinBtn=document.getElementById('spinBtn');
+let credits=1000, bet=25, jackpot=25000, lastWin=0, spinning=false, autoRemaining=0;
+const options=[25,50,100,200];
+function weightedPick(){const total=Object.values(weights).reduce((a,b)=>a+b,0); let r=Math.random()*total; for(const [id,w] of Object.entries(weights)){r-=w; if(r<=0)return SYMBOLS.find(s=>s.id===id)} return SYMBOLS[0]}
+function randomGrid(){return Array.from({length:REELS},()=>Array.from({length:ROWS},()=>weightedPick()))}
+function buildCell(sym){const d=document.createElement('div'); d.className='cell'; d.dataset.id=sym.id; if(sym.type==='image'){const img=document.createElement('img'); img.src=sym.src; img.alt=sym.label; d.appendChild(img);} else {const i=document.createElement('div'); i.className='icon'; i.textContent=sym.icon; d.appendChild(i);} const l=document.createElement('div'); l.className='label'; l.textContent=sym.label; d.appendChild(l); return d}
+function render(grid,spinningNow=false){reelsEl.innerHTML=''; for(let c=0;c<REELS;c++){const reel=document.createElement('div'); reel.className='reel'+(spinningNow?' spin':''); for(let r=0;r<ROWS;r++) reel.appendChild(buildCell(grid[c][r])); reelsEl.appendChild(reel)}}
+function hud(){document.getElementById('credits').textContent=credits.toLocaleString(); document.getElementById('bet').textContent=bet.toLocaleString(); document.getElementById('jackpot').textContent=jackpot.toLocaleString(); document.getElementById('lastWin').textContent=lastWin.toLocaleString();}
+function setMessage(t,big=false){msgEl.textContent=t; msgEl.classList.toggle('big',!!big)}
+function adjustBet(dir){if(spinning) return; let idx=options.indexOf(bet); idx=Math.max(0,Math.min(options.length-1,idx+dir)); bet=options[idx]; hud()}
+function payout(sym,count){if(count<3) return 0; if(sym.id==='logo' && count===5) return jackpot; if(sym.tier==='merch') return bet*(6 + (count-3)*3); if(sym.tier==='music') return bet*(4 + (count-3)*2); if(sym.tier==='rare') return bet*(8 + (count-3)*4); return bet*(2 + (count-3))}
+function analyze(grid){let total=0; let messages=[]; let reward='loss'; const wins=[];
+ for(let lineIndex=0; lineIndex<PAYLINES.length; lineIndex++){
+   const line=PAYLINES[lineIndex]; const rowSyms=line.map((row,col)=>grid[col][row]); const first=rowSyms[0]; let streak=1; for(let i=1;i<rowSyms.length;i++){ if(rowSyms[i].id===first.id) streak++; else break; }
+   if(streak>=3){ total+=payout(first,streak); messages.push(`${first.label} x${streak}`); wins.push({line:lineIndex,row:lineIndex,count:streak,id:first.id}); if(first.id==='logo'&&streak===5){ reward='jackpot'; jackpot=25000;} else if(first.tier==='merch' && reward!=='jackpot') reward='merch'; else if(first.tier==='music' && !['jackpot','merch'].includes(reward)) reward='music'; else if(first.tier==='rare' && !['jackpot','merch','music'].includes(reward)) reward='rare'; else if(reward==='loss') reward='small'; }
+ }
+ const flat=grid.flat(); const keyCount=flat.filter(s=>s.id==='key').length; if(keyCount>=3){ total += bet*5; messages.push('Key scatter'); if(reward==='loss') reward='rare'; }
+ return {total,reward,messages,wins};
 }
-function makeCell(symbol){
-  const cell = document.createElement('div');
-  cell.className = 'cell' + (symbol.type === 'icon' ? ' icon' : '');
-  if(symbol.type === 'image'){
-    const img = document.createElement('img');
-    img.src = symbol.src;
-    img.alt = symbol.label;
-    cell.appendChild(img);
-  } else {
-    const icon = document.createElement('div');
-    icon.className = 'icon-txt';
-    icon.textContent = symbol.icon;
-    cell.appendChild(icon);
-  }
-  const label = document.createElement('div');
-  label.className = 'label';
-  label.textContent = symbol.label;
-  cell.appendChild(label);
-  return cell;
+function highlight(result){document.querySelectorAll('.cell').forEach(c=>c.classList.remove('win')); result.wins.forEach(w=>{ const reelEls=[...document.querySelectorAll('.reel')]; for(let c=0;c<w.count;c++){ reelEls[c]?.children[w.row]?.classList.add('win'); } }); if(result.total>0){ screenEl.classList.add('flash'); setTimeout(()=>screenEl.classList.remove('flash'),500); } }
+function forceWinGrid(kind='small'){ const pool={small:['cash','speaker'],music:['grammy','x100','resume'],merch:['hoodie','hat'],rare:['vault','crown','key'],jackpot:['logo']}; let id=(pool[kind]||pool.small)[Math.floor(Math.random()*(pool[kind]||pool.small).length)]; const sym=SYMBOLS.find(s=>s.id===id); const grid=randomGrid(); const row=Math.floor(Math.random()*3); for(let i=0;i<3+(kind==='jackpot'?2:0);i++) grid[i][row]=sym; return grid; }
+function chooseGrid(){ const roll=Math.random(); if(roll<0.0008) return forceWinGrid('jackpot'); if(roll<0.0038) return forceWinGrid('merch'); if(roll<0.0138) return forceWinGrid('rare'); if(roll<0.0438) return forceWinGrid('music'); if(roll<0.1638) return forceWinGrid('small'); return randomGrid(); }
+function spin(){ if(spinning || credits<bet) return; spinning=true; credits-=bet; lastWin=0; statusEl.textContent='Spinning'; hud(); setMessage('Reels spinning...'); render(randomGrid(), true); spinBtn.disabled=true;
+ const delays=[350,550,750,950,1180]; let finalGrid=chooseGrid(); delays.forEach((ms,idx)=>setTimeout(()=>{ const reels=[...document.querySelectorAll('.reel')]; reels[idx].classList.remove('spin'); reels[idx].innerHTML=''; for(let r=0;r<ROWS;r++) reels[idx].appendChild(buildCell(finalGrid[idx][r])); },ms));
+ setTimeout(()=>{ const result=analyze(finalGrid); highlight(result); if(result.total>0){ credits+=result.total; lastWin=result.total; jackpot += Math.floor(bet*0.15); statusEl.textContent=result.reward==='jackpot'?'JACKPOT!':'Win'; const rewardText={jackpot:'ACCESS GRANTED — JACKPOT HIT',merch:'MERCH REWARD HIT',music:'MUSIC REWARD HIT',rare:'RARE BONUS HIT',small:'SMALL WIN'}; setMessage(`${rewardText[result.reward] || 'WIN'} • ${result.messages.join(' • ')} • +${result.total.toLocaleString()}`, true); }
+ else { jackpot += Math.floor(bet*0.35); statusEl.textContent='Miss'; setMessage('No hit this spin. Build the jackpot and try again.'); }
+ hud(); spinning=false; spinBtn.disabled=false; if(autoRemaining>0){ autoRemaining--; if(autoRemaining>0) setTimeout(spin,250); }
+ },1400);
 }
-function renderGrid(resultGrid){
-  reelsEl.innerHTML = '';
-  for(let c=0;c<REELS;c++){
-    const reel = document.createElement('div');
-    reel.className = 'reel';
-    for(let r=0;r<ROWS;r++){
-      reel.appendChild(makeCell(resultGrid[c][r]));
-    }
-    reelsEl.appendChild(reel);
-  }
-}
-function randomGrid(){
-  return Array.from({length:REELS}, ()=>Array.from({length:ROWS}, ()=>weightedPick()));
-}
-function setText(id, val){document.getElementById(id).textContent = val;}
-function updateHud(){
-  setText('credits', credits.toLocaleString());
-  setText('bet', bet.toLocaleString());
-  setText('jackpot', jackpot.toLocaleString());
-  setText('lastWin', lastWin.toLocaleString());
-}
-function setMessage(msg){messageEl.textContent = msg;}
-function adjustBet(delta){
-  if(spinning) return;
-  const options=[25,50,100,200];
-  let idx = options.indexOf(bet);
-  idx = Math.max(0, Math.min(options.length-1, idx + delta));
-  bet = options[idx];
-  updateHud();
-}
-function evaluate(grid){
-  let payout = 0;
-  let messages = [];
-  let rewardType = 'none';
-
-  const lines = PAYLINES.map(line => line.map((row, col)=>grid[col][row]));
-  const byId = arr => arr.map(s=>s.id);
-
-  for(const symbols of lines){
-    const ids = byId(symbols);
-    const counts = {};
-    ids.forEach(id=>counts[id]=(counts[id]||0)+1);
-
-    if(ids.every(id => id === 'logo')){
-      payout += jackpot;
-      messages.push('JACKPOT — full 3D logo payline.');
-      jackpot = 25000;
-      rewardType = 'jackpot';
-      continue;
-    }
-
-    for(const [id,count] of Object.entries(counts)){
-      if(count >= 3){
-        const sym = SYMBOLS.find(s=>s.id===id);
-        if(sym.tier === 'merch'){
-          payout += Math.floor(bet * 6);
-          messages.push('Merch line hit.');
-          rewardType = rewardType === 'jackpot' ? rewardType : 'merch';
-        } else if(sym.tier === 'music'){
-          payout += Math.floor(bet * 4);
-          messages.push('Music unlock line.');
-          if(rewardType === 'none') rewardType = 'music';
-        } else if(sym.id === 'vault' || sym.id === 'key' || sym.id === 'crown'){
-          payout += Math.floor(bet * 10);
-          messages.push('Rare vault bonus.');
-          rewardType = rewardType === 'jackpot' ? rewardType : 'rare';
-        } else {
-          payout += Math.floor(bet * 2);
-          messages.push('Common line hit.');
-          if(rewardType === 'none') rewardType = 'small';
-        }
-      }
-    }
-  }
-
-  // extra rare combination anywhere on screen: 3 keys
-  const all = grid.flat();
-  const keyCount = all.filter(s=>s.id==='key').length;
-  if(keyCount >= 3){
-    payout += Math.floor(bet * 5);
-    messages.push('Vault key scatter bonus.');
-    rewardType = rewardType === 'none' ? 'rare' : rewardType;
-  }
-
-  if(payout === 0){
-    jackpot += Math.max(10, Math.floor(bet * 0.35));
-    lastWin = 0;
-    return {payout:0, rewardType:'loss', msg:'No hit. Jackpot climbs. Keep the big rewards rare.'};
-  }
-
-  lastWin = payout;
-  return {
-    payout,
-    rewardType,
-    msg: messages.join(' ') + ' ' + rewardCopy(rewardType)
-  };
-}
-function rewardCopy(type){
-  switch(type){
-    case 'jackpot': return 'Best used for a very rare elite unlock or merch claim.';
-    case 'merch': return 'Good place for a merch code or claim token.';
-    case 'music': return 'Good place for an unreleased snippet or hidden track page.';
-    case 'rare': return 'Use this for a vault key, coupon, or higher-value digital reward.';
-    default: return 'Use this as points, credits, or a replay bonus.';
-  }
-}
-async function spinOnce(){
-  if(spinning) return;
-  if(credits < bet){
-    setMessage('Not enough credits. Reset or lower the bet.');
-    return;
-  }
-  spinning = true;
-  statusEl.textContent = 'Spinning';
-  credits -= bet;
-  updateHud();
-  setMessage('Spinning the vault...');
-  const cycles = 12;
-  for(let i=0;i<cycles;i++){
-    renderGrid(randomGrid());
-    await new Promise(r=>setTimeout(r, 90 + i*10));
-  }
-
-  let final = randomGrid();
-
-  // tune visible hit rate by gently nudging some losses into small wins
-  if(Math.random() < 0.11){
-    const lineRow = Math.floor(Math.random()*3);
-    const forced = SYMBOLS.find(s=>['cash','speaker','grammy','x100','resume','hoodie'][Math.floor(Math.random()*6)]===s.id);
-    for(let c=0;c<3;c++) final[c][lineRow] = forced;
-  }
-  if(Math.random() < 0.01){
-    const lineRow = Math.floor(Math.random()*3);
-    const rareForced = SYMBOLS.find(s=>['vault','key','crown'][Math.floor(Math.random()*3)]===s.id);
-    for(let c=0;c<3;c++) final[c][lineRow] = rareForced;
-  }
-  if(Math.random() < 0.0008){
-    const lineRow = 1;
-    for(let c=0;c<5;c++) final[c][lineRow] = SYMBOLS.find(s=>s.id==='logo');
-  }
-
-  renderGrid(final);
-  const out = evaluate(final);
-  credits += out.payout;
-  if(out.rewardType !== 'loss'){
-    document.querySelector('.screen-shell').classList.add('flash');
-    setTimeout(()=>document.querySelector('.screen-shell').classList.remove('flash'), 2000);
-  }
-  updateHud();
-  statusEl.textContent = out.rewardType === 'loss' ? 'Miss' : 'Hit';
-  setMessage(out.msg);
-  spinning = false;
-}
-async function autoSpin(times=10){
-  if(spinning) return;
-  for(let i=0;i<times;i++){
-    if(credits < bet) break;
-    await spinOnce();
-    await new Promise(r=>setTimeout(r, 220));
-  }
-}
-document.getElementById('betDown').onclick = ()=>adjustBet(-1);
-document.getElementById('betUp').onclick = ()=>adjustBet(1);
-document.getElementById('spinBtn').onclick = spinOnce;
-document.getElementById('resetBtn').onclick = ()=>{
-  if(spinning) return;
-  credits = 1000; jackpot = 25000; lastWin = 0; statusEl.textContent = 'Ready';
-  updateHud(); setMessage('Credits reset. Odds stay controlled.');
-  renderGrid(randomGrid());
-};
-document.getElementById('autoBtn').onclick = ()=>autoSpin(10);
-updateHud();
-renderGrid(randomGrid());
+function resetGame(){ credits=1000; bet=25; jackpot=25000; lastWin=0; autoRemaining=0; statusEl.textContent='Ready'; render(randomGrid()); hud(); setMessage('Spin to land music, merch, keys, vaults, or the logo jackpot.'); document.querySelectorAll('.cell').forEach(c=>c.classList.remove('win'));}
+document.getElementById('betDown').onclick=()=>adjustBet(-1); document.getElementById('betUp').onclick=()=>adjustBet(1); spinBtn.onclick=spin; document.getElementById('resetBtn').onclick=resetGame; document.getElementById('autoBtn').onclick=()=>{ if(spinning) return; autoRemaining=10; spin(); };
+resetGame();
