@@ -1,71 +1,11 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CAPO VAULT ARCADE</title>
-<link rel="stylesheet" href="./shared.css">
-<style>
-.hero{position:relative;overflow:hidden;padding:28px;border-radius:30px}
-.hero::before{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.55)), url('./assets/vault-bg.jpg') center/cover no-repeat;
-  opacity:.38;filter:saturate(.75) contrast(1.05)
-}
-.hero>*{position:relative;z-index:1}
-.logo-chip{display:inline-flex;gap:12px;align-items:center;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:rgba(0,0,0,.25)}
-.logo-chip img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:24px}
-.card{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:250px;padding:18px}
-.card::before{content:"";position:absolute;inset:auto -30px 68% auto;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle, rgba(217,165,72,.22), transparent 67%);filter:blur(12px)}
-.card>*{position:relative;z-index:1}
-.card h3{margin:14px 0 10px;font-size:28px}
-.card p{margin:0 0 16px;color:var(--muted);line-height:1.55;min-height:72px}
-.tag{display:inline-block;padding:7px 10px;border-radius:999px;border:1px solid var(--line);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f0cb7e;background:rgba(217,165,72,.06)}
-.action-row{display:flex;gap:10px;flex-wrap:wrap}
-.micro{font-size:12px;color:#9d8f75;margin-top:18px}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <section class="hero metal-panel">
-    <div class="logo-chip"><img src="./assets/logo.jpg" alt="3D THE CAPO logo"><span>3D THE CAPO • CAPO VAULT ARCADE</span></div>
-    <div class="topbar" style="margin-top:18px">
-      <div class="title-block">
-        <div class="kicker">Game Vault</div>
-        <h1><span class="gold-text">Play</span> The Vault</h1>
-        <p>Full drag-and-drop game room with upgraded paths, black-and-gold styling, and a branded 5-reel reward slot using your art. Upload this whole <strong>nfc/game-vault</strong> folder to replace the old one.</p>
-      </div>
-      <div class="hud">
-        <div class="pill">Slots</div>
-        <div class="pill">Pool</div>
-        <div class="pill">Racing</div>
-        <div class="pill">Chess</div>
-        <div class="pill">Vault Defense</div>
-      </div>
-    </div>
-    <div class="grid">
-      <article class="card metal-panel">
-        <div><span class="tag">Main Feature</span><h3>Reward Slot</h3><p>5 reels, 3 rows, weighted odds, branded symbols, and controlled reward logic so it stays exciting without paying out too much.</p></div>
-        <div class="action-row"><a class="play-btn" href="./games/slot-machine-custom/index.html">Play Slot</a></div>
-      </article>
-      <article class="card metal-panel">
-        <div><span class="tag">Table Game</span><h3>Pool</h3><p>Black felt, gold rails, cue glow, timer mode, and quick mobile play built for your vault room aesthetic.</p></div>
-        <div class="action-row"><a class="play-btn" href="./games/pool/index.html">Play Pool</a></div>
-      </article>
-      <article class="card metal-panel">
-        <div><span class="tag">Bay Vibe</span><h3>Racing</h3><p>Bridge lights, night run, traffic dodge, and score-based arcade speed with luxury dark UI.</p></div>
-        <div class="action-row"><a class="play-btn" href="./games/racing/index.html">Start Run</a></div>
-      </article>
-      <article class="card metal-panel">
-        <div><span class="tag">Classic</span><h3>Chess</h3><p>Black marble board, gold and matte pieces, simple local 2-player rules, and a premium look instead of a plain board.</p></div>
-        <div class="action-row"><a class="play-btn" href="./games/chess/index.html">Open Chess</a></div>
-      </article>
-      <article class="card metal-panel">
-        <div><span class="tag">Skill Game</span><h3>Vault Defense</h3><p>Clean target-range shooter with vault security styling, moving targets, streak meter, and fast replay.</p></div>
-        <div class="action-row"><a class="play-btn" href="./games/vault-defense/index.html">Run Drill</a></div>
-      </article>
-    </div>
-    <div class="micro">Paths are all local to this folder, so the pack is ready for GitHub Pages inside <strong>/nfc/game-vault/</strong>.</div>
-  </section>
-</div>
-</body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CAPO VAULT ARCADE</title><link rel="stylesheet" href="./shared.css"><style>
+.hero{position:relative;overflow:hidden;padding:28px;border-radius:28px;min-height:310px}.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.78)),url('./assets/vault-bg.jpg') center/cover no-repeat;opacity:.42}.hero>*{position:relative;z-index:1}.chip{display:inline-flex;align-items:center;gap:12px;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(0,0,0,.4)}.chip img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:24px}.card{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:16px;padding:22px;min-height:240px}.card:after{content:"";position:absolute;inset:auto -44px -44px auto;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle, rgba(215,166,87,.18), transparent 70%)}.card>*{position:relative;z-index:1}.tag{display:inline-block;padding:7px 10px;border-radius:999px;border:1px solid var(--line);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f0cb7e;background:rgba(217,165,72,.06)}.card h3{font-size:30px;margin:10px 0 8px}
+</style></head><body><div class="wrap"><section class="hero metal-panel"><div class="chip"><img src="./assets/logo.jpg" alt="logo"><span>3D THE CAPO • CAPO VAULT ARCADE</span></div><div class="topbar" style="margin-top:18px"><div class="title-block"><div class="kicker">Game Vault</div><h1><span class="gold-text">Capo</span> Arcade</h1><p>Clean rebuild. All buttons rewired. No placeholder cards. Same drop-in folder structure.</p></div><div class="hud"><div class="pill">Reward Slot</div><div class="pill">Hood Maze</div><div class="pill">Pool</div><div class="pill">Racing</div><div class="pill">Chess</div><div class="pill">Vault Defense</div></div></div><div class="grid">
+<article class="card metal-panel"><div><span class="tag">Main Event</span><h3>Reward Slot</h3><p>True 5-reel, 3-row machine using your art and weighted odds.</p></div><a class="play-btn" href="./games/slot-machine-custom/index.html">Play Slot</a></article>
+<article class="card metal-panel"><div><span class="tag">Street Maze</span><h3>Hood Maze</h3><p>Pacman-style hood run. Clear money pickups, dodge heat, survive the block.</p></div><a class="play-btn" href="./games/hood-maze/index.html">Run Hood Maze</a></article>
+<article class="card metal-panel"><div><span class="tag">Table Game</span><h3>Pool</h3><p>Luxury black-and-gold billiards with smoother aiming and cleaner physics.</p></div><a class="play-btn" href="./games/pool/index.html">Play Pool</a></article>
+<article class="card metal-panel"><div><span class="tag">Bay Run</span><h3>Racing</h3><p>Night highway driving with bridge silhouettes, traffic, boost, and rep score.</p></div><a class="play-btn" href="./games/racing/index.html">Start Race</a></article>
+<article class="card metal-panel"><div><span class="tag">Luxury</span><h3>Chess</h3><p>Luxury board, local two-player mode, legal move highlights, clean controls.</p></div><a class="play-btn" href="./games/chess/index.html">Open Chess</a></article>
+<article class="card metal-panel"><div><span class="tag">Training</span><h3>Vault Defense</h3><p>Hit moving targets, build combo, survive the countdown, protect the vault.</p></div><a class="play-btn" href="./games/vault-defense/index.html">Run Drill</a></article>
+</div></section></div></body></html>

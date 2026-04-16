@@ -1,61 +1,24 @@
 
 :root{
-  --bg:#060606;
-  --bg2:#0e0b08;
-  --panel:#121212;
-  --panel-2:#171311;
-  --gold:#d9a548;
-  --gold-2:#9a6b24;
-  --gold-3:#f3d18b;
-  --text:#f4ebda;
-  --muted:#b8ad96;
-  --line:rgba(217,165,72,.28);
-  --danger:#ffcb6e;
-  --shadow:0 20px 50px rgba(0,0,0,.45), 0 0 24px rgba(217,165,72,.11);
-  --radius:24px;
+  --bg:#090909;--panel:#111111;--panel2:#171717;--gold:#d7a657;--gold2:#f4d187;--text:#f3efe6;--muted:#b8aa8f;--line:rgba(215,166,87,.24);
 }
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:radial-gradient(circle at top, #22170d 0%, #0e0a08 25%, #050505 55%, #020202 100%);color:var(--text);font-family:Inter,Arial,sans-serif}
-a{color:inherit}
-body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
-  background:
-    linear-gradient(135deg, rgba(217,165,72,.07), transparent 24%, transparent 76%, rgba(217,165,72,.06)),
-    radial-gradient(circle at 50% 0%, rgba(255,215,130,.08), transparent 45%),
-    repeating-linear-gradient(90deg, transparent 0 42px, rgba(255,255,255,.014) 42px 43px);
-}
-.wrap{max-width:1320px;margin:0 auto;padding:20px}
-.gold-text{background:linear-gradient(180deg,#fff5d4,#efcb80 40%,#c88f35 65%,#8d5f1e 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.back-link,.ghost-btn,.play-btn,button{
-  appearance:none;border:none;text-decoration:none;cursor:pointer;
-  border-radius:18px;padding:13px 18px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
-}
-.back-link,.ghost-btn{
-  color:#f6ddb0;background:rgba(217,165,72,.08);border:1px solid var(--line)
-}
-.play-btn, .primary{
-  color:#160f05;background:linear-gradient(180deg,#f6d487,#d9a548 55%,#a7722a 100%);
-  box-shadow:0 10px 24px rgba(217,165,72,.22), inset 0 1px 0 rgba(255,255,255,.35);
-  border:1px solid rgba(255,220,135,.55)
-}
-.metal-panel{
-  border:1px solid var(--line);border-radius:var(--radius);
-  background:linear-gradient(180deg, rgba(255,212,130,.06), rgba(255,255,255,.015)), linear-gradient(180deg,#17130f,#0b0b0b);
-  box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.03)
-}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
-.title-block .kicker{letter-spacing:.24em;text-transform:uppercase;color:#d9ba7a;font-size:12px}
-.title-block h1{margin:6px 0 8px;font-size:clamp(34px,7vw,72px);line-height:.95;letter-spacing:.03em}
-.title-block p{margin:0;color:var(--muted);line-height:1.6;max-width:760px}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-.stat-box{padding:15px 14px;border-radius:20px;border:1px solid var(--line);background:linear-gradient(180deg,#15120f,#101010);text-align:center}
-.stat-box span{display:block;color:#bfae90;font-size:11px;text-transform:uppercase;letter-spacing:.16em;margin-bottom:6px}
-.stat-box strong{font-size:26px}
-.footer-note{margin-top:14px;color:#a39579;font-size:13px;line-height:1.5}
-.hud{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.hud .pill{padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(217,165,72,.08);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#efcc83}
-.game-shell{padding:18px}
-@media (max-width:800px){
-  .wrap{padding:16px}
-  .game-shell{padding:14px}
-}
+*{box-sizing:border-box} html,body{margin:0;padding:0;background:radial-gradient(circle at top,#16110a 0,#090909 32%,#040404 100%);color:var(--text);font-family:Inter,Arial,sans-serif;min-height:100%}
+a{text-decoration:none;color:inherit} img{max-width:100%;display:block}
+.wrap{max-width:1380px;margin:0 auto;padding:24px}
+.metal-panel{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,.2)),linear-gradient(135deg,#111,#181818 45%,#101010);border:1px solid var(--line);box-shadow:0 16px 50px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.025);border-radius:26px}
+.topbar{display:flex;gap:22px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;margin-bottom:20px}
+.back-link{display:inline-flex;gap:10px;align-items:center;padding:10px 14px;border-radius:999px;background:#111;border:1px solid var(--line);color:#efdcb0}
+.kicker{text-transform:uppercase;letter-spacing:.24em;font-size:11px;color:var(--gold2)}
+h1{margin:.2rem 0 .5rem;font-size:clamp(34px,5vw,64px);line-height:.95}.gold-text{color:var(--gold2)}
+p{color:var(--muted);line-height:1.55}
+.hud{display:flex;flex-wrap:wrap;gap:10px}.pill{padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:rgba(215,166,87,.08);color:#f0d394;font-size:13px}
+.controls,.tiny-controls{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}.controls{margin-top:18px}.tiny-controls{margin-top:10px}
+.play-btn,.ghost-btn{appearance:none;border:0;cursor:pointer;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:14px 22px;border-radius:16px;transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease}
+.play-btn{color:#1a1308;background:linear-gradient(180deg,var(--gold2),var(--gold));box-shadow:0 8px 24px rgba(215,166,87,.3)}
+.ghost-btn{color:#f3d89a;background:#141414;border:1px solid var(--line)}
+.play-btn:hover,.ghost-btn:hover{transform:translateY(-1px)} .play-btn:disabled,.ghost-btn:disabled{opacity:.55;cursor:not-allowed}
+.status-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}.stat-box{padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:rgba(0,0,0,.22)} .stat-box span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px}.stat-box strong{font-size:24px}
+.message{margin-top:16px;padding:14px 18px;border-radius:16px;border:1px solid var(--line);background:rgba(215,166,87,.07);color:#f3ddb1;text-align:center}
+.canvas-wrap{border-radius:24px;overflow:hidden;border:1px solid var(--line);background:#080808;box-shadow:inset 0 0 0 1px rgba(255,255,255,.025)}
+canvas{display:block;width:100%;height:auto;background:#080808}
+@media (max-width:700px){.wrap{padding:14px} .back-link{width:100%;justify-content:center} .controls .play-btn,.controls .ghost-btn,.tiny-controls .ghost-btn{flex:1 1 44%}}
