@@ -1,187 +1,160 @@
-const SYMBOLS = [
-  {id:'logo', type:'image', src:'./assets/logo.jpg'},
-  {id:'vault', type:'image', src:'./assets/vault-bg.jpg'},
-  {id:'grammy', type:'image', src:'./assets/cover-fgrammy.jpg'},
-  {id:'x100', type:'image', src:'./assets/cover-100x3.jpg'},
-  {id:'resume', type:'image', src:'./assets/cover-resume.jpg'},
-  {id:'crown', type:'icon', icon:'👑'},
-  {id:'speaker', type:'icon', icon:'🔊'},
-  {id:'hoodie', type:'icon', icon:'🧥'},
-  {id:'cash', type:'icon', icon:'💰'},
-  {id:'key', type:'icon', icon:'🔐'},
-];
-const WEIGHTS = {logo:1,vault:3,grammy:6,x100:6,resume:6,crown:3,speaker:10,hoodie:5,cash:16,key:3};
-const REELS = 5;
-const ROWS = 3;
-let credits = 1000;
-let bet = 25;
-let jackpot = 25000;
+
+const START_CREDITS = 1000;
+const STORAGE_KEY = 'capo_slot_credits_v2';
+const bets = [25,50,100,250];
+let betIndex = 0;
+let credits = parseInt(localStorage.getItem(STORAGE_KEY) || START_CREDITS,10);
+if (Number.isNaN(credits) || credits < 0) credits = START_CREDITS;
+let jackpot = 125000;
 let lastWin = 0;
 let spinning = false;
-let autoMode = false;
-
+const reelCount = 5, rows = 3, symbolH = 118;
+const feed = {
+  small:['Cash hit','Street payout','Speaker combo'],
+  medium:['Cover unlock tier','Vault pulse','Capo line hit'],
+  rare:['Merch tier landed','Rare crown line','Vault key line'],
+  jackpot:['CAPO JACKPOT','Elite vault hit']
+};
+const symbols = [
+  {id:'cash',src:'assets/cash.png',weight:24,payout:1},
+  {id:'speaker',src:'assets/speaker.png',weight:18,payout:1},
+  {id:'cover1',src:'assets/cover1.jpg',weight:14,payout:2},
+  {id:'cover2',src:'assets/cover2.jpg',weight:14,payout:2},
+  {id:'cover3',src:'assets/cover3.jpg',weight:14,payout:2},
+  {id:'merch1',src:'assets/merch1.jpg',weight:10,payout:3},
+  {id:'merch2',src:'assets/merch2.jpg',weight:10,payout:3},
+  {id:'vault',src:'assets/vault.png',weight:8,payout:4},
+  {id:'logo',src:'assets/logo.png',weight:5,payout:6},
+  {id:'crown',src:'assets/crown.png',weight:4,payout:8},
+  {id:'key',src:'assets/key.png',weight:2,payout:12}
+];
 const reelsEl = document.getElementById('reels');
-const messageEl = document.getElementById('message');
-const statusEl = document.getElementById('status');
-const stageEl = document.querySelector('.reel-stage');
+const spinBtn = document.getElementById('spinBtn');
+const betValue = document.getElementById('betValue');
+const creditsValue = document.getElementById('creditsValue');
+const lastWinValue = document.getElementById('lastWinValue');
+const jackpotValue = document.getElementById('jackpotValue');
+const overlay = document.getElementById('winOverlay');
+const winTier = document.getElementById('winTier');
+const winText = document.getElementById('winText');
+const winAmount = document.getElementById('winAmount');
+const machine = document.querySelector('.machine');
+const intro = document.getElementById('intro');
+document.getElementById('enterBtn').onclick = ()=> intro.classList.add('hide');
+document.getElementById('closeWinBtn').onclick = ()=> overlay.classList.remove('show');
+document.getElementById('betDownBtn').onclick = ()=>{ if(spinning) return; betIndex=(betIndex-1+bets.length)%bets.length; renderStats(); };
+document.getElementById('betUpBtn').onclick = ()=>{ if(spinning) return; betIndex=(betIndex+1)%bets.length; renderStats(); };
+spinBtn.onclick = spin;
 
-function byId(id){ return document.getElementById(id); }
 function weightedPick(){
-  const pool = Object.entries(WEIGHTS);
-  const total = pool.reduce((a,[,w])=>a+w,0);
-  let r = Math.random()*total;
-  for(const [id,w] of pool){ if((r-=w)<=0) return SYMBOLS.find(s=>s.id===id); }
-  return SYMBOLS[SYMBOLS.length-1];
+  const total = symbols.reduce((a,s)=>a+s.weight,0);
+  let n = Math.random()*total;
+  for (const s of symbols){ n-=s.weight; if(n<=0) return s; }
+  return symbols[0];
 }
-function randomGrid(){ return Array.from({length:REELS},()=>Array.from({length:ROWS},()=>weightedPick())); }
-function makeCell(symbol){
-  const cell = document.createElement('div');
-  cell.className = 'cell' + (symbol.type === 'icon' ? ' icon' : '');
-  if(symbol.type === 'image'){
-    const img = document.createElement('img');
-    img.src = symbol.src;
-    img.alt = symbol.id;
-    img.onerror = ()=>{ cell.classList.add('icon'); cell.textContent = '◆'; };
-    cell.appendChild(img);
-  } else {
-    cell.textContent = symbol.icon;
-  }
-  return cell;
+function createSymbol(sym){
+  const d=document.createElement('div'); d.className='symbol';
+  const img=document.createElement('img'); img.src=sym.src; img.alt=''; img.onerror=()=>{img.style.display='none'; d.textContent='★'; d.style.fontSize='44px'; d.style.color='var(--gold3)';};
+  d.appendChild(img); d.dataset.id=sym.id; return d;
 }
-function renderGrid(grid, winningCells = []){
-  reelsEl.innerHTML = '';
-  for(let c=0;c<REELS;c++){
-    const reel = document.createElement('div');
-    reel.className = 'reel';
-    for(let r=0;r<ROWS;r++){
-      const cell = makeCell(grid[c][r]);
-      if(winningCells.some(([wc,wr])=>wc===c && wr===r)) cell.classList.add('win');
-      reel.appendChild(cell);
-    }
-    reelsEl.appendChild(reel);
+function buildReels(){
+  reelsEl.innerHTML='';
+  for(let i=0;i<reelCount;i++){
+    const reel=document.createElement('div'); reel.className='reel';
+    const strip=document.createElement('div'); strip.className='reel-strip';
+    for(let j=0;j<18;j++){ strip.appendChild(createSymbol(weightedPick())); }
+    reel.appendChild(strip); reelsEl.appendChild(reel);
   }
 }
-function updateHud(){
-  byId('credits').textContent = credits.toLocaleString();
-  byId('bet').textContent = bet.toLocaleString();
-  byId('jackpot').textContent = jackpot.toLocaleString();
-  byId('lastWin').textContent = lastWin.toLocaleString();
+function renderStats(){
+  betValue.textContent = bets[betIndex];
+  creditsValue.textContent = credits;
+  lastWinValue.textContent = lastWin;
+  jackpotValue.textContent = jackpot.toLocaleString();
+  spinBtn.disabled = spinning || credits < bets[betIndex];
+  spinBtn.textContent = credits < bets[betIndex] ? 'Out of Credits' : 'Spin';
 }
-function setMessage(msg){ messageEl.textContent = msg; }
-function adjustBet(dir){
-  if(spinning) return;
-  const options = [25,50,100,200];
-  let idx = options.indexOf(bet);
-  idx = Math.max(0, Math.min(options.length-1, idx + dir));
-  bet = options[idx];
-  updateHud();
-}
-function lineSymbols(grid, row){ return Array.from({length:REELS}, (_,c)=>grid[c][row]); }
-function evaluate(grid){
-  let payout = 0;
-  let winningCells = [];
-  let msg = 'Miss.';
-  let hit = false;
-  [0,1,2].forEach(row=>{
-    const line = lineSymbols(grid,row);
-    const first = line[0].id;
-    const streak = line.filter(s=>s.id===first).length;
-    if(streak===5 && first==='logo'){
-      payout += jackpot;
-      jackpot = 25000;
-      hit = true;
-      msg = 'JACKPOT.';
-      winningCells = winningCells.concat([[0,row],[1,row],[2,row],[3,row],[4,row]]);
-    } else {
-      const counts = {};
-      line.forEach(s=>counts[s.id]=(counts[s.id]||0)+1);
-      for(const [id,count] of Object.entries(counts)){
-        if(count >= 3){
-          hit = true;
-          const rowWins = [];
-          line.forEach((s,c)=>{ if(s.id===id) rowWins.push([c,row]); });
-          winningCells = winningCells.concat(rowWins);
-          if(['grammy','x100','resume'].includes(id)) payout += bet*4;
-          else if(['vault','key','crown'].includes(id)) payout += bet*6;
-          else if(id==='hoodie') payout += bet*5;
-          else payout += bet*2;
-        }
-      }
-    }
-  });
-  if(!hit){
-    jackpot += Math.max(10, Math.floor(bet * 0.35));
-    lastWin = 0;
-    return { payout:0, winningCells:[], msg:'No hit. Jackpot climbs.' };
-  }
-  lastWin = payout;
-  if(msg !== 'JACKPOT.') msg = payout >= bet*10 ? 'Big win.' : 'Win.';
-  return { payout, winningCells, msg };
-}
-async function spinAnimation(){
-  const loops = 10;
-  for(let i=0;i<loops;i++){
-    renderGrid(randomGrid());
-    await new Promise(r=>setTimeout(r, 70 + i*8));
-  }
-}
-function forceRates(grid){
-  if(Math.random() < 0.10){
-    const row = Math.floor(Math.random()*ROWS);
-    const forced = ['cash','speaker','grammy','x100','resume','hoodie'][Math.floor(Math.random()*6)];
-    for(let c=0;c<3;c++) grid[c][row] = SYMBOLS.find(s=>s.id===forced);
-  }
-  if(Math.random() < 0.008){
-    const row = 1;
-    const rare = ['vault','key','crown'][Math.floor(Math.random()*3)];
-    for(let c=1;c<4;c++) grid[c][row] = SYMBOLS.find(s=>s.id===rare);
-  }
-  if(Math.random() < 0.0008){
-    const row = 1;
-    for(let c=0;c<5;c++) grid[c][row] = SYMBOLS.find(s=>s.id==='logo');
-  }
+function saveCredits(){ localStorage.setItem(STORAGE_KEY, String(credits)); }
+function forceOutcome(kind){
+  const common=['cash','speaker','cover1','cover2','cover3'];
+  const rewardSets={ medium:'vault', rare:'logo', jackpot:'key' };
+  const grid = Array.from({length:rows},()=>Array.from({length:reelCount},()=>weightedPick().id));
+  if(kind==='small'){ const id = common[Math.floor(Math.random()*common.length)]; for(let i=0;i<3;i++) grid[1][i]=id; }
+  if(kind==='medium'){ for(let i=0;i<3;i++) grid[1][i]=rewardSets.medium; }
+  if(kind==='rare'){ for(let i=0;i<3;i++) grid[1][i]=rewardSets.rare; }
+  if(kind==='jackpot'){ for(let i=0;i<3;i++) grid[1][i]=rewardSets.jackpot; }
   return grid;
 }
-async function spinOnce(){
-  if(spinning) return;
-  if(credits < bet){ setMessage('Not enough credits.'); return; }
-  spinning = true;
-  statusEl.textContent = 'Spinning';
-  credits -= bet;
-  updateHud();
-  setMessage('Spinning...');
-  await spinAnimation();
-  let grid = forceRates(randomGrid());
-  const result = evaluate(grid);
-  credits += result.payout;
-  renderGrid(grid, result.winningCells);
-  updateHud();
-  statusEl.textContent = result.payout ? 'Hit' : 'Ready';
-  setMessage(result.msg);
-  if(result.payout){ stageEl.classList.add('flash'); setTimeout(()=>stageEl.classList.remove('flash'), 1500); }
-  spinning = false;
+function naturalGrid(){ return Array.from({length:rows},()=>Array.from({length:reelCount},()=>weightedPick().id)); }
+function outcomeType(){
+  const r=Math.random();
+  if(r<0.0008) return 'jackpot';
+  if(r<0.008) return 'rare';
+  if(r<0.035) return 'medium';
+  if(r<0.14) return 'small';
+  return 'none';
 }
-async function autoSpin(){
-  if(spinning || autoMode) return;
-  autoMode = true;
-  for(let i=0;i<10;i++){
-    if(credits < bet) break;
-    await spinOnce();
-    await new Promise(r=>setTimeout(r, 180));
+function evaluate(grid){
+  let best = {match:0, amount:0, ids:[]};
+  for(let row=0; row<rows; row++){
+    let run=1;
+    for(let c=1;c<reelCount;c++){
+      if(grid[row][c]===grid[row][c-1]) run++; else break;
+    }
+    if(run>=3){
+      const sym = symbols.find(s=>s.id===grid[row][0]);
+      const multiplier = run===5 ? 5 : run===4 ? 3 : 1.6;
+      const amount = Math.floor(bets[betIndex] * sym.payout * multiplier);
+      if(amount > best.amount) best = {match:run, amount, ids:[...Array(run).keys()].map(i=>`${row}-${i}`), symbol:sym.id};
+    }
   }
-  autoMode = false;
+  return best;
 }
-byId('betDown').addEventListener('click', ()=>adjustBet(-1));
-byId('betUp').addEventListener('click', ()=>adjustBet(1));
-byId('spinBtn').addEventListener('click', spinOnce);
-byId('autoBtn').addEventListener('click', autoSpin);
-byId('resetBtn').addEventListener('click', ()=>{
-  if(spinning) return;
-  credits = 1000; bet = 25; jackpot = 25000; lastWin = 0;
-  statusEl.textContent = 'Ready';
-  updateHud();
-  setMessage('Ready to spin.');
-  renderGrid(randomGrid());
-});
-updateHud();
-renderGrid(randomGrid());
+function refillStrip(strip, finalColumn){
+  strip.innerHTML='';
+  const filler = [];
+  for(let i=0;i<12;i++) filler.push(weightedPick());
+  filler.push(symbols.find(s=>s.id===finalColumn[0]));
+  filler.push(symbols.find(s=>s.id===finalColumn[1]));
+  filler.push(symbols.find(s=>s.id===finalColumn[2]));
+  filler.push(weightedPick());
+  filler.push(weightedPick());
+  filler.forEach(sym=> strip.appendChild(createSymbol(sym)));
+}
+function spin(){
+  const cost = bets[betIndex];
+  if(spinning || credits < cost) return;
+  spinning = true; overlay.classList.remove('show'); machine.classList.remove('win-flash','jackpot-hit');
+  credits -= cost; jackpot += Math.floor(cost * .35); lastWin = 0; saveCredits(); renderStats();
+  const type = outcomeType();
+  const finalGrid = type==='none' ? naturalGrid() : forceOutcome(type);
+  const reelEls = [...document.querySelectorAll('.reel-strip')];
+  reelEls.forEach((strip,i)=>{ refillStrip(strip, finalGrid.map(row=>row[i])); });
+  reelEls.forEach((strip,i)=>{
+    const finalY = -(12 * 118 + 8); // approximate top offset before final 3 visible cells
+    strip.animate([
+      { transform:'translateY(0px)' },
+      { transform:`translateY(-${980 + i*80}px)` },
+      { transform:`translateY(${finalY}px)` }
+    ], { duration: 1200 + i*220, easing:'cubic-bezier(.15,.9,.2,1)', fill:'forwards' });
+  });
+  setTimeout(()=> finishSpin(finalGrid, type), 1200 + (reelCount-1)*220 + 80);
+}
+function finishSpin(grid, forcedType){
+  const result = evaluate(grid);
+  const reelDivs = [...document.querySelectorAll('.reel')];
+  reelDivs.forEach(reel => [...reel.querySelectorAll('.symbol')].forEach(s=>s.classList.remove('active')));
+  if(result.amount>0){
+    credits += result.amount; lastWin = result.amount; saveCredits();
+    const tier = forcedType==='jackpot' ? 'JACKPOT' : forcedType==='rare' ? 'RARE HIT' : forcedType==='medium' ? 'BIG WIN' : 'WIN';
+    winTier.textContent = tier;
+    winText.textContent = (feed[forcedType] || feed.small)[Math.floor(Math.random()*((feed[forcedType]||feed.small).length))];
+    winAmount.textContent = `+${result.amount}`;
+    overlay.classList.add('show');
+    if(forcedType==='jackpot'){ machine.classList.add('jackpot-hit'); jackpot = Math.max(50000, jackpot - 5000); }
+    else { machine.classList.add('win-flash'); }
+  }
+  renderStats();
+  spinning = false; renderStats();
+}
+buildReels(); renderStats();
