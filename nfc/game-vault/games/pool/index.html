@@ -1,14 +1,1 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CAPO POOL</title><link rel="stylesheet" href="../../shared.css"><link rel="stylesheet" href="./style.css"></head><body>
-<div class="wrap">
-  <div class="topbar">
-    <a class="back-link" href="../../index.html">← Back to Vault</a>
-    <div class="title-block"><div class="kicker">CAPO TABLE</div><h1><span class="gold-text">Pool</span> Run</h1><p>Simple drag-to-aim table with black felt and gold rails.</p></div>
-  </div>
-  <section class="metal-panel game-shell">
-    <canvas id="table" width="1080" height="620"></canvas>
-    <div class="controls"><button class="ghost-btn" id="reset">Reset Rack</button><button class="play-btn" id="newShot">Cue Reset</button></div>
-    <div class="footer-note">Drag from the cue ball to aim and release to shoot. Sink all target balls to clear the table.</div>
-  </section>
-</div>
-<script src="./script.js"></script></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pool</title><link rel="stylesheet" href="../../shared.css"><link rel="stylesheet" href="./style.css"></head><body><div class="wrap"><div class="topbar"><a class="back-link" href="../../index.html">← Back to Vault</a><div class="title-block"><div class="kicker">Capo Table</div><h1><span class="gold-text">Black</span> Pool</h1><p>Drag from the cue ball to aim. Release to shoot. Sink every target ball.</p></div><div class="hud"><div class="pill">Drag Aim</div><div class="pill">Bank Shots</div><div class="pill">Luxury Table</div></div></div><section class="metal-panel game-shell"><div class="status-strip"><div class="stat-box"><span>Shots</span><strong id="shots">0</strong></div><div class="stat-box"><span>Balls Left</span><strong id="left">6</strong></div><div class="stat-box"><span>Status</span><strong id="state">Ready</strong></div></div><div class="canvas-wrap" style="margin:16px 0"><canvas id="game" width="1100" height="640"></canvas></div><div class="controls"><button class="play-btn" id="reset">Reset Rack</button></div><div class="message" id="msg">Line up the shot and clear the table.</div></section></div><script src="./script.js"></script></body></html>
