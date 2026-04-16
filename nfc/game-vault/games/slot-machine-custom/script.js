@@ -1,39 +1,302 @@
 
-const STARTING_CREDITS=1000;
-const BETS=[10,25,50,100];
-const SYMBOLS=[
-{id:'speaker',src:'./assets/speaker.png',weight:18},
-{id:'merch1',src:'./assets/merch1.jpg',weight:12},
-{id:'key',src:'./assets/key.png',weight:10},
-{id:'lock',src:'./assets/lock.svg',weight:10},
-{id:'crown',src:'./assets/crown.png',weight:8},
-{id:'logo',src:'./assets/logo.png',weight:8},
-{id:'cover1',src:'./assets/cover1.jpg',weight:7},
-{id:'cover2',src:'./assets/cover2.jpg',weight:7},
-{id:'cover3',src:'./assets/cover3.jpg',weight:7},
-{id:'vault',src:'./assets/vault.png',weight:4},
+const STARTING_CREDITS = 1000;
+const BETS = [10, 25, 50, 100];
+const ROWS = 3;
+const REELS = 5;
+const CELL_HEIGHT = () => window.innerWidth <= 720 ? 86 : 104;
+
+const SYMBOLS = [
+  { id:'speaker', src:'./assets/speaker.svg', weight:18 },
+  { id:'hoodie',  src:'./assets/hoodie.svg',  weight:16 },
+  { id:'key',     src:'./assets/key.svg',     weight:10 },
+  { id:'lock',    src:'./assets/lock.svg',    weight:10 },
+  { id:'chain',   src:'./assets/chain.svg',   weight:8 },
+  { id:'mic',     src:'./assets/mic.svg',     weight:8 },
+  { id:'crown',   src:'./assets/crown.svg',   weight:7 },
+  { id:'logo',    src:'./assets/logo.svg',    weight:6 },
+  { id:'vault',   src:'./assets/vault.svg',   weight:4 }
 ];
-const paylines=[[[0,0],[1,0],[2,0],[3,0],[4,0]],[[0,1],[1,1],[2,1],[3,1],[4,1]],[[0,2],[1,2],[2,2],[3,2],[4,2]],[[0,0],[1,1],[2,2],[3,1],[4,0]],[[0,2],[1,1],[2,0],[3,1],[4,2]]];
-const payoutMultipliers={3:4,4:10,5:25};
-const rareBonuses={key:60,lock:60,crown:90,logo:90,vault:120};
-let credits=parseInt(localStorage.getItem('capo_slot_credits')||STARTING_CREDITS,10); if(!Number.isFinite(credits)||credits<0) credits=STARTING_CREDITS;
-let betIndex=parseInt(localStorage.getItem('capo_slot_bet_idx')||'1',10); if(!Number.isFinite(betIndex)||betIndex<0||betIndex>=BETS.length) betIndex=1;
-let jackpot=parseInt(localStorage.getItem('capo_slot_jackpot')||'125000',10); if(!Number.isFinite(jackpot)||jackpot<50000) jackpot=125000;
-let isSpinning=false; let currentGrid=[];
-const reelsEl=document.getElementById('reels'), creditsEl=document.getElementById('creditsValue'), betEl=document.getElementById('betValue'), jackpotEl=document.getElementById('jackpotValue'), messageBar=document.getElementById('messageBar'), machineEl=document.querySelector('.machine'), winOverlay=document.getElementById('winOverlay'), winTier=document.getElementById('winTier'), winText=document.getElementById('winText'), winAmount=document.getElementById('winAmount');
-const weightedPool=SYMBOLS.flatMap(s=>Array.from({length:s.weight},()=>s));
-const fmt=n=>new Intl.NumberFormat('en-US').format(n);
-function pickWeighted(){return weightedPool[Math.floor(Math.random()*weightedPool.length)]}
-function saveState(){localStorage.setItem('capo_slot_credits',credits);localStorage.setItem('capo_slot_bet_idx',betIndex);localStorage.setItem('capo_slot_jackpot',jackpot)}
-function updateHud(){creditsEl.textContent=fmt(credits);betEl.textContent=fmt(BETS[betIndex]);jackpotEl.textContent=fmt(jackpot)}
-function makeSymbolCell(symbol){const div=document.createElement('div');div.className='symbol';const img=document.createElement('img');img.src=symbol.src;img.alt='';img.loading='eager';img.onerror=()=>{img.src='./assets/crown.png'};div.appendChild(img);return div}
-function buildReels(){reelsEl.innerHTML='';for(let c=0;c<5;c++){const reel=document.createElement('div');reel.className='reel';const strip=document.createElement('div');strip.className='strip';reel.appendChild(strip);reelsEl.appendChild(reel)}}
-function renderGrid(grid){[...document.querySelectorAll('.reel .strip')].forEach((strip,c)=>{strip.innerHTML='';for(let r=0;r<3;r++) strip.appendChild(makeSymbolCell(grid[c][r]))})}
-function randomGrid(){return Array.from({length:5},()=>Array.from({length:3},()=>pickWeighted()))}
-function forcedGrid(){const base=randomGrid();const centerWin=Math.random()<0.16;const bigWin=Math.random()<0.028;const jackpotHit=Math.random()<0.0025;if(jackpotHit){const rare=SYMBOLS.find(s=>s.id==='vault');for(let c=0;c<5;c++) base[c][1]=rare;return base}if(bigWin){const rareIds=['logo','crown','key','lock'];const sym=SYMBOLS.find(s=>s.id===rareIds[Math.floor(Math.random()*rareIds.length)]);const count=Math.random()<0.45?4:5;for(let c=0;c<count;c++) base[c][1]=sym;return base}if(centerWin){const sym=pickWeighted();const count=3+Math.floor(Math.random()*2);for(let c=0;c<count;c++) base[c][1]=sym;return base}if(Math.random()<0.38){const sym=pickWeighted();for(let c=0;c<4;c++) base[c][1]=sym;let miss=pickWeighted();if(miss.id===sym.id) miss=SYMBOLS[0];base[4][1]=miss}return base}
-function evaluate(grid){const wins=[];let total=0;paylines.forEach(line=>{let count=1;const first=grid[line[0][0]][line[0][1]];for(let i=1;i<line.length;i++){const [c,r]=line[i];if(grid[c][r].id===first.id) count++;else break}if(count>=3){let amount=BETS[betIndex]*(payoutMultipliers[count]||0);if(rareBonuses[first.id]) amount+=rareBonuses[first.id];total+=amount;wins.push({id:first.id,count,amount,cells:line.slice(0,count)})}});return {wins,total}}
-function clearHighlights(){document.querySelectorAll('.symbol.win').forEach(el=>el.classList.remove('win'))}
-function highlightWins(winData){clearHighlights();const reelEls=[...document.querySelectorAll('.reel .strip')];winData.wins.forEach(win=>{win.cells.forEach(([c,r])=>{const cell=reelEls[c].children[r];if(cell) cell.classList.add('win')})})}
-async function spin(){if(isSpinning)return;const bet=BETS[betIndex];if(credits<bet){messageBar.textContent='Out of Credits';return}isSpinning=true;clearHighlights();credits-=bet;jackpot+=Math.floor(bet*.12);updateHud();messageBar.textContent='Spinning';const target=forcedGrid();const reelEls=[...document.querySelectorAll('.reel .strip')];for(let c=0;c<5;c++){const strip=reelEls[c];strip.innerHTML='';for(let i=0;i<16;i++) strip.appendChild(makeSymbolCell(pickWeighted()))}await Promise.all(reelEls.map((strip,idx)=>new Promise(resolve=>{let ticks=0;const totalTicks=14+idx*4;const timer=setInterval(()=>{strip.innerHTML='';const items=(ticks>=totalTicks-3)?[...Array.from({length:3},(_,r)=>target[idx][r]),...Array.from({length:13},()=>pickWeighted())]:Array.from({length:16},()=>pickWeighted());items.forEach(sym=>strip.appendChild(makeSymbolCell(sym)));strip.style.transform=`translateY(-${(ticks%4)*16}px)`;ticks++;if(ticks>totalTicks){clearInterval(timer);strip.style.transform='translateY(0)';strip.innerHTML='';for(let r=0;r<3;r++) strip.appendChild(makeSymbolCell(target[idx][r]));resolve()}},70)})));currentGrid=target;const result=evaluate(currentGrid);if(result.total>0){credits+=result.total;jackpot=Math.max(50000,jackpot-Math.floor(result.total*.4));updateHud();highlightWins(result);machineEl.classList.remove('flash');void machineEl.offsetWidth;machineEl.classList.add('flash');const highest=[...result.wins].sort((a,b)=>b.amount-a.amount)[0];winTier.textContent=highest.count===5?'Jackpot Line':'Win';winText.textContent=highest.id==='vault'?'Access Granted':'Capo Hit';winAmount.textContent='+'+fmt(result.total);winOverlay.classList.add('show');messageBar.textContent='Win'}else{messageBar.textContent='No Hit'}saveState();isSpinning=false}
-document.getElementById('spinBtn').addEventListener('click',spin);document.getElementById('betDown').addEventListener('click',()=>{if(isSpinning)return;betIndex=(betIndex-1+BETS.length)%BETS.length;updateHud();saveState()});document.getElementById('betUp').addEventListener('click',()=>{if(isSpinning)return;betIndex=(betIndex+1)%BETS.length;updateHud();saveState()});document.getElementById('enterBtn').addEventListener('click',()=>document.getElementById('entryOverlay').classList.add('hide'));document.getElementById('closeWinBtn').addEventListener('click',()=>winOverlay.classList.remove('show'));
-buildReels();currentGrid=randomGrid();renderGrid(currentGrid);updateHud();
+
+const payLines = [
+  [[0,0],[1,0],[2,0],[3,0],[4,0]],
+  [[0,1],[1,1],[2,1],[3,1],[4,1]],
+  [[0,2],[1,2],[2,2],[3,2],[4,2]],
+  [[0,0],[1,1],[2,2],[3,1],[4,0]],
+  [[0,2],[1,1],[2,0],[3,1],[4,2]]
+];
+const payByCount = {3: 4, 4: 10, 5: 24};
+const bonusById = { key:50, lock:50, crown:75, logo:90, vault:150 };
+
+const storageKeys = {
+  credits: 'capo_live_slot_credits',
+  bet: 'capo_live_slot_bet_idx',
+  jackpot: 'capo_live_slot_jackpot'
+};
+
+let credits = parseInt(localStorage.getItem(storageKeys.credits) || STARTING_CREDITS, 10);
+if (!Number.isFinite(credits) || credits < 0) credits = STARTING_CREDITS;
+let betIndex = parseInt(localStorage.getItem(storageKeys.bet) || '1', 10);
+if (!Number.isFinite(betIndex) || betIndex < 0 || betIndex >= BETS.length) betIndex = 1;
+let jackpot = parseInt(localStorage.getItem(storageKeys.jackpot) || '125000', 10);
+if (!Number.isFinite(jackpot) || jackpot < 50000) jackpot = 125000;
+
+let spinning = false;
+let currentGrid = [];
+
+const reelsEl = document.getElementById('reels');
+const creditsEl = document.getElementById('creditsValue');
+const betEl = document.getElementById('betValue');
+const jackpotEl = document.getElementById('jackpotValue');
+const statusBar = document.getElementById('statusBar');
+const machineEl = document.querySelector('.machine');
+const entryOverlay = document.getElementById('entryOverlay');
+const winOverlay = document.getElementById('winOverlay');
+const winTier = document.getElementById('winTier');
+const winTitle = document.getElementById('winTitle');
+const winAmount = document.getElementById('winAmount');
+
+const weightedPool = SYMBOLS.flatMap(s => Array.from({length: s.weight}, () => s));
+const fmt = n => new Intl.NumberFormat('en-US').format(n);
+const byId = id => SYMBOLS.find(s => s.id === id);
+
+function pickWeighted(){
+  return weightedPool[Math.floor(Math.random() * weightedPool.length)];
+}
+
+function saveState(){
+  localStorage.setItem(storageKeys.credits, credits);
+  localStorage.setItem(storageKeys.bet, betIndex);
+  localStorage.setItem(storageKeys.jackpot, jackpot);
+}
+
+function updateHud(){
+  creditsEl.textContent = fmt(credits);
+  betEl.textContent = fmt(BETS[betIndex]);
+  jackpotEl.textContent = fmt(jackpot);
+}
+
+function symbolCell(symbol){
+  const cell = document.createElement('div');
+  cell.className = 'symbol';
+  const img = document.createElement('img');
+  img.src = symbol.src;
+  img.alt = '';
+  img.loading = 'eager';
+  cell.dataset.id = symbol.id;
+  cell.appendChild(img);
+  return cell;
+}
+
+function buildMachine(){
+  reelsEl.innerHTML = '';
+  for (let i = 0; i < REELS; i++){
+    const windowEl = document.createElement('div');
+    windowEl.className = 'reel-window';
+    const strip = document.createElement('div');
+    strip.className = 'reel-strip';
+    windowEl.appendChild(strip);
+    reelsEl.appendChild(windowEl);
+  }
+}
+
+function randomGrid(){
+  return Array.from({length: REELS}, () => Array.from({length: ROWS}, () => pickWeighted()));
+}
+
+function targetGrid(){
+  const grid = randomGrid();
+  const jackpotHit = Math.random() < 0.0012;
+  const bigHit = Math.random() < 0.02;
+  const regularHit = Math.random() < 0.13;
+  const nearMiss = Math.random() < 0.34;
+
+  if (jackpotHit){
+    const sym = byId('vault');
+    for (let c = 0; c < REELS; c++) grid[c][1] = sym;
+    return grid;
+  }
+
+  if (bigHit){
+    const ids = ['logo', 'crown', 'key', 'lock'];
+    const sym = byId(ids[Math.floor(Math.random() * ids.length)]);
+    const count = Math.random() < 0.55 ? 4 : 5;
+    for (let c = 0; c < count; c++) grid[c][1] = sym;
+    return grid;
+  }
+
+  if (regularHit){
+    const sym = pickWeighted();
+    const count = 3 + Math.floor(Math.random() * 2);
+    for (let c = 0; c < count; c++) grid[c][1] = sym;
+    return grid;
+  }
+
+  if (nearMiss){
+    const sym = pickWeighted();
+    for (let c = 0; c < 4; c++) grid[c][1] = sym;
+    let miss = pickWeighted();
+    if (miss.id === sym.id) miss = byId('speaker');
+    grid[4][1] = miss;
+  }
+
+  return grid;
+}
+
+function evaluate(grid){
+  let total = 0;
+  const wins = [];
+  payLines.forEach(line => {
+    const first = grid[line[0][0]][line[0][1]];
+    let count = 1;
+    for (let i = 1; i < line.length; i++){
+      const [c, r] = line[i];
+      if (grid[c][r].id === first.id) count++;
+      else break;
+    }
+    if (count >= 3){
+      const amount = BETS[betIndex] * payByCount[count] + (bonusById[first.id] || 0);
+      total += amount;
+      wins.push({id:first.id, count, amount, cells: line.slice(0, count)});
+    }
+  });
+  return { total, wins };
+}
+
+function clearHighlights(){
+  document.querySelectorAll('.symbol.hit').forEach(n => n.classList.remove('hit'));
+}
+
+function highlight(result){
+  clearHighlights();
+  const strips = [...document.querySelectorAll('.reel-strip')];
+  result.wins.forEach(win => {
+    win.cells.forEach(([c, r]) => {
+      const node = strips[c]?.children[r];
+      if (node) node.classList.add('hit');
+    });
+  });
+}
+
+function renderFinalGrid(grid){
+  const strips = [...document.querySelectorAll('.reel-strip')];
+  strips.forEach((strip, c) => {
+    strip.innerHTML = '';
+    for (let r = 0; r < ROWS; r++) strip.appendChild(symbolCell(grid[c][r]));
+    strip.style.transform = 'translateY(0)';
+  });
+}
+
+function fillStrip(strip, symbols){
+  strip.innerHTML = '';
+  symbols.forEach(sym => strip.appendChild(symbolCell(sym)));
+}
+
+function message(text){
+  statusBar.textContent = text;
+}
+
+function animateReel(strip, finalSymbols, reelIndex){
+  return new Promise(resolve => {
+    const cellH = CELL_HEIGHT();
+    const lead = Array.from({length: 18 + reelIndex * 4}, () => pickWeighted());
+    const full = lead.concat(finalSymbols);
+    fillStrip(strip, full);
+
+    let start = null;
+    const duration = 850 + reelIndex * 190;
+    const totalDistance = (lead.length) * cellH;
+
+    function frame(ts){
+      if (!start) start = ts;
+      const elapsed = ts - start;
+      const p = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      const y = -(totalDistance * ease);
+      strip.style.transform = `translateY(${y}px)`;
+      if (p < 1){
+        requestAnimationFrame(frame);
+      } else {
+        strip.style.transform = `translateY(${-totalDistance}px)`;
+        setTimeout(() => {
+          fillStrip(strip, finalSymbols);
+          strip.style.transform = 'translateY(0)';
+          resolve();
+        }, 40);
+      }
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+async function spin(){
+  if (spinning) return;
+  const bet = BETS[betIndex];
+  if (credits < bet){
+    message('OUT OF CREDITS');
+    return;
+  }
+
+  spinning = true;
+  clearHighlights();
+  credits -= bet;
+  jackpot += Math.floor(bet * 0.12);
+  updateHud();
+  message('SPINNING');
+
+  const target = targetGrid();
+  const strips = [...document.querySelectorAll('.reel-strip')];
+
+  await Promise.all(strips.map((strip, idx) => animateReel(strip, target[idx], idx)));
+  currentGrid = target;
+
+  const result = evaluate(currentGrid);
+  if (result.total > 0){
+    credits += result.total;
+    jackpot = Math.max(50000, jackpot - Math.floor(result.total * 0.35));
+    updateHud();
+    highlight(result);
+    machineEl.classList.remove('flash');
+    void machineEl.offsetWidth;
+    machineEl.classList.add('flash');
+
+    const biggest = [...result.wins].sort((a,b) => b.amount - a.amount)[0];
+    winTier.textContent = biggest.count === 5 ? 'BIG WIN' : 'WIN';
+    winTitle.textContent = biggest.id === 'vault' ? 'ACCESS GRANTED' : 'CAPO HIT';
+    winAmount.textContent = '+' + fmt(result.total);
+    winOverlay.classList.add('show');
+    winOverlay.setAttribute('aria-hidden', 'false');
+    message(biggest.id === 'vault' ? 'ACCESS GRANTED' : 'WIN');
+  } else {
+    message('NO HIT');
+  }
+
+  saveState();
+  spinning = false;
+}
+
+document.getElementById('spinBtn').addEventListener('click', spin);
+document.getElementById('betDown').addEventListener('click', () => {
+  if (spinning) return;
+  betIndex = (betIndex - 1 + BETS.length) % BETS.length;
+  updateHud();
+  saveState();
+});
+document.getElementById('betUp').addEventListener('click', () => {
+  if (spinning) return;
+  betIndex = (betIndex + 1) % BETS.length;
+  updateHud();
+  saveState();
+});
+document.getElementById('enterBtn').addEventListener('click', () => {
+  entryOverlay.classList.add('hide');
+});
+document.getElementById('closeWinBtn').addEventListener('click', () => {
+  winOverlay.classList.remove('show');
+  winOverlay.setAttribute('aria-hidden', 'true');
+});
+
+buildMachine();
+currentGrid = randomGrid();
+renderFinalGrid(currentGrid);
+updateHud();
+message('READY');

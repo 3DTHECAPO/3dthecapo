@@ -1,1 +1,76 @@
-<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1,viewport-fit=cover'><title>Capo Casino</title><link rel='stylesheet' href='../../shared.css'><link rel='stylesheet' href='./style.css'></head><body><div class='slot-shell'><a class='ghost-btn back' href='../../index.html'>← Vault</a><section class='machine'><div class='machine-top'><div class='jackpot panel-lite'><div class='label'>Progressive Jackpot</div><div class='value' id='jackpotValue'>125000</div></div><div class='brand panel-lite'><div class='brand-lock'>🔒</div><div><div class='name'>CAPO CASINO</div><div class='sub'>3D THE CAPO</div></div></div><div class='bank panel-lite'><div class='bank-item'><span>Credits</span><strong id='creditsValue'>1000</strong></div><div class='bank-item'><span>Bet</span><strong id='betValue'>25</strong></div></div></div><div class='stage'><div class='machine-glow'></div><div class='reel-header'><div></div><div class='reel-title'>5 Reels</div><div class='reel-title'>3 Rows</div></div><div class='reels' id='reels'></div><div class='payout-bar' id='messageBar'>Ready</div></div><div class='controls'><button class='ghost-btn control' id='betDown'>Bet -</button><button class='ghost-btn control' id='betUp'>Bet +</button><button class='btn spin-btn' id='spinBtn'>Spin</button></div></section></div><div class='entry' id='entryOverlay'><div class='entry-card'><div class='entry-kicker'>Capo Vault</div><div class='entry-title'>Capo Casino</div><button class='btn' id='enterBtn'>Enter</button></div></div><div class='win-overlay' id='winOverlay'><div class='win-card'><div class='win-tier' id='winTier'>Win</div><div class='win-text' id='winText'>Capo Hit</div><div class='win-amount' id='winAmount'>+0</div><button class='btn' id='closeWinBtn'>Continue</button></div></div><script src='./script.js'></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Capo Casino</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="entry" id="entryOverlay">
+    <div class="entry-card">
+      <div class="entry-mark"></div>
+      <h1>CAPO CASINO</h1>
+      <button class="enter-btn" id="enterBtn" type="button">ENTER</button>
+    </div>
+  </div>
+
+  <main class="app">
+    <a class="back-btn" href="../../index.html" aria-label="Back to Vault">←</a>
+
+    <section class="machine" aria-label="Capo Casino Slot Machine">
+      <header class="machine-header">
+        <div class="jackpot-panel">
+          <div class="jackpot-label">JACKPOT</div>
+          <div class="jackpot-value" id="jackpotValue">125,000</div>
+        </div>
+
+        <div class="brand-panel">
+          <div class="brand-chip"></div>
+          <div class="brand-stack">
+            <div class="brand-title">3D THE CAPO</div>
+            <div class="brand-sub">CAPO CASINO</div>
+          </div>
+        </div>
+
+        <div class="bank-panel">
+          <div class="bank-block">
+            <span>CREDITS</span>
+            <strong id="creditsValue">1,000</strong>
+          </div>
+          <div class="bank-block">
+            <span>BET</span>
+            <strong id="betValue">25</strong>
+          </div>
+        </div>
+      </header>
+
+      <section class="stage">
+        <div class="bezel">
+          <div class="screen-glow"></div>
+          <div class="top-led"></div>
+          <div class="reels" id="reels"></div>
+          <div class="status-bar" id="statusBar" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <div class="controls">
+        <button class="control-btn" id="betDown" type="button" aria-label="Decrease bet">−</button>
+        <button class="control-btn spin-btn" id="spinBtn" type="button">SPIN</button>
+        <button class="control-btn" id="betUp" type="button" aria-label="Increase bet">+</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="win-overlay" id="winOverlay" aria-hidden="true">
+    <div class="win-card">
+      <div class="win-badge" id="winTier">WIN</div>
+      <div class="win-title" id="winTitle">CAPO HIT</div>
+      <div class="win-amount" id="winAmount">+0</div>
+      <button class="enter-btn" id="closeWinBtn" type="button">CONTINUE</button>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
