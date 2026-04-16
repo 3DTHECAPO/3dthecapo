@@ -3,68 +3,89 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Game Vault</title>
-  <link rel="stylesheet" href="./styles.css">
+  <title>3D THE CAPO — Game Vault</title>
+  <link rel="stylesheet" href="./shared.css">
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <a class="logo-link" href="../index.html"><img class="logo" src="../assets/vault_stamp_gold.png?v=4" alt="Vault Seal"></a>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <a class="btn" href="../index.html">Back To Vault</a>
-        <a class="btn" href="../../index.html?v=4">Main Site</a>
+  <main class="wrap">
+    <section class="topbar">
+      <div class="brand">
+        <div class="kicker">3D THE CAPO</div>
+        <h1 class="title">Game Vault</h1>
+        <p class="subtitle">Premium dark-and-gold mini game hub. All links are fixed to the local <strong>./games/</strong> paths so the cards stop throwing 404 errors from the vault page.</p>
       </div>
-    </div>
+      <a class="pill" href="../index.html">Back to NFC</a>
+    </section>
 
     <section class="hero">
-      <div class="eyebrow">Arcade Access</div>
-      <h1>Game Vault</h1>
-      <p>Public games are open to everyone. NFC holders unlock bonus lanes, better rewards, and hidden routes inside the same arcade.</p>
+      <div class="panel">
+        <p><strong>Diagnostic fix:</strong> this rebuild uses direct local links from <code>/nfc/game-vault/index.html</code> into each game folder under <code>/nfc/game-vault/games/</code>. No root-level <code>/games/</code> links.</p>
+        <p class="small">Drop this whole <strong>nfc/game-vault</strong> folder into GitHub and overwrite the old one.</p>
+      </div>
+      <div class="panel stats">
+        <div class="stat"><div class="stat-label">Total Games</div><div class="stat-value">6</div></div>
+        <div class="stat"><div class="stat-label">Broken Paths</div><div class="stat-value">0</div></div>
+        <div class="stat"><div class="stat-label">Style</div><div class="stat-value">Vault Gold</div></div>
+      </div>
     </section>
 
-    <div class="divider"><span class="line"></span><strong>Core Games</strong><span class="line"></span></div>
     <section class="grid">
       <article class="card">
-        <span class="tag">Main Game</span>
+        <span class="card-tag">Action</span>
         <h3>Vault Heist</h3>
-        <p>Choose the right heist path and break into the inner vault. Wrong route and the run ends.</p>
-        <div class="actions"><a class="btn gold" href="./games/vault-heist/index.html">Play</a></div>
+        <p>Memory-match your way through a high-security vault raid and clear the board before time runs out.</p>
+        <div class="actions">
+          <a class="btn" href="./games/vault-heist/index.html">Play</a>
+        </div>
       </article>
-      <article class="card">
-        <span class="tag">Fast Skill</span>
-        <h3>Reaction Lock</h3>
-        <p>Stop the lock needle in the gold zone three times to crack the mechanism.</p>
-        <div class="actions"><a class="btn gold" href="./games/reaction-lock/index.html">Play</a></div>
-      </article>
-      <article class="card">
-        <span class="tag">Arcade</span>
-        <h3>Gold Rush</h3>
-        <p>Catch the gold, avoid the dead drops, and chase a higher score.</p>
-        <div class="actions"><a class="btn gold" href="./games/gold-rush/index.html">Play</a></div>
-      </article>
-    </section>
 
-    <div class="divider"><span class="line"></span><strong>NFC Bonus</strong><span class="line"></span></div>
-    <section class="grid">
-      <article class="card bonus" id="bonusCard">
-        <span class="tag">Holder Access</span>
-        <h3>Bonus Lane</h3>
-        <p id="bonusCopy">Tap merch or enter your NFC code first to enable bonus rewards and hidden game outcomes.</p>
-        <div class="actions" id="bonusActions">
-          <a class="btn" href="../scan.html?v=4">Unlock Bonus</a>
+      <article class="card">
+        <span class="card-tag">Skill</span>
+        <h3>Reaction Lock</h3>
+        <p>Wait for the vault light to go green, then react fast. Too early and the lock jams.</p>
+        <div class="actions">
+          <a class="btn" href="./games/reaction-lock/index.html">Play</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <span class="card-tag">Arcade</span>
+        <h3>Gold Rush</h3>
+        <p>Stack gold fast before the timer drains. Hit your target and trigger a bonus payout.</p>
+        <div class="actions">
+          <a class="btn" href="./games/gold-rush/index.html">Play</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <span class="card-tag">Arcade</span>
+        <h3>Slot Machine</h3>
+        <p>Spin a luxury trap slot machine with black-and-gold reels, live balance, and jackpot logic.</p>
+        <div class="actions">
+          <a class="btn" href="./games/slot-machine-custom/index.html">Play</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <span class="card-tag">Shooter</span>
+        <h3>Shooter Target</h3>
+        <p>Pop moving targets, build streaks, and clear the round before the clock expires.</p>
+        <div class="actions">
+          <a class="btn" href="./games/shooter-target/index.html">Play</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <span class="card-tag">Defense</span>
+        <h3>Vault Defense</h3>
+        <p>Stop incoming breach waves and protect the vault core long enough to win the round.</p>
+        <div class="actions">
+          <a class="btn" href="./games/vault-defense/index.html">Play</a>
         </div>
       </article>
     </section>
-  </div>
-  <script src="./shared.js"></script>
-  <script>
-    const bonus = GV.isBonus();
-    const copy = document.getElementById('bonusCopy');
-    const actions = document.getElementById('bonusActions');
-    if (bonus) {
-      copy.textContent = 'Bonus mode is active. Your games now unlock hidden rewards, extra copy, and holder-only outcomes.';
-      actions.innerHTML = '<a class="btn gold" href="./games/vault-heist/index.html?nfc=1">Play Bonus Heist</a><a class="btn" href="./games/reaction-lock/index.html?nfc=1">Bonus Reaction Lock</a>';
-    }
-  </script>
+
+    <p class="footer-note">Drop-in path: <strong>/nfc/game-vault/</strong>. Every card above uses a relative link that matches this folder structure.</p>
+  </main>
 </body>
 </html>
