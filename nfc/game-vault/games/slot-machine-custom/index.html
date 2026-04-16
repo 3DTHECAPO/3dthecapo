@@ -1,1 +1,81 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Capo Reward Slot</title><link rel="stylesheet" href="../../shared.css"><link rel="stylesheet" href="./style.css"></head><body><div class="wrap"><div class="topbar"><a class="back-link" href="../../index.html">← Back to Vault</a><div class="title-block"><div class="kicker">Capo Casino</div><h1><span class="gold-text">Reward</span> Slot</h1><p>Five reels. Three rows. Weighted hits. Brand symbols. Rare real reward odds.</p></div><div class="hud"><div class="pill">5 Reels</div><div class="pill">3 Rows</div><div class="pill">Weighted Odds</div></div></div><section class="machine metal-panel"><div class="header-band"><img class="logo" src="../../assets/logo.jpg" alt="logo"><div><div class="machine-name">3D THE CAPO</div><div class="jackpot-label">Jackpot</div><div id="jackpot" class="jackpot">25,000</div></div><div class="vault-stamp">CAPO CASINO</div></div><div class="status-strip" style="margin-top:14px"><div class="stat-box"><span>Credits</span><strong id="credits">1000</strong></div><div class="stat-box"><span>Bet</span><strong id="bet">25</strong></div><div class="stat-box"><span>Last Win</span><strong id="lastWin">0</strong></div><div class="stat-box"><span>Status</span><strong id="status">Ready</strong></div></div><div class="screen metal-panel" id="screen"><div class="reels" id="reels"></div><div class="payline line1"></div><div class="payline line2"></div><div class="payline line3"></div></div><div class="controls"><button class="ghost-btn" id="betDown">- Bet</button><button class="play-btn" id="spinBtn">Spin</button><button class="ghost-btn" id="betUp">+ Bet</button></div><div class="tiny-controls"><button class="ghost-btn" id="autoBtn">Auto x10</button><button class="ghost-btn" id="resetBtn">Reset</button></div><div class="message" id="message">Spin to land music, merch, keys, vaults, or the logo jackpot.</div><div class="legend"><div class="legend-item"><b>5 Logos</b><span>jackpot</span></div><div class="legend-item"><b>3 Music Covers</b><span>music reward</span></div><div class="legend-item"><b>3 Merch</b><span>merch reward</span></div><div class="legend-item"><b>3 Keys / Vaults</b><span>rare bonus</span></div></div></section></div><script src="./script.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CAPO CASINO — Reward Slot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="bg-fx"></div>
+  <div class="intro-overlay" id="introOverlay" aria-hidden="false">
+    <div class="intro-card">
+      <div class="intro-kicker">3D THE CAPO PRESENTS</div>
+      <h1>CAPO CASINO</h1>
+      <p>Luxury vault slot experience. Five reels. Cinematic lights. Controlled reward odds.</p>
+      <button id="enterBtn" class="primary-btn">ENTER THE VAULT</button>
+    </div>
+  </div>
+  <main class="machine-wrap">
+    <header class="topbar">
+      <a href="../../index.html" class="back-link">← BACK TO VAULT</a>
+      <div class="brand-badge">3D THE CAPO</div>
+    </header>
+    <section class="machine-shell">
+      <div class="marquee">
+        <div class="marquee-top">CINEMATIC REWARD SLOT</div>
+        <div class="marquee-title">CAPO CASINO</div>
+        <div class="marquee-sub">5 REELS • 3 ROWS • ELITE VAULT ODDS</div>
+      </div>
+      <div class="status-strip">
+        <div class="status-box"><span class="label">CREDITS</span><strong id="creditsValue">500</strong></div>
+        <div class="status-box"><span class="label">BET</span><strong id="betValue">25</strong></div>
+        <div class="status-box jackpot-box"><span class="label">JACKPOT</span><strong id="jackpotValue">25000</strong></div>
+      </div>
+      <div class="cabinet">
+        <div class="cabinet-lights left"></div>
+        <div class="cabinet-lights right"></div>
+        <div class="screen-frame">
+          <div class="payline payline-top"></div>
+          <div class="payline payline-mid active"></div>
+          <div class="payline payline-bot"></div>
+          <div class="reels" id="reels">
+            <div class="reel-window"><div class="reel-strip" id="reel0"></div></div>
+            <div class="reel-window"><div class="reel-strip" id="reel1"></div></div>
+            <div class="reel-window"><div class="reel-strip" id="reel2"></div></div>
+            <div class="reel-window"><div class="reel-strip" id="reel3"></div></div>
+            <div class="reel-window"><div class="reel-strip" id="reel4"></div></div>
+          </div>
+          <div class="screen-glass"></div>
+        </div>
+        <div class="message-board" id="messageBoard">READY TO SPIN</div>
+        <div class="controls">
+          <div class="control-cluster">
+            <button class="control-btn" id="minusBetBtn" aria-label="Decrease bet">−</button>
+            <button class="control-btn" id="plusBetBtn" aria-label="Increase bet">+</button>
+          </div>
+          <button class="spin-btn" id="spinBtn"><span class="spin-top">SPIN</span><span class="spin-sub">CINEMATIC REELS</span></button>
+          <button class="control-btn ghost" id="autoBtn">AUTO x5</button>
+        </div>
+      </div>
+      <section class="reward-panel">
+        <div class="panel-card"><div class="panel-title">BEST HIT</div><div class="panel-value" id="bestHit">—</div></div>
+        <div class="panel-card"><div class="panel-title">LAST WIN</div><div class="panel-value" id="lastWin">0</div></div>
+        <div class="panel-card odds"><div class="panel-title">ODDS</div><div class="odds-copy">small hits are common, big rewards stay rare</div></div>
+      </section>
+    </section>
+    <div class="reward-modal" id="rewardModal" aria-hidden="true">
+      <div class="reward-card">
+        <div class="reward-kicker">ACCESS GRANTED</div>
+        <h2 id="rewardTitle">BIG WIN</h2>
+        <p id="rewardCopy">You hit a reward combo.</p>
+        <button class="primary-btn" id="closeRewardBtn">KEEP SPINNING</button>
+      </div>
+    </div>
+  </main>
+  <script src="./script.js"></script>
+</body>
+</html>
