@@ -1,91 +1,63 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>3D THE CAPO — Game Vault</title>
-  <link rel="stylesheet" href="./shared.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CAPO VAULT ARCADE</title>
+  <style>
+    :root{
+      --bg:#070707;--panel:#111;--panel2:#171717;--gold:#d5a646;--gold2:#8d6421;--text:#f4ead6;--muted:#b7aa92;
+      --line:rgba(213,166,70,.32);--glow:0 0 22px rgba(213,166,70,.28);
+    }
+    *{box-sizing:border-box} html,body{margin:0;height:100%;font-family:Inter,Arial,sans-serif;background:radial-gradient(circle at top, #1b1408 0%, #0c0b09 26%, #050505 58%, #020202 100%);color:var(--text)}
+    body:before{content:"";position:fixed;inset:0;background:linear-gradient(135deg,rgba(213,166,70,.06),transparent 22%,transparent 78%,rgba(213,166,70,.05)),repeating-linear-gradient(90deg,transparent 0 39px, rgba(255,255,255,.015) 40px);pointer-events:none}
+    .wrap{max-width:1280px;margin:0 auto;padding:34px 18px 56px}
+    .hero{position:relative;border:1px solid var(--line);border-radius:28px;padding:34px;background:linear-gradient(180deg, rgba(255,212,128,.09), rgba(255,255,255,.02)), linear-gradient(180deg,#16110b,#0d0d0d);box-shadow:var(--glow), inset 0 1px 0 rgba(255,255,255,.04)}
+    .badge{display:inline-block;padding:8px 14px;border:1px solid var(--line);border-radius:999px;color:#f7d68f;background:rgba(213,166,70,.08);letter-spacing:.2em;font-size:12px;text-transform:uppercase}
+    h1{font-size:clamp(34px,7vw,74px);line-height:.95;margin:16px 0 10px;letter-spacing:.06em}
+    .gold{background:linear-gradient(180deg,#fff1c9,#e5b65c 45%,#8e6422 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{max-width:780px;color:var(--muted);font-size:18px;line-height:1.6}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:28px}
+    .card{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:230px;padding:18px;border-radius:22px;border:1px solid var(--line);background:linear-gradient(180deg,#151515,#0c0c0c);box-shadow:0 16px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03);overflow:hidden}
+    .card:before{content:"";position:absolute;inset:auto -20% 68% auto;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle, rgba(213,166,70,.22), transparent 65%);filter:blur(14px)}
+    .tag{display:inline-block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f0cb7e;border:1px solid var(--line);padding:7px 10px;border-radius:999px;background:rgba(213,166,70,.06)}
+    .title{font-size:28px;font-weight:800;margin:14px 0 10px;letter-spacing:.03em}
+    .desc{color:var(--muted);line-height:1.55;min-height:72px}
+    .btn{display:inline-flex;justify-content:center;align-items:center;padding:14px 18px;border-radius:14px;border:1px solid rgba(255,216,120,.35);text-decoration:none;color:#140d03;background:linear-gradient(180deg,#f4d183,#cc9336);font-weight:800;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 8px 22px rgba(213,166,70,.25)}
+    .btn:hover{filter:brightness(1.05)}
+    .foot{margin-top:26px;color:#9f9279;font-size:14px}
+  </style>
 </head>
 <body>
-  <main class="wrap">
-    <section class="topbar">
-      <div class="brand">
-        <div class="kicker">3D THE CAPO</div>
-        <h1 class="title">Game Vault</h1>
-        <p class="subtitle">Premium dark-and-gold mini game hub. All links are fixed to the local <strong>./games/</strong> paths so the cards stop throwing 404 errors from the vault page.</p>
-      </div>
-      <a class="pill" href="../index.html">Back to NFC</a>
-    </section>
-
+  <div class="wrap">
     <section class="hero">
-      <div class="panel">
-        <p><strong>Diagnostic fix:</strong> this rebuild uses direct local links from <code>/nfc/game-vault/index.html</code> into each game folder under <code>/nfc/game-vault/games/</code>. No root-level <code>/games/</code> links.</p>
-        <p class="small">Drop this whole <strong>nfc/game-vault</strong> folder into GitHub and overwrite the old one.</p>
+      <span class="badge">3D THE CAPO • CAPO VAULT ARCADE</span>
+      <h1><span class="gold">GAME</span> VAULT</h1>
+      <p class="lead">Luxury black-and-gold arcade room for your website. All games below use local paths only, so this pack is drag-and-drop safe for <strong>/nfc/game-vault/</strong>.</p>
+      <div class="grid">
+        <article class="card">
+          <div><span class="tag">Reward Game</span><div class="title">Slot Machine</div><div class="desc">Vault-style slot machine with premium UI, jackpot meter, glow effects, and branded black/gold casino feel.</div></div>
+          <a class="btn" href="./games/slot-machine-custom/index.html">Play Now</a>
+        </article>
+        <article class="card">
+          <div><span class="tag">Table Game</span><div class="title">Pool</div><div class="desc">Top-down capo billiards table with cue aim, clean collisions, and premium felt/gold trim styling.</div></div>
+          <a class="btn" href="./games/pool/index.html">Break Rack</a>
+        </article>
+        <article class="card">
+          <div><span class="tag">Bay Area Racer</span><div class="title">Street Run</div><div class="desc">Fast lane-dodge racer with bridge skyline silhouettes, night-road glow, and score-based speed scaling.</div></div>
+          <a class="btn" href="./games/racing/index.html">Hit The Road</a>
+        </article>
+        <article class="card">
+          <div><span class="tag">Strategy</span><div class="title">Chess</div><div class="desc">Luxury board with move validation, turn logic, and clean piece visuals in black marble and gold.</div></div>
+          <a class="btn" href="./games/chess/index.html">Open Board</a>
+        </article>
+        <article class="card">
+          <div><span class="tag">Training</span><div class="title">Vault Defense</div><div class="desc">Premium target-defense game with moving security targets, combo scoring, timer mode, and fast feedback.</div></div>
+          <a class="btn" href="./games/vault-defense/index.html">Enter Range</a>
+        </article>
       </div>
-      <div class="panel stats">
-        <div class="stat"><div class="stat-label">Total Games</div><div class="stat-value">6</div></div>
-        <div class="stat"><div class="stat-label">Broken Paths</div><div class="stat-value">0</div></div>
-        <div class="stat"><div class="stat-label">Style</div><div class="stat-value">Vault Gold</div></div>
-      </div>
+      <div class="foot">Install path: <strong>/nfc/game-vault/</strong> • All links are already wired with local relative paths.</div>
     </section>
-
-    <section class="grid">
-      <article class="card">
-        <span class="card-tag">Action</span>
-        <h3>Vault Heist</h3>
-        <p>Memory-match your way through a high-security vault raid and clear the board before time runs out.</p>
-        <div class="actions">
-          <a class="btn" href="./games/vault-heist/index.html">Play</a>
-        </div>
-      </article>
-
-      <article class="card">
-        <span class="card-tag">Skill</span>
-        <h3>Reaction Lock</h3>
-        <p>Wait for the vault light to go green, then react fast. Too early and the lock jams.</p>
-        <div class="actions">
-          <a class="btn" href="./games/reaction-lock/index.html">Play</a>
-        </div>
-      </article>
-
-      <article class="card">
-        <span class="card-tag">Arcade</span>
-        <h3>Gold Rush</h3>
-        <p>Stack gold fast before the timer drains. Hit your target and trigger a bonus payout.</p>
-        <div class="actions">
-          <a class="btn" href="./games/gold-rush/index.html">Play</a>
-        </div>
-      </article>
-
-      <article class="card">
-        <span class="card-tag">Arcade</span>
-        <h3>Slot Machine</h3>
-        <p>Spin a luxury trap slot machine with black-and-gold reels, live balance, and jackpot logic.</p>
-        <div class="actions">
-          <a class="btn" href="./games/slot-machine-custom/index.html">Play</a>
-        </div>
-      </article>
-
-      <article class="card">
-        <span class="card-tag">Shooter</span>
-        <h3>Shooter Target</h3>
-        <p>Pop moving targets, build streaks, and clear the round before the clock expires.</p>
-        <div class="actions">
-          <a class="btn" href="./games/shooter-target/index.html">Play</a>
-        </div>
-      </article>
-
-      <article class="card">
-        <span class="card-tag">Defense</span>
-        <h3>Vault Defense</h3>
-        <p>Stop incoming breach waves and protect the vault core long enough to win the round.</p>
-        <div class="actions">
-          <a class="btn" href="./games/vault-defense/index.html">Play</a>
-        </div>
-      </article>
-    </section>
-
-    <p class="footer-note">Drop-in path: <strong>/nfc/game-vault/</strong>. Every card above uses a relative link that matches this folder structure.</p>
-  </main>
+  </div>
 </body>
 </html>
