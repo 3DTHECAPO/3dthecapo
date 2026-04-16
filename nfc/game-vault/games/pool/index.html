@@ -1,1 +1,14 @@
-<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>CAPO TABLE</title><link rel='stylesheet' href='style.css'></head><body><div class='app'><header><a href='../../index.html'>← Back</a><div><div class='kicker'>3D THE CAPO</div><h1>CAPO TABLE</h1><p>Drag opposite the cue ball to shoot.</p></div></header><canvas id='game' width='920' height='540'></canvas><div class='hud'><span id='status'>Sink all 5 gold balls.</span><button id='reset'>Reset Rack</button></div></div><script src='script.js'></script></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAPO POOL</title><link rel="stylesheet" href="../../shared.css"><link rel="stylesheet" href="./style.css"></head><body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="back-link" href="../../index.html">← Back to Vault</a>
+    <div class="title-block"><div class="kicker">CAPO TABLE</div><h1><span class="gold-text">Pool</span> Run</h1><p>Simple drag-to-aim table with black felt and gold rails.</p></div>
+  </div>
+  <section class="metal-panel game-shell">
+    <canvas id="table" width="1080" height="620"></canvas>
+    <div class="controls"><button class="ghost-btn" id="reset">Reset Rack</button><button class="play-btn" id="newShot">Cue Reset</button></div>
+    <div class="footer-note">Drag from the cue ball to aim and release to shoot. Sink all target balls to clear the table.</div>
+  </section>
+</div>
+<script src="./script.js"></script></body></html>
