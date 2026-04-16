@@ -1,61 +1,16 @@
 
-const pieces = {
-  wr:'♖', wn:'♘', wb:'♗', wq:'♕', wk:'♔', wp:'♙',
-  br:'♜', bn:'♞', bb:'♝', bq:'♛', bk:'♚', bp:'♟'
-};
-const start = [
-  ['br','bn','bb','bq','bk','bb','bn','br'],
-  ['bp','bp','bp','bp','bp','bp','bp','bp'],
-  ['','','','','','','',''],
-  ['','','','','','','',''],
-  ['','','','','','','',''],
-  ['','','','','','','',''],
-  ['wp','wp','wp','wp','wp','wp','wp','wp'],
-  ['wr','wn','wb','wq','wk','wb','wn','wr'],
-];
-let boardState, turn='w', selected=null;
-const board=document.getElementById('board'), msg=document.getElementById('msg');
-function reset(){ boardState = JSON.parse(JSON.stringify(start)); turn='w'; selected=null; render(); msg.textContent='White to move.'; }
-function render(){
-  board.innerHTML='';
-  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
-    const d=document.createElement('div'); d.className='sq '+(((r+c)%2)?'dark':'light')+(selected&&selected.r===r&&selected.c===c?' sel':'');
-    d.dataset.r=r; d.dataset.c=c; const p=boardState[r][c]; d.textContent = pieces[p] || ''; d.onclick=onClick; board.appendChild(d);
-  }
-}
-function colorOf(p){ return p ? p[0] : ''; }
-function legal(from,to){
-  const p=boardState[from.r][from.c]; if(!p) return false;
-  const target=boardState[to.r][to.c]; if(colorOf(target)===colorOf(p)) return false;
-  const dr=to.r-from.r, dc=to.c-from.c; const adr=Math.abs(dr), adc=Math.abs(dc);
-  const type=p[1], dir=p[0]==='w'?-1:1;
-  if(type==='p'){
-    if(dc===0 && !target && dr===dir) return true;
-    if(dc===0 && !target && dr===2*dir && ((p[0]==='w'&&from.r===6)||(p[0]==='b'&&from.r===1)) && !boardState[from.r+dir][from.c]) return true;
-    if(adr===1 && dc!==0 && dr===dir && target) return true;
-    return false;
-  }
-  if(type==='r') return rookClear(from,to);
-  if(type==='b') return bishopClear(from,to);
-  if(type==='q') return rookClear(from,to)||bishopClear(from,to);
-  if(type==='n') return (adr===2&&adc===1)||(adr===1&&adc===2);
-  if(type==='k') return adr<=1&&adc<=1;
-}
-function rookClear(f,t){ if(f.r!==t.r && f.c!==t.c) return false; const sr=Math.sign(t.r-f.r), sc=Math.sign(t.c-f.c); let r=f.r+sr, c=f.c+sc; while(r!==t.r||c!==t.c){ if(boardState[r][c]) return false; r+=sr; c+=sc; } return true; }
-function bishopClear(f,t){ if(Math.abs(t.r-f.r)!==Math.abs(t.c-f.c)) return false; const sr=Math.sign(t.r-f.r), sc=Math.sign(t.c-f.c); let r=f.r+sr, c=f.c+sc; while(r!==t.r&&c!==t.c){ if(boardState[r][c]) return false; r+=sr; c+=sc; } return true; }
-function onClick(e){
-  const r=+e.currentTarget.dataset.r, c=+e.currentTarget.dataset.c;
-  const p=boardState[r][c];
-  if(selected){
-    if(legal(selected,{r,c})){
-      boardState[r][c]=boardState[selected.r][selected.c]; boardState[selected.r][selected.c]='';
-      turn = turn==='w'?'b':'w';
-      msg.textContent = (turn==='w'?'White':'Black') + ' to move.';
-      selected=null; render(); return;
-    }
-    selected=null;
-  }
-  if(p && colorOf(p)===turn){ selected={r,c}; render(); }
-}
-document.getElementById('reset').onclick=reset;
-reset();
+const boardEl=document.getElementById('board'); const pieces={w:{k:'♔',q:'♕',r:'♖',b:'♗',n:'♘',p:'♙'},b:{k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'}}; let board,turn='w',selected=null,moves=[];
+function start(){ board=[['br','bn','bb','bq','bk','bb','bn','br'],['bp','bp','bp','bp','bp','bp','bp','bp'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['wp','wp','wp','wp','wp','wp','wp','wp'],['wr','wn','wb','wq','wk','wb','wn','wr']]; turn='w'; selected=null; moves=[]; render(); status('Live'); msg('Tap a piece, then tap a highlighted square.'); }
+function status(t){document.getElementById('status').textContent=t; document.getElementById('turn').textContent=turn==='w'?'White':'Black'} function msg(t){document.getElementById('msg').textContent=t}
+function inside(x,y){return x>=0&&x<8&&y>=0&&y<8} function colorOf(p){return p? p[0]:null}
+function genMoves(x,y){ const p=board[y][x]; if(!p||colorOf(p)!==turn) return []; const c=p[0], t=p[1], res=[]; const add=(nx,ny,slide=false)=>{ while(inside(nx,ny)){ if(!board[ny][nx]) res.push([nx,ny]); else { if(colorOf(board[ny][nx])!==c) res.push([nx,ny]); break; } if(!slide) break; nx += Math.sign(nx-x||0); ny += Math.sign(ny-y||0); } };
+ if(t==='p'){ const dir=c==='w'?-1:1; if(inside(x,y+dir)&&!board[y+dir][x]) res.push([x,y+dir]); if((c==='w'&&y===6)||(c==='b'&&y===1)){ if(!board[y+dir][x]&&!board[y+2*dir][x]) res.push([x,y+2*dir]); } [[-1,dir],[1,dir]].forEach(([dx,dy])=>{ const nx=x+dx, ny=y+dy; if(inside(nx,ny)&&board[ny][nx]&&colorOf(board[ny][nx])!==c) res.push([nx,ny]);}); }
+ if(t==='r'||t==='q'){ [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{ let nx=x+dx, ny=y+dy; while(inside(nx,ny)){ if(!board[ny][nx]) res.push([nx,ny]); else { if(colorOf(board[ny][nx])!==c) res.push([nx,ny]); break;} nx+=dx; ny+=dy; } }); }
+ if(t==='b'||t==='q'){ [[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([dx,dy])=>{ let nx=x+dx, ny=y+dy; while(inside(nx,ny)){ if(!board[ny][nx]) res.push([nx,ny]); else { if(colorOf(board[ny][nx])!==c) res.push([nx,ny]); break;} nx+=dx; ny+=dy; } }); }
+ if(t==='n'){ [[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]].forEach(([dx,dy])=>{ const nx=x+dx, ny=y+dy; if(inside(nx,ny)&&colorOf(board[ny][nx])!==c) res.push([nx,ny]);}); }
+ if(t==='k'){ for(let dx=-1;dx<=1;dx++) for(let dy=-1;dy<=1;dy++){ if(dx||dy){ const nx=x+dx, ny=y+dy; if(inside(nx,ny)&&colorOf(board[ny][nx])!==c) res.push([nx,ny]); } }}
+ return res; }
+function clickSq(x,y){ if(selected && moves.some(m=>m[0]===x&&m[1]===y)){ board[y][x]=board[selected[1]][selected[0]]; board[selected[1]][selected[0]]=''; turn=turn==='w'?'b':'w'; selected=null; moves=[]; render(); status('Live'); return; }
+ if(board[y][x] && colorOf(board[y][x])===turn){ selected=[x,y]; moves=genMoves(x,y); render(); } }
+function render(){ boardEl.innerHTML=''; for(let y=0;y<8;y++) for(let x=0;x<8;x++){ const sq=document.createElement('div'); sq.className='sq '+(((x+y)%2===0)?'light':'dark'); if(selected&&selected[0]===x&&selected[1]===y) sq.classList.add('sel'); if(moves.some(m=>m[0]===x&&m[1]===y)) sq.classList.add('move'); const p=board[y][x]; if(p){ sq.textContent=pieces[p[0]][p[1]]; } sq.onclick=()=>clickSq(x,y); boardEl.appendChild(sq); } status('Live'); }
+document.getElementById('reset').onclick=start; start();
