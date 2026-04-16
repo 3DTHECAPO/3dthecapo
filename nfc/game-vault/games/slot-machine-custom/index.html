@@ -1,1 +1,60 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Capo Reward Slot</title><link rel="stylesheet" href="../../shared.css"><link rel="stylesheet" href="./style.css"></head><body><div class="intro" id="intro"><div class="intro-inner metal-panel"><div class="kicker">Capo Casino</div><h1><span class="gold-text">Entering</span> Capo Vault</h1><p>5 reels. 3 rows. Premium machine styling. Big hits stay rare on purpose.</p><button class="play-btn" id="enterBtn">Enter Machine</button></div></div><div class="wrap"><div class="topbar"><a class="back-link" href="../../index.html">← Back to Vault</a><div class="title-block"><div class="kicker">Capo Casino</div><h1><span class="gold-text">Reward</span> Slot</h1><p>Cinematic 5-reel machine using your art and brand symbols. Buttons and copy cleaned up.</p></div><div class="hud"><div class="pill">5 Reels</div><div class="pill">3 Rows</div><div class="pill">Rare Jackpot</div></div></div><section class="machine metal-panel"><div class="machine-top"><div class="brand-wrap"><img class="logo" src="../../assets/logo.jpg" alt="3D THE CAPO logo"><div><div class="machine-name">3D THE CAPO</div><div class="machine-sub">CAPO CASINO</div></div></div><div class="jackpot-box"><span>Progressive Jackpot</span><strong id="jackpot">25,000</strong></div></div><div class="machine-grid"><aside class="side-panel metal-panel"><div class="side-title">Pays</div><div class="legend-item"><b>5 Logos</b><span>Jackpot</span></div><div class="legend-item"><b>3+ Merch</b><span>Merch hit</span></div><div class="legend-item"><b>3 Covers</b><span>Music hit</span></div><div class="legend-item"><b>3 Keys / Vaults</b><span>Rare bonus</span></div></aside><div class="center-stage"><div class="status-strip"><div class="stat-box"><span>Credits</span><strong id="credits">1000</strong></div><div class="stat-box"><span>Bet</span><strong id="bet">25</strong></div><div class="stat-box"><span>Last Win</span><strong id="lastWin">0</strong></div><div class="stat-box"><span>Status</span><strong id="status">Ready</strong></div></div><div class="screen-wrap"><div class="screen metal-panel" id="screen"><div class="screen-glow"></div><div class="reels" id="reels"></div><div class="payline line1"></div><div class="payline line2"></div><div class="payline line3"></div><div class="big-win" id="bigWin"></div></div></div><div class="controls"><button class="ghost-btn" id="betDown">- Bet</button><button class="play-btn" id="spinBtn">Spin</button><button class="ghost-btn" id="betUp">+ Bet</button></div><div class="tiny-controls"><button class="ghost-btn" id="autoBtn">Auto x10</button><button class="ghost-btn" id="resetBtn">Reset Credits</button></div><div class="message" id="message">Spin to land music, merch, keys, vaults, or the logo jackpot.</div></div><aside class="side-panel metal-panel"><div class="side-title">Modes</div><div class="mode-chip">Weighted odds</div><div class="mode-chip">Staggered spin</div><div class="mode-chip">Touch ready</div><div class="mode-chip">Brand symbols</div></aside></div></section></div><script src="./script.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>CAPO CASINO</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="page-bg"></div>
+  <main class="slot-app">
+    <a class="back-link" href="../../index.html">← Vault</a>
+
+    <section class="machine-shell" aria-label="Capo Casino slot machine">
+      <header class="machine-top">
+        <div class="brand-wrap">
+          <img class="brand-logo" src="./assets/logo.jpg" alt="3D THE CAPO logo">
+          <div class="brand-text">
+            <div class="eyebrow">CAPO CASINO</div>
+            <h1>Reward Slot</h1>
+          </div>
+        </div>
+        <div class="jackpot-panel">
+          <div class="jackpot-kicker">Progressive Jackpot</div>
+          <div class="jackpot-value" id="jackpot">25,000</div>
+        </div>
+      </header>
+
+      <section class="stats-grid" aria-label="Machine stats">
+        <div class="stat-card"><span>Credits</span><strong id="credits">1000</strong></div>
+        <div class="stat-card"><span>Bet</span><strong id="bet">25</strong></div>
+        <div class="stat-card"><span>Last Win</span><strong id="lastWin">0</strong></div>
+        <div class="stat-card"><span>Status</span><strong id="status">Ready</strong></div>
+      </section>
+
+      <section class="reel-stage" aria-label="Slot reels">
+        <div class="reel-frame-glow"></div>
+        <div class="payline payline-top"></div>
+        <div class="payline payline-mid"></div>
+        <div class="payline payline-bot"></div>
+        <div class="reels" id="reels"></div>
+      </section>
+
+      <section class="controls" aria-label="Machine controls">
+        <button class="control ghost" id="betDown" type="button">− Bet</button>
+        <button class="control spin" id="spinBtn" type="button">Spin</button>
+        <button class="control ghost" id="betUp" type="button">＋ Bet</button>
+      </section>
+
+      <section class="controls secondary-controls" aria-label="Extra controls">
+        <button class="control slim" id="autoBtn" type="button">Auto x10</button>
+        <button class="control slim" id="resetBtn" type="button">Reset Credits</button>
+      </section>
+
+      <div class="message-bar" id="message">Ready to spin.</div>
+    </section>
+  </main>
+  <script src="./script.js"></script>
+</body>
+</html>
