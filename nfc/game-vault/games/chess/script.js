@@ -1,67 +1,17 @@
 
-const boardEl = document.getElementById('board');
-const statusText = document.getElementById('statusText');
-const turnPill = document.getElementById('turnPill');
-const whiteCapsEl = document.getElementById('whiteCaps');
-const blackCapsEl = document.getElementById('blackCaps');
-const glyph = {
-  wk:'♔', wq:'♕', wr:'♖', wb:'♗', wn:'♘', wp:'♙',
-  bk:'♚', bq:'♛', br:'♜', bb:'♝', bn:'♞', bp:'♟'
-};
-let state, turn, selected, legalMoves, whiteCaps, blackCaps;
-function reset(){
- state = [
- ['br','bn','bb','bq','bk','bb','bn','br'],
- ['bp','bp','bp','bp','bp','bp','bp','bp'],
- ['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],
- ['wp','wp','wp','wp','wp','wp','wp','wp'],
- ['wr','wn','wb','wq','wk','wb','wn','wr']
- ];
- turn='w'; selected=null; legalMoves=[]; whiteCaps=[]; blackCaps=[]; render();
-}
-function inside(r,c){ return r>=0&&r<8&&c>=0&&c<8; }
-function colorOf(p){ return p ? p[0] : ''; }
-function cloneMoves(list){ return list.map(m=>({...m})); }
-function pathClear(fr,fc,tr,tc){ const sr=Math.sign(tr-fr), sc=Math.sign(tc-fc); let r=fr+sr,c=fc+sc; while(r!==tr || c!==tc){ if(state[r][c]) return false; r+=sr; c+=sc; } return true; }
-function getMoves(r,c){
- const p=state[r][c]; if(!p) return []; const color=p[0], type=p[1], moves=[]; const dir=color==='w'?-1:1;
- const add=(rr,cc,captureOnly=false)=>{ if(!inside(rr,cc)) return; const t=state[rr][cc]; if(captureOnly){ if(t && colorOf(t)!==color) moves.push({r:rr,c:cc,capture:true}); return; } if(!t) moves.push({r:rr,c:cc}); else if(colorOf(t)!==color) moves.push({r:rr,c:cc,capture:true}); };
- if(type==='p'){ add(r+dir,c); if(((color==='w'&&r===6)||(color==='b'&&r===1)) && !state[r+dir][c] && !state[r+2*dir][c]) moves.push({r:r+2*dir,c}); add(r+dir,c-1,true); add(r+dir,c+1,true); return moves.filter(m=>inside(m.r,m.c)); }
- if(type==='n'){ [[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]].forEach(([dr,dc])=>add(r+dr,c+dc)); return moves; }
- const lines=[]; if(type==='b'||type==='q') lines.push([1,1],[1,-1],[-1,1],[-1,-1]); if(type==='r'||type==='q') lines.push([1,0],[-1,0],[0,1],[0,-1]);
- if(type==='k'){ [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([dr,dc])=>add(r+dr,c+dc)); return moves; }
- for(const [dr,dc] of lines){ let rr=r+dr, cc=c+dc; while(inside(rr,cc)){ const t=state[rr][cc]; if(!t){ moves.push({r:rr,c:cc}); } else { if(colorOf(t)!==color) moves.push({r:rr,c:cc,capture:true}); break; } rr+=dr; cc+=dc; } }
- return moves;
-}
-function render(){
- boardEl.innerHTML='';
- for(let r=0;r<8;r++) for(let c=0;c<8;c++){
-   const sq=document.createElement('button'); sq.className=`square ${((r+c)%2)?'dark':'light'}`; sq.type='button';
-   if(selected && selected.r===r && selected.c===c) sq.classList.add('sel');
-   const legal = legalMoves.find(m=>m.r===r&&m.c===c); if(legal) sq.classList.add(legal.capture?'capture':'move');
-   sq.onclick=()=>clickSquare(r,c);
-   const piece=state[r][c]; if(piece){ const d=document.createElement('div'); d.className=`piece ${piece[0]==='w'?'white':'black'}`; d.textContent=glyph[piece]; sq.appendChild(d); }
-   boardEl.appendChild(sq);
- }
- statusText.textContent = `${turn==='w'?'Gold':'Black'} to move`;
- turnPill.textContent = `${turn==='w'?'Gold':'Black'} to move`;
- whiteCapsEl.textContent = whiteCaps.map(p=>glyph[p]).join(' ');
- blackCapsEl.textContent = blackCaps.map(p=>glyph[p]).join(' ');
-}
-function clickSquare(r,c){
- const piece=state[r][c];
- if(selected){
-   const move=legalMoves.find(m=>m.r===r&&m.c===c);
-   if(move){
-     const moving=state[selected.r][selected.c];
-     if(state[r][c]){ if(turn==='w') whiteCaps.push(state[r][c]); else blackCaps.push(state[r][c]); }
-     state[r][c]=moving; state[selected.r][selected.c]='';
-     if(moving[1]==='p' && (r===0 || r===7)) state[r][c]=moving[0]+'q';
-     turn = turn==='w' ? 'b':'w'; selected=null; legalMoves=[]; render(); return;
-   }
- }
- if(piece && colorOf(piece)===turn){ selected={r,c}; legalMoves=getMoves(r,c); render(); return; }
- selected=null; legalMoves=[]; render();
-}
-document.getElementById('resetBtn').onclick=reset;
-reset();
+const PIECES={wK:'♔',wQ:'♕',wR:'♖',wB:'♗',wN:'♘',wP:'♙',bK:'♚',bQ:'♛',bR:'♜',bB:'♝',bN:'♞',bP:'♟'};
+const boardEl=document.getElementById('board'),turnLabel=document.getElementById('turnLabel'),goldCaps=document.getElementById('goldCaps'),blackCaps=document.getElementById('blackCaps');
+let board=[],turn='w',selected=null,legalMoves=[],captures={w:[],b:[]};
+function startBoard(){board=[['bR','bN','bB','bQ','bK','bB','bN','bR'],['bP','bP','bP','bP','bP','bP','bP','bP'],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],['wP','wP','wP','wP','wP','wP','wP','wP'],['wR','wN','wB','wQ','wK','wB','wN','wR']];turn='w';selected=null;legalMoves=[];captures={w:[],b:[]};render();}
+function inBounds(r,c){return r>=0&&r<8&&c>=0&&c<8} function colorOf(piece){return piece?piece[0]:null}
+function lineMoves(r,c,dirs,max=8){const piece=board[r][c],own=colorOf(piece),moves=[];dirs.forEach(([dr,dc])=>{for(let step=1;step<=max;step++){const nr=r+dr*step,nc=c+dc*step;if(!inBounds(nr,nc)) break;const target=board[nr][nc];if(!target){moves.push([nr,nc]);continue;} if(colorOf(target)!==own) moves.push([nr,nc]); break;}});return moves}
+function pseudoMoves(r,c){const piece=board[r][c]; if(!piece) return []; const color=piece[0], type=piece[1], dir=color==='w'?-1:1; switch(type){case 'P':{const moves=[]; const one=[r+dir,c]; if(inBounds(...one)&&!board[one[0]][one[1]]) moves.push(one); const startRow=color==='w'?6:1; const two=[r+dir*2,c]; if(r===startRow&&!board[one[0]][one[1]]&&inBounds(...two)&&!board[two[0]][two[1]]) moves.push(two); [[r+dir,c-1],[r+dir,c+1]].forEach(([nr,nc])=>{if(inBounds(nr,nc)&&board[nr][nc]&&colorOf(board[nr][nc])!==color) moves.push([nr,nc])}); return moves;} case 'R': return lineMoves(r,c,[[1,0],[-1,0],[0,1],[0,-1]]); case 'B': return lineMoves(r,c,[[1,1],[1,-1],[-1,1],[-1,-1]]); case 'Q': return lineMoves(r,c,[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]); case 'N': return [[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]].map(([dr,dc])=>[r+dr,c+dc]).filter(([nr,nc])=>inBounds(nr,nc)&&colorOf(board[nr][nc])!==color); case 'K': return lineMoves(r,c,[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]],1); default:return [];}}
+function kingPos(color){for(let r=0;r<8;r++) for(let c=0;c<8;c++) if(board[r][c]===color+'K') return [r,c]; return null}
+function isCheck(color){const kp=kingPos(color); if(!kp) return false; const opp=color==='w'?'b':'w'; for(let r=0;r<8;r++) for(let c=0;c<8;c++) if(board[r][c]&&colorOf(board[r][c])===opp){const moves=pseudoMoves(r,c); if(moves.some(([mr,mc])=>mr===kp[0]&&mc===kp[1])) return true;} return false}
+function legalFor(r,c){const piece=board[r][c]; if(!piece||colorOf(piece)!==turn) return []; return pseudoMoves(r,c).filter(([nr,nc])=>{const from=board[r][c],to=board[nr][nc]; board[nr][nc]=from; board[r][c]=null; const bad=isCheck(turn); board[r][c]=from; board[nr][nc]=to; return !bad;});}
+function allLegal(color){const keepTurn=turn; turn=color; const out=[]; for(let r=0;r<8;r++) for(let c=0;c<8;c++) if(board[r][c]&&colorOf(board[r][c])===color){const moves=legalFor(r,c); if(moves.length) out.push(...moves);} turn=keepTurn; return out}
+function statusText(){const colorName=turn==='w'?'Gold':'Black'; const inCheck=isCheck(turn); if(allLegal(turn).length===0) return inCheck?`${colorName} in checkmate`:'Stalemate'; return inCheck?`${colorName} in check`:`${colorName} to move`}
+function move(from,to){const [fr,fc]=from,[tr,tc]=to; const moving=board[fr][fc],target=board[tr][tc]; if(target) captures[turn].push(target); board[tr][tc]=moving; board[fr][fc]=null; if(moving==='wP'&&tr===0) board[tr][tc]='wQ'; if(moving==='bP'&&tr===7) board[tr][tc]='bQ'; turn=turn==='w'?'b':'w'; selected=null; legalMoves=[]; render()}
+function renderCaptures(){goldCaps.innerHTML=''; blackCaps.innerHTML=''; captures.w.forEach(p=>{const d=document.createElement('div'); d.className='cap black'; d.textContent=PIECES[p]; goldCaps.appendChild(d)}); captures.b.forEach(p=>{const d=document.createElement('div'); d.className='cap gold'; d.textContent=PIECES[p]; blackCaps.appendChild(d)})}
+function render(){boardEl.innerHTML=''; turnLabel.textContent=statusText(); for(let r=0;r<8;r++){for(let c=0;c<8;c++){const sq=document.createElement('div'); sq.className=`square ${((r+c)%2===0)?'light':'dark'}`; const isSelected=selected&&selected[0]===r&&selected[1]===c; if(isSelected) sq.classList.add('sel'); if(legalMoves.some(([mr,mc])=>mr===r&&mc===c)) sq.classList.add('hl'); sq.addEventListener('click',()=>{const piece=board[r][c]; const clickedMove=legalMoves.find(([mr,mc])=>mr===r&&mc===c); if(selected&&clickedMove){move(selected,[r,c]);return;} if(piece&&colorOf(piece)===turn){selected=[r,c]; legalMoves=legalFor(r,c);} else {selected=null; legalMoves=[];} render();}); const piece=board[r][c]; if(piece){const p=document.createElement('div'); p.className=`piece ${piece[0]==='w'?'gold':'black'}`; p.textContent=PIECES[piece]; sq.appendChild(p);} boardEl.appendChild(sq);}} renderCaptures()}
+document.getElementById('resetBtn').addEventListener('click',startBoard); startBoard();
