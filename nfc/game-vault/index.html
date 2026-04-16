@@ -1,63 +1,71 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CAPO VAULT ARCADE</title>
-  <style>
-    :root{
-      --bg:#070707;--panel:#111;--panel2:#171717;--gold:#d5a646;--gold2:#8d6421;--text:#f4ead6;--muted:#b7aa92;
-      --line:rgba(213,166,70,.32);--glow:0 0 22px rgba(213,166,70,.28);
-    }
-    *{box-sizing:border-box} html,body{margin:0;height:100%;font-family:Inter,Arial,sans-serif;background:radial-gradient(circle at top, #1b1408 0%, #0c0b09 26%, #050505 58%, #020202 100%);color:var(--text)}
-    body:before{content:"";position:fixed;inset:0;background:linear-gradient(135deg,rgba(213,166,70,.06),transparent 22%,transparent 78%,rgba(213,166,70,.05)),repeating-linear-gradient(90deg,transparent 0 39px, rgba(255,255,255,.015) 40px);pointer-events:none}
-    .wrap{max-width:1280px;margin:0 auto;padding:34px 18px 56px}
-    .hero{position:relative;border:1px solid var(--line);border-radius:28px;padding:34px;background:linear-gradient(180deg, rgba(255,212,128,.09), rgba(255,255,255,.02)), linear-gradient(180deg,#16110b,#0d0d0d);box-shadow:var(--glow), inset 0 1px 0 rgba(255,255,255,.04)}
-    .badge{display:inline-block;padding:8px 14px;border:1px solid var(--line);border-radius:999px;color:#f7d68f;background:rgba(213,166,70,.08);letter-spacing:.2em;font-size:12px;text-transform:uppercase}
-    h1{font-size:clamp(34px,7vw,74px);line-height:.95;margin:16px 0 10px;letter-spacing:.06em}
-    .gold{background:linear-gradient(180deg,#fff1c9,#e5b65c 45%,#8e6422 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-    .lead{max-width:780px;color:var(--muted);font-size:18px;line-height:1.6}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:28px}
-    .card{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:230px;padding:18px;border-radius:22px;border:1px solid var(--line);background:linear-gradient(180deg,#151515,#0c0c0c);box-shadow:0 16px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03);overflow:hidden}
-    .card:before{content:"";position:absolute;inset:auto -20% 68% auto;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle, rgba(213,166,70,.22), transparent 65%);filter:blur(14px)}
-    .tag{display:inline-block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f0cb7e;border:1px solid var(--line);padding:7px 10px;border-radius:999px;background:rgba(213,166,70,.06)}
-    .title{font-size:28px;font-weight:800;margin:14px 0 10px;letter-spacing:.03em}
-    .desc{color:var(--muted);line-height:1.55;min-height:72px}
-    .btn{display:inline-flex;justify-content:center;align-items:center;padding:14px 18px;border-radius:14px;border:1px solid rgba(255,216,120,.35);text-decoration:none;color:#140d03;background:linear-gradient(180deg,#f4d183,#cc9336);font-weight:800;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 8px 22px rgba(213,166,70,.25)}
-    .btn:hover{filter:brightness(1.05)}
-    .foot{margin-top:26px;color:#9f9279;font-size:14px}
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAPO VAULT ARCADE</title>
+<link rel="stylesheet" href="./shared.css">
+<style>
+.hero{position:relative;overflow:hidden;padding:28px;border-radius:30px}
+.hero::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.55)), url('./assets/vault-bg.jpg') center/cover no-repeat;
+  opacity:.38;filter:saturate(.75) contrast(1.05)
+}
+.hero>*{position:relative;z-index:1}
+.logo-chip{display:inline-flex;gap:12px;align-items:center;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:rgba(0,0,0,.25)}
+.logo-chip img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:24px}
+.card{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:250px;padding:18px}
+.card::before{content:"";position:absolute;inset:auto -30px 68% auto;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle, rgba(217,165,72,.22), transparent 67%);filter:blur(12px)}
+.card>*{position:relative;z-index:1}
+.card h3{margin:14px 0 10px;font-size:28px}
+.card p{margin:0 0 16px;color:var(--muted);line-height:1.55;min-height:72px}
+.tag{display:inline-block;padding:7px 10px;border-radius:999px;border:1px solid var(--line);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f0cb7e;background:rgba(217,165,72,.06)}
+.action-row{display:flex;gap:10px;flex-wrap:wrap}
+.micro{font-size:12px;color:#9d8f75;margin-top:18px}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="hero">
-      <span class="badge">3D THE CAPO • CAPO VAULT ARCADE</span>
-      <h1><span class="gold">GAME</span> VAULT</h1>
-      <p class="lead">Luxury black-and-gold arcade room for your website. All games below use local paths only, so this pack is drag-and-drop safe for <strong>/nfc/game-vault/</strong>.</p>
-      <div class="grid">
-        <article class="card">
-          <div><span class="tag">Reward Game</span><div class="title">Slot Machine</div><div class="desc">Vault-style slot machine with premium UI, jackpot meter, glow effects, and branded black/gold casino feel.</div></div>
-          <a class="btn" href="./games/slot-machine-custom/index.html">Play Now</a>
-        </article>
-        <article class="card">
-          <div><span class="tag">Table Game</span><div class="title">Pool</div><div class="desc">Top-down capo billiards table with cue aim, clean collisions, and premium felt/gold trim styling.</div></div>
-          <a class="btn" href="./games/pool/index.html">Break Rack</a>
-        </article>
-        <article class="card">
-          <div><span class="tag">Bay Area Racer</span><div class="title">Street Run</div><div class="desc">Fast lane-dodge racer with bridge skyline silhouettes, night-road glow, and score-based speed scaling.</div></div>
-          <a class="btn" href="./games/racing/index.html">Hit The Road</a>
-        </article>
-        <article class="card">
-          <div><span class="tag">Strategy</span><div class="title">Chess</div><div class="desc">Luxury board with move validation, turn logic, and clean piece visuals in black marble and gold.</div></div>
-          <a class="btn" href="./games/chess/index.html">Open Board</a>
-        </article>
-        <article class="card">
-          <div><span class="tag">Training</span><div class="title">Vault Defense</div><div class="desc">Premium target-defense game with moving security targets, combo scoring, timer mode, and fast feedback.</div></div>
-          <a class="btn" href="./games/vault-defense/index.html">Enter Range</a>
-        </article>
+<div class="wrap">
+  <section class="hero metal-panel">
+    <div class="logo-chip"><img src="./assets/logo.jpg" alt="3D THE CAPO logo"><span>3D THE CAPO • CAPO VAULT ARCADE</span></div>
+    <div class="topbar" style="margin-top:18px">
+      <div class="title-block">
+        <div class="kicker">Game Vault</div>
+        <h1><span class="gold-text">Play</span> The Vault</h1>
+        <p>Full drag-and-drop game room with upgraded paths, black-and-gold styling, and a branded 5-reel reward slot using your art. Upload this whole <strong>nfc/game-vault</strong> folder to replace the old one.</p>
       </div>
-      <div class="foot">Install path: <strong>/nfc/game-vault/</strong> • All links are already wired with local relative paths.</div>
-    </section>
-  </div>
-</body>
-</html>
+      <div class="hud">
+        <div class="pill">Slots</div>
+        <div class="pill">Pool</div>
+        <div class="pill">Racing</div>
+        <div class="pill">Chess</div>
+        <div class="pill">Vault Defense</div>
+      </div>
+    </div>
+    <div class="grid">
+      <article class="card metal-panel">
+        <div><span class="tag">Main Feature</span><h3>Reward Slot</h3><p>5 reels, 3 rows, weighted odds, branded symbols, and controlled reward logic so it stays exciting without paying out too much.</p></div>
+        <div class="action-row"><a class="play-btn" href="./games/slot-machine-custom/index.html">Play Slot</a></div>
+      </article>
+      <article class="card metal-panel">
+        <div><span class="tag">Table Game</span><h3>Pool</h3><p>Black felt, gold rails, cue glow, timer mode, and quick mobile play built for your vault room aesthetic.</p></div>
+        <div class="action-row"><a class="play-btn" href="./games/pool/index.html">Play Pool</a></div>
+      </article>
+      <article class="card metal-panel">
+        <div><span class="tag">Bay Vibe</span><h3>Racing</h3><p>Bridge lights, night run, traffic dodge, and score-based arcade speed with luxury dark UI.</p></div>
+        <div class="action-row"><a class="play-btn" href="./games/racing/index.html">Start Run</a></div>
+      </article>
+      <article class="card metal-panel">
+        <div><span class="tag">Classic</span><h3>Chess</h3><p>Black marble board, gold and matte pieces, simple local 2-player rules, and a premium look instead of a plain board.</p></div>
+        <div class="action-row"><a class="play-btn" href="./games/chess/index.html">Open Chess</a></div>
+      </article>
+      <article class="card metal-panel">
+        <div><span class="tag">Skill Game</span><h3>Vault Defense</h3><p>Clean target-range shooter with vault security styling, moving targets, streak meter, and fast replay.</p></div>
+        <div class="action-row"><a class="play-btn" href="./games/vault-defense/index.html">Run Drill</a></div>
+      </article>
+    </div>
+    <div class="micro">Paths are all local to this folder, so the pack is ready for GitHub Pages inside <strong>/nfc/game-vault/</strong>.</div>
+  </section>
+</div>
+</body></html>
