@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3D THE CAPO — Slot Machine</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+
+    <main class="machine-wrap">
+      <header class="machine-top">
+        <p class="eyebrow">GAME VAULT</p>
+        <h1>3D THE CAPO</h1>
+        <div class="subline">BLACK GOLD JACKPOT MACHINE</div>
+      </header>
+
+      <section class="machine-frame">
+        <div class="machine-glow"></div>
+
+        <div class="top-panels">
+          <div class="panel stat-panel">
+            <span class="label">BALANCE</span>
+            <strong id="balanceDisplay">1000</strong>
+          </div>
+          <div class="panel jackpot-panel">
+            <span class="label">JACKPOT</span>
+            <strong id="jackpotDisplay">5000</strong>
+          </div>
+          <div class="panel stat-panel">
+            <span class="label">BET</span>
+            <strong id="betDisplay">50</strong>
+          </div>
+        </div>
+
+        <div class="reels-shell">
+          <div class="reels" aria-label="Slot machine reels">
+            <div class="reel-window"><div class="reel" id="reel1">💎</div></div>
+            <div class="reel-window"><div class="reel" id="reel2">👑</div></div>
+            <div class="reel-window"><div class="reel" id="reel3">💰</div></div>
+          </div>
+        </div>
+
+        <div class="controls-row">
+          <button class="control-btn" id="betDownBtn" type="button">- BET</button>
+          <button class="spin-btn" id="spinBtn" type="button">SPIN</button>
+          <button class="control-btn" id="betUpBtn" type="button">+ BET</button>
+        </div>
+
+        <div class="message-box" id="messageBox">Press SPIN to chase the vault jackpot.</div>
+
+        <div class="paytable">
+          <div class="pay-item"><span>💎💎💎</span><strong>10x BET</strong></div>
+          <div class="pay-item"><span>👑👑👑</span><strong>8x BET</strong></div>
+          <div class="pay-item"><span>💰💰💰</span><strong>6x BET</strong></div>
+          <div class="pay-item"><span>🎵🎵🎵</span><strong>5x BET</strong></div>
+          <div class="pay-item"><span>Any 2 Match</span><strong>2x BET</strong></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>

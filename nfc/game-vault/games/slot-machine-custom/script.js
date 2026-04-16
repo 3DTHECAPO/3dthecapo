@@ -1,151 +1,132 @@
-const symbols = [
-  { icon: '💰', weight: 5, name: 'Money' },
-  { icon: '👑', weight: 3, name: 'Crown' },
-  { icon: '💎', weight: 4, name: 'Diamond' },
-  { icon: '7️⃣', weight: 1, name: 'Seven' },
-  { icon: '🔥', weight: 4, name: 'Fire' },
-  { icon: '🎤', weight: 3, name: 'Mic' }
-];
+(() => {
+  const symbols = ['💎', '👑', '💰', '🎵', '7'];
+  const payouts = {
+    '💎': 10,
+    '👑': 8,
+    '💰': 6,
+    '🎵': 5,
+    '7': 12
+  };
 
-const reels = [
-  document.getElementById('reel1'),
-  document.getElementById('reel2'),
-  document.getElementById('reel3')
-];
-const balanceEl = document.getElementById('balance');
-const betDisplayEl = document.getElementById('betDisplay');
-const jackpotEl = document.getElementById('jackpot');
-const messageEl = document.getElementById('message');
-const spinBtn = document.getElementById('spinBtn');
-const betUpBtn = document.getElementById('betUp');
-const betDownBtn = document.getElementById('betDown');
-const chips = [...document.querySelectorAll('.chip')];
+  let balance = 1000;
+  let jackpot = 5000;
+  let bet = 50;
+  let spinning = false;
 
-let balance = 1000;
-let bet = 25;
-let jackpot = 5000;
-let spinning = false;
+  const reelEls = [
+    document.getElementById('reel1'),
+    document.getElementById('reel2'),
+    document.getElementById('reel3')
+  ];
 
-function weightedPick() {
-  const total = symbols.reduce((sum, s) => sum + s.weight, 0);
-  let roll = Math.random() * total;
-  for (const symbol of symbols) {
-    roll -= symbol.weight;
-    if (roll <= 0) return symbol;
+  const balanceDisplay = document.getElementById('balanceDisplay');
+  const jackpotDisplay = document.getElementById('jackpotDisplay');
+  const betDisplay = document.getElementById('betDisplay');
+  const messageBox = document.getElementById('messageBox');
+  const spinBtn = document.getElementById('spinBtn');
+  const betUpBtn = document.getElementById('betUpBtn');
+  const betDownBtn = document.getElementById('betDownBtn');
+
+  function formatNum(value) {
+    return String(value);
   }
-  return symbols[0];
-}
 
-function setMessage(text, type='') {
-  messageEl.textContent = text;
-  messageEl.className = 'message' + (type ? ` ${type}` : '');
-}
+  function updateUI() {
+    balanceDisplay.textContent = formatNum(balance);
+    jackpotDisplay.textContent = formatNum(jackpot);
+    betDisplay.textContent = formatNum(bet);
+    spinBtn.disabled = spinning || balance < bet;
+    betDownBtn.disabled = spinning || bet <= 10;
+    betUpBtn.disabled = spinning || bet >= 200 || balance < bet + 10;
+  }
 
-function format(num) {
-  return Math.max(0, Math.floor(num)).toLocaleString();
-}
+  function setMessage(text, state = '') {
+    messageBox.textContent = text;
+    messageBox.className = 'message-box' + (state ? ' ' + state : '');
+  }
 
-function updateUI() {
-  balanceEl.textContent = format(balance);
-  betDisplayEl.textContent = format(bet);
-  jackpotEl.textContent = format(jackpot);
-  chips.forEach(chip => chip.classList.toggle('active', Number(chip.dataset.bet) === bet));
-  betDownBtn.disabled = spinning || bet <= 25;
-  betUpBtn.disabled = spinning || bet >= 250;
-  spinBtn.disabled = spinning || balance < bet;
-}
+  function randomSymbol() {
+    return symbols[Math.floor(Math.random() * symbols.length)];
+  }
 
-function payoutFor(result) {
-  const icons = result.map(r => r.icon);
-  const allSame = icons.every(i => i === icons[0]);
-  const sevens = icons.filter(i => i === '7️⃣').length;
-  const crowns = icons.filter(i => i === '👑').length;
+  function evaluate(result) {
+    const [a, b, c] = result;
+    const counts = {};
+    result.forEach(s => counts[s] = (counts[s] || 0) + 1);
 
-  if (allSame && icons[0] === '7️⃣') {
-    return { amount: jackpot, text: 'JACKPOT HIT — 7️⃣7️⃣7️⃣! THE VAULT BURST OPEN.', type: 'win', resetJackpot: true };
-  }
-  if (allSame && icons[0] === '👑') {
-    return { amount: bet * 15, text: 'CROWN SWEEP — premium hit.', type: 'win' };
-  }
-  if (allSame && icons[0] === '💎') {
-    return { amount: bet * 12, text: 'DIAMOND LINE — icy payout.', type: 'win' };
-  }
-  if (allSame && icons[0] === '💰') {
-    return { amount: bet * 10, text: 'MONEY BAGS — bankroll up.', type: 'win' };
-  }
-  if (allSame) {
-    return { amount: bet * 7, text: `${result[0].name.toUpperCase()} MATCH — clean hit.`, type: 'win' };
-  }
-  if (sevens === 2) {
-    return { amount: bet * 3, text: 'DOUBLE 7 BONUS.', type: 'win' };
-  }
-  if (crowns === 2) {
-    return { amount: bet * 2, text: 'DOUBLE CROWN BONUS.', type: 'win' };
-  }
-  return { amount: 0, text: 'No hit. Spin again.', type: 'lose' };
-}
+    if (a === b && b === c) {
+      const mult = payouts[a] || 4;
+      const win = bet * mult;
+      balance += win;
+      if (a === '7') {
+        balance += jackpot;
+        setMessage(`JACKPOT! 777 hit for ${win + jackpot}!`, 'jackpot');
+        jackpot = 5000;
+      } else {
+        setMessage(`BIG WIN! ${a}${a}${a} paid ${win}.`, 'win');
+        jackpot += Math.floor(bet * 0.2);
+      }
+      return;
+    }
 
-function animateSpin(finalResult) {
-  return Promise.all(reels.map((reel, idx) => {
-    reel.classList.add('spinning');
-    return new Promise(resolve => {
+    const pair = Object.values(counts).some(count => count === 2);
+    if (pair) {
+      const win = bet * 2;
+      balance += win;
+      jackpot += Math.floor(bet * 0.35);
+      setMessage(`Nice hit. Two matched for ${win}.`, 'win');
+      return;
+    }
+
+    jackpot += Math.floor(bet * 0.5);
+    setMessage(`No hit. Vault grows to ${jackpot}.`, 'lose');
+  }
+
+  function animateSpin(finalSymbols) {
+    spinning = true;
+    updateUI();
+    setMessage('Spinning the reels...', '');
+
+    reelEls.forEach(el => el.classList.add('spinning'));
+
+    reelEls.forEach((el, index) => {
       const interval = setInterval(() => {
-        reel.textContent = symbols[Math.floor(Math.random() * symbols.length)].icon;
-      }, 80);
+        el.textContent = randomSymbol();
+      }, 90);
 
-      const stopDelay = 850 + idx * 380;
       setTimeout(() => {
         clearInterval(interval);
-        reel.classList.remove('spinning');
-        reel.textContent = finalResult[idx].icon;
-        resolve();
-      }, stopDelay);
+        el.textContent = finalSymbols[index];
+        el.classList.remove('spinning');
+
+        if (index === reelEls.length - 1) {
+          spinning = false;
+          evaluate(finalSymbols);
+          updateUI();
+        }
+      }, 900 + index * 450);
     });
-  }));
-}
-
-async function spin() {
-  if (spinning || balance < bet) return;
-  spinning = true;
-  balance -= bet;
-  jackpot += Math.round(bet * 0.25);
-  setMessage('The vault is spinning...', '');
-  updateUI();
-
-  const result = [weightedPick(), weightedPick(), weightedPick()];
-  await animateSpin(result);
-
-  const payout = payoutFor(result);
-  if (payout.amount > 0) {
-    balance += payout.amount;
-  }
-  if (payout.resetJackpot) {
-    jackpot = 5000;
   }
 
-  setMessage(`${payout.text} ${payout.amount > 0 ? `+${format(payout.amount)}` : ''}`.trim(), payout.type);
+  spinBtn.addEventListener('click', () => {
+    if (spinning || balance < bet) return;
+    balance -= bet;
+    const finalSymbols = [randomSymbol(), randomSymbol(), randomSymbol()];
+    animateSpin(finalSymbols);
+    updateUI();
+  });
 
-  if (balance < 25) {
-    setMessage('Balance too low. Refresh or add your own wallet logic later.', 'lose');
-  }
+  betUpBtn.addEventListener('click', () => {
+    if (spinning) return;
+    bet = Math.min(200, bet + 10);
+    updateUI();
+  });
 
-  spinning = false;
-  updateUI();
-}
+  betDownBtn.addEventListener('click', () => {
+    if (spinning) return;
+    bet = Math.max(10, bet - 10);
+    updateUI();
+  });
 
-spinBtn.addEventListener('click', spin);
-betUpBtn.addEventListener('click', () => {
-  bet = Math.min(250, bet + 25);
   updateUI();
-});
-betDownBtn.addEventListener('click', () => {
-  bet = Math.max(25, bet - 25);
-  updateUI();
-});
-chips.forEach(chip => chip.addEventListener('click', () => {
-  if (spinning) return;
-  bet = Number(chip.dataset.bet);
-  updateUI();
-}));
-
-updateUI();
+})();
