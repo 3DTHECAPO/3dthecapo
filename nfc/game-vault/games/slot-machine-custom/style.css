@@ -1,8 +1,183 @@
+:root{
+  --gold:#e2b65d;
+  --gold2:#c8891d;
+  --gold3:#7d5010;
+  --text:#f6ead3;
+  --line:rgba(226,182,93,.22);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  min-height:100vh;
+  color:var(--text);
+  font-family:'Orbitron',sans-serif;
+  background:
+    radial-gradient(circle at 50% 8%, rgba(200,137,29,.18), transparent 18%),
+    radial-gradient(circle at 50% 50%, rgba(200,137,29,.08), transparent 28%),
+    linear-gradient(rgba(3,3,3,.78), rgba(3,3,3,.88)),
+    url('./assets/bg-vault-room.jpg') center/cover no-repeat,
+    linear-gradient(180deg,#090807 0%, #030303 100%);
+  padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 20px);
+}
+.app{max-width:430px;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.back{
+  width:54px;height:54px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.28);
+  color:var(--text);text-decoration:none;font-size:26px
+}
+.kicker{font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+.title{font-size:18px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
 
-body{background:#000;color:#fff;font-family:sans-serif;text-align:center}
-.machine{max-width:400px;margin:auto}
-.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
-.reel{height:250px;background:#111;display:grid;grid-template-rows:repeat(3,1fr)}
-.cell{border:1px solid gold;display:flex;align-items:center;justify-content:center}
-img{width:100%;height:100%;object-fit:contain}
-#lever{margin-top:20px;padding:10px 20px}
+.machine{
+  position:relative;border-radius:32px;border:1px solid var(--line);padding:16px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0) 10%),
+    radial-gradient(circle at 50% 10%, rgba(200,137,29,.18), transparent 20%),
+    linear-gradient(180deg,#16110e,#080706);
+  box-shadow:0 18px 44px rgba(0,0,0,.5);
+}
+.panel{
+  border-radius:24px;border:1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0) 16%),
+    linear-gradient(180deg,#16110e,#080706);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.jackpot{padding:16px 18px 14px;margin-bottom:14px}
+.label{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+.jackpot-value{margin-top:6px;font-size:54px;line-height:1;font-weight:900}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.stat{padding:16px}
+.value{margin-top:8px;font-size:28px;line-height:1.05;font-weight:900}
+
+.machine-body{
+  position:relative;
+  padding-right:68px;
+  margin-bottom:14px;
+}
+.screen{
+  position:relative;padding:14px;border-radius:30px;border:1px solid rgba(226,182,93,.26);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0) 10%),
+    linear-gradient(180deg,#24180f,#070606);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.03),0 10px 28px rgba(0,0,0,.38);
+}
+.screen::before{
+  content:"";position:absolute;inset:10px;border-radius:24px;border:1px solid rgba(226,182,93,.09);pointer-events:none;
+}
+.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.reel{
+  height:294px;padding:8px;border-radius:22px;border:1px solid rgba(226,182,93,.16);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0) 12%),
+    linear-gradient(180deg,#18120f,#080706);
+  display:grid;grid-template-rows:repeat(3,1fr);gap:8px;
+  box-shadow:inset 0 10px 18px rgba(255,255,255,.02), inset 0 -12px 22px rgba(0,0,0,.25);
+}
+.cell{
+  display:grid;place-items:center;overflow:hidden;border-radius:18px;border:1px solid rgba(226,182,93,.12);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0) 20%),
+    linear-gradient(180deg,#15110e,#090807);
+}
+.cellFrame{
+  width:100%;
+  height:100%;
+  border-radius:14px;
+  background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), #060606;
+  border:1px solid rgba(226,182,93,.14);
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+}
+.cell img{
+  width:96%;
+  height:96%;
+  object-fit:contain;
+  display:block;
+  filter:drop-shadow(0 8px 12px rgba(0,0,0,.35));
+}
+.cell.cover .cellFrame{
+  width:100%;
+  height:100%;
+  border-radius:14px;
+}
+.cell.cover img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.cell.logo img{
+  width:98%;
+  height:98%;
+  object-fit:contain;
+  filter:drop-shadow(0 0 14px rgba(226,182,93,.22));
+}
+
+.lever{
+  position:absolute;
+  right:-6px;
+  top:22px;
+  width:64px;
+  height:252px;
+  background:transparent;
+  border:none;
+  padding:0;
+  cursor:pointer;
+  appearance:none;
+}
+.lever-track{
+  position:absolute;
+  right:26px;
+  top:36px;
+  width:12px;
+  height:172px;
+  border-radius:999px;
+  background:
+    linear-gradient(180deg,#6c4208 0%, #f0cb6f 18%, #9a6411 52%, #f0cb6f 86%, #6a4008 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.18),
+    0 0 18px rgba(200,137,29,.22);
+}
+.lever-stick{
+  position:absolute;
+  right:29px;
+  top:28px;
+  width:6px;
+  height:166px;
+  border-radius:999px;
+  background:
+    linear-gradient(180deg,#f7dda0 0%, #e1ae3c 55%, #8b5710 100%);
+}
+.lever-knob{
+  position:absolute;
+  right:11px;
+  top:0;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 32% 28%, #fff0c8 0%, #f0c960 24%, #d69321 56%, #8d5810 100%);
+  box-shadow:
+    0 10px 18px rgba(0,0,0,.38),
+    inset 0 2px 3px rgba(255,255,255,.28),
+    0 0 16px rgba(200,137,29,.24);
+}
+.lever:active .lever-knob{transform:translateY(24px)}
+.lever:active .lever-stick{transform:translateY(16px)}
+
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.btn{border:none;border-radius:22px;padding:18px 14px;font-size:18px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.secondary{background:linear-gradient(180deg,#17120f,#0b0a09);color:var(--text);border:1px solid var(--line)}
+.primary{background:linear-gradient(180deg,#f0ca6c,#c8891d);color:#111;box-shadow:0 10px 22px rgba(200,137,29,.28)}
+.message{min-height:24px;margin-top:14px;text-align:center;color:var(--gold);font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+@media (max-width:430px){
+  .jackpot-value{font-size:46px}
+  .reel{height:280px}
+  .machine-body{padding-right:62px}
+  .lever{right:-4px;width:58px;height:238px}
+  .lever-track{right:24px;height:162px}
+  .lever-stick{right:27px;height:156px}
+  .lever-knob{width:38px;height:38px;right:10px}
+}
