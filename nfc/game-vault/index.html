@@ -1,1 +1,31 @@
-<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Capo Vault</title><link rel='stylesheet' href='./shared.css'><style>.hero{position:relative;overflow:hidden;padding:28px}.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.72)),url('./assets/vault-bg.jpg') center/cover no-repeat;opacity:.34}.hero>*{position:relative;z-index:1}.brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.brand img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:1px solid rgba(255,255,255,.08)}.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#d7bf95}h1{margin:8px 0 10px;font-size:clamp(34px,7vw,76px);line-height:.92}.gold{background:linear-gradient(180deg,#fff6de,#efce86 42%,#c9892d 72%,#8a5814 100%);-webkit-background-clip:text;background-clip:text;color:transparent}.sub{max-width:720px;color:var(--muted);line-height:1.65;margin:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:24px}.card{padding:22px;min-height:270px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.card:after{content:"";position:absolute;right:-50px;top:-50px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(216,168,74,.18),transparent 68%);filter:blur(10px)}.card>*{position:relative;z-index:1}.tag{display:inline-flex;padding:8px 12px;border-radius:999px;border:1px solid var(--line);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f1d18d;background:rgba(216,168,74,.08)}.card h2{font-size:34px;margin:16px 0 10px}.card p{margin:0;color:var(--muted);line-height:1.65;max-width:34ch}.actions{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}</style></head><body><div class='wrap'><section class='hero panel'><div class='brand'><img src='./assets/logo.jpg' alt=''><div><div class='kicker'>3D THE CAPO</div><div style='font-weight:900;letter-spacing:.14em;text-transform:uppercase'>Capo Vault</div></div></div><h1><span class='gold'>Slot.</span> Chess.</h1><p class='sub'>Two polished games only.</p><div class='grid'><article class='card panel'><div><span class='tag'>Capo Casino</span><h2>Slot</h2><p>5 reels. 3 rows. Fixed starting bank. No reset.</p></div><div class='actions'><a class='btn' href='./games/slot-machine-custom/index.html'>Enter Slot</a></div></article><article class='card panel'><div><span class='tag'>Street Edition</span><h2>Chess</h2><p>Graffiti board, premium move highlights, local two-player play.</p></div><div class='actions'><a class='btn' href='./games/capo-chess/index.html'>Open Chess</a></div></article></div></section></div></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Capo Vault</title>
+  <link rel="stylesheet" href="./shared.css">
+</head>
+<body>
+  <main class="hub">
+    <header class="hub-header">
+      <div class="eyebrow">3D THE CAPO</div>
+      <h1>Capo Vault</h1>
+    </header>
+
+    <section class="hub-grid">
+      <a class="vault-card" href="./games/slot-machine-custom/">
+        <span class="vault-pill">Capo Casino</span>
+        <strong>Slot</strong>
+        <span class="vault-btn">Enter</span>
+      </a>
+
+      <a class="vault-card" href="./games/capo-chess/">
+        <span class="vault-pill">Street Edition</span>
+        <strong>Chess</strong>
+        <span class="vault-btn">Open</span>
+      </a>
+    </section>
+  </main>
+</body>
+</html>
