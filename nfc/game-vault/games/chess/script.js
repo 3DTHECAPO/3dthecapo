@@ -1,5 +1,6 @@
 const boardEl = document.getElementById('board');
 const statusEl = document.getElementById('status');
+const resetBtn = document.getElementById('resetBtn');
 
 const START_ROWS = [
   ['♜','♞','♝','♛','♚','♝','♞','♜'],
@@ -31,12 +32,12 @@ function render(){
       const sq = document.createElement('button');
       sq.type = 'button';
       sq.className = 'square ' + (((row + col) % 2) ? 'dark' : 'light');
+      sq.dataset.row = String(row);
+      sq.dataset.col = String(col);
       if(selected && selected.row === row && selected.col === col){
         sq.classList.add('selected');
       }
       sq.textContent = piece;
-      sq.dataset.row = String(row);
-      sq.dataset.col = String(col);
       boardEl.appendChild(sq);
     }
   }
@@ -77,23 +78,19 @@ function clickSquare(row, col){
   render();
 }
 
-boardEl.addEventListener('pointerup', (event) => {
+function handleBoardEvent(event){
   const square = event.target.closest('.square');
   if(!square) return;
   const row = Number(square.dataset.row);
   const col = Number(square.dataset.col);
+  if(Number.isNaN(row) || Number.isNaN(col)) return;
   clickSquare(row, col);
-});
+}
 
-boardEl.addEventListener('click', (event) => {
-  const square = event.target.closest('.square');
-  if(!square) return;
-  const row = Number(square.dataset.row);
-  const col = Number(square.dataset.col);
-  clickSquare(row, col);
-});
+boardEl.addEventListener('click', handleBoardEvent);
+boardEl.addEventListener('pointerup', handleBoardEvent);
 
-document.getElementById('resetBtn').addEventListener('click', () => {
+resetBtn.addEventListener('click', () => {
   state = cloneRows(START_ROWS);
   whiteTurn = true;
   selected = null;
