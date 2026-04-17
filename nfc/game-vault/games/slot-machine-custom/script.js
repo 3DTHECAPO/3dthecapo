@@ -1,6 +1,6 @@
 const STARTING_CREDITS = 1000;
 const BETS = [25,50,100,250];
-const STORAGE_KEY = 'capo_slot_clean_v1';
+const STORAGE_KEY = 'capo_slot_realistic_assets_v1';
 
 const SYMBOLS = [
   {id:'speaker',src:'assets/speaker.png',kind:'object',weight:14,payout:3},
@@ -17,17 +17,18 @@ const SYMBOLS = [
   {id:'resume',src:'assets/cover-my-resume.png',kind:'cover',weight:4,payout:18},
   {id:'logo',src:'assets/logo.png',kind:'logo',weight:2,payout:50},
 ];
+
 let state = loadState();
 let spinning = false;
 
 const els = {
   reels: document.getElementById('reels'),
-  credits: document.getElementById('credits'),
-  bet: document.getElementById('bet'),
-  lastWin: document.getElementById('lastWin'),
-  status: document.getElementById('status'),
-  jackpot: document.getElementById('jackpot'),
-  message: document.getElementById('message'),
+  credits: document.getElementById('creditsValue'),
+  bet: document.getElementById('betValue'),
+  lastWin: document.getElementById('lastWinValue'),
+  status: document.getElementById('statusValue'),
+  jackpot: document.getElementById('jackpotValue'),
+  message: document.getElementById('messageBar'),
 };
 
 function loadState(){
@@ -53,6 +54,18 @@ function pick(){
   for(const s of SYMBOLS){ r -= s.weight; if(r<=0) return s; }
   return SYMBOLS[0];
 }
+function makeCell(symbol){
+  const cell = document.createElement('div');
+  cell.className = 'cell ' + (symbol.kind === 'cover' ? 'cover' : symbol.kind === 'logo' ? 'logo' : '');
+  const frame = document.createElement('div');
+  frame.className = 'cellFrame';
+  const img = document.createElement('img');
+  img.src = symbol.src;
+  img.alt = '';
+  frame.appendChild(img);
+  cell.appendChild(frame);
+  return cell;
+}
 function board(){
   return Array.from({length:3},()=>Array.from({length:5},()=>pick()));
 }
@@ -61,15 +74,7 @@ function render(b){
   for(let c=0;c<5;c++){
     const reel = document.createElement('div');
     reel.className='reel';
-    for(let r=0;r<3;r++){
-      const s = b[r][c];
-      const cell = document.createElement('div');
-      cell.className='cell ' + (s.kind==='cover' ? 'cover' : s.kind==='logo' ? 'logo' : '');
-      const img=document.createElement('img');
-      img.src=s.src; img.alt='';
-      cell.appendChild(img);
-      reel.appendChild(cell);
-    }
+    for(let r=0;r<3;r++) reel.appendChild(makeCell(b[r][c]));
     els.reels.appendChild(reel);
   }
 }
@@ -81,19 +86,18 @@ function update(status='Ready', msg=''){
   els.jackpot.textContent = Math.round(state.jackpot).toLocaleString();
   els.message.textContent = msg;
 }
-function paylines(b){
-  return [b[0], b[1], b[2]];
-}
+function paylines(b){ return [b[0], b[1], b[2]]; }
 function evaluate(b){
   const bet = BETS[state.betIndex];
-  let total=0;
+  let total = 0;
   for(const line of paylines(b)){
     const counts = {};
-    line.forEach(s=>counts[s.id]=(counts[s.id]||0)+1);
+    line.forEach(s => counts[s.id] = (counts[s.id] || 0) + 1);
     for(const s of SYMBOLS){
-      const count = counts[s.id]||0;
-      if(count>=3){
-        total += Math.round(bet * (count===5 ? s.payout*2 : count===4 ? s.payout*1.4 : s.payout));
+      const n = counts[s.id] || 0;
+      if(n >= 3){
+        const mult = n === 5 ? s.payout * 2 : n === 4 ? s.payout * 1.4 : s.payout;
+        total += Math.round(bet * mult);
       }
     }
   }
@@ -105,31 +109,27 @@ function spinOnce(){
   if(state.credits < bet){ update('No Credits','Out of Credits'); return; }
   spinning = true;
   state.credits -= bet;
-  state.jackpot += Math.round(bet*.35);
+  state.jackpot += Math.round(bet * .35);
   state.lastWin = 0;
   update('Spinning','');
-  const reels = Array.from(document.querySelectorAll('.reel'));
-  const timers = reels.map((reel, idx)=>setInterval(()=>{
-    reel.innerHTML='';
-    for(let r=0;r<3;r++){
-      const s=pick();
-      const cell=document.createElement('div');
-      cell.className='cell ' + (s.kind==='cover' ? 'cover' : s.kind==='logo' ? 'logo' : '');
-      const img=document.createElement('img'); img.src=s.src; img.alt='';
-      cell.appendChild(img); reel.appendChild(cell);
-    }
-  }, 90+idx*20));
+
+  const liveReels = Array.from(document.querySelectorAll('.reel'));
+  const timers = liveReels.map((reel, idx)=>setInterval(()=>{
+    reel.innerHTML = '';
+    for(let r=0;r<3;r++) reel.appendChild(makeCell(pick()));
+  }, 95 + idx*20));
+
   setTimeout(()=>{
     const b = board();
-    timers.forEach((t,idx)=>setTimeout(()=>clearInterval(t), idx*150));
+    timers.forEach((t, idx)=>setTimeout(()=>clearInterval(t), idx*150));
     setTimeout(()=>{
       render(b);
       const win = evaluate(b);
       state.lastWin = win;
-      if(win>0){
+      if(win > 0){
         state.credits += win;
         update('Win', 'Won ' + win.toLocaleString());
-      } else {
+      }else{
         update('Ready','');
       }
       saveState();
@@ -137,13 +137,17 @@ function spinOnce(){
     }, 760);
   }, 620);
 }
-
-document.getElementById('minusBet').onclick = ()=>{ if(spinning) return; state.betIndex=Math.max(0,state.betIndex-1); saveState(); update(); };
-document.getElementById('plusBet').onclick = ()=>{ if(spinning) return; state.betIndex=Math.min(BETS.length-1,state.betIndex+1); saveState(); update(); };
+document.getElementById('minusBet').onclick = ()=>{ if(spinning) return; state.betIndex = Math.max(0, state.betIndex-1); saveState(); update(); };
+document.getElementById('plusBet').onclick = ()=>{ if(spinning) return; state.betIndex = Math.min(BETS.length-1, state.betIndex+1); saveState(); update(); };
 document.getElementById('spin').onclick = spinOnce;
 document.getElementById('auto').onclick = ()=>{
-  let n=10;
-  const run=()=>{ if(n<=0 || state.credits<BETS[state.betIndex] || spinning) return; spinOnce(); n--; const w=setInterval(()=>{ if(!spinning){clearInterval(w); run();}},120); };
+  let n = 10;
+  const run = ()=> {
+    if(n <= 0 || spinning || state.credits < BETS[state.betIndex]) return;
+    spinOnce();
+    n--;
+    const wait = setInterval(()=>{ if(!spinning){ clearInterval(wait); run(); } }, 120);
+  };
   run();
 };
 
