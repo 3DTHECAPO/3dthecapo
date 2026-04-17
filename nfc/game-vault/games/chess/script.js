@@ -1,103 +1,51 @@
-const boardEl = document.getElementById('board');
-const statusEl = document.getElementById('status');
+/* FINAL CHESS FIX */
+const boardEl=document.getElementById('board');
+const statusEl=document.getElementById('status');
 
-const START_ROWS = [
-  ['♜','♞','♝','♛','♚','♝','♞','♜'],
-  ['♟','♟','♟','♟','♟','♟','♟','♟'],
-  ['','','','','','','',''],
-  ['','','','','','','',''],
-  ['','','','','','','',''],
-  ['','','','','','','',''],
-  ['♙','♙','♙','♙','♙','♙','♙','♙'],
-  ['♖','♘','♗','♕','♔','♗','♘','♖']
+const START=[
+['♜','♞','♝','♛','♚','♝','♞','♜'],
+['♟','♟','♟','♟','♟','♟','♟','♟'],
+['','','','','','','',''],
+['','','','','','','',''],
+['','','','','','','',''],
+['','','','','','','',''],
+['♙','♙','♙','♙','♙','♙','♙','♙'],
+['♖','♘','♗','♕','♔','♗','♘','♖']
 ];
 
-let state = cloneRows(START_ROWS);
-let whiteTurn = true;
-let selected = null;
+let state=JSON.parse(JSON.stringify(START));
+let turn=true,sel=null;
 
-function cloneRows(rows){
-  return rows.map(row => row.slice());
+function isW(p){return '♔♕♖♗♘♙'.includes(p)}
+function isB(p){return '♚♛♜♝♞♟'.includes(p)}
+
+function draw(){
+boardEl.innerHTML='';
+for(let r=0;r<8;r++){
+for(let c=0;c<8;c++){
+let sq=document.createElement('button');
+sq.className='square '+((r+c)%2?'dark':'light');
+sq.textContent=state[r][c];
+sq.onclick=()=>click(r,c);
+boardEl.appendChild(sq);
+}}
+statusEl.textContent=turn?'WHITE':'BLACK';
 }
 
-function isWhite(piece){ return '♔♕♖♗♘♙'.includes(piece); }
-function isBlack(piece){ return '♚♛♜♝♞♟'.includes(piece); }
-
-function render(){
-  boardEl.innerHTML = '';
-  for(let row = 0; row < 8; row++){
-    for(let col = 0; col < 8; col++){
-      const piece = state[row][col];
-      const sq = document.createElement('button');
-      sq.type = 'button';
-      sq.className = 'square ' + (((row + col) % 2) ? 'dark' : 'light');
-      if(selected && selected.row === row && selected.col === col){
-        sq.classList.add('selected');
-      }
-      sq.textContent = piece;
-      sq.dataset.row = String(row);
-      sq.dataset.col = String(col);
-      boardEl.appendChild(sq);
-    }
-  }
-  statusEl.textContent = whiteTurn ? 'WHITE TO MOVE' : 'BLACK TO MOVE';
+function click(r,c){
+let p=state[r][c];
+if(!sel){
+if(!p)return;
+if(turn&&!isW(p))return;
+if(!turn&&!isB(p))return;
+sel={r,c};return;
+}
+if(sel.r===r&&sel.c===c){sel=null;return;}
+let t=state[r][c];
+if((turn&&isW(t))||(!turn&&isB(t))){sel={r,c};return;}
+state[r][c]=state[sel.r][sel.c];
+state[sel.r][sel.c]='';
+sel=null;turn=!turn;draw();
 }
 
-function clickSquare(row, col){
-  const piece = state[row][col];
-
-  if(selected === null){
-    if(!piece) return;
-    if(whiteTurn && !isWhite(piece)) return;
-    if(!whiteTurn && !isBlack(piece)) return;
-    selected = { row, col };
-    render();
-    return;
-  }
-
-  if(selected.row === row && selected.col === col){
-    selected = null;
-    render();
-    return;
-  }
-
-  const moving = state[selected.row][selected.col];
-  const target = state[row][col];
-
-  if((whiteTurn && isWhite(target)) || (!whiteTurn && isBlack(target))){
-    selected = { row, col };
-    render();
-    return;
-  }
-
-  state[row][col] = moving;
-  state[selected.row][selected.col] = '';
-  selected = null;
-  whiteTurn = !whiteTurn;
-  render();
-}
-
-boardEl.addEventListener('pointerup', (event) => {
-  const square = event.target.closest('.square');
-  if(!square) return;
-  const row = Number(square.dataset.row);
-  const col = Number(square.dataset.col);
-  clickSquare(row, col);
-});
-
-boardEl.addEventListener('click', (event) => {
-  const square = event.target.closest('.square');
-  if(!square) return;
-  const row = Number(square.dataset.row);
-  const col = Number(square.dataset.col);
-  clickSquare(row, col);
-});
-
-document.getElementById('resetBtn').addEventListener('click', () => {
-  state = cloneRows(START_ROWS);
-  whiteTurn = true;
-  selected = null;
-  render();
-});
-
-render();
+draw();
