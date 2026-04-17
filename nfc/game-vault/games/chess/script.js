@@ -35,7 +35,8 @@ function render(){
         sq.classList.add('selected');
       }
       sq.textContent = piece;
-      sq.addEventListener('click', () => clickSquare(row, col));
+      sq.dataset.row = String(row);
+      sq.dataset.col = String(col);
       boardEl.appendChild(sq);
     }
   }
@@ -75,6 +76,22 @@ function clickSquare(row, col){
   whiteTurn = !whiteTurn;
   render();
 }
+
+boardEl.addEventListener('pointerup', (event) => {
+  const square = event.target.closest('.square');
+  if(!square) return;
+  const row = Number(square.dataset.row);
+  const col = Number(square.dataset.col);
+  clickSquare(row, col);
+});
+
+boardEl.addEventListener('click', (event) => {
+  const square = event.target.closest('.square');
+  if(!square) return;
+  const row = Number(square.dataset.row);
+  const col = Number(square.dataset.col);
+  clickSquare(row, col);
+});
 
 document.getElementById('resetBtn').addEventListener('click', () => {
   state = cloneRows(START_ROWS);
