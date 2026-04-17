@@ -26,6 +26,7 @@ body{
   border:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.28);
   color:var(--text);text-decoration:none;font-size:26px
 }
+.headcopy{min-width:0}
 .kicker{font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
 .title{font-size:18px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
 
@@ -51,11 +52,7 @@ body{
 .stat{padding:16px}
 .value{margin-top:8px;font-size:28px;line-height:1.05;font-weight:900}
 
-.machine-body{
-  position:relative;
-  padding-right:68px;
-  margin-bottom:14px;
-}
+.machine-body{position:relative;padding-right:68px;margin-bottom:14px}
 .screen{
   position:relative;padding:14px;border-radius:30px;border:1px solid rgba(226,182,93,.26);
   background:
@@ -116,53 +113,21 @@ body{
 }
 
 .lever{
-  position:absolute;
-  right:-6px;
-  top:22px;
-  width:64px;
-  height:252px;
-  background:transparent;
-  border:none;
-  padding:0;
-  cursor:pointer;
-  appearance:none;
+  position:absolute;right:-6px;top:22px;width:64px;height:252px;background:transparent;border:none;padding:0;cursor:pointer;appearance:none;
 }
 .lever-track{
-  position:absolute;
-  right:26px;
-  top:36px;
-  width:12px;
-  height:172px;
-  border-radius:999px;
-  background:
-    linear-gradient(180deg,#6c4208 0%, #f0cb6f 18%, #9a6411 52%, #f0cb6f 86%, #6a4008 100%);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.18),
-    0 0 18px rgba(200,137,29,.22);
+  position:absolute;right:26px;top:36px;width:12px;height:172px;border-radius:999px;
+  background:linear-gradient(180deg,#6c4208 0%, #f0cb6f 18%, #9a6411 52%, #f0cb6f 86%, #6a4008 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.18),0 0 18px rgba(200,137,29,.22);
 }
 .lever-stick{
-  position:absolute;
-  right:29px;
-  top:28px;
-  width:6px;
-  height:166px;
-  border-radius:999px;
-  background:
-    linear-gradient(180deg,#f7dda0 0%, #e1ae3c 55%, #8b5710 100%);
+  position:absolute;right:29px;top:28px;width:6px;height:166px;border-radius:999px;
+  background:linear-gradient(180deg,#f7dda0 0%, #e1ae3c 55%, #8b5710 100%);
 }
 .lever-knob{
-  position:absolute;
-  right:11px;
-  top:0;
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 32% 28%, #fff0c8 0%, #f0c960 24%, #d69321 56%, #8d5810 100%);
-  box-shadow:
-    0 10px 18px rgba(0,0,0,.38),
-    inset 0 2px 3px rgba(255,255,255,.28),
-    0 0 16px rgba(200,137,29,.24);
+  position:absolute;right:11px;top:0;width:42px;height:42px;border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, #fff0c8 0%, #f0c960 24%, #d69321 56%, #8d5810 100%);
+  box-shadow:0 10px 18px rgba(0,0,0,.38), inset 0 2px 3px rgba(255,255,255,.28), 0 0 16px rgba(200,137,29,.24);
 }
 .lever:active .lever-knob{transform:translateY(24px)}
 .lever:active .lever-stick{transform:translateY(16px)}

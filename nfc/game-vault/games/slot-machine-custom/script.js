@@ -1,6 +1,6 @@
 const STARTING_CREDITS = 1000;
 const BETS = [25,50,100,250];
-const STORAGE_KEY = 'play3d_slots_rebuild_v1';
+const STORAGE_KEY = 'play3d_slots_rebuild_v2';
 
 const SYMBOLS = [
   {id:'speaker',src:'assets/speaker.png',kind:'object',weight:14,payout:3},
