@@ -10,51 +10,69 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <main class="app">
+  <main class="shell">
     <header class="topbar">
       <a class="back" href="../../index.html" aria-label="Back">←</a>
-      <div class="headcopy">
+      <div class="brand">
         <div class="kicker">3D THE CAPO</div>
         <div class="title">PLAY 3D SLOTS</div>
       </div>
     </header>
 
     <section class="machine">
-      <div class="jackpot panel">
-        <div class="label">Jackpot</div>
-        <div class="jackpot-value" id="jackpotValue">125,000</div>
+      <div class="machine-crown">
+        <div class="capo-mark">3D THE CAPO</div>
+        <div class="jackpot-box">
+          <div class="jackpot-label">JACKPOT</div>
+          <div class="jackpot-value" id="jackpotValue">125,000</div>
+        </div>
       </div>
 
-      <div class="stats">
-        <div class="panel stat"><div class="label">Credits</div><div class="value" id="creditsValue">1000</div></div>
-        <div class="panel stat"><div class="label">Bet</div><div class="value" id="betValue">25</div></div>
-        <div class="panel stat"><div class="label">Last Win</div><div class="value" id="lastWinValue">0</div></div>
-        <div class="panel stat"><div class="label">Status</div><div class="value" id="statusValue">Ready</div></div>
-      </div>
-
-      <div class="machine-body">
-        <div class="screen">
+      <div class="reel-section">
+        <div class="reel-shell">
           <div class="reels" id="reels"></div>
         </div>
-        <button class="lever" id="leverBtn" aria-label="Spin">
-          <span class="lever-track"></span>
-          <span class="lever-stick"></span>
+
+        <button class="lever" id="leverBtn" aria-label="Pull lever">
+          <span class="lever-bar"></span>
           <span class="lever-knob"></span>
         </button>
       </div>
 
-      <div class="controls">
-        <button class="btn secondary" id="downBetBtn">- Bet</button>
-        <button class="btn primary" id="spinBtn">Spin</button>
+      <div class="scorebar">
+        <div class="score-card">
+          <div class="score-label">BALANCE</div>
+          <div class="score-value" id="creditsValue">1,000</div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">BET</div>
+          <div class="score-value" id="betValue">25</div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">WIN</div>
+          <div class="score-value" id="lastWinValue">0</div>
+        </div>
       </div>
+
       <div class="controls">
-        <button class="btn secondary" id="upBetBtn">+ Bet</button>
-        <button class="btn secondary" id="autoBtn">Auto x10</button>
+        <button class="bet-btn" id="downBetBtn">BET -</button>
+        <button class="spin-btn" id="spinBtn">SPIN</button>
+      </div>
+
+      <div class="controls bottom-controls">
+        <button class="bet-btn" id="upBetBtn">BET +</button>
+        <button class="bet-btn secondary" id="autoBtn">AUTO x10</button>
+      </div>
+
+      <div class="status-row">
+        <div class="status-label">STATUS</div>
+        <div class="status-value" id="statusValue">READY</div>
       </div>
 
       <div class="message" id="messageBar"></div>
     </section>
   </main>
+
   <script src="./script.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 const STARTING_CREDITS = 1000;
 const BETS = [25,50,100,250];
-const STORAGE_KEY = 'play3d_slots_rebuild_v2';
+const STORAGE_KEY = 'play3d_slots_prod_fix_v1';
 
 const SYMBOLS = [
   {id:'speaker',src:'assets/speaker.png',kind:'object',weight:14,payout:3},
@@ -47,15 +47,21 @@ function loadState(){
   return {credits:STARTING_CREDITS, betIndex:0, jackpot:125000, lastWin:0};
 }
 function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
 function pick(){
   const total = SYMBOLS.reduce((a,s)=>a+s.weight,0);
   let r = Math.random()*total;
-  for(const s of SYMBOLS){ r -= s.weight; if(r<=0) return s; }
+  for(const s of SYMBOLS){
+    r -= s.weight;
+    if(r<=0) return s;
+  }
   return SYMBOLS[0];
 }
+
 function makeCell(symbol){
   const cell = document.createElement('div');
-  cell.className = 'cell ' + (symbol.kind === 'cover' ? 'cover' : symbol.kind === 'logo' ? 'logo' : '');
+  cell.className = 'cell ' + symbol.kind;
+  if(symbol.kind === 'object') cell.classList.add('object');
   const frame = document.createElement('div');
   frame.className = 'cellFrame';
   const img = document.createElement('img');
@@ -65,7 +71,11 @@ function makeCell(symbol){
   cell.appendChild(frame);
   return cell;
 }
-function board(){ return Array.from({length:3},()=>Array.from({length:5},()=>pick())); }
+
+function board(){
+  return Array.from({length:3},()=>Array.from({length:5},()=>pick()));
+}
+
 function render(b){
   els.reels.innerHTML = '';
   for(let c=0;c<5;c++){
@@ -75,6 +85,7 @@ function render(b){
     els.reels.appendChild(reel);
   }
 }
+
 function update(status='Ready', msg=''){
   els.credits.textContent = state.credits.toLocaleString();
   els.bet.textContent = BETS[state.betIndex].toLocaleString();
@@ -83,7 +94,9 @@ function update(status='Ready', msg=''){
   els.jackpot.textContent = Math.round(state.jackpot).toLocaleString();
   els.message.textContent = msg;
 }
+
 function paylines(b){ return [b[0], b[1], b[2]]; }
+
 function evaluate(b){
   const bet = BETS[state.betIndex];
   let total = 0;
@@ -100,10 +113,15 @@ function evaluate(b){
   }
   return total;
 }
+
 function spinOnce(){
   if(spinning) return;
   const bet = BETS[state.betIndex];
-  if(state.credits < bet){ update('No Credits','Out of Credits'); return; }
+  if(state.credits < bet){
+    update('No Credits','Out of Credits');
+    return;
+  }
+
   spinning = true;
   state.credits -= bet;
   state.jackpot += Math.round(bet * .35);
@@ -114,7 +132,7 @@ function spinOnce(){
   const timers = liveReels.map((reel, idx)=>setInterval(()=>{
     reel.innerHTML = '';
     for(let r=0;r<3;r++) reel.appendChild(makeCell(pick()));
-  }, 90 + idx*20));
+  }, 88 + idx*18));
 
   setTimeout(()=>{
     const b = board();
@@ -126,13 +144,13 @@ function spinOnce(){
       if(win > 0){
         state.credits += win;
         update('Win', 'Won ' + win.toLocaleString());
-      }else{
+      } else {
         update('Ready','');
       }
       saveState();
       spinning = false;
-    }, 680);
-  }, 560);
+    }, 620);
+  }, 520);
 }
 
 document.getElementById('downBetBtn').onclick = ()=>{ if(spinning) return; state.betIndex = Math.max(0, state.betIndex-1); saveState(); update(); };
