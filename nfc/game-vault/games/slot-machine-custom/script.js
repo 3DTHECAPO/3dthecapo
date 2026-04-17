@@ -1,6 +1,6 @@
 const STARTING_CREDITS = 1000;
 const BETS = [25,50,100,250];
-const STORAGE_KEY = 'capo_slot_realistic_assets_v1';
+const STORAGE_KEY = 'play3d_slots_v2';
 
 const SYMBOLS = [
   {id:'speaker',src:'assets/speaker.png',kind:'object',weight:14,payout:3},
@@ -41,13 +41,12 @@ function loadState(){
         betIndex: Number.isInteger(s.betIndex) ? Math.max(0,Math.min(BETS.length-1,s.betIndex)) : 0,
         jackpot: Number.isFinite(s.jackpot) ? s.jackpot : 125000,
         lastWin: Number.isFinite(s.lastWin) ? s.lastWin : 0
-      }
+      };
     }
   }catch(e){}
-  return {credits:STARTING_CREDITS, betIndex:0, jackpot:125000, lastWin:0}
+  return {credits:STARTING_CREDITS, betIndex:0, jackpot:125000, lastWin:0};
 }
 function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-
 function pick(){
   const total = SYMBOLS.reduce((a,s)=>a+s.weight,0);
   let r = Math.random()*total;
@@ -137,10 +136,11 @@ function spinOnce(){
     }, 760);
   }, 620);
 }
-document.getElementById('minusBet').onclick = ()=>{ if(spinning) return; state.betIndex = Math.max(0, state.betIndex-1); saveState(); update(); };
-document.getElementById('plusBet').onclick = ()=>{ if(spinning) return; state.betIndex = Math.min(BETS.length-1, state.betIndex+1); saveState(); update(); };
-document.getElementById('spin').onclick = spinOnce;
-document.getElementById('auto').onclick = ()=>{
+document.getElementById('downBetBtn').onclick = ()=>{ if(spinning) return; state.betIndex = Math.max(0, state.betIndex-1); saveState(); update(); };
+document.getElementById('upBetBtn').onclick = ()=>{ if(spinning) return; state.betIndex = Math.min(BETS.length-1, state.betIndex+1); saveState(); update(); };
+document.getElementById('spinBtn').onclick = spinOnce;
+document.getElementById('leverBtn').onclick = spinOnce;
+document.getElementById('autoBtn').onclick = ()=>{
   let n = 10;
   const run = ()=> {
     if(n <= 0 || spinning || state.credits < BETS[state.betIndex]) return;
