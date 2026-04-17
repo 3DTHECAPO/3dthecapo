@@ -1,1 +1,32 @@
-<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1,viewport-fit=cover'><title>Capo Chess</title><link rel='stylesheet' href='../../shared.css'><link rel='stylesheet' href='./style.css'></head><body><div class='chess-shell'><a class='ghost-btn back' href='../../index.html'>← Vault</a><section class='room'><div class='topbar'><div class='brand panel-lite'><div class='spray'>♟</div><div><div class='title'>CAPO CHESS</div><div class='sub'>Street Edition</div></div></div><div class='status panel-lite'><span id='turnLabel'>Gold to move</span></div><button class='ghost-btn reset-btn' id='resetBtn'>Reset Match</button></div><div class='layout'><div class='captures panel-lite'><div class='cap-title'>Gold Captures</div><div class='cap-row' id='goldCaps'></div></div><div class='board-wrap panel-lite'><div class='board' id='board'></div></div><div class='captures panel-lite'><div class='cap-title'>Black Captures</div><div class='cap-row' id='blackCaps'></div></div></div></section></div><script src='./script.js'></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>PLAY 3D Chess</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="back" href="../../index.html" aria-label="Back">←</a>
+      <div>
+        <div class="kicker">3D THE CAPO</div>
+        <div class="title">PLAY 3D CHESS</div>
+      </div>
+    </header>
+
+    <section class="shell">
+      <div class="status" id="status">White to move</div>
+      <div class="board" id="board"></div>
+      <div class="controls">
+        <button class="btn" id="resetBtn">Reset</button>
+      </div>
+    </section>
+  </main>
+  <script src="./script.js"></script>
+</body>
+</html>
