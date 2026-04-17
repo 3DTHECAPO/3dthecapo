@@ -12,9 +12,13 @@ const START_ROWS = [
   ['♖','♘','♗','♕','♔','♗','♘','♖']
 ];
 
-let state = START_ROWS.map(row => row.slice());
+let state = cloneRows(START_ROWS);
 let whiteTurn = true;
 let selected = null;
+
+function cloneRows(rows){
+  return rows.map(row => row.slice());
+}
 
 function isWhite(piece){ return '♔♕♖♗♘♙'.includes(piece); }
 function isBlack(piece){ return '♚♛♜♝♞♟'.includes(piece); }
@@ -25,10 +29,13 @@ function render(){
     for(let col = 0; col < 8; col++){
       const piece = state[row][col];
       const sq = document.createElement('button');
+      sq.type = 'button';
       sq.className = 'square ' + (((row + col) % 2) ? 'dark' : 'light');
-      if(selected && selected.row === row && selected.col === col) sq.classList.add('selected');
+      if(selected && selected.row === row && selected.col === col){
+        sq.classList.add('selected');
+      }
       sq.textContent = piece;
-      sq.onclick = () => clickSquare(row, col);
+      sq.addEventListener('click', () => clickSquare(row, col));
       boardEl.appendChild(sq);
     }
   }
@@ -42,7 +49,7 @@ function clickSquare(row, col){
     if(!piece) return;
     if(whiteTurn && !isWhite(piece)) return;
     if(!whiteTurn && !isBlack(piece)) return;
-    selected = {row, col};
+    selected = { row, col };
     render();
     return;
   }
@@ -53,11 +60,11 @@ function clickSquare(row, col){
     return;
   }
 
-  const target = state[row][col];
   const moving = state[selected.row][selected.col];
+  const target = state[row][col];
 
   if((whiteTurn && isWhite(target)) || (!whiteTurn && isBlack(target))){
-    selected = {row, col};
+    selected = { row, col };
     render();
     return;
   }
@@ -69,11 +76,11 @@ function clickSquare(row, col){
   render();
 }
 
-document.getElementById('resetBtn').onclick = () => {
-  state = START_ROWS.map(row => row.slice());
+document.getElementById('resetBtn').addEventListener('click', () => {
+  state = cloneRows(START_ROWS);
   whiteTurn = true;
   selected = null;
   render();
-};
+});
 
 render();
