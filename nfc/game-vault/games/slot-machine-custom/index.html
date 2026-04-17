@@ -1,55 +1,49 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Capo Casino</title>
-  <link rel="stylesheet" href="./style.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Capo Casino</title>
+<link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <main class="app">
-    <div class="topbar">
+    <header class="topbar">
       <a class="back" href="../../index.html" aria-label="Back">←</a>
-      <div class="topcopy">
-        <div class="eyebrow">3D THE CAPO</div>
-        <div class="brand">Capo Casino</div>
+      <div>
+        <div class="kicker">3D THE CAPO</div>
+        <div class="title">Capo Casino</div>
       </div>
-    </div>
+    </header>
 
     <section class="machine">
-      <div class="overlay" id="overlay">
-        <div class="overlay-card">
-          <div class="overlay-title">Capo Casino</div>
-          <button class="btn primary" id="enterBtn">Enter</button>
+      <div class="toprow">
+        <div class="jackpot panel">
+          <div class="label">Jackpot</div>
+          <div class="jackpot-value" id="jackpot">125,000</div>
         </div>
       </div>
 
-      <div class="jackpot">
-        <div class="label">Jackpot</div>
-        <div class="jackpot-value" id="jackpotValue">125,000</div>
-      </div>
-
       <div class="stats">
-        <div class="stat"><span class="label">Credits</span><strong id="creditsValue">1000</strong></div>
-        <div class="stat"><span class="label">Bet</span><strong id="betValue">25</strong></div>
-        <div class="stat"><span class="label">Last Win</span><strong id="lastWinValue">0</strong></div>
-        <div class="stat"><span class="label">Status</span><strong id="statusValue">Ready</strong></div>
+        <div class="panel stat"><div class="label">Credits</div><div class="value" id="credits">1000</div></div>
+        <div class="panel stat"><div class="label">Bet</div><div class="value" id="bet">25</div></div>
+        <div class="panel stat"><div class="label">Last Win</div><div class="value" id="lastWin">0</div></div>
+        <div class="panel stat"><div class="label">Status</div><div class="value" id="status">Ready</div></div>
       </div>
 
-      <div class="reel-shell" id="reelFrame">
+      <div class="screen">
         <div class="reels" id="reels"></div>
       </div>
 
-      <div class="control-row">
-        <button class="btn secondary" id="downBetBtn">- Bet</button>
-        <button class="btn primary spin" id="spinBtn">Spin</button>
+      <div class="controls">
+        <button class="btn secondary" id="minusBet">- Bet</button>
+        <button class="btn primary" id="spin">Spin</button>
       </div>
-      <div class="control-row">
-        <button class="btn secondary" id="upBetBtn">+ Bet</button>
-        <button class="btn secondary" id="autoBtn">Auto x10</button>
+      <div class="controls">
+        <button class="btn secondary" id="plusBet">+ Bet</button>
+        <button class="btn secondary" id="auto">Auto x10</button>
       </div>
 
-      <div class="messagebar" id="messageBar"></div>
+      <div class="message" id="message"></div>
     </section>
   </main>
   <script src="./script.js"></script>

@@ -1,161 +1,151 @@
-const STORAGE_KEY='capo_slot_live_state';
-const STARTING_CREDITS=1000;
-const BETS=[25,50,100,250];
-const JACKPOT_BASE=125000;
+const STARTING_CREDITS = 1000;
+const BETS = [25,50,100,250];
+const STORAGE_KEY = 'capo_slot_clean_v1';
 
-const symbolDefs=[
-  {name:'speaker',file:'assets/speaker.png',weight:16,payout:3,type:'object'},
-  {name:'crown',file:'assets/crown.png',weight:9,payout:10,type:'object'},
-  {name:'key',file:'assets/key.png',weight:10,payout:8,type:'object'},
-  {name:'lock',file:'assets/lock.png',weight:10,payout:8,type:'object'},
-  {name:'vault',file:'assets/vault.png',weight:7,payout:14,type:'object'},
-  {name:'chain',file:'assets/chain.png',weight:12,payout:5,type:'object'},
-  {name:'mic',file:'assets/mic.png',weight:11,payout:6,type:'object'},
-  {name:'hoodie',file:'assets/hoodie.png',weight:10,payout:7,type:'object'},
-  {name:'cash',file:'assets/cash.png',weight:13,payout:4,type:'object'},
-  {name:'fuck-a-grammy',file:'assets/cover-fuck-a-grammy.png',weight:4,payout:18,type:'cover'},
-  {name:'100x3',file:'assets/cover-100x3.png',weight:4,payout:20,type:'cover'},
-  {name:'my-resume',file:'assets/cover-my-resume.png',weight:4,payout:20,type:'cover'},
-  {name:'logo',file:'assets/logo.png',weight:2,payout:50,type:'cover'}
+const SYMBOLS = [
+  {id:'speaker',src:'assets/speaker.png',kind:'object',weight:14,payout:3},
+  {id:'crown',src:'assets/crown.png',kind:'object',weight:8,payout:8},
+  {id:'key',src:'assets/key.png',kind:'object',weight:9,payout:7},
+  {id:'lock',src:'assets/lock.png',kind:'object',weight:9,payout:7},
+  {id:'vault',src:'assets/vault.png',kind:'object',weight:7,payout:10},
+  {id:'chain',src:'assets/chain.png',kind:'object',weight:12,payout:4},
+  {id:'mic',src:'assets/mic.png',kind:'object',weight:10,payout:5},
+  {id:'hoodie',src:'assets/hoodie.png',kind:'object',weight:9,payout:5},
+  {id:'cash',src:'assets/cash.png',kind:'object',weight:13,payout:4},
+  {id:'grammy',src:'assets/cover-fuck-a-grammy.png',kind:'cover',weight:4,payout:16},
+  {id:'100x3',src:'assets/cover-100x3.png',kind:'cover',weight:4,payout:18},
+  {id:'resume',src:'assets/cover-my-resume.png',kind:'cover',weight:4,payout:18},
+  {id:'logo',src:'assets/logo.png',kind:'logo',weight:2,payout:50},
 ];
+let state = loadState();
+let spinning = false;
 
-let state=loadState(), isSpinning=false;
-
-const reelsEl=document.getElementById('reels');
-const creditsEl=document.getElementById('creditsValue');
-const betEl=document.getElementById('betValue');
-const lastWinEl=document.getElementById('lastWinValue');
-const statusEl=document.getElementById('statusValue');
-const jackpotEl=document.getElementById('jackpotValue');
-const msgEl=document.getElementById('messageBar');
-const frameEl=document.getElementById('reelFrame');
-const overlayEl=document.getElementById('overlay');
+const els = {
+  reels: document.getElementById('reels'),
+  credits: document.getElementById('credits'),
+  bet: document.getElementById('bet'),
+  lastWin: document.getElementById('lastWin'),
+  status: document.getElementById('status'),
+  jackpot: document.getElementById('jackpot'),
+  message: document.getElementById('message'),
+};
 
 function loadState(){
   try{
-    const raw=localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY);
     if(raw){
-      const parsed=JSON.parse(raw);
+      const s = JSON.parse(raw);
       return {
-        credits:Number.isFinite(parsed.credits)?parsed.credits:STARTING_CREDITS,
-        betIndex:Number.isInteger(parsed.betIndex)?Math.max(0,Math.min(BETS.length-1,parsed.betIndex)):0,
-        jackpot:Number.isFinite(parsed.jackpot)?parsed.jackpot:JACKPOT_BASE,
-        lastWin:Number.isFinite(parsed.lastWin)?parsed.lastWin:0
-      };
+        credits: Number.isFinite(s.credits) ? s.credits : STARTING_CREDITS,
+        betIndex: Number.isInteger(s.betIndex) ? Math.max(0,Math.min(BETS.length-1,s.betIndex)) : 0,
+        jackpot: Number.isFinite(s.jackpot) ? s.jackpot : 125000,
+        lastWin: Number.isFinite(s.lastWin) ? s.lastWin : 0
+      }
     }
   }catch(e){}
-  return {credits:STARTING_CREDITS,betIndex:0,jackpot:JACKPOT_BASE,lastWin:0};
+  return {credits:STARTING_CREDITS, betIndex:0, jackpot:125000, lastWin:0}
 }
-function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
-function weightedPick(){
-  const total=symbolDefs.reduce((sum,s)=>sum+s.weight,0);
-  let n=Math.random()*total;
-  for(const s of symbolDefs){ n-=s.weight; if(n<=0) return s; }
-  return symbolDefs[0];
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+function pick(){
+  const total = SYMBOLS.reduce((a,s)=>a+s.weight,0);
+  let r = Math.random()*total;
+  for(const s of SYMBOLS){ r -= s.weight; if(r<=0) return s; }
+  return SYMBOLS[0];
 }
-function makeCell(sym){
-  const cell=document.createElement('div');
-  cell.className='cell '+(sym.type==='object'?'object':'cover')+' fallback';
-  if(sym.name==='logo') cell.classList.add('logo');
-  const img=document.createElement('img');
-  img.alt='';
-  img.src=sym.file;
-  img.onload=()=>cell.classList.remove('fallback');
-  img.onerror=()=>cell.classList.add('fallback');
-  cell.appendChild(img);
-  return cell;
+function board(){
+  return Array.from({length:3},()=>Array.from({length:5},()=>pick()));
 }
-function renderBoard(board){
-  reelsEl.innerHTML='';
+function render(b){
+  els.reels.innerHTML = '';
   for(let c=0;c<5;c++){
-    const reel=document.createElement('div');
+    const reel = document.createElement('div');
     reel.className='reel';
-    for(let r=0;r<3;r++) reel.appendChild(makeCell(board[r][c]));
-    reelsEl.appendChild(reel);
+    for(let r=0;r<3;r++){
+      const s = b[r][c];
+      const cell = document.createElement('div');
+      cell.className='cell ' + (s.kind==='cover' ? 'cover' : s.kind==='logo' ? 'logo' : '');
+      const img=document.createElement('img');
+      img.src=s.src; img.alt='';
+      cell.appendChild(img);
+      reel.appendChild(cell);
+    }
+    els.reels.appendChild(reel);
   }
 }
-function randomBoard(){return Array.from({length:3},()=>Array.from({length:5},()=>weightedPick()));}
-function updateUi(status='Ready', message=''){
-  creditsEl.textContent=state.credits.toLocaleString();
-  betEl.textContent=BETS[state.betIndex].toLocaleString();
-  lastWinEl.textContent=state.lastWin.toLocaleString();
-  statusEl.textContent=status;
-  jackpotEl.textContent=Math.round(state.jackpot).toLocaleString();
-  msgEl.textContent=message;
+function update(status='Ready', msg=''){
+  els.credits.textContent = state.credits.toLocaleString();
+  els.bet.textContent = BETS[state.betIndex].toLocaleString();
+  els.lastWin.textContent = state.lastWin.toLocaleString();
+  els.status.textContent = status;
+  els.jackpot.textContent = Math.round(state.jackpot).toLocaleString();
+  els.message.textContent = msg;
 }
-function paylines(board){
-  return [board[0],board[1],board[2],[board[0][0],board[1][1],board[2][2],board[1][3],board[0][4]],[board[2][0],board[1][1],board[0][2],board[1][3],board[2][4]]];
+function paylines(b){
+  return [b[0], b[1], b[2]];
 }
-function lineWin(line, bet){
-  const counts={}; line.forEach(s=>counts[s.name]=(counts[s.name]||0)+1);
-  let best=0;
-  for(const s of symbolDefs){
-    const count=counts[s.name]||0;
-    if(count>=3){
-      const mult=count===5?s.payout*2.4:count===4?s.payout*1.5:s.payout;
-      best=Math.max(best,Math.round(bet*mult));
+function evaluate(b){
+  const bet = BETS[state.betIndex];
+  let total=0;
+  for(const line of paylines(b)){
+    const counts = {};
+    line.forEach(s=>counts[s.id]=(counts[s.id]||0)+1);
+    for(const s of SYMBOLS){
+      const count = counts[s.id]||0;
+      if(count>=3){
+        total += Math.round(bet * (count===5 ? s.payout*2 : count===4 ? s.payout*1.4 : s.payout));
+      }
     }
   }
-  return best;
-}
-function evaluate(board){
-  const bet=BETS[state.betIndex];
-  let total=0;
-  for(const line of paylines(board)) total += lineWin(line, bet);
-  const logos=board.flat().filter(s=>s.name==='logo').length;
-  if(logos>=3) total += Math.round(state.jackpot*0.02);
   return total;
 }
 function spinOnce(){
-  if(isSpinning) return;
-  const bet=BETS[state.betIndex];
-  if(state.credits<bet){ updateUi('No Credits','Out of Credits'); return; }
-  isSpinning=true;
+  if(spinning) return;
+  const bet = BETS[state.betIndex];
+  if(state.credits < bet){ update('No Credits','Out of Credits'); return; }
+  spinning = true;
   state.credits -= bet;
-  state.jackpot += Math.round(bet*0.35);
-  state.lastWin=0;
-  updateUi('Spinning','');
-  const reels=[...document.querySelectorAll('.reel')];
-  const intervals=reels.map((reel,idx)=>setInterval(()=>{
+  state.jackpot += Math.round(bet*.35);
+  state.lastWin = 0;
+  update('Spinning','');
+  const reels = Array.from(document.querySelectorAll('.reel'));
+  const timers = reels.map((reel, idx)=>setInterval(()=>{
     reel.innerHTML='';
-    for(let r=0;r<3;r++) reel.appendChild(makeCell(weightedPick()));
-  },95+idx*18));
+    for(let r=0;r<3;r++){
+      const s=pick();
+      const cell=document.createElement('div');
+      cell.className='cell ' + (s.kind==='cover' ? 'cover' : s.kind==='logo' ? 'logo' : '');
+      const img=document.createElement('img'); img.src=s.src; img.alt='';
+      cell.appendChild(img); reel.appendChild(cell);
+    }
+  }, 90+idx*20));
   setTimeout(()=>{
-    const board=randomBoard();
-    intervals.forEach((id,idx)=>setTimeout(()=>clearInterval(id),idx*160));
+    const b = board();
+    timers.forEach((t,idx)=>setTimeout(()=>clearInterval(t), idx*150));
     setTimeout(()=>{
-      renderBoard(board);
-      const win=evaluate(board);
-      state.lastWin=win;
+      render(b);
+      const win = evaluate(b);
+      state.lastWin = win;
       if(win>0){
         state.credits += win;
-        state.jackpot=Math.max(JACKPOT_BASE,state.jackpot-Math.round(win*0.35));
-        frameEl.classList.add('win-flash');
-        setTimeout(()=>frameEl.classList.remove('win-flash'),650);
-        updateUi('Win',`Won ${win.toLocaleString()}`);
+        update('Win', 'Won ' + win.toLocaleString());
       } else {
-        updateUi('Ready','');
+        update('Ready','');
       }
       saveState();
-      isSpinning=false;
-    },780);
-  },650);
+      spinning = false;
+    }, 760);
+  }, 620);
 }
-function autoSpin(count=10){
-  if(isSpinning) return;
-  let n=count;
-  const run=()=>{
-    if(n<=0 || state.credits < BETS[state.betIndex]) return;
-    spinOnce(); n--;
-    const wait=setInterval(()=>{ if(!isSpinning){ clearInterval(wait); run(); }},120);
-  };
-  run();
-}
-document.getElementById('spinBtn').addEventListener('click',spinOnce);
-document.getElementById('downBetBtn').addEventListener('click',()=>{ if(isSpinning) return; state.betIndex=Math.max(0,state.betIndex-1); saveState(); updateUi('Ready',''); });
-document.getElementById('upBetBtn').addEventListener('click',()=>{ if(isSpinning) return; state.betIndex=Math.min(BETS.length-1,state.betIndex+1); saveState(); updateUi('Ready',''); });
-document.getElementById('autoBtn').addEventListener('click',()=>autoSpin(10));
-document.getElementById('enterBtn').addEventListener('click',()=>overlayEl.classList.add('hidden'));
 
-renderBoard(randomBoard());
-updateUi('Ready','');
+document.getElementById('minusBet').onclick = ()=>{ if(spinning) return; state.betIndex=Math.max(0,state.betIndex-1); saveState(); update(); };
+document.getElementById('plusBet').onclick = ()=>{ if(spinning) return; state.betIndex=Math.min(BETS.length-1,state.betIndex+1); saveState(); update(); };
+document.getElementById('spin').onclick = spinOnce;
+document.getElementById('auto').onclick = ()=>{
+  let n=10;
+  const run=()=>{ if(n<=0 || state.credits<BETS[state.betIndex] || spinning) return; spinOnce(); n--; const w=setInterval(()=>{ if(!spinning){clearInterval(w); run();}},120); };
+  run();
+};
+
+render(board());
+update();
