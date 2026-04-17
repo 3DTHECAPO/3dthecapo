@@ -2,22 +2,33 @@
   --gold:#e2b65d;
   --gold2:#c8891d;
   --text:#f6ead3;
-  --muted:#d5c4a3;
   --line:rgba(226,182,93,.22);
-  --bg:#050505;
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:#050505;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+html,body{margin:0;padding:0}
 body{
   min-height:100vh;
   background:
     radial-gradient(circle at 50% 10%, rgba(200,137,29,.15), transparent 24%),
     linear-gradient(180deg,#080707 0%, #030303 100%);
+  color:var(--text);
+  font-family:'Orbitron',sans-serif;
   padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 20px);
 }
 .wrap{max-width:430px;margin:0 auto}
-.kicker{font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
-h1{margin:6px 0 20px;font-size:46px;line-height:1;font-weight:900}
+.kicker{
+  font-size:13px;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  color:var(--gold);
+}
+h1{
+  margin:8px 0 22px;
+  font-size:44px;
+  line-height:1;
+  font-weight:900;
+  text-transform:uppercase;
+}
 .card{
   border:1px solid var(--line);
   border-radius:30px;
@@ -27,7 +38,7 @@ h1{margin:6px 0 20px;font-size:46px;line-height:1;font-weight:900}
     linear-gradient(180deg,#15100d,#080706);
   box-shadow:0 16px 44px rgba(0,0,0,.45);
 }
-.game-card + .game-card{margin-top:18px}
+.card + .card{margin-top:18px}
 .pill{
   display:inline-block;
   border:1px solid var(--line);
@@ -38,11 +49,19 @@ h1{margin:6px 0 20px;font-size:46px;line-height:1;font-weight:900}
   letter-spacing:.24em;
   text-transform:uppercase;
 }
-.game-title{font-size:34px;font-weight:900;margin:18px 0 18px}
+.game-title{
+  font-size:32px;
+  font-weight:900;
+  margin:18px 0 18px;
+  text-transform:uppercase;
+}
 .btn{
-  display:inline-flex;align-items:center;justify-content:center;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
   min-width:220px;
-  border:none;border-radius:22px;
+  border:none;
+  border-radius:22px;
   padding:18px 24px;
   background:linear-gradient(180deg,#f0ca6c,#c8891d);
   color:#111;
