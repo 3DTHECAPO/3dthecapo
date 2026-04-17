@@ -34,7 +34,6 @@ function render(){
 
 function clickSquare(i){
   const piece = state[i];
-
   if(selected === null){
     if(!piece) return;
     if(whiteTurn && !isWhite(piece)) return;
@@ -43,20 +42,17 @@ function clickSquare(i){
     render();
     return;
   }
-
   if(selected === i){
     selected = null;
     render();
     return;
   }
-
   const moving = state[selected];
   if((whiteTurn && isWhite(piece)) || (!whiteTurn && isBlack(piece))){
     selected = i;
     render();
     return;
   }
-
   state[i] = moving;
   state[selected] = '';
   selected = null;
