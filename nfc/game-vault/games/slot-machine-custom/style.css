@@ -51,7 +51,11 @@ body{
 .stat{padding:16px}
 .value{margin-top:8px;font-size:28px;line-height:1.05;font-weight:900}
 
-.machine-body{position:relative;padding-right:54px;margin-bottom:14px}
+.machine-body{
+  position:relative;
+  padding-right:68px;
+  margin-bottom:14px;
+}
 .screen{
   position:relative;padding:14px;border-radius:30px;border:1px solid rgba(226,182,93,.26);
   background:
@@ -88,19 +92,63 @@ body{
 .cell.logo .cellFrame{width:86%;aspect-ratio:1 / 1}
 .cell.logo img{width:94%;height:94%;object-fit:contain;filter:drop-shadow(0 0 14px rgba(226,182,93,.22))}
 
+/* WHEEL / LEVER FIX */
 .lever{
-  position:absolute;right:0;top:28px;width:48px;height:220px;background:transparent;border:none;padding:0;cursor:pointer;
+  position:absolute;
+  right:-6px;
+  top:22px;
+  width:64px;
+  height:252px;
+  background:transparent;
+  border:none;
+  padding:0;
+  cursor:pointer;
+  appearance:none;
+}
+.lever-track{
+  position:absolute;
+  right:26px;
+  top:36px;
+  width:12px;
+  height:172px;
+  border-radius:999px;
+  background:
+    linear-gradient(180deg,#6c4208 0%, #f0cb6f 18%, #9a6411 52%, #f0cb6f 86%, #6a4008 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.18),
+    0 0 18px rgba(200,137,29,.22);
 }
 .lever-stick{
-  position:absolute;right:20px;top:18px;width:8px;height:150px;border-radius:999px;
-  background:linear-gradient(180deg,#784c0b,#efc96b 12%,#865710 52%,#efc96b 88%,#6a4108);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);
+  position:absolute;
+  right:29px;
+  top:28px;
+  width:6px;
+  height:166px;
+  border-radius:999px;
+  background:
+    linear-gradient(180deg,#f7dda0 0%, #e1ae3c 55%, #8b5710 100%);
 }
 .lever-knob{
-  position:absolute;right:6px;top:0;width:34px;height:34px;border-radius:50%;
-  background:radial-gradient(circle at 35% 35%, #ffd98a 0%, #e4a932 45%, #9d5f10 100%);
-  box-shadow:0 8px 18px rgba(0,0,0,.35), inset 0 2px 2px rgba(255,255,255,.25);
+  position:absolute;
+  right:11px;
+  top:0;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 32% 28%, #fff0c8 0%, #f0c960 24%, #d69321 56%, #8d5810 100%);
+  box-shadow:
+    0 10px 18px rgba(0,0,0,.38),
+    inset 0 2px 3px rgba(255,255,255,.28),
+    0 0 16px rgba(200,137,29,.24);
 }
+.lever:active .lever-knob{
+  transform:translateY(16px);
+}
+.lever:active .lever-stick{
+  transform:translateY(12px);
+}
+
 .controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
 .btn{border:none;border-radius:22px;padding:18px 14px;font-size:18px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
 .secondary{background:linear-gradient(180deg,#17120f,#0b0a09);color:var(--text);border:1px solid var(--line)}
@@ -109,8 +157,9 @@ body{
 @media (max-width:430px){
   .jackpot-value{font-size:46px}
   .reel{height:292px}
-  .machine-body{padding-right:46px}
-  .lever{width:42px;height:210px}
-  .lever-stick{right:17px;height:142px}
-  .lever-knob{width:30px;height:30px;right:6px}
+  .machine-body{padding-right:62px}
+  .lever{right:-4px;width:58px;height:238px}
+  .lever-track{right:24px;height:162px}
+  .lever-stick{right:27px;height:156px}
+  .lever-knob{width:38px;height:38px;right:10px}
 }
