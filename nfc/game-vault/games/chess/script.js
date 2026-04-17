@@ -23,9 +23,9 @@ function render(){
   boardEl.innerHTML = '';
   for(let i = 0; i < 64; i++){
     const piece = state[i];
-    const sq = document.createElement('button');
     const row = Math.floor(i / 8);
     const col = i % 8;
+    const sq = document.createElement('button');
     sq.className = 'square ' + (((row + col) % 2) ? 'dark' : 'light');
     if(selected === i) sq.classList.add('selected');
     sq.textContent = piece;
