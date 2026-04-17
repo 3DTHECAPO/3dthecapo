@@ -1,41 +1,51 @@
 :root{
   --gold:#e3b85f;
-  --gold2:#c88a1d;
-  --text:#f6ead3;
+  --gold2:#c88816;
+  --cream:#f6ead3;
   --line:rgba(227,184,95,.22);
+  --bg1:#0b0908;
+  --bg2:#050505;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
   min-height:100vh;
-  background:
-    radial-gradient(circle at 50% 10%, rgba(200,137,29,.14), transparent 24%),
-    linear-gradient(180deg,#080707 0%, #030303 100%);
-  color:var(--text);
+  color:var(--cream);
   font-family:'Orbitron',sans-serif;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(200,137,22,.14), transparent 24%),
+    linear-gradient(180deg,#090807 0%, #030303 100%);
   padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 20px);
 }
-.wrap{max-width:430px;margin:0 auto}
-.kicker{font-size:13px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold)}
-h1{margin:8px 0 22px;font-size:44px;line-height:1;font-weight:900;text-transform:uppercase}
-.card{
+.hub{max-width:430px;margin:0 auto}
+.hub-head{margin-bottom:18px}
+.kicker{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+h1{margin:8px 0 4px;font-size:42px;line-height:1;font-weight:900}
+.sub{margin:0;color:#ccbda0}
+.hub-card{
+  border-radius:24px;
   border:1px solid var(--line);
-  border-radius:30px;
   padding:22px;
   background:
-    radial-gradient(circle at 82% 22%, rgba(200,137,29,.16), transparent 18%),
-    linear-gradient(180deg,#15100d,#080706);
+    radial-gradient(circle at 82% 22%, rgba(200,137,22,.14), transparent 18%),
+    linear-gradient(180deg,#17120f,#080706);
   box-shadow:0 16px 44px rgba(0,0,0,.45);
 }
-.card + .card{margin-top:18px}
+.hub-card + .hub-card{margin-top:18px}
 .pill{
-  display:inline-block;border:1px solid var(--line);border-radius:999px;
-  padding:11px 16px;color:var(--gold);font-size:12px;letter-spacing:.24em;text-transform:uppercase;
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:10px 14px;border-radius:999px;
+  border:1px solid var(--line);
+  color:var(--gold);
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;
 }
-.game-title{font-size:32px;font-weight:900;margin:18px 0 18px;text-transform:uppercase}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;min-width:220px;
-  border:none;border-radius:22px;padding:18px 24px;
-  background:linear-gradient(180deg,#f0ca6c,#c8891d);
-  color:#111;font-weight:900;font-size:18px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;
+h2{margin:16px 0 10px;font-size:32px;line-height:1;font-weight:900}
+p{margin:0 0 18px;line-height:1.5;color:#d8c8ac}
+.cta{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:220px;padding:18px 22px;border-radius:18px;
+  text-decoration:none;color:#111;
+  font-weight:900;font-size:17px;letter-spacing:.08em;text-transform:uppercase;
+  background:linear-gradient(180deg,#f2ce75,#c98919);
+  box-shadow:0 10px 22px rgba(200,137,22,.24);
 }
