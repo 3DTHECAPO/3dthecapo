@@ -1,6 +1,6 @@
 const STARTING_CREDITS = 1000;
 const BETS = [25,50,100,250];
-const STORAGE_KEY = 'play3d_slots_prod_fix_v1';
+const STORAGE_KEY = 'play3d_version_b_final';
 
 const SYMBOLS = [
   {id:'speaker',src:'assets/speaker.png',kind:'object',weight:14,payout:3},
@@ -47,17 +47,15 @@ function loadState(){
   return {credits:STARTING_CREDITS, betIndex:0, jackpot:125000, lastWin:0};
 }
 function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-
 function pick(){
   const total = SYMBOLS.reduce((a,s)=>a+s.weight,0);
   let r = Math.random()*total;
   for(const s of SYMBOLS){
     r -= s.weight;
-    if(r<=0) return s;
+    if(r <= 0) return s;
   }
   return SYMBOLS[0];
 }
-
 function makeCell(symbol){
   const cell = document.createElement('div');
   cell.className = 'cell ' + symbol.kind;
@@ -71,11 +69,7 @@ function makeCell(symbol){
   cell.appendChild(frame);
   return cell;
 }
-
-function board(){
-  return Array.from({length:3},()=>Array.from({length:5},()=>pick()));
-}
-
+function board(){ return Array.from({length:3},()=>Array.from({length:5},()=>pick())); }
 function render(b){
   els.reels.innerHTML = '';
   for(let c=0;c<5;c++){
@@ -85,8 +79,7 @@ function render(b){
     els.reels.appendChild(reel);
   }
 }
-
-function update(status='Ready', msg=''){
+function update(status='READY', msg=''){
   els.credits.textContent = state.credits.toLocaleString();
   els.bet.textContent = BETS[state.betIndex].toLocaleString();
   els.lastWin.textContent = state.lastWin.toLocaleString();
@@ -94,9 +87,7 @@ function update(status='Ready', msg=''){
   els.jackpot.textContent = Math.round(state.jackpot).toLocaleString();
   els.message.textContent = msg;
 }
-
 function paylines(b){ return [b[0], b[1], b[2]]; }
-
 function evaluate(b){
   const bet = BETS[state.betIndex];
   let total = 0;
@@ -113,20 +104,18 @@ function evaluate(b){
   }
   return total;
 }
-
 function spinOnce(){
   if(spinning) return;
   const bet = BETS[state.betIndex];
   if(state.credits < bet){
-    update('No Credits','Out of Credits');
+    update('NO CREDITS','OUT OF CREDITS');
     return;
   }
-
   spinning = true;
   state.credits -= bet;
   state.jackpot += Math.round(bet * .35);
   state.lastWin = 0;
-  update('Spinning','');
+  update('SPINNING','');
 
   const liveReels = Array.from(document.querySelectorAll('.reel'));
   const timers = liveReels.map((reel, idx)=>setInterval(()=>{
@@ -143,16 +132,15 @@ function spinOnce(){
       state.lastWin = win;
       if(win > 0){
         state.credits += win;
-        update('Win', 'Won ' + win.toLocaleString());
+        update('WIN', 'WON ' + win.toLocaleString());
       } else {
-        update('Ready','');
+        update('READY','');
       }
       saveState();
       spinning = false;
     }, 620);
   }, 520);
 }
-
 document.getElementById('downBetBtn').onclick = ()=>{ if(spinning) return; state.betIndex = Math.max(0, state.betIndex-1); saveState(); update(); };
 document.getElementById('upBetBtn').onclick = ()=>{ if(spinning) return; state.betIndex = Math.min(BETS.length-1, state.betIndex+1); saveState(); update(); };
 document.getElementById('spinBtn').onclick = spinOnce;
