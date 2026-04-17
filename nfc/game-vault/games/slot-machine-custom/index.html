@@ -7,70 +7,60 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <div class="entry" id="entryOverlay">
-    <div class="entry-card">
-      <div class="entry-mark"></div>
-      <h1>CAPO CASINO</h1>
-      <button class="enter-btn" id="enterBtn" type="button">ENTER</button>
-    </div>
-  </div>
-
   <main class="app">
-    <a class="back-btn" href="../../index.html" aria-label="Back to Vault">←</a>
+    <div class="topbar">
+      <a class="back" href="../../index.html" aria-label="Back">←</a>
+      <div class="brand">
+        <div class="brandline">3D THE CAPO</div>
+        <div class="subbrand">Capo Casino</div>
+      </div>
+    </div>
 
-    <section class="machine" aria-label="Capo Casino Slot Machine">
-      <header class="machine-header">
-        <div class="jackpot-panel">
-          <div class="jackpot-label">JACKPOT</div>
-          <div class="jackpot-value" id="jackpotValue">125,000</div>
+    <section class="machine" id="machine">
+      <div class="overlay" id="overlay">
+        <div class="modal">
+          <div class="modal-logo"><img src="./assets/logo.png" alt=""></div>
+          <h1>Capo Casino</h1>
+          <button class="btn primary" id="enterBtn">Enter</button>
         </div>
+      </div>
 
-        <div class="brand-panel">
-          <div class="brand-chip"></div>
-          <div class="brand-stack">
-            <div class="brand-title">3D THE CAPO</div>
-            <div class="brand-sub">CAPO CASINO</div>
-          </div>
-        </div>
+      <div class="jackpot">
+        <div class="label">Jackpot</div>
+        <div class="jackpot-value" id="jackpotValue">125,000</div>
+      </div>
 
-        <div class="bank-panel">
-          <div class="bank-block">
-            <span>CREDITS</span>
-            <strong id="creditsValue">1,000</strong>
-          </div>
-          <div class="bank-block">
-            <span>BET</span>
-            <strong id="betValue">25</strong>
-          </div>
+      <div class="brand-panel">
+        <div class="brand-mark"><img src="./assets/logo.png" alt=""></div>
+        <div>
+          <div class="brand-big">3D THE CAPO</div>
+          <div class="brand-small">Capo Casino</div>
         </div>
-      </header>
+      </div>
 
-      <section class="stage">
-        <div class="bezel">
-          <div class="screen-glow"></div>
-          <div class="top-led"></div>
-          <div class="reels" id="reels"></div>
-          <div class="status-bar" id="statusBar" aria-live="polite"></div>
-        </div>
-      </section>
+      <div class="stats">
+        <div class="stat"><div class="label">Credits</div><div class="stat-value" id="creditsValue">1000</div></div>
+        <div class="stat"><div class="label">Bet</div><div class="stat-value" id="betValue">25</div></div>
+        <div class="stat"><div class="label">Last Win</div><div class="stat-value" id="lastWinValue">0</div></div>
+        <div class="stat"><div class="label">Status</div><div class="stat-value" id="statusValue">Ready</div></div>
+      </div>
+
+      <div class="reel-frame" id="reelFrame">
+        <div class="reels" id="reels"></div>
+      </div>
 
       <div class="controls">
-        <button class="control-btn" id="betDown" type="button" aria-label="Decrease bet">−</button>
-        <button class="control-btn spin-btn" id="spinBtn" type="button">SPIN</button>
-        <button class="control-btn" id="betUp" type="button" aria-label="Increase bet">+</button>
+        <button class="btn secondary" id="downBetBtn">- Bet</button>
+        <button class="btn primary" id="spinBtn">Spin</button>
       </div>
+      <div class="actions">
+        <button class="btn secondary" id="upBetBtn">+ Bet</button>
+        <button class="btn secondary" id="autoBtn">Auto x10</button>
+      </div>
+
+      <div class="messagebar" id="messageBar"></div>
     </section>
   </main>
-
-  <div class="win-overlay" id="winOverlay" aria-hidden="true">
-    <div class="win-card">
-      <div class="win-badge" id="winTier">WIN</div>
-      <div class="win-title" id="winTitle">CAPO HIT</div>
-      <div class="win-amount" id="winAmount">+0</div>
-      <button class="enter-btn" id="closeWinBtn" type="button">CONTINUE</button>
-    </div>
-  </div>
-
   <script src="./script.js"></script>
 </body>
 </html>
