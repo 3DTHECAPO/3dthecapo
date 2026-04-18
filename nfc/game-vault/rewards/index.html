@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>PLAY 3D REWARDS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="back" href="../index.html" aria-label="Back">←</a>
+      <div class="headcopy">
+        <div class="kicker">3D THE CAPO</div>
+        <div class="title">REWARD WALLET</div>
+      </div>
+    </header>
+
+    <section class="panel summary-panel">
+      <div class="summary-grid">
+        <div class="stat">
+          <span class="label">Rewards</span>
+          <div class="value" id="totalRewardsValue">0</div>
+        </div>
+        <div class="stat">
+          <span class="label">Unclaimed</span>
+          <div class="value" id="unclaimedRewardsValue">0</div>
+        </div>
+        <div class="stat">
+          <span class="label">Claimed</span>
+          <div class="value" id="claimedRewardsValue">0</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel filters-panel">
+      <div class="filter-row">
+        <button class="filter-btn active" data-filter="all" type="button">All</button>
+        <button class="filter-btn" data-filter="unclaimed" type="button">Unclaimed</button>
+        <button class="filter-btn" data-filter="claimed" type="button">Claimed</button>
+      </div>
+    </section>
+
+    <section class="panel actions-panel">
+      <div class="actions-grid">
+        <button class="action-btn gold" id="exportBtn" type="button">Export</button>
+        <button class="action-btn dark" id="clearClaimedBtn" type="button">Clear Claimed</button>
+      </div>
+      <p class="note">Merch and NFC rewards are stored locally in this browser until you connect a real backend.</p>
+    </section>
+
+    <section class="wallet-list" id="walletList"></section>
+
+    <template id="rewardCardTemplate">
+      <article class="reward-card">
+        <div class="reward-head">
+          <div>
+            <div class="reward-name"></div>
+            <div class="reward-meta"></div>
+          </div>
+          <div class="reward-badge"></div>
+        </div>
+        <div class="reward-body">
+          <div class="reward-desc"></div>
+          <div class="reward-code"></div>
+          <div class="reward-extra"></div>
+        </div>
+        <div class="reward-actions">
+          <button class="action-btn gold claim-btn" type="button">Claim</button>
+          <button class="action-btn dark copy-btn" type="button">Copy Code</button>
+        </div>
+      </article>
+    </template>
+  </main>
+  <script src="./script.js"></script>
+</body>
+</html>

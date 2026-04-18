@@ -1,0 +1,185 @@
+:root{
+  --gold:#e4b85f;
+  --gold2:#c88816;
+  --cream:#f3ebdc;
+  --line:rgba(228,184,95,.24);
+  --muted:#ccbfa8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  min-height:100vh;
+  color:var(--cream);
+  font-family:'Orbitron',sans-serif;
+  background:
+    radial-gradient(circle at 50% 8%, rgba(200,137,22,.17), transparent 22%),
+    linear-gradient(rgba(0,0,0,.72), rgba(0,0,0,.86)),
+    linear-gradient(180deg,#090807 0%, #030303 100%);
+  padding:calc(env(safe-area-inset-top,0px) + 10px) 10px calc(env(safe-area-inset-bottom,0px) + 16px);
+}
+.app{max-width:430px;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.back{
+  width:44px;height:44px;display:grid;place-items:center;border-radius:50%;
+  text-decoration:none;color:var(--cream);background:rgba(0,0,0,.34);
+  border:1px solid rgba(255,255,255,.06);font-size:22px;flex:0 0 auto;
+}
+.headcopy{min-width:0}
+.kicker{font-size:10px;letter-spacing:.24em;color:var(--gold);text-transform:uppercase}
+.title{font-size:14px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.panel{
+  border-radius:18px;
+  padding:10px;
+  margin-bottom:10px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0) 12%),
+    linear-gradient(180deg,#17120f,#090807);
+  border:1px solid var(--line);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 14px 30px rgba(0,0,0,.4);
+}
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+}
+.stat{
+  border:1px solid rgba(228,184,95,.18);
+  border-radius:10px;
+  padding:8px 6px;
+  text-align:center;
+  background:linear-gradient(180deg,#14100d,#070606);
+}
+.label{
+  display:block;
+  color:var(--gold);
+  font-size:8px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+.value{
+  font-size:16px;
+  font-weight:900;
+  line-height:1;
+}
+.filter-row,.actions-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:6px;
+}
+.filter-row{
+  grid-template-columns:repeat(3,1fr);
+}
+.filter-btn,.action-btn{
+  min-height:40px;
+  border:none;
+  border-radius:10px;
+  font-family:'Orbitron',sans-serif;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.filter-btn,.action-btn.dark{
+  color:var(--cream);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0) 10%),
+    linear-gradient(180deg,#17120e,#0a0908);
+  border:1px solid rgba(228,184,95,.22);
+}
+.filter-btn.active,.action-btn.gold{
+  color:#111;
+  background:radial-gradient(circle at 50% 35%, #f7dd96 0%, #e5b54d 48%, #c78615 100%);
+}
+.note{
+  margin:8px 4px 0;
+  text-align:center;
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.45;
+}
+.wallet-list{
+  display:grid;
+  gap:10px;
+}
+.reward-card{
+  border-radius:18px;
+  padding:12px;
+  background:
+    radial-gradient(circle at 82% 22%, rgba(200,137,22,.12), transparent 18%),
+    linear-gradient(180deg,#17120f,#080706);
+  border:1px solid var(--line);
+  box-shadow:0 14px 30px rgba(0,0,0,.42);
+}
+.reward-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.reward-name{
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.reward-meta{
+  color:var(--gold);
+  font-size:9px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-top:4px;
+}
+.reward-badge{
+  align-self:flex-start;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(228,184,95,.2);
+  background:linear-gradient(180deg,#14100d,#070606);
+  color:var(--gold);
+  font-size:8px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.reward-desc{
+  color:var(--cream);
+  font-size:11px;
+  line-height:1.5;
+  margin-bottom:10px;
+}
+.reward-code{
+  border-radius:12px;
+  padding:12px;
+  background:#0a0908;
+  border:1px solid rgba(228,184,95,.24);
+  color:#f2ce75;
+  text-align:center;
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:.08em;
+  margin-bottom:8px;
+}
+.reward-extra{
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.45;
+}
+.reward-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:12px;
+}
+.empty-state{
+  border-radius:18px;
+  padding:22px 16px;
+  text-align:center;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0) 12%),
+    linear-gradient(180deg,#17120f,#080706);
+  border:1px solid var(--line);
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.6;
+}
