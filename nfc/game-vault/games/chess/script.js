@@ -20,7 +20,6 @@ let selected = null;
 function cloneRows(rows){
   return rows.map(row => row.slice());
 }
-
 function isWhite(piece){ return '♔♕♖♗♘♙'.includes(piece); }
 function isBlack(piece){ return '♚♛♜♝♞♟'.includes(piece); }
 
@@ -80,7 +79,10 @@ function clickSquare(row, col){
 boardEl.addEventListener('click', (event) => {
   const square = event.target.closest('.square');
   if(!square) return;
-  clickSquare(Number(square.dataset.row), Number(square.dataset.col));
+  const row = Number(square.dataset.row);
+  const col = Number(square.dataset.col);
+  if(Number.isNaN(row) || Number.isNaN(col)) return;
+  clickSquare(row, col);
 });
 
 resetBtn.addEventListener('click', () => {
