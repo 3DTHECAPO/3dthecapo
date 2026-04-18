@@ -28,16 +28,15 @@ function render(){
   boardEl.innerHTML = '';
   for(let row = 0; row < 8; row++){
     for(let col = 0; col < 8; col++){
-      const piece = state[row][col];
       const sq = document.createElement('button');
       sq.type = 'button';
       sq.className = 'square ' + (((row + col) % 2) ? 'dark' : 'light');
       sq.dataset.row = String(row);
       sq.dataset.col = String(col);
+      sq.textContent = state[row][col];
       if(selected && selected.row === row && selected.col === col){
         sq.classList.add('selected');
       }
-      sq.textContent = piece;
       boardEl.appendChild(sq);
     }
   }
@@ -78,17 +77,11 @@ function clickSquare(row, col){
   render();
 }
 
-function handleBoardEvent(event){
+boardEl.addEventListener('click', (event) => {
   const square = event.target.closest('.square');
   if(!square) return;
-  const row = Number(square.dataset.row);
-  const col = Number(square.dataset.col);
-  if(Number.isNaN(row) || Number.isNaN(col)) return;
-  clickSquare(row, col);
-}
-
-boardEl.addEventListener('click', handleBoardEvent);
-boardEl.addEventListener('pointerup', handleBoardEvent);
+  clickSquare(Number(square.dataset.row), Number(square.dataset.col));
+});
 
 resetBtn.addEventListener('click', () => {
   state = cloneRows(START_ROWS);
