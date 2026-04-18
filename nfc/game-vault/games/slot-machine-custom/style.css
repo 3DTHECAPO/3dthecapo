@@ -43,7 +43,7 @@ body{
   content:"";
   position:absolute;
   top:66px;
-  bottom:12px;
+  bottom:20px;
   width:8px;
   border-radius:2px;
   background:linear-gradient(180deg,#6b4208 0%, #f1cb71 18%, #9d6414 52%, #f1cb71 84%, #6b4208 100%);
@@ -53,20 +53,21 @@ body{
 .machine::after{right:6px}
 
 .machine-crown{
-  margin:0 2px 4px;
-  padding:6px;
+  margin:0 4px 6px;
+  padding:7px;
   border-radius:6px;
   background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0) 12%),linear-gradient(180deg,#1c1511,#0b0a09);
   border:1px solid var(--line);
 }
 .capo-mark{text-align:center;font-size:14px;font-weight:900;letter-spacing:.08em;margin-bottom:4px;text-transform:uppercase}
 .jackpot-box{
-  border-radius:4px;padding:6px;
+  border-radius:4px;
+  padding:6px;
   background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0) 16%),linear-gradient(180deg,#14100d,#060606);
   border:1px solid rgba(228,184,95,.24);
 }
 .jackpot-label{font-size:9px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:4px;text-align:center}
-.jackpot-value{text-align:center;font-size:22px;line-height:1;font-weight:900}
+.jackpot-value{text-align:center;font-size:24px;line-height:1;font-weight:900}
 
 .reel-section{
   display:grid;
@@ -74,7 +75,6 @@ body{
   gap:8px;
   align-items:start;
   margin:0 0 6px;
-  padding-right:0;
 }
 .reel-shell{
   min-width:0;
@@ -217,7 +217,7 @@ body{
   align-items:center;
   justify-content:space-between;
   margin:0 4px;
-  padding:0 4px;
+  padding:0 4px 6px;
 }
 .status-label{font-size:9px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
 .status-value{font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
