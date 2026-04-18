@@ -43,7 +43,7 @@ body{
   content:"";
   position:absolute;
   top:66px;
-  bottom:20px;
+  bottom:12px;
   width:8px;
   border-radius:2px;
   background:linear-gradient(180deg,#6b4208 0%, #f1cb71 18%, #9d6414 52%, #f1cb71 84%, #6b4208 100%);
@@ -53,28 +53,28 @@ body{
 .machine::after{right:6px}
 
 .machine-crown{
-  margin:0 4px 6px;
-  padding:7px;
+  margin:0 2px 4px;
+  padding:6px;
   border-radius:6px;
   background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0) 12%),linear-gradient(180deg,#1c1511,#0b0a09);
   border:1px solid var(--line);
 }
 .capo-mark{text-align:center;font-size:14px;font-weight:900;letter-spacing:.08em;margin-bottom:4px;text-transform:uppercase}
 .jackpot-box{
-  border-radius:4px;
-  padding:6px;
+  border-radius:4px;padding:6px;
   background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0) 16%),linear-gradient(180deg,#14100d,#060606);
   border:1px solid rgba(228,184,95,.24);
 }
 .jackpot-label{font-size:9px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:4px;text-align:center}
-.jackpot-value{text-align:center;font-size:24px;line-height:1;font-weight:900}
+.jackpot-value{text-align:center;font-size:22px;line-height:1;font-weight:900}
 
 .reel-section{
   display:grid;
-  grid-template-columns:minmax(0,1fr) 36px;
-  gap:4px;
+  grid-template-columns:minmax(0,1fr) 42px;
+  gap:8px;
   align-items:start;
   margin:0 0 6px;
+  padding-right:0;
 }
 .reel-shell{
   min-width:0;
@@ -132,40 +132,38 @@ body{
   object-fit:contain;
 }
 
-/* LEVER ALIGNMENT FIX */
 .lever{
   position:relative;
-  width:36px;
-  height:226px;           /* matches reel height */
+  width:42px;
+  height:170px;
   background:transparent;
   border:none;
   padding:0;
   cursor:pointer;
   justify-self:end;
-  align-self:start;
 }
 .lever-bar{
   position:absolute;
-  right:14px;
-  top:18px;               /* centered within lever box */
+  right:15px;
+  top:22px;
   width:8px;
-  height:190px;           /* extends down to match reels */
+  height:114px;
   border-radius:999px;
   background:linear-gradient(180deg,#6f4508 0%, #efca70 18%, #9c6312 56%, #efca70 84%, #6f4508 100%);
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),0 0 18px rgba(228,184,95,.2);
 }
 .lever-knob{
   position:absolute;
-  right:4px;
+  right:5px;
   top:0;
-  width:28px;
-  height:28px;
+  width:24px;
+  height:24px;
   border-radius:50%;
   background:radial-gradient(circle at 32% 28%, #fff0ca 0%, #f0c85d 24%, #d69222 58%, #8c5710 100%);
   box-shadow:inset 0 2px 3px rgba(255,255,255,.24),0 8px 16px rgba(0,0,0,.36),0 0 14px rgba(228,184,95,.2);
 }
-.lever:active .lever-knob{transform:translateY(14px)}
-.lever:active .lever-bar{transform:translateY(10px)}
+.lever:active .lever-knob{transform:translateY(12px)}
+.lever:active .lever-bar{transform:translateY(8px)}
 
 .scorebar{
   display:grid;
@@ -219,7 +217,7 @@ body{
   align-items:center;
   justify-content:space-between;
   margin:0 4px;
-  padding:0 4px 6px;
+  padding:0 4px;
 }
 .status-label{font-size:9px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
 .status-value{font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
