@@ -1,61 +1,235 @@
-/* REEL LOCATION FIX - centers entire reel block correctly */
+:root{
+  --gold:#e4b85f;
+  --gold2:#c88816;
+  --cream:#f3ebdc;
+  --line:rgba(228,184,95,.28);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  min-height:100vh;
+  color:var(--cream);
+  font-family:'Orbitron',sans-serif;
+  background:
+    radial-gradient(circle at 50% 8%, rgba(200,137,22,.18), transparent 20%),
+    linear-gradient(rgba(0,0,0,.72), rgba(0,0,0,.84)),
+    url('./assets/bg-vault-room.jpg') center/cover no-repeat,
+    linear-gradient(180deg,#090807 0%, #030303 100%);
+  padding:calc(env(safe-area-inset-top,0px) + 10px) 10px calc(env(safe-area-inset-bottom,0px) + 14px);
+}
+.shell{max-width:430px;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.back{
+  width:44px;height:44px;display:grid;place-items:center;border-radius:50%;
+  text-decoration:none;color:var(--cream);background:rgba(0,0,0,.34);
+  border:1px solid rgba(255,255,255,.06);font-size:22px;flex:0 0 auto;
+}
+.brand{min-width:0}
+.kicker{font-size:10px;letter-spacing:.24em;color:var(--gold);text-transform:uppercase}
+.title{font-size:14px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+
+.machine{
+  position:relative;
+  border-radius:16px;
+  padding:8px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0) 10%),
+    radial-gradient(circle at 50% 14%, rgba(200,137,22,.15), transparent 24%),
+    linear-gradient(180deg,#17120f,#090807);
+  border:1px solid var(--line);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 18px 40px rgba(0,0,0,.52);
+}
+.machine::before,.machine::after{
+  content:"";
+  position:absolute;
+  top:66px;
+  bottom:20px;
+  width:8px;
+  border-radius:2px;
+  background:linear-gradient(180deg,#6b4208 0%, #f1cb71 18%, #9d6414 52%, #f1cb71 84%, #6b4208 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),0 0 16px rgba(228,184,95,.16);
+}
+.machine::before{left:6px}
+.machine::after{right:6px}
+
+.machine-crown{
+  margin:0 4px 6px;
+  padding:7px;
+  border-radius:6px;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0) 12%),linear-gradient(180deg,#1c1511,#0b0a09);
+  border:1px solid var(--line);
+}
+.capo-mark{text-align:center;font-size:14px;font-weight:900;letter-spacing:.08em;margin-bottom:4px;text-transform:uppercase}
+.jackpot-box{
+  border-radius:4px;
+  padding:6px;
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0) 16%),linear-gradient(180deg,#14100d,#060606);
+  border:1px solid rgba(228,184,95,.24);
+}
+.jackpot-label{font-size:9px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:4px;text-align:center}
+.jackpot-value{text-align:center;font-size:24px;line-height:1;font-weight:900}
 
 .reel-section{
   display:grid;
-  grid-template-columns: 1fr 40px;
-  align-items:center;
-  gap:6px;
-  margin:0 auto;
-  max-width:100%;
+  grid-template-columns:minmax(0,1fr) 36px;
+  gap:4px;
+  align-items:start;
+  margin:0 0 6px;
 }
-
-/* CENTER THE WHOLE REEL MACHINE */
 .reel-shell{
-  margin:0 auto;
-  width:100%;
-  max-width:100%;
-  display:flex;
-  justify-content:center;
+  min-width:0;
+  border-radius:3px;
+  padding:2px;
+  border:1px solid rgba(228,184,95,.24);
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 12%),linear-gradient(180deg,#241a14,#090707);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04), inset 0 -12px 20px rgba(0,0,0,.28), 0 8px 18px rgba(0,0,0,.42);
 }
-
-/* FORCE TRUE CENTER GRID */
 .reels{
   display:grid;
-  grid-template-columns: repeat(5, 1fr);
-  justify-content:center;
-  align-items:center;
-  width:100%;
-  max-width:100%;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:4px;
 }
-
-/* MAKE EACH REEL EQUAL WIDTH */
 .reel{
-  width:100%;
+  height:226px;
   display:grid;
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-rows:repeat(3,1fr);
+  gap:4px;
+  padding:2px;
+  border:1px solid rgba(228,184,95,.14);
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0) 10%),linear-gradient(180deg,#17120e,#070606);
 }
-
-/* HARD CENTER CONTENT INSIDE CELLS */
 .cell{
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  border:1px solid rgba(228,184,95,.12);
+  border-radius:2px;
+  background:radial-gradient(circle at 50% 30%, rgba(255,255,255,.04), transparent 50%),linear-gradient(180deg,#14100d,#050505);
 }
-
-/* ENSURE IMAGES ARE PERFECTLY CENTERED */
-.cell img{
-  display:block;
-  margin:auto;
-}
-
-/* ALIGN LEVER PERFECTLY TO REELS */
-.lever{
+.cellFrame{
+  width:100%;
   height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  background:#050505;
+}
+.cell img{
+  width:88%;
+  height:88%;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 6px 8px rgba(0,0,0,.30));
+}
+.cell.cover img{
+  width:78%;
+  height:78%;
+  object-fit:contain;
+}
+.cell.logo img{
+  width:84%;
+  height:84%;
+  object-fit:contain;
 }
 
+/* LEVER ALIGNMENT FIX */
+.lever{
+  position:relative;
+  width:36px;
+  height:226px;           /* matches reel height */
+  background:transparent;
+  border:none;
+  padding:0;
+  cursor:pointer;
+  justify-self:end;
+  align-self:start;
+}
 .lever-bar{
-  height:85%;
+  position:absolute;
+  right:14px;
+  top:18px;               /* centered within lever box */
+  width:8px;
+  height:190px;           /* extends down to match reels */
+  border-radius:999px;
+  background:linear-gradient(180deg,#6f4508 0%, #efca70 18%, #9c6312 56%, #efca70 84%, #6f4508 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),0 0 18px rgba(228,184,95,.2);
+}
+.lever-knob{
+  position:absolute;
+  right:4px;
+  top:0;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, #fff0ca 0%, #f0c85d 24%, #d69222 58%, #8c5710 100%);
+  box-shadow:inset 0 2px 3px rgba(255,255,255,.24),0 8px 16px rgba(0,0,0,.36),0 0 14px rgba(228,184,95,.2);
+}
+.lever:active .lever-knob{transform:translateY(14px)}
+.lever:active .lever-bar{transform:translateY(10px)}
+
+.scorebar{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:4px;
+  margin:0 4px 6px;
+}
+.score-card{
+  border:1px solid rgba(228,184,95,.22);
+  padding:6px 5px 5px;
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0) 14%),linear-gradient(180deg,#17120e,#070606);
+  text-align:center;
+}
+.score-label{font-size:8px;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;margin-bottom:4px}
+.score-value{font-size:15px;font-weight:900;line-height:1}
+
+.controls{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin:0 4px 6px;
+}
+.bet-btn{
+  min-height:42px;
+  border:none;
+  border-radius:4px;
+  font-family:'Orbitron',sans-serif;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--cream);
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0) 10%),linear-gradient(180deg,#17120e,#0a0908);
+  border:1px solid rgba(228,184,95,.22);
+}
+.bet-btn.secondary{font-size:11px}
+.spin-btn{
+  min-height:42px;
+  border:none;
+  border-radius:999px;
+  font-family:'Orbitron',sans-serif;
+  font-size:15px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#111;
+  background:radial-gradient(circle at 50% 35%, #f7dd96 0%, #e5b54d 48%, #c78615 100%);
+}
+.status-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:0 4px;
+  padding:0 4px 6px;
+}
+.status-label{font-size:9px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
+.status-value{font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.message{
+  min-height:14px;
+  margin:5px 4px 0;
+  text-align:center;
+  color:var(--gold);
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
 }
