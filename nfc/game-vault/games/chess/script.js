@@ -27,15 +27,24 @@ function render(){
   boardEl.innerHTML = '';
   for(let row = 0; row < 8; row++){
     for(let col = 0; col < 8; col++){
+      const piece = state[row][col];
       const sq = document.createElement('button');
       sq.type = 'button';
       sq.className = 'square ' + (((row + col) % 2) ? 'dark' : 'light');
       sq.dataset.row = String(row);
       sq.dataset.col = String(col);
-      sq.textContent = state[row][col];
+
       if(selected && selected.row === row && selected.col === col){
         sq.classList.add('selected');
       }
+
+      if(piece){
+        const pieceEl = document.createElement('span');
+        pieceEl.className = 'piece ' + (isWhite(piece) ? 'white-piece' : 'black-piece');
+        pieceEl.textContent = piece;
+        sq.appendChild(pieceEl);
+      }
+
       boardEl.appendChild(sq);
     }
   }
