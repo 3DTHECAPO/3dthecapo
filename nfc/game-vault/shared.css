@@ -3,8 +3,6 @@
   --gold2:#c88816;
   --cream:#f6ead3;
   --line:rgba(227,184,95,.22);
-  --bg1:#0b0908;
-  --bg2:#050505;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -20,10 +18,9 @@ body{
 .hub{max-width:430px;margin:0 auto}
 .hub-head{margin-bottom:18px}
 .kicker{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
-h1{margin:8px 0 4px;font-size:42px;line-height:1;font-weight:900}
-.sub{margin:0;color:#ccbda0}
+h1{margin:8px 0 0;font-size:42px;line-height:1;font-weight:900}
 .hub-card{
-  border-radius:24px;
+  border-radius:22px;
   border:1px solid var(--line);
   padding:22px;
   background:
@@ -34,13 +31,10 @@ h1{margin:8px 0 4px;font-size:42px;line-height:1;font-weight:900}
 .hub-card + .hub-card{margin-top:18px}
 .pill{
   display:inline-flex;align-items:center;justify-content:center;
-  padding:10px 14px;border-radius:999px;
-  border:1px solid var(--line);
-  color:var(--gold);
-  font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  padding:10px 14px;border-radius:999px;border:1px solid var(--line);
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);
 }
-h2{margin:16px 0 10px;font-size:32px;line-height:1;font-weight:900}
-p{margin:0 0 18px;line-height:1.5;color:#d8c8ac}
+h2{margin:18px 0 18px;font-size:32px;line-height:1;font-weight:900}
 .cta{
   display:inline-flex;align-items:center;justify-content:center;
   min-width:220px;padding:18px 22px;border-radius:18px;
