@@ -76,14 +76,17 @@ function clickSquare(row, col){
   render();
 }
 
-boardEl.addEventListener('click', (event) => {
+function handleBoardEvent(event){
   const square = event.target.closest('.square');
   if(!square) return;
   const row = Number(square.dataset.row);
   const col = Number(square.dataset.col);
   if(Number.isNaN(row) || Number.isNaN(col)) return;
   clickSquare(row, col);
-});
+}
+
+boardEl.addEventListener('click', handleBoardEvent);
+boardEl.style.touchAction = 'manipulation';
 
 resetBtn.addEventListener('click', () => {
   state = cloneRows(START_ROWS);
