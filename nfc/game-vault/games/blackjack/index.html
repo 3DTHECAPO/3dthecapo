@@ -1,1 +1,75 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>PLAY 3D BLACKJACK</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="./style.css"></head><body><main class="app"><header class="topbar"><a class="back" href="../../index.html" aria-label="Back">←</a><div class="headcopy"><div class="kicker">3D THE CAPO</div><div class="title">PLAY 3D BLACKJACK</div></div></header><section class="table-shell"><div class="marquee"><div class="stat-grid"><div class="stat"><span class="label">Bankroll</span><div class="value" id="bankrollValue">1000</div></div><div class="stat"><span class="label">Bet</span><div class="value" id="betValue">25</div></div><div class="stat"><span class="label">Round</span><div class="value" id="roundValue">Ready</div></div></div></div><div class="felt"><section class="seat"><div class="seat-header"><div class="seat-title">Dealer</div><div class="seat-note" id="dealerScore">0</div></div><div class="cards" id="dealerCards"></div></section><section class="seat"><div class="seat-header"><div class="seat-title">Player</div><div class="seat-note" id="playerScore">0</div></div><div class="cards" id="playerCards"></div></section></div><div class="status" id="statusBar">Place your bet and deal.</div><div class="controls"><button class="btn dark" id="betDownBtn" type="button">Bet -</button><button class="btn dark" id="betUpBtn" type="button">Bet +</button></div><div class="controls"><button class="btn gold" id="dealBtn" type="button">Deal</button><button class="btn gold" id="restartBtn" type="button">Restart</button></div><div class="controls"><button class="btn dark" id="hitBtn" type="button">Hit</button><button class="btn dark" id="standBtn" type="button">Stand</button></div><div class="note">Premium mobile blackjack. Dealer draws to 17. Blackjack pays 3:2.</div></section></main><script src="../../rewards/reward-engine.js"></script><script src="./script.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>PLAY 3D BLACKJACK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="back" href="../../index.html" aria-label="Back">←</a>
+      <div class="headcopy">
+        <div class="kicker">3D THE CAPO</div>
+        <div class="title">PLAY 3D BLACKJACK</div>
+      </div>
+    </header>
+    <section class="table-shell">
+      <div class="marquee">
+        <div class="stat-grid">
+          <div class="stat"><span class="label">Bankroll</span><div class="value" id="bankrollValue">1000</div></div>
+          <div class="stat"><span class="label">Bet</span><div class="value" id="betValue">25</div></div>
+          <div class="stat"><span class="label">Round</span><div class="value" id="roundValue">Ready</div></div>
+        </div>
+      </div>
+
+      <div id="memberStrip" style="margin:0 0 10px;padding:8px 10px;border:1px solid rgba(228,184,95,.22);border-radius:8px;text-align:center;">FREE PLAY</div>
+
+      
+      <section class="reward-tracker" id="rewardTracker">
+        <div class="reward-tracker-head">
+          <div>
+            <div class="reward-tracker-kicker">Reward Progress</div>
+            <div class="reward-tracker-mode" id="rewardTrackerMode">FREE PLAY</div>
+          </div>
+          <div class="reward-tracker-bank-wrap">
+            <div class="reward-tracker-bank-label">GLOBAL BANK</div>
+            <div class="reward-tracker-bank" id="rewardTrackerBank">0</div>
+          </div>
+        </div>
+        <div class="reward-tracker-bar">
+          <div class="reward-tracker-fill" id="rewardTrackerFill"></div>
+        </div>
+        <div class="reward-tracker-next" id="rewardTrackerNext">MEMBER REWARDS LOCKED</div>
+        <div class="reward-tracker-sub" id="rewardTrackerSub">Subscribers / buyers only.</div>
+      </section>
+
+
+      <div class="felt">
+        <section class="seat">
+          <div class="seat-header"><div class="seat-title">Dealer</div><div class="seat-note" id="dealerScore">0</div></div>
+          <div class="cards" id="dealerCards"></div>
+        </section>
+        <section class="seat">
+          <div class="seat-header"><div class="seat-title">Player</div><div class="seat-note" id="playerScore">0</div></div>
+          <div class="cards" id="playerCards"></div>
+        </section>
+      </div>
+
+      <div class="status" id="statusBar">Place your bet and deal.</div>
+      <div class="controls"><button class="btn dark" id="betDownBtn" type="button">Bet -</button><button class="btn dark" id="betUpBtn" type="button">Bet +</button></div>
+      <div class="controls"><button class="btn gold" id="dealBtn" type="button">Deal</button><button class="btn gold" id="restartBtn" type="button">Restart</button></div>
+      <div class="controls"><button class="btn dark" id="hitBtn" type="button">Hit</button><button class="btn dark" id="standBtn" type="button">Stand</button></div>
+      <div class="note">Free visitors can play. Members build the global credit bank and unlock milestone rewards.</div>
+    </section>
+  </main>
+  <script src="../../rewards/member-milestone-system.js"></script>
+  <script src="../../rewards/game-wrapper.js"></script>
+  <script src="../../rewards/reward-tracker-ui.js"></script>
+  <script src="./script.js"></script>
+</body>
+</html>
