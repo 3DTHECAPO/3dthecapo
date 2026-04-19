@@ -16,7 +16,7 @@
 
   function queueBoost(amount){
     const val = Number(localStorage.getItem(BOOST_KEY)||0);
-    localStorage.setItem(BOOST_KEY, val + amount);
+    localStorage.setItem(BOOST_KEY, String(val + Math.max(0, Math.floor(Number(amount)||0))));
   }
 
   function applyBoost(current){
