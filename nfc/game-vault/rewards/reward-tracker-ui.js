@@ -76,15 +76,20 @@
     if(bankEl) bankEl.textContent = formatNumber(bank);
 
     if(!info.rewardsEnabled){
-      if(nextEl) nextEl.textContent = 'MEMBER REWARDS LOCKED';
-      if(subEl) subEl.textContent = 'Subscribers / buyers only. Free visitors stay in free play.';
+      if(nextEl) nextEl.textContent = 'REWARDS LOCKED';
+      if(subEl){
+        subEl.textContent = '';
+        subEl.style.display = 'none';
+      }
       if(fillEl) fillEl.style.width = '0%';
       return;
     }
 
+    if(subEl) subEl.style.display = '';
+
     if(!next){
       if(nextEl) nextEl.textContent = 'ALL REWARDS CLEARED';
-      if(subEl) subEl.textContent = 'You cleared every current milestone.';
+      if(subEl) subEl.textContent = '';
       if(fillEl) fillEl.style.width = '100%';
       return;
     }
@@ -96,8 +101,8 @@
 
     if(nextEl) nextEl.textContent = `${next.label.toUpperCase()} AT ${formatNumber(next.credits)}`;
     if(subEl) subEl.textContent = remaining > 0
-      ? `${formatNumber(remaining)} credits until next unlock`
-      : 'Milestone reached';
+      ? `${formatNumber(remaining)} TO NEXT UNLOCK`
+      : 'MILESTONE REACHED';
     if(fillEl) fillEl.style.width = `${progress}%`;
   }
 
