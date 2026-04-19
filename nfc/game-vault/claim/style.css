@@ -1,0 +1,91 @@
+:root{
+  --gold:#e4b85f;
+  --cream:#f6ead3;
+  --line:rgba(228,184,95,.22);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  min-height:100vh;
+  font-family:'Orbitron',sans-serif;
+  color:var(--cream);
+  background:
+    radial-gradient(circle at 50% 10%, rgba(200,137,22,.16), transparent 24%),
+    linear-gradient(180deg,#090807 0%, #030303 100%);
+  padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 20px);
+}
+.app{max-width:460px;margin:0 auto}
+.card{
+  border-radius:24px;
+  padding:20px;
+  background:
+    radial-gradient(circle at 82% 22%, rgba(200,137,22,.14), transparent 18%),
+    linear-gradient(180deg,#17120f,#080706);
+  border:1px solid var(--line);
+  box-shadow:0 16px 44px rgba(0,0,0,.45);
+}
+.kicker{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+h1{margin:8px 0 10px;font-size:34px;line-height:1;font-weight:900}
+.sub{margin:0 0 16px;color:#ccbfa8;font-size:12px;line-height:1.55}
+.panel{
+  border-radius:18px;
+  border:1px solid var(--line);
+  padding:14px;
+  background:linear-gradient(180deg,#14100d,#070606);
+  margin-top:12px;
+}
+.label,.mini-label{
+  display:block;
+  color:var(--gold);
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+input{
+  width:100%;
+  min-height:50px;
+  border-radius:14px;
+  border:1px solid rgba(228,184,95,.22);
+  background:#0a0908;
+  color:var(--cream);
+  font-family:'Orbitron',sans-serif;
+  font-size:13px;
+  padding:0 14px;
+}
+.btn{
+  width:100%;
+  min-height:50px;
+  border:none;
+  border-radius:14px;
+  font-family:'Orbitron',sans-serif;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-top:12px;
+}
+.btn.gold{
+  color:#111;
+  background:radial-gradient(circle at 50% 35%, #f7dd96 0%, #e5b54d 48%, #c78615 100%);
+}
+.status{
+  min-height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:10px;
+  border-radius:12px;
+  border:1px solid rgba(228,184,95,.18);
+  background:#0a0908;
+  color:#f2ce75;
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.explain{
+  color:#ccbfa8;
+  font-size:12px;
+  line-height:1.6;
+}
