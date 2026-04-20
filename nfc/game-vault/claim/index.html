@@ -2,39 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Claim Credits</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <main class="app">
     <section class="card">
-      <div class="kicker">3D THE CAPO</div>
       <h1>CREDIT CLAIM</h1>
-      <p class="sub">Use your claim link or enter your boost code to add play credits to this device.</p>
 
-      <div class="panel">
-        <label class="label" for="claimCodeInput">Boost Code</label>
-        <input id="claimCodeInput" type="text" placeholder="BOOST-5000-AB12CD">
-        <button id="claimBtn" class="btn gold" type="button">Claim Credits</button>
-      </div>
+      <input id="claimCodeInput" type="text" placeholder="BOOST-5000-XXXX">
 
-      <div class="panel">
-        <div class="mini-label">Status</div>
-        <div id="statusBox" class="status">READY</div>
-      </div>
+      <button id="claimBtn" class="btn gold">Claim Credits</button>
 
-      <div class="panel">
-        <div class="mini-label">What this does</div>
-        <div class="explain">
-          Adds credits to this device for your games. Each valid claim code can only be used once on this browser.
-        </div>
-      </div>
+      <a id="playBtn" href="../index.html" class="btn gold" style="display:none;margin-top:10px;text-align:center;text-decoration:none;">
+        PLAY GAMES
+      </a>
+
+      <div id="statusBox">READY</div>
     </section>
   </main>
+
   <script src="../rewards/bankroll.js"></script>
   <script src="./claim.js"></script>
 </body>

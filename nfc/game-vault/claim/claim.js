@@ -1,71 +1,53 @@
 const statusBox = document.getElementById('statusBox');
 const input = document.getElementById('claimCodeInput');
 const btn = document.getElementById('claimBtn');
+const playBtn = document.getElementById('playBtn');
 
-const USED_CLAIM_CODES_KEY = 'play3d_used_claim_codes_v1';
+const USED_KEY = 'used_codes_v1';
 
-function getUsedClaimCodes(){
-  try{
-    const raw = localStorage.getItem(USED_CLAIM_CODES_KEY);
-    const parsed = JSON.parse(raw || '[]');
-    return Array.isArray(parsed) ? parsed : [];
-  }catch(e){
-    return [];
+function getUsed(){
+  return JSON.parse(localStorage.getItem(USED_KEY) || '[]');
+}
+
+function setUsed(arr){
+  localStorage.setItem(USED_KEY, JSON.stringify(arr));
+}
+
+function used(code){
+  return getUsed().includes(code);
+}
+
+function markUsed(code){
+  const arr = getUsed();
+  if(!arr.includes(code)){
+    arr.push(code);
+    setUsed(arr);
   }
 }
 
-function markClaimCodeUsed(code){
-  const used = getUsedClaimCodes();
-  if(!used.includes(code)){
-    used.push(code);
-    localStorage.setItem(USED_CLAIM_CODES_KEY, JSON.stringify(used));
-  }
+function parse(code){
+  const m = code.toUpperCase().match(/^BOOST-(\d+)-([A-Z0-9]+)$/);
+  if(!m) return null;
+  return {amount: parseInt(m[1])};
 }
 
-function isClaimCodeUsed(code){
-  return getUsedClaimCodes().includes(code);
-}
+btn.onclick = () => {
+  const raw = input.value.trim();
+  const p = parse(raw);
 
-function parseBoostCode(raw){
-  const code = String(raw || '').trim().toUpperCase();
-  const match = code.match(/^BOOST-(\d+)-([A-Z0-9]+)$/);
-  if(!match) return null;
-  return {
-    code,
-    amount: Math.max(0, parseInt(match[1], 10) || 0)
-  };
-}
-
-function setStatus(text){
-  statusBox.textContent = text;
-}
-
-function applyClaim(rawCode){
-  const parsed = parseBoostCode(rawCode);
-  if(!parsed || !parsed.amount){
-    setStatus('INVALID CODE');
-    return;
-  }
-  if(isClaimCodeUsed(parsed.code)){
-    setStatus('CODE ALREADY USED');
-    return;
-  }
-  if(!window.Play3DBankroll){
-    setStatus('BANKROLL SYSTEM MISSING');
+  if(!p){
+    statusBox.textContent = 'INVALID';
     return;
   }
 
-  Play3DBankroll.queueBoost(parsed.amount);
-  markClaimCodeUsed(parsed.code);
-  setStatus('CREDITS ADDED +' + parsed.amount.toLocaleString());
-  input.value = parsed.code;
-}
+  if(used(raw)){
+    statusBox.textContent = 'USED';
+    return;
+  }
 
-btn.addEventListener('click', () => applyClaim(input.value));
+  Play3DBankroll.queueBoost(p.amount);
+  markUsed(raw);
 
-const params = new URLSearchParams(window.location.search);
-const autoCode = params.get('claim') || '';
-if(autoCode){
-  input.value = autoCode.toUpperCase();
-  applyClaim(autoCode);
-}
+  statusBox.textContent = 'ADDED +' + p.amount;
+  playBtn.style.display = 'block';
+};
