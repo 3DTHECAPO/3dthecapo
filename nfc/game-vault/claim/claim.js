@@ -26,9 +26,18 @@ function markUsed(code){
 }
 
 function parse(code){
-  const m = code.toUpperCase().match(/^BOOST-(\d+)-([A-Z0-9]+)$/);
-  if(!m) return null;
-  return {amount: parseInt(m[1])};
+  const upper = code.toUpperCase().trim();
+
+  let m = upper.match(/^BOOST-(\d+)-([A-Z0-9]+)$/);
+  if(m) return { type:'boost', amount: parseInt(m[1], 10) || 0, raw: upper };
+
+  m = upper.match(/^MEMBER-(\d+)-([A-Z0-9]+)$/);
+  if(m) return { type:'member', amount: parseInt(m[1], 10) || 0, raw: upper };
+
+  m = upper.match(/^VIP-(\d+)-([A-Z0-9]+)$/);
+  if(m) return { type:'member', amount: parseInt(m[1], 10) || 0, raw: upper };
+
+  return null;
 }
 
 btn.onclick = () => {
@@ -45,9 +54,15 @@ btn.onclick = () => {
     return;
   }
 
+  if(p.type === 'member' && window.Play3DMemberSystem){
+    Play3DMemberSystem.setMember(true);
+  }
+
   Play3DBankroll.queueBoost(p.amount);
   markUsed(raw);
 
-  statusBox.textContent = 'ADDED +' + p.amount;
+  statusBox.textContent = p.type === 'member'
+    ? 'MEMBER ACTIVE +' + p.amount
+    : 'ADDED +' + p.amount;
   playBtn.style.display = 'block';
 };
