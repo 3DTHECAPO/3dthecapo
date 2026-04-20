@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>PLAY 3D SLOTS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="back" href="../../index.html" aria-label="Back">←</a>
+      <div class="brand">
+        <div class="kicker">3D THE CAPO</div>
+        <div class="title">PLAY 3D SLOTS</div>
+      </div>
+    </header>
+
+    <section class="machine">
+      <div class="machine-crown">
+        <div class="capo-mark">3D THE CAPO</div>
+        <div class="jackpot-box">
+          <div class="jackpot-label">JACKPOT</div>
+          <div class="jackpot-value" id="jackpotValue">125,000</div>
+        </div>
+      </div>
+
+      <div id="memberStrip" style="margin:0 10px 8px;padding:8px 10px;border:1px solid rgba(228,184,95,.22);border-radius:8px;text-align:center;">FREE PLAY</div>
+
+      
+      <section class="reward-tracker" id="rewardTracker">
+        <div class="reward-tracker-head">
+          <div>
+            <div class="reward-tracker-kicker">Reward Progress</div>
+            <div class="reward-tracker-mode" id="rewardTrackerMode">FREE PLAY</div>
+          </div>
+          <div class="reward-tracker-bank-wrap">
+            <div class="reward-tracker-bank-label">GLOBAL BANK</div>
+            <div class="reward-tracker-bank" id="rewardTrackerBank">0</div>
+          </div>
+        </div>
+        <div class="reward-tracker-bar">
+          <div class="reward-tracker-fill" id="rewardTrackerFill"></div>
+        </div>
+        <div class="reward-tracker-next" id="rewardTrackerNext">MEMBER REWARDS LOCKED</div>
+        <div class="reward-tracker-sub" id="rewardTrackerSub">Subscribers / buyers only.</div>
+      </section>
+
+
+      <div class="reel-section">
+        <div class="reel-shell">
+          <div class="reels" id="reels"></div>
+        </div>
+      </div>
+
+      <div class="scorebar">
+        <div class="score-card">
+          <div class="score-label">BALANCE</div>
+          <div class="score-value" id="creditsValue">1,000</div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">BET</div>
+          <div class="score-value" id="betValue">25</div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">WIN</div>
+          <div class="score-value" id="lastWinValue">0</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="bet-btn" id="downBetBtn" type="button">BET -</button>
+        <button class="spin-btn" id="spinBtn" type="button">SPIN</button>
+      </div>
+
+      <div class="controls">
+        <button class="bet-btn" id="upBetBtn" type="button">BET +</button>
+        <button class="bet-btn secondary" id="autoBtn" type="button">AUTO x10</button>
+      </div>
+
+      <div class="status-row">
+        <div class="status-label">STATUS</div>
+        <div class="status-value" id="statusValue">READY</div>
+      </div>
+
+      <div class="message" id="messageBar"></div>
+    </section>
+  </main>
+  <script src="./script.js"></script>
+</body>
+</html>
