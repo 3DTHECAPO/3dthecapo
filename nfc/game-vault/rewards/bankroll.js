@@ -1,36 +1,22 @@
 (function(){
-  const BASE = 1000;
-  const START_KEY = 'play3d_started_v3';
-  const BOOST_KEY = 'play3d_boost_v3';
-
-  function ensureStarter(current){
-    const started = localStorage.getItem(START_KEY);
-    if(!started){
-      localStorage.setItem(START_KEY,'1');
-      if(!current || current <= 0){
-        return {value: BASE, msg: 'STARTER ' + BASE};
-      }
-    }
-    return {value: current, msg:''};
-  }
-
-  function queueBoost(amount){
-    const val = Number(localStorage.getItem(BOOST_KEY)||0);
-    localStorage.setItem(BOOST_KEY, String(val + Math.max(0, Math.floor(Number(amount)||0))));
-  }
-
-  function applyBoost(current){
-    const val = Number(localStorage.getItem(BOOST_KEY)||0);
-    if(val>0){
-      localStorage.setItem(BOOST_KEY,0);
-      return {value: current + val, msg: 'BOOST +' + val};
-    }
-    return {value: current, msg:''};
-  }
-
-  window.Play3DBankroll = {
-    ensureStarter,
-    queueBoost,
-    applyBoost
-  };
+const BASE=1000;
+const START='play3d_start';
+const BOOST='play3d_boost';
+function ensureStarter(v){
+ if(!localStorage.getItem(START)){
+  localStorage.setItem(START,'1');
+  if(!v||v<=0) return {value:BASE,msg:'STARTER '+BASE};
+ }
+ return {value:v,msg:''};
+}
+function queueBoost(a){
+ const v=Number(localStorage.getItem(BOOST)||0);
+ localStorage.setItem(BOOST,v+Number(a||0));
+}
+function applyBoost(v){
+ const b=Number(localStorage.getItem(BOOST)||0);
+ if(b>0){localStorage.setItem(BOOST,0);return {value:v+b,msg:'BOOST +'+b};}
+ return {value:v,msg:''};
+}
+window.Play3DBankroll={ensureStarter,queueBoost,applyBoost};
 })();
