@@ -1,23 +1,21 @@
 (function(){
   function addCredits(amount){
     if(!window.Play3DMemberSystem){
-      return {free:true, unlocked:false};
+      return { free:true, unlocked:false, bank:0 };
     }
-
     if(!Play3DMemberSystem.isMember()){
-      return {free:true, unlocked:false};
+      return { free:true, unlocked:false, bank:Play3DMemberSystem.getCreditBank() };
     }
-
     const bank = Play3DMemberSystem.addCredits(amount);
-
-    if(bank >= 50000){
-      return {free:false, unlocked:true};
-    }
-
-    return {free:false, unlocked:false};
+    return {
+      free:false,
+      unlocked: bank >= 50000,
+      bank
+    };
   }
 
   window.Play3DGameRewards = {
-    addCredits
+    addCredits,
+    updateBadge(){ /* optional no-op */ }
   };
 })();

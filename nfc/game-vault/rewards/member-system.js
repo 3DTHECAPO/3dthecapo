@@ -7,17 +7,17 @@
   }
 
   function setMember(val){
-    localStorage.setItem(MEMBER_KEY, val ? '1':'0');
+    localStorage.setItem(MEMBER_KEY, val ? '1' : '0');
   }
 
   function getCreditBank(){
-    return Math.max(0, Number(localStorage.getItem(BANK_KEY) || 0));
+    return Math.max(0, Math.floor(Number(localStorage.getItem(BANK_KEY) || 0)));
   }
 
   function addCredits(amount){
-    const current = getCreditBank();
-    const next = current + Math.max(0, Math.floor(amount));
-    localStorage.setItem(BANK_KEY, next);
+    const safe = Math.max(0, Math.floor(Number(amount) || 0));
+    const next = getCreditBank() + safe;
+    localStorage.setItem(BANK_KEY, String(next));
     return next;
   }
 
