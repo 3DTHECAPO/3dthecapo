@@ -1,0 +1,22 @@
+<!doctype html>
+<html><head><title>Vault</title></head>
+<body>
+<h1>Vault Access</h1>
+<div id="result"></div>
+<script>
+const params=new URLSearchParams(window.location.search);
+const code=params.get('code');
+
+if(!code){
+ document.getElementById('result').innerText="No code";
+}else if(code.includes("ENTRY")){
+ document.getElementById('result').innerText="ENTRY ACCESS";
+}else if(code.includes("GOLD")){
+ document.getElementById('result').innerText="GOLD ACCESS";
+}else if(code.includes("ELITE")){
+ document.getElementById('result').innerText="ELITE ACCESS";
+}else{
+ document.getElementById('result').innerText="INVALID CODE";
+}
+</script>
+</body></html>
