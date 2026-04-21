@@ -33,14 +33,24 @@
         <div class="status-text ok" id="statusText">CHECKING CODE</div>
         <div class="status-sub" id="statusSub">Please wait...</div>
       </div>
+
+      <div class="pass-box" id="passBox" style="display:none">
+        <div class="status-kicker">Pass Saved</div>
+        <div class="pass-row"><span>Tier</span><strong id="passTier">-</strong></div>
+        <div class="pass-row"><span>Expires</span><strong id="passExpiry">-</strong></div>
+      </div>
     </section>
   </main>
 
   <script src="../shared/config.js"></script>
+  <script src="../shared/pass-session.js"></script>
   <script src="../shared/secure-redeem.js"></script>
   <script>
     const statusText = document.getElementById("statusText");
     const statusSub = document.getElementById("statusSub");
+    const passBox = document.getElementById("passBox");
+    const passTier = document.getElementById("passTier");
+    const passExpiry = document.getElementById("passExpiry");
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code") || "";
 
@@ -55,7 +65,12 @@
           return;
         }
         statusText.textContent = "ACCESS GRANTED";
-        statusSub.textContent = "Routing you now...";
+        statusSub.textContent = "Pass saved. Routing you now...";
+        if(result.pass){
+          passBox.style.display = "block";
+          passTier.textContent = result.pass.tier;
+          passExpiry.textContent = Play3DPassSession.formatExpiry(result.pass);
+        }
         setTimeout(() => { window.location.href = result.route; }, 450);
       }catch(e){
         statusText.textContent = "SYSTEM ERROR";
