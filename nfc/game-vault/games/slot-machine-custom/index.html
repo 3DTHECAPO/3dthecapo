@@ -11,15 +11,12 @@
 </head>
 <body>
   <main class="shell">
-    <header class="topbar" style="justify-content:space-between;">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <a class="back" href="../../index.html" aria-label="Back">←</a>
-        <div class="brand">
-          <div class="kicker">3D THE CAPO</div>
-          <div class="title">PLAY 3D SLOTS</div>
-        </div>
+    <header class="topbar">
+      <a class="back" href="../../index.html" aria-label="Back">←</a>
+      <div class="brand">
+        <div class="kicker">3D THE CAPO</div>
+        <div class="title">PLAY 3D SLOTS</div>
       </div>
-      <a href="../../../../index.html" style="text-decoration:none;padding:8px 12px;border:1px solid #e4b85f;border-radius:6px;font-size:12px;color:#f3ebdc;">MAIN SITE</a>
     </header>
 
     <section class="machine">
@@ -30,6 +27,28 @@
           <div class="jackpot-value" id="jackpotValue">125,000</div>
         </div>
       </div>
+
+      <div id="memberStrip" style="margin:0 10px 8px;padding:8px 10px;border:1px solid rgba(228,184,95,.22);border-radius:8px;text-align:center;">FREE PLAY</div>
+
+      
+      <section class="reward-tracker" id="rewardTracker">
+        <div class="reward-tracker-head">
+          <div>
+            <div class="reward-tracker-kicker">Reward Progress</div>
+            <div class="reward-tracker-mode" id="rewardTrackerMode">FREE PLAY</div>
+          </div>
+          <div class="reward-tracker-bank-wrap">
+            <div class="reward-tracker-bank-label">GLOBAL BANK</div>
+            <div class="reward-tracker-bank" id="rewardTrackerBank">0</div>
+          </div>
+        </div>
+        <div class="reward-tracker-bar">
+          <div class="reward-tracker-fill" id="rewardTrackerFill"></div>
+        </div>
+        <div class="reward-tracker-next" id="rewardTrackerNext">MEMBER REWARDS LOCKED</div>
+        <div class="reward-tracker-sub" id="rewardTrackerSub">Subscribers / buyers only.</div>
+      </section>
+
 
       <div class="reel-section">
         <div class="reel-shell">
@@ -70,7 +89,6 @@
       <div class="message" id="messageBar"></div>
     </section>
   </main>
-
   <script src="./script.js"></script>
 </body>
 </html>
