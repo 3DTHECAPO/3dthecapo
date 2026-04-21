@@ -1,37 +1,76 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PLAY 3D SLOTS</title>
-<link rel="stylesheet" href="./style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>PLAY 3D SLOTS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+  <main class="shell">
+    <header class="topbar" style="justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a class="back" href="../../index.html" aria-label="Back">←</a>
+        <div class="brand">
+          <div class="kicker">3D THE CAPO</div>
+          <div class="title">PLAY 3D SLOTS</div>
+        </div>
+      </div>
+      <a href="../../../../index.html" style="text-decoration:none;padding:8px 12px;border:1px solid #e4b85f;border-radius:6px;font-size:12px;color:#f3ebdc;">MAIN SITE</a>
+    </header>
 
-<div class="shell">
+    <section class="machine">
+      <div class="machine-crown">
+        <div class="capo-mark">3D THE CAPO</div>
+        <div class="jackpot-box">
+          <div class="jackpot-label">JACKPOT</div>
+          <div class="jackpot-value" id="jackpotValue">125,000</div>
+        </div>
+      </div>
 
-<header class="topbar" style="justify-content:space-between;">
-<a class="back" href="../../index.html">←</a>
-<div class="title">PLAY 3D SLOTS</div>
-<a href="../../../../index.html">MAIN SITE</a>
-</header>
+      <div class="reel-section">
+        <div class="reel-shell">
+          <div class="reels" id="reels"></div>
+        </div>
+      </div>
 
-<div class="machine">
+      <div class="scorebar">
+        <div class="score-card">
+          <div class="score-label">BALANCE</div>
+          <div class="score-value" id="creditsValue">1,000</div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">BET</div>
+          <div class="score-value" id="betValue">25</div>
+        </div>
+        <div class="score-card">
+          <div class="score-label">WIN</div>
+          <div class="score-value" id="lastWinValue">0</div>
+        </div>
+      </div>
 
-<div class="reel-section">
-<div class="reel-shell">
-<div id="reels" class="reels"></div>
-</div>
-</div>
+      <div class="controls">
+        <button class="bet-btn" id="downBetBtn" type="button">BET -</button>
+        <button class="spin-btn" id="spinBtn" type="button">SPIN</button>
+      </div>
 
-<div class="controls">
-<button id="spinBtn">SPIN</button>
-</div>
+      <div class="controls">
+        <button class="bet-btn" id="upBetBtn" type="button">BET +</button>
+        <button class="bet-btn secondary" id="autoBtn" type="button">AUTO x10</button>
+      </div>
 
-</div>
+      <div class="status-row">
+        <div class="status-label">STATUS</div>
+        <div class="status-value" id="statusValue">READY</div>
+      </div>
 
-</div>
+      <div class="message" id="messageBar"></div>
+    </section>
+  </main>
 
-<script src="./script.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
