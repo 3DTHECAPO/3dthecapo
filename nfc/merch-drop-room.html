@@ -16,6 +16,22 @@
     .product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
     @media (max-width:980px){.product-grid{grid-template-columns:1fr}}
   </style>
+
+  <script src="/public/shared/config.js"></script>
+  <script src="/public/shared/pass-session.js"></script>
+  <script>
+    (function(){
+      if(!window.Play3DPassSession){
+        location.replace('/public/redeem/');
+        return;
+      }
+      const pass = Play3DPassSession.current();
+      if(!pass){
+        location.replace('/public/redeem/');
+      }
+    })();
+  </script>
+
 </head>
 <body class="room-cinematic room-merch merch-stage">
   <div class="noise"></div>
