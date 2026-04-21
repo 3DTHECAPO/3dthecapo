@@ -1,6 +1,6 @@
 window.PLAY3D_SECURE_CONFIG = {
-  supabaseUrl: "https://YOUR-PROJECT.supabase.co",
-  supabaseAnonKey: "YOUR_SUPABASE_ANON_KEY",
+  supabaseUrl: "https://fupoedrovfloudefyzna.supabase.co",
+  supabaseAnonKey: "sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1",
   tableName: "vault_codes",
   routes: {
     ENTRY: "/nfc/entry-backdrop.html",
