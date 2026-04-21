@@ -1,0 +1,12 @@
+<!doctype html>
+<html><head><title>Redeem</title></head>
+<body>
+<h1>Enter Code</h1>
+<input id="code"><button onclick="go()">Redeem</button>
+<script>
+function go(){
+  const c=document.getElementById('code').value;
+  window.location.href='../vault/index.html?code='+c;
+}
+</script>
+</body></html>
