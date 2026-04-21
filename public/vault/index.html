@@ -1,22 +1,68 @@
 <!doctype html>
-<html><head><title>Vault</title></head>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>3D THE CAPO • Secure Vault Check</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/styles.css">
+</head>
 <body>
-<h1>Vault Access</h1>
-<div id="result"></div>
-<script>
-const params=new URLSearchParams(window.location.search);
-const code=params.get('code');
+  <main class="shell">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a class="back" href="/public/redeem/" aria-label="Back">←</a>
+        <div>
+          <div class="kicker">3D THE CAPO</div>
+          <div class="title">Secure Vault Check</div>
+        </div>
+      </div>
+      <a class="btn-link" href="/index.html">MAIN SITE</a>
+    </div>
 
-if(!code){
- document.getElementById('result').innerText="No code";
-}else if(code.includes("ENTRY")){
- document.getElementById('result').innerText="ENTRY ACCESS";
-}else if(code.includes("GOLD")){
- document.getElementById('result').innerText="GOLD ACCESS";
-}else if(code.includes("ELITE")){
- document.getElementById('result').innerText="ELITE ACCESS";
-}else{
- document.getElementById('result').innerText="INVALID CODE";
-}
-</script>
-</body></html>
+    <section class="card">
+      <div class="hero">
+        <div class="hero-title">Vault Check</div>
+        <div class="hero-sub">VERIFYING</div>
+      </div>
+
+      <div class="status">
+        <div class="status-kicker">Status</div>
+        <div class="status-text ok" id="statusText">CHECKING CODE</div>
+        <div class="status-sub" id="statusSub">Please wait...</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../shared/config.js"></script>
+  <script src="../shared/secure-redeem.js"></script>
+  <script>
+    const statusText = document.getElementById("statusText");
+    const statusSub = document.getElementById("statusSub");
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code") || "";
+
+    (async function(){
+      try{
+        const result = await Play3DSecureRedeem.redeemCode(code);
+        if(!result.ok){
+          const [title, sub] = Play3DSecureRedeem.statusMessage(result.reason);
+          statusText.textContent = title;
+          statusText.className = "status-text bad";
+          statusSub.textContent = sub;
+          return;
+        }
+        statusText.textContent = "ACCESS GRANTED";
+        statusSub.textContent = "Routing you now...";
+        setTimeout(() => { window.location.href = result.route; }, 450);
+      }catch(e){
+        statusText.textContent = "SYSTEM ERROR";
+        statusText.className = "status-text bad";
+        statusSub.textContent = "Check your Supabase config and try again.";
+      }
+    })();
+  </script>
+</body>
+</html>
