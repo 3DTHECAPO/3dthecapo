@@ -5,7 +5,7 @@ const enterVault = document.getElementById('enterVault');
 const scannerBox = document.getElementById('scannerBox');
 
 function normalizeCode(value){ return (value || '').trim().toUpperCase(); }
-function buildVaultUrl(code){ return './index.html?nfc=1&code=' + encodeURIComponent(normalizeCode(code)); }
+function buildVaultUrl(code){ return '/public/vault/?code=' + encodeURIComponent(normalizeCode(code)); }
 function goWithCode(code){
   const finalCode = normalizeCode(code);
   if(!finalCode){ alert('Enter a valid code.'); return; }
