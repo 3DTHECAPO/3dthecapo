@@ -8,5 +8,12 @@ window.PLAY3D_SECURE_CONFIG = {
     ELITE: "/nfc/album-chamber.html",
     DROP: "/nfc/merch-drop-room.html",
     MERCH: "/nfc/exclusive-merch-vault.html"
+  },
+  sessionHours: {
+    ENTRY: 24,
+    GOLD: 168,
+    ELITE: 720,
+    DROP: 72,
+    MERCH: 336
   }
 };

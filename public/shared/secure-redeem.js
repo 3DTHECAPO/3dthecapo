@@ -56,7 +56,17 @@
     await markCodeUsed(row.id);
 
     const route = row.route || routeFor(row.code_type);
-    return { ok: true, route, row };
+    let pass = null;
+    if(window.Play3DPassSession){
+      pass = window.Play3DPassSession.create({
+        tier: row.code_type,
+        code: row.code,
+        route,
+        expires_at: row.expires_at || null
+      });
+    }
+
+    return { ok: true, route, row, pass };
   }
 
   function statusMessage(reason){

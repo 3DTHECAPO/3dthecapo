@@ -59,7 +59,7 @@ button{
   background:radial-gradient(circle at 50% 35%, #f7dd96 0%, #e5b54d 48%, #c78615 100%);
 }
 .status{
-  margin-top:14px;min-height:60px;border:1px solid rgba(228,184,95,.18);border-radius:12px;
+  margin-top:14px;min-height:76px;border:1px solid rgba(228,184,95,.18);border-radius:12px;
   background:linear-gradient(180deg,#12100e,#080706);padding:12px;
 }
 .status-kicker{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
@@ -68,3 +68,9 @@ button{
 .ok{color:#f6ead3}
 .bad{color:#ffb0b0}
 .small{font-size:11px;line-height:1.5;color:#ccbfa8;margin-top:12px}
+.pass-box{
+  margin-top:14px;border:1px solid rgba(228,184,95,.18);border-radius:12px;
+  background:linear-gradient(180deg,#12100e,#080706);padding:12px;
+}
+.pass-row{display:flex;justify-content:space-between;gap:10px;font-size:12px;line-height:1.6}
+.pass-row strong{color:var(--gold)}
