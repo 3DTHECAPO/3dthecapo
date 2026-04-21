@@ -1,12 +1,87 @@
 <!doctype html>
-<html><head><title>Redeem</title></head>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>3D THE CAPO • Redeem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/styles.css">
+</head>
 <body>
-<h1>Enter Code</h1>
-<input id="code"><button onclick="go()">Redeem</button>
-<script>
-function go(){
-  const c=document.getElementById('code').value;
-  window.location.href='../vault/index.html?code='+c;
-}
-</script>
-</body></html>
+  <main class="shell">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a class="back" href="/nfc/index.html" aria-label="Back">←</a>
+        <div>
+          <div class="kicker">3D THE CAPO</div>
+          <div class="title">Secure Code Redeem</div>
+        </div>
+      </div>
+      <a class="btn-link" href="/index.html">MAIN SITE</a>
+    </div>
+
+    <section class="card">
+      <div class="hero">
+        <div class="hero-title">Vault Access</div>
+        <div class="hero-sub">ENTER CODE</div>
+      </div>
+
+      <div class="input-wrap">
+        <label for="codeInput">Redeem Code</label>
+        <input id="codeInput" placeholder="ENTRY001 / GOLD001 / ELITE001">
+        <button id="redeemBtn" type="button">Redeem</button>
+      </div>
+
+      <div class="status">
+        <div class="status-kicker">Status</div>
+        <div class="status-text ok" id="statusText">READY</div>
+        <div class="status-sub" id="statusSub">Enter a valid code to unlock your vault route.</div>
+      </div>
+
+      <div class="small">
+        This page checks your code against your secure backend, marks it used, then routes you into the correct chamber.
+      </div>
+    </section>
+  </main>
+
+  <script src="../shared/config.js"></script>
+  <script src="../shared/secure-redeem.js"></script>
+  <script>
+    const codeInput = document.getElementById("codeInput");
+    const statusText = document.getElementById("statusText");
+    const statusSub = document.getElementById("statusSub");
+    const btn = document.getElementById("redeemBtn");
+
+    async function handleRedeem(){
+      const code = codeInput.value;
+      statusText.textContent = "CHECKING CODE";
+      statusSub.textContent = "Validating and securing access...";
+      try{
+        const result = await Play3DSecureRedeem.redeemCode(code);
+        if(!result.ok){
+          const [title, sub] = Play3DSecureRedeem.statusMessage(result.reason);
+          statusText.textContent = title;
+          statusText.className = "status-text bad";
+          statusSub.textContent = sub;
+          return;
+        }
+        statusText.textContent = "ACCESS GRANTED";
+        statusText.className = "status-text ok";
+        statusSub.textContent = "Routing you now...";
+        setTimeout(() => { window.location.href = result.route; }, 450);
+      }catch(e){
+        statusText.textContent = "SYSTEM ERROR";
+        statusText.className = "status-text bad";
+        statusSub.textContent = "Check your Supabase config and try again.";
+      }
+    }
+
+    btn.addEventListener("click", handleRedeem);
+    codeInput.addEventListener("keydown", e => {
+      if(e.key === "Enter") handleRedeem();
+    });
+  </script>
+</body>
+</html>
