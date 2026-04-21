@@ -40,19 +40,38 @@
         <div class="status-sub" id="statusSub">Enter a valid code to unlock your vault route.</div>
       </div>
 
+      <div class="pass-box" id="passBox" style="display:none">
+        <div class="status-kicker">Pass Saved</div>
+        <div class="pass-row"><span>Tier</span><strong id="passTier">-</strong></div>
+        <div class="pass-row"><span>Expires</span><strong id="passExpiry">-</strong></div>
+      </div>
+
       <div class="small">
-        This page checks your code against your secure backend, marks it used, then routes you into the correct chamber.
+        Valid codes now create a vault pass on this device with an expiry timer.
       </div>
     </section>
   </main>
 
   <script src="../shared/config.js"></script>
+  <script src="../shared/pass-session.js"></script>
   <script src="../shared/secure-redeem.js"></script>
   <script>
     const codeInput = document.getElementById("codeInput");
     const statusText = document.getElementById("statusText");
     const statusSub = document.getElementById("statusSub");
     const btn = document.getElementById("redeemBtn");
+    const passBox = document.getElementById("passBox");
+    const passTier = document.getElementById("passTier");
+    const passExpiry = document.getElementById("passExpiry");
+
+    const existing = window.Play3DPassSession && Play3DPassSession.current();
+    if(existing){
+      passBox.style.display = "block";
+      passTier.textContent = existing.tier;
+      passExpiry.textContent = Play3DPassSession.formatExpiry(existing);
+      statusText.textContent = "PASS ACTIVE";
+      statusSub.textContent = "You already have active vault access on this device.";
+    }
 
     async function handleRedeem(){
       const code = codeInput.value;
@@ -69,7 +88,12 @@
         }
         statusText.textContent = "ACCESS GRANTED";
         statusText.className = "status-text ok";
-        statusSub.textContent = "Routing you now...";
+        statusSub.textContent = "Pass saved. Routing you now...";
+        if(result.pass){
+          passBox.style.display = "block";
+          passTier.textContent = result.pass.tier;
+          passExpiry.textContent = Play3DPassSession.formatExpiry(result.pass);
+        }
         setTimeout(() => { window.location.href = result.route; }, 450);
       }catch(e){
         statusText.textContent = "SYSTEM ERROR";
