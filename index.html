@@ -13,6 +13,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css?v=4">
+  <style>
+    .mailing-list-embed{
+      width:100%;
+      max-width:720px;
+      margin:0 auto;
+    }
+    .mailing-list-embed iframe{
+      width:100%;
+      min-height:305px;
+      border:0;
+      background:transparent;
+      display:block;
+    }
+  </style>
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
@@ -177,10 +191,17 @@
 
     <section class="section mail">
       <div class="sub">JOIN THE MAILING LIST</div>
-      <form class="form" id="mailForm">
-        <input class="input" type="email" name="email" placeholder="Enter your email" required>
-        <button class="pill gold" type="submit">Submit</button>
-      </form>
+      <div class="mailing-list-embed" id="mailForm">
+        <iframe
+          width="540"
+          height="305"
+          src="https://911068ec.sibforms.com/serve/MUIFANrZUVfDLkJTGxa5Vx01xEdmjfvOFSKsFU2YY6sNJS2W0hxaF6uB3yXQYvG19TNjpbzbYz2fm8O1K1A-JmkI4qt9ZmTWI-NhnHSxU0GVcEzOk_HYLqSDSwAjk3tQIiL39fgdiJ0xnZVmFoncXVN5EVs7EfzfnRj63Scf4UhDxGtmDiRE1Qk55gUopXvxEL_D_lR9meJKJQu51w=="
+          frameborder="0"
+          scrolling="auto"
+          allowfullscreen
+          style="display:block;margin-left:auto;margin-right:auto;max-width:100%;width:100%;border:0;background:transparent;">
+        </iframe>
+      </div>
       <div id="mailNote" class="note"></div>
     </section>
 
