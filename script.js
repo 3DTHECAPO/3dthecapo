@@ -27,14 +27,7 @@
   tick();
 
   const form = byId('mailForm');
-  const note = byId('mailNote');
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (note) note.textContent = 'You're locked in. Updates will hit your inbox first.';
-      form.reset();
-    });
-  }
+  
 
   qsa('.filter').forEach(btn => {
     btn.addEventListener('click', () => {
