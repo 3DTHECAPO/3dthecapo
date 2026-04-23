@@ -19,6 +19,25 @@ const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
 const TABLE = 'vault_codes';
 
 // ---------- UI ----------
+  async function logEvent(code, tier, type){
+  try{
+    await fetch(`${SUPABASE_URL}/rest/v1/vault_logs`,{
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':`Bearer ${SUPABASE_ANON}`,
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        code: code,
+        tier: tier || '',
+        event_type: type,
+        user_agent: navigator.userAgent,
+        page: window.location.pathname
+      })
+    });
+  }catch(e){}
+}
 function showLocked(msg){
   document.body.classList.add('locked');
   if(statusPill) statusPill.textContent='Locked';
