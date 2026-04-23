@@ -183,7 +183,36 @@
       </form>
       <div id="mailNote" class="note"></div>
     </section>
+185 </section>
 
+186 <script>
+187 document.getElementById("mailForm").addEventListener("submit", async function(e) {
+188   e.preventDefault();
+
+189   const email = document.getElementById("email").value;
+
+190   const response = await fetch("https://api.brevo.com/v3/contacts", {
+191     method: "POST",
+192     headers: {
+193       "Content-Type": "application/json",
+194       "api-key": "xkeysib-ee9413f151c4b06ca7887aead-3e8ab7dcd-b87530f4fd560ce47a90957a6aa0ca-lNn5Qn49pqMzKD48"
+195     },
+196     body: JSON.stringify({
+197       email: email,
+198       listIds: [7],
+199       updateEnabled: true
+200     })
+201   });
+
+202   if (response.ok) {
+203     document.getElementById("mailNote").innerText = "You’re locked in 💎";
+204   } else {
+205     document.getElementById("mailNote").innerText = "Something went wrong";
+206   }
+207 });
+208 </script>
+
+209 <div class="divider" id="vault">
     <div class="divider" id="vault"><span class="line"></span><span>CAPO VAULT</span><span class="line"></span></div>
 
     <section class="section">
@@ -285,32 +314,7 @@
     </footer>
   </main>
 
-  <script>
-  document.getElementById("mailForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-
-    const email = document.getElementById("email").value;
-
-    const response = await fetch("https://api.brevo.com/v3/contacts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "api-key": "xkeysib-ee9413f151c4b06ca7887aead-3e8ab7dcd-b87530f4fd560ce47a90957a6aa0ca-lNn5Qn49pqMzKD48"
-      },
-      body: JSON.stringify({
-        email: email,
-        listIds: [7],
-        updateEnabled: true
-      })
-    });
-
-    if (response.ok) {
-      document.getElementById("mailNote").innerText = "You’re locked in 💎";
-    } else {
-      document.getElementById("mailNote").innerText = "Something went wrong";
-    }
-  });
-  </script>
+  
 
   <script src="./script.js?v=4"></script>
 </body>
