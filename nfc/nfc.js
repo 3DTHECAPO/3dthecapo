@@ -105,11 +105,13 @@ async function init(){
     const record = await getCode(code);
 
     if(!record){
+      await logEvent(code, '', 'invalid');
       showLocked('Invalid code');
       return;
     }
 
     if(record.used){
+      await logEvent(code, '', 'already_used');
       showLocked('Code already used');
       return;
     }
@@ -124,6 +126,7 @@ async function init(){
     const tier = record.code_type.toLowerCase();
 
     await markUsed(code);
+    await logEvent(code, tier, 'success');
     unlockUI(tier);
 
   }catch(err){
