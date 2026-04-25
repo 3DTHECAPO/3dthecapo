@@ -89,3 +89,40 @@
     document.body.classList.add('site-loaded');
   });
 })();
+
+
+// 🔥 EMAIL FUNCTION (added)
+async function emailFirstCode() {
+  const email = document.getElementById("email").value;
+  const name = document.getElementById("name")?.value || "";
+
+  if (!email) {
+    alert("Enter email");
+    return;
+  }
+
+  try {
+    const res = await fetch("https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: email,
+        name: name
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("Check your email 🔥");
+    } else {
+      alert("Error: " + (data.error || "Something went wrong"));
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Request failed");
+  }
+}
