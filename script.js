@@ -47,32 +47,25 @@
 
     try {
       const res = await fetch("https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + SUPABASE_KEY
-        },
-        body: JSON.stringify({
-          email: email,
-          name: name
-        })
-      });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer " + SUPABASE_KEY
+  },
+  body: JSON.stringify({
+    email: email,
+    name: name
+  })
+});
 
-      let data;
+let data;
 
 try {
   data = await res.json();
 } catch {
   const text = await res.text();
-  throw new Error(text);
-}
-
-console.log("Response:", data);
-
-if (data.success) {
-  alert("Check your email");
-} else {
-  alert("Error: " + (data.error || "Something went wrong"));
+  alert("RAW ERROR: " + text);
+  return;
 }
   };
 
