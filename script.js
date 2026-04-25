@@ -37,6 +37,7 @@
 
   // 🔥 EMAIL FUNCTION (THIS FIXES EVERYTHING)
   window.emailFirstCode = async function () {
+  alert("FUNCTION TRIGGERED");
     const email = document.getElementById("email")?.value;
     const name = document.getElementById("name")?.value || "";
 
