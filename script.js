@@ -58,19 +58,21 @@
         })
       });
 
-      const data = await res.json();
+      let data;
 
-      console.log("Response:", data);
+try {
+  data = await res.json();
+} catch {
+  const text = await res.text();
+  throw new Error(text);
+}
 
-      if (data.success) {
-        alert("Check your email 🔥");
-      } else {
-        alert("Error: " + (data.error || "Something went wrong"));
-      }
+console.log("Response:", data);
 
-    } catch (err) {
-      console.error(err);
-      alert("Request failed: " + err.message);
+if (data.success) {
+  alert("Check your email");
+} else {
+  alert("Error: " + (data.error || "Something went wrong"));
 }
   };
 
