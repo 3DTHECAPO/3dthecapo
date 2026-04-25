@@ -177,10 +177,11 @@
 
     <section class="section mail">
       <div class="sub">JOIN THE MAILING LIST</div>
-      <form class="form" action="https://911068ec.sibforms.com/serve/MUIFANrZUVfDLkJTGxa5Vx01xEdmjfvOFSKsFU2YY6sNJS2W0hxaF6uB3yXQYvG19TNjpbzbYz2fm8O1K1A-JmkI4qt9ZmTWI-NhnHSxU0GVcEzOk_HYLqSDSwAjk3tQIiL39fgdiJ0xnZVmFoncXVN5EVs7EfzfnRj63Scf4UhDxGtmDiRE1Qk55gUopXvxEL_D_lR9meJKJQu51w==" method="GET" target="_blank">
-        <input class="input" type="email" name="email" placeholder="Enter your email" required>
-        <button class="pill gold" type="submit">Submit</button>
-      </form>
+      <div class="form">
+        <input id="email" class="input" type="email" placeholder="Enter your email" required>
+        <input id="name" class="input" type="text" placeholder="Your name (optional)">
+        <button class="pill gold" type="button" onclick="emailFirstCode()">Submit</button>
+      </div>
       <div id="mailNote" class="note"></div>
     </section>
 
