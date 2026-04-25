@@ -70,8 +70,8 @@
 
     } catch (err) {
       console.error(err);
-      alert("Request failed");
-    }
+      alert("Request failed: " + err.message);
+}
   };
 
   // Merch filter
