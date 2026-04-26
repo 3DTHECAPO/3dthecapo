@@ -103,7 +103,10 @@ async function init(){
     
 
     if(record.expires_at){
-      if(new Date() > new Date(record.expires_at)){
+      const now = new Date().getTime();
+const expiry = new Date(record.expires_at).getTime();
+
+if(now > expiry){
   await logEvent(code, '', 'expired');
   showLocked('Code expired');
   return;
