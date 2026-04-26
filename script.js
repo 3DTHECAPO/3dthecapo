@@ -38,37 +38,55 @@
   // 🔥 EMAIL FUNCTION (THIS FIXES EVERYTHING)
   window.emailFirstCode = async function () {
   alert("FUNCTION TRIGGERED");
-    const email = document.getElementById("email")?.value;
-    const name = document.getElementById("name")?.value || "";
 
-    if (!email) {
-      alert("Enter email");
+  const email = document.getElementById("email")?.value;
+  const name = document.getElementById("name")?.value || "";
+
+  if (!email) {
+    alert("Enter email");
+    return;
+  }
+
+  try {
+    const res = await fetch("https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + SUPABASE_KEY
+      },
+      body: JSON.stringify({
+        email: email,
+        name: name
+      })
+    });
+
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      const text = await res.text();
+      alert("RAW ERROR: " + text);
       return;
     }
 
-    try {
-      const res = await fetch("https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + SUPABASE_KEY
-  },
-  body: JSON.stringify({
-    email: email,
-    name: name
-  })
-});
+    console.log("Response:", data);
 
-let data;
+    if (!res.ok) {
+      alert("SERVER ERROR: " + (data.error || JSON.stringify(data)));
+      return;
+    }
 
-try {
-  data = await res.json();
-} catch {
-  const text = await res.text();
-  alert("RAW ERROR: " + text);
-  return;
-}
-  };
+    if (data.success) {
+      alert("Check your email");
+    } else {
+      alert("Error: " + (data.error || "Something went wrong"));
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Request failed: " + err.message);
+  }
+};
 
   // Merch filter
   qsa('.filter').forEach(btn => {
