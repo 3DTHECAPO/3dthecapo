@@ -97,9 +97,9 @@ async function markUsed(code){
 async function init(){
 
   if(!code){
-    showLocked();
-    return;
-  }
+  showLocked('No code provided');
+  return;
+}
 
   try{
     const record = await getCode(code);
