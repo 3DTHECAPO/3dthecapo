@@ -114,11 +114,14 @@ if(now > expiry){
       }
     }
 
-    const tier = (record.code_type || 'entry').toLowerCase();
+    const tier = record.code_type.toLowerCase();
 
-    
-    await logEvent(code, tier, 'success');
-    unlockUI(tier);
+// TEMP: disable markUsed until stable
+// await markUsed(code);
+
+await logEvent(code, tier, 'success');
+
+unlockUI(tier);
 
   }catch(err){
     showLocked('Connection error');
