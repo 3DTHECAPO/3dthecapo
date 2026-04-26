@@ -110,11 +110,7 @@ async function init(){
       return;
     }
 
-    if(record.used){
-      await logEvent(code, '', 'already_used');
-      showLocked('Code already used');
-      return;
-    }
+    
 
     if(record.expires_at){
       if(new Date() > new Date(record.expires_at)){
@@ -127,7 +123,7 @@ async function init(){
 
     const tier = record.code_type.toLowerCase();
 
-    await markUsed(code);
+    
     await logEvent(code, tier, 'success');
     unlockUI(tier);
 
