@@ -81,17 +81,7 @@ async function getCode(code){
   return data.length ? data[0] : null;
 }
 
-async function markUsed(code){
-  await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${code}`,{
-    method:'PATCH',
-    headers:{
-      'apikey':SUPABASE_ANON,
-      'Authorization':`Bearer ${SUPABASE_ANON}`,
-      'Content-Type':'application/json'
-    },
-    body:JSON.stringify({used:true})
-  });
-}
+
 
 // ---------- MAIN ----------
 async function init(){
