@@ -111,7 +111,7 @@ async function init(){
       }
     }
 
-    const tier = record.code_type.toLowerCase();
+    const tier = (record.code_type || 'entry').toLowerCase();
 
     
     await logEvent(code, tier, 'success');
