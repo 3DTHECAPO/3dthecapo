@@ -47,7 +47,7 @@ function showLocked(msg){
   if(publicNav) publicNav.classList.remove('hidden');
   if(privateNav) privateNav.classList.add('hidden');
 }
-
+console.log("UNLOCKING:", tier);
 function unlockUI(tier){
   document.body.classList.remove('locked');
 
