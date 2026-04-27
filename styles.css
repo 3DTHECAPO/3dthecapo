@@ -178,3 +178,40 @@ body.site-loaded .single-card{
 }
 
 .actions,.cta{gap:10px;flex-wrap:wrap}
+
+/* MAIN PAGE TOP SECTION SAFE PATCH — prevents content from scrolling underneath logo/header */
+.header{
+  position: relative !important;
+  top: auto !important;
+  z-index: 5 !important;
+  backdrop-filter: none !important;
+  background: linear-gradient(rgba(0,0,0,.72), rgba(0,0,0,.28)) !important;
+}
+
+/* Keep logo section visible but stop it from acting like an overlay */
+.top-logo{
+  position: relative !important;
+  z-index: 6 !important;
+}
+
+/* Make first hero section start normally under the logo/header */
+.header + .section{
+  margin-top: 12px !important;
+}
+
+@media (max-width:640px){
+  .header{
+    position: relative !important;
+    top: auto !important;
+    padding: 8px 0 12px !important;
+  }
+  .top-logo img{
+    width: min(300px,82vw) !important;
+    max-height: 120px !important;
+    object-fit: contain !important;
+  }
+  .nav{
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}
