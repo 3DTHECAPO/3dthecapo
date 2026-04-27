@@ -48,12 +48,14 @@
 
     const row = await fetchCodeRecord(code);
     if(!row) return {ok:false, reason:"invalid"};
-    if(row.used) return {ok:false, reason:"used", row};
+    if(row.used && cfg.consumeOnRedeem === true) return {ok:false, reason:"used", row};
     if(row.expires_at && new Date(row.expires_at).getTime() < Date.now()){
       return {ok:false, reason:"expired", row};
     }
 
-    await markCodeUsed(row.id);
+    if(cfg.consumeOnRedeem === true && row.id){
+      await markCodeUsed(row.id);
+    }
 
     const route = row.route || routeFor(row.code_type);
     let pass = null;
