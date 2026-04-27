@@ -71,7 +71,7 @@
           passTier.textContent = result.pass.tier;
           passExpiry.textContent = Play3DPassSession.formatExpiry(result.pass);
         }
-        setTimeout(() => { window.location.href = "/nfc/index.html?code=" + encodeURIComponent(code); }, 1500);
+        setTimeout(() => { window.location.href = result.route || ("/nfc/index.html?code=" + encodeURIComponent(code)); }, 900);
       }catch(e){
         statusText.textContent = "SYSTEM ERROR";
         statusText.className = "status-text bad";
