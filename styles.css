@@ -215,3 +215,46 @@ body.site-loaded .single-card{
     overflow: visible !important;
   }
 }
+/* FULL WIDTH LAYOUT FIX */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* MAIN CONTAINER */
+.container,
+.wrapper,
+.main,
+.content {
+  width: 100%;
+  max-width: 1400px; /* keeps it clean, not stretched ugly */
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* HERO / TOP SECTION */
+.hero,
+.header,
+.top-section {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* FIX OVERLAY ISSUE */
+header {
+  position: relative !important; /* stops it from covering scroll */
+}
+
+/* BUTTON + TEXT SCALING */
+h1 {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+p {
+  font-size: clamp(1rem, 1.5vw, 1.3rem);
+}
+
