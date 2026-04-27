@@ -3,9 +3,7 @@
 
 const byId = (id)=>document.getElementById(id);
 const params = new URLSearchParams(window.location.search);
-
 const code = (params.get('code')||'').toUpperCase().trim();
-const explicitUnlock = (params.get('unlock')||'').toLowerCase();
 
 const statusPill=byId('statusPill');
 const vaultState=byId('vaultState');
@@ -13,13 +11,29 @@ const lockedActions=byId('lockedActions');
 const lockedRoom=byId('lockedRoom');
 const publicNav=byId('publicNav');
 const privateNav=byId('privateNav');
+const vaultSequence=byId('vaultSequence');
+const accessOverlay=byId('accessOverlay');
+const sessionDivider=byId('sessionDivider');
+const sessionLane=byId('sessionLane');
+const connectDivider=byId('connectDivider');
+const connect=byId('connect');
 
 const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
 const TABLE = 'vault_codes';
 
-// ---------- UI ----------
-  async function logEvent(code, tier, type){
+const ROOM_MAP = {
+  entry: 'room-entry',
+  gold: 'room-gold',
+  elite: 'room-elite',
+  drop: 'room-elite',
+  merch: 'room-elite'
+};
+
+function show(el){ if(el) el.classList.remove('hidden'); }
+function hide(el){ if(el) el.classList.add('hidden'); }
+
+async function logEvent(codeValue, tier, type){
   try{
     await fetch(`${SUPABASE_URL}/rest/v1/vault_logs`,{
       method:'POST',
@@ -29,7 +43,7 @@ const TABLE = 'vault_codes';
         'Content-Type':'application/json'
       },
       body:JSON.stringify({
-        code: code,
+        code: codeValue,
         tier: tier || '',
         event_type: type,
         user_agent: navigator.userAgent,
@@ -38,58 +52,73 @@ const TABLE = 'vault_codes';
     });
   }catch(e){}
 }
+
 function showLocked(msg){
   document.body.classList.add('locked');
   if(statusPill) statusPill.textContent='Locked';
   if(vaultState) vaultState.textContent = msg || 'Access code required';
-  if(lockedActions) lockedActions.classList.remove('hidden');
-  if(lockedRoom) lockedRoom.classList.remove('hidden');
-  if(publicNav) publicNav.classList.remove('hidden');
-  if(privateNav) privateNav.classList.add('hidden');
+  show(lockedActions);
+  show(lockedRoom);
+  show(publicNav);
+  hide(privateNav);
+  hide(sessionDivider);
+  hide(sessionLane);
+  hide(connectDivider);
+  hide(connect);
 }
-console.log("UNLOCKING:", tier);
-function unlockUI(tier){
+
+function playAccessSequence(){
+  if(vaultSequence){
+    vaultSequence.classList.add('play','active','open');
+    vaultSequence.removeAttribute('aria-hidden');
+  }
+  if(accessOverlay){
+    accessOverlay.classList.add('show','active');
+  }
+  document.body.classList.add('access-granted','vault-open');
+}
+
+function unlockUI(rawTier){
+  const tier = String(rawTier || 'entry').toLowerCase();
   document.body.classList.remove('locked');
 
-  ['entry','gold','elite'].forEach(t=>{
-    const el = byId('room-'+t);
-    if(el) el.classList.add('hidden');
-  });
+  ['entry','gold','elite'].forEach(t=>hide(byId('room-'+t)));
 
-  const room = byId('room-'+tier);
-  if(room) room.classList.remove('hidden');
+  const roomId = ROOM_MAP[tier] || 'room-entry';
+  show(byId(roomId));
 
   if(statusPill) statusPill.textContent = tier.toUpperCase();
   if(vaultState) vaultState.textContent = tier.charAt(0).toUpperCase()+tier.slice(1)+' Room';
 
-  if(publicNav) publicNav.classList.add('hidden');
-  if(privateNav) privateNav.classList.remove('hidden');
+  hide(lockedActions);
+  hide(lockedRoom);
+  hide(publicNav);
+  show(privateNav);
+  show(sessionDivider);
+  show(sessionLane);
+  show(connectDivider);
+  show(connect);
+
+  playAccessSequence();
 }
 
-// ---------- SUPABASE ----------
-async function getCode(code){
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${code}&select=*`,{
+async function getCode(codeValue){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(codeValue)}&select=*`,{
     headers:{
       'apikey':SUPABASE_ANON,
       'Authorization':`Bearer ${SUPABASE_ANON}`
     }
   });
-
   if(!res.ok) throw new Error('DB error');
-
   const data = await res.json();
   return data.length ? data[0] : null;
 }
 
-
-
-// ---------- MAIN ----------
 async function init(){
-
   if(!code){
-  showLocked('No code provided');
-  return;
-}
+    showLocked('No code provided');
+    return;
+  }
 
   try{
     const record = await getCode(code);
@@ -100,34 +129,23 @@ async function init(){
       return;
     }
 
-    
-
     if(record.expires_at){
-      const now = new Date().getTime();
-const expiry = new Date(record.expires_at).getTime();
-
-if(now > expiry){
-  await logEvent(code, '', 'expired');
-  showLocked('Code expired');
-  return;
-}
+      const expiry = new Date(record.expires_at).getTime();
+      if(Number.isFinite(expiry) && Date.now() > expiry){
+        await logEvent(code, record.code_type || '', 'expired');
+        showLocked('Code expired');
+        return;
       }
     }
 
-    const tier = record.code_type.toLowerCase();
-
-// TEMP: disable markUsed until stable
-// await markUsed(code);
-
-await logEvent(code, tier, 'success');
-
-unlockUI(tier);
-
+    const tier = String(record.code_type || 'ENTRY').toLowerCase();
+    await logEvent(code, tier, 'success');
+    unlockUI(tier);
   }catch(err){
+    console.error(err);
     showLocked('Connection error');
   }
 }
 
 init();
-
 })();
