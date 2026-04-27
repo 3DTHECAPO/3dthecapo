@@ -69,30 +69,13 @@ function showLocked(msg){
 
 function playAccessSequence(){
   if(vaultSequence){
-    vaultSequence.classList.remove('fadeout');
     vaultSequence.classList.add('play','active','open');
     vaultSequence.removeAttribute('aria-hidden');
   }
   if(accessOverlay){
     accessOverlay.classList.add('show','active');
-    const img = accessOverlay.querySelector('.access-graphic');
-    if(img){
-      if(img.complete) accessOverlay.classList.add('image-loaded');
-      img.addEventListener('load', () => accessOverlay.classList.add('image-loaded'), {once:true});
-    }
   }
   document.body.classList.add('access-granted','vault-open');
-
-  setTimeout(()=>{
-    if(vaultSequence) vaultSequence.classList.add('fadeout');
-  }, 4300);
-  setTimeout(()=>{
-    if(vaultSequence){
-      vaultSequence.classList.remove('active','play','open','fadeout');
-      vaultSequence.setAttribute('aria-hidden','true');
-    }
-    if(accessOverlay) accessOverlay.classList.remove('show','active');
-  }, 5100);
 }
 
 function unlockUI(rawTier){
