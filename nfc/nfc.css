@@ -186,19 +186,12 @@ body{position:relative}
   100%{transform:translateY(-5%) translateX(2%)}
 }
 
-/* PLAY3D SAFE ACCESS CLEANUP — hide old PNG/text layer only */
-.access-overlay .access-graphic {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
+/* PLAY3D SAFE ACCESS CLEANUP — hides only the old PNG layer with small background text */
+.access-overlay .access-graphic{
+  display:none !important;
 }
-
-.access-overlay .access-fallback,
-.access-overlay.image-loaded .access-fallback {
-  display: block !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  position: relative !important;
-  z-index: 5 !important;
+.access-overlay .access-fallback{
+  display:block !important;
+  position:absolute;
+  z-index:4;
 }
