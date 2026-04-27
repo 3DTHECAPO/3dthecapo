@@ -53,6 +53,34 @@ async function logEvent(codeValue, tier, type){
   }catch(e){}
 }
 
+
+function patchCodeHit(codeValue){
+  if(!codeValue) return;
+  // Fire-and-forget analytics marker. This restores dashboard hits without blocking access.
+  try{
+    fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(codeValue)}`,{
+      method:'PATCH',
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':`Bearer ${SUPABASE_ANON}`,
+        'Content-Type':'application/json',
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify({ used:true, used_at:new Date().toISOString() })
+    }).catch(()=>{});
+  }catch(e){}
+}
+
+function fireBrevoSafe(codeValue, tier){
+  // Keeps Brevo-compatible hooks non-blocking. If your Brevo script is loaded anywhere,
+  // these events give it something to catch without freezing the vault flow.
+  try{ window.dispatchEvent(new CustomEvent('play3d:redeem_success', { detail:{ code:codeValue, tier:tier||'' } })); }catch(e){}
+  try{
+    if(window.Brevo && typeof window.Brevo.track === 'function') window.Brevo.track('vault_redeem_success', { code:codeValue, tier:tier||'' });
+    if(window.sendinblue && typeof window.sendinblue.track === 'function') window.sendinblue.track('vault_redeem_success', { code:codeValue, tier:tier||'' });
+  }catch(e){}
+}
+
 function showLocked(msg){
   document.body.classList.add('locked');
   if(statusPill) statusPill.textContent='Locked';
@@ -68,14 +96,47 @@ function showLocked(msg){
 }
 
 function playAccessSequence(){
-  if(vaultSequence){
-    vaultSequence.classList.add('play','active','open');
-    vaultSequence.removeAttribute('aria-hidden');
+  if(!vaultSequence){
+    document.body.classList.add('access-granted','vault-open');
+    return;
   }
+
+  // Reset every time so the cinematic can replay on every valid entry.
+  vaultSequence.classList.remove('play','active','open','fadeout');
+  vaultSequence.style.display = 'block';
+  vaultSequence.style.opacity = '1';
+  vaultSequence.style.visibility = 'visible';
+  vaultSequence.removeAttribute('aria-hidden');
+  void vaultSequence.offsetWidth;
+
+  document.body.classList.add('access-granted');
+
+  // 1) Access Granted screen first.
   if(accessOverlay){
     accessOverlay.classList.add('show','active');
   }
-  document.body.classList.add('access-granted','vault-open');
+  vaultSequence.classList.add('active');
+
+  // 2) Then remove Access overlay and play the doors so it does not get stuck covering them.
+  setTimeout(()=>{
+    if(accessOverlay){
+      accessOverlay.classList.remove('show','active');
+    }
+    vaultSequence.classList.add('play','open');
+    document.body.classList.add('vault-open');
+  }, 950);
+
+  // 3) Fade the cinematic away and reveal the unlocked room underneath.
+  setTimeout(()=>{
+    vaultSequence.classList.add('fadeout');
+  }, 4450);
+
+  setTimeout(()=>{
+    vaultSequence.classList.remove('play','active','open','fadeout');
+    vaultSequence.style.display = 'none';
+    vaultSequence.setAttribute('aria-hidden','true');
+    document.body.classList.remove('access-granted');
+  }, 5300);
 }
 
 function unlockUI(rawTier){
@@ -139,7 +200,9 @@ async function init(){
     }
 
     const tier = String(record.code_type || 'ENTRY').toLowerCase();
-    await logEvent(code, tier, 'success');
+    patchCodeHit(code);
+    fireBrevoSafe(code, tier);
+    logEvent(code, tier, 'success');
     unlockUI(tier);
   }catch(err){
     console.error(err);
