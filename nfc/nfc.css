@@ -332,3 +332,9 @@ body.vault-open .hero-media:after{
 @media (prefers-reduced-motion: reduce){
   .vault-sequence *, .vault-sequence:before, .vault-sequence:after, .room:not(.hidden) .glass, .room:not(.hidden) .subpanel, .room:not(.hidden) .bundle-head{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
 }
+/* REMOVE BACKGROUND TEXT LAYER ONLY */
+#accessGranted::before,
+#accessGranted::after {
+  content: none !important;
+  display: none !important;
+}
