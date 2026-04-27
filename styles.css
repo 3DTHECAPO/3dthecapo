@@ -257,3 +257,27 @@ h1 {
 p {
   font-size: clamp(1rem, 1.5vw, 1.3rem);
 }
+/* ===== FULL WIDTH FIX ===== */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.container,
+.wrapper,
+.main,
+.content {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+header {
+  position: relative !important;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+}
