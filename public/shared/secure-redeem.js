@@ -75,28 +75,41 @@
     }
   }
 
+
+  function fireBrevoSafe(row, eventType){
+    try{
+      window.dispatchEvent(new CustomEvent('play3d:redeem_success', { detail:{ code: row && row.code || '', tier: row && row.code_type || '', event_type:eventType || 'redeem_success' } }));
+    }catch(e){}
+    try{
+      if(window.Brevo && typeof window.Brevo.track === 'function') window.Brevo.track('vault_redeem_success', { code: row && row.code || '', tier: row && row.code_type || '' });
+      if(window.sendinblue && typeof window.sendinblue.track === 'function') window.sendinblue.track('vault_redeem_success', { code: row && row.code || '', tier: row && row.code_type || '' });
+    }catch(e){}
+  }
+
   async function redeemCode(rawCode){
     const code = normalizeCode(rawCode);
     if(!code) return {ok:false, reason:"empty"};
 
     const row = await fetchCodeRecord(code);
     if(!row){
-      await logVaultEvent({code, code_type:''}, 'invalid');
+      logVaultEvent({code, code_type:''}, 'invalid');
       return {ok:false, reason:"invalid"};
     }
 
     if(row.used && cfg.consumeOnRedeem === true){
-      await logVaultEvent(row, 'used_blocked');
+      logVaultEvent(row, 'used_blocked');
       return {ok:false, reason:"used", row};
     }
 
     if(row.expires_at && new Date(row.expires_at).getTime() < Date.now()){
-      await logVaultEvent(row, 'expired');
+      logVaultEvent(row, 'expired');
       return {ok:false, reason:"expired", row};
     }
 
-    await patchCodeHit(row.id);
-    await logVaultEvent(row, 'redeem_success');
+    // Tracking must never block access. Fire-and-forget keeps the vault from freezing.
+    patchCodeHit(row.id);
+    logVaultEvent(row, 'redeem_success');
+    fireBrevoSafe(row, 'redeem_success');
 
     const route = routeFor(row.code_type, row.code);
     let pass = null;
