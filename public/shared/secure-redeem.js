@@ -91,8 +91,9 @@
     if(!code) return {ok:false, reason:"empty"};
 
     const row = await fetchCodeRecord(code);
-    // 🔥 START TIMER ON FIRST USE (USES duration FIELD)
+    // 🔥 START TIMER ON FIRST USE (SAFE VERSION)
     if (!row.expires_at) {
+
       const map = {
         "1h": 1 * 60 * 60 * 1000,
         "6h": 6 * 60 * 60 * 1000,
@@ -103,11 +104,12 @@
         "30d": 30 * 24 * 60 * 60 * 1000
       };
 
-      const key = row.duration || "none";
+      const key = row.duration || "1h";
+      const durationMs = map[key];
 
-      if (key !== "none") {
+      if (durationMs) {
         const now = new Date();
-        const expires = new Date(now.getTime() + (map[key] || 0));
+        const expires = new Date(now.getTime() + durationMs);
 
         try {
           await fetch(`${supabaseUrl}/rest/v1/${tableName}?id=eq.${encodeURIComponent(row.id)}`, {
@@ -124,8 +126,9 @@
           });
 
           row.expires_at = expires.toISOString();
+
         } catch (e) {
-          console.warn("Timer start failed", e);
+          console.warn("Timer failed", e);
         }
       }
     }
