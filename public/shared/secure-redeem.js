@@ -91,6 +91,32 @@
     if(!code) return {ok:false, reason:"empty"};
 
     const row = await fetchCodeRecord(code);
+    // 🔥 START TIMER ON FIRST USE
+    if (!row.expires_at) {
+      const now = new Date();
+      const expires = new Date(now.getTime() + (60 * 60 * 1000)); // 1 hour
+
+      try {
+        await fetch(`${supabaseUrl}/rest/v1/${tableName}?id=eq.${encodeURIComponent(row.id)}`, {
+          method: "PATCH",
+          headers: {
+            "apikey": supabaseAnonKey,
+            "Authorization": `Bearer ${supabaseAnonKey}`,
+            "Content-Type": "application/json",
+            "Prefer": "return=representation"
+          },
+          body: JSON.stringify({
+            expires_at: expires.toISOString()
+          })
+        });
+
+        row.expires_at = expires.toISOString();
+
+      } catch (e) {
+        console.warn("Failed to start timer on first use", e);
+      }
+    }
+
     if(!row){
       logVaultEvent({code, code_type:''}, 'invalid');
       return {ok:false, reason:"invalid"};
