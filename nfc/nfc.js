@@ -182,7 +182,15 @@ async function init(){
   }
 
   try{
-    const record = await getCode(code);
+    const result = await window.Play3DSecureRedeem.redeemCode(code);
+
+    if(!result || !result.ok){
+      await logEvent(code, '', 'invalid');
+      showLocked('Invalid code');
+      return;
+    }
+
+    const record = result.row;
 
     if(!record){
       await logEvent(code, '', 'invalid');
