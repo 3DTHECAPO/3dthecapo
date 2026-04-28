@@ -9,7 +9,7 @@
   }
 
   function routeFor(codeType, code){
-    // IMPORTANT: always route through /public/redeem/?code= so ACCESS GRANTED + cinematic doors can run.
+    // IMPORTANT: always route https://3dthecapo.com/public/redeem/?code=ENTRY100 so ACCESS GRANTED + cinematic doors can run.
     // The room/tier is still decided from Supabase inside /nfc/nfc.js.
     const safeCode = encodeURIComponent(normalizeCode(code));
     return `/nfc/index.html?code=${safeCode}&play=1`;
