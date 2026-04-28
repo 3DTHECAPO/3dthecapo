@@ -91,29 +91,42 @@
     if(!code) return {ok:false, reason:"empty"};
 
     const row = await fetchCodeRecord(code);
-    // 🔥 START TIMER ON FIRST USE
+    // 🔥 START TIMER ON FIRST USE (USES duration FIELD)
     if (!row.expires_at) {
-      const now = new Date();
-      const expires = new Date(now.getTime() + (60 * 60 * 1000)); // 1 hour
+      const map = {
+        "1h": 1 * 60 * 60 * 1000,
+        "6h": 6 * 60 * 60 * 1000,
+        "12h": 12 * 60 * 60 * 1000,
+        "1d": 24 * 60 * 60 * 1000,
+        "3d": 3 * 24 * 60 * 60 * 1000,
+        "7d": 7 * 24 * 60 * 60 * 1000,
+        "30d": 30 * 24 * 60 * 60 * 1000
+      };
 
-      try {
-        await fetch(`${supabaseUrl}/rest/v1/${tableName}?id=eq.${encodeURIComponent(row.id)}`, {
-          method: "PATCH",
-          headers: {
-            "apikey": supabaseAnonKey,
-            "Authorization": `Bearer ${supabaseAnonKey}`,
-            "Content-Type": "application/json",
-            "Prefer": "return=representation"
-          },
-          body: JSON.stringify({
-            expires_at: expires.toISOString()
-          })
-        });
+      const key = row.duration || "none";
 
-        row.expires_at = expires.toISOString();
+      if (key !== "none") {
+        const now = new Date();
+        const expires = new Date(now.getTime() + (map[key] || 0));
 
-      } catch (e) {
-        console.warn("Failed to start timer on first use", e);
+        try {
+          await fetch(`${supabaseUrl}/rest/v1/${tableName}?id=eq.${encodeURIComponent(row.id)}`, {
+            method: "PATCH",
+            headers: {
+              "apikey": supabaseAnonKey,
+              "Authorization": `Bearer ${supabaseAnonKey}`,
+              "Content-Type": "application/json",
+              "Prefer": "return=representation"
+            },
+            body: JSON.stringify({
+              expires_at: expires.toISOString()
+            })
+          });
+
+          row.expires_at = expires.toISOString();
+        } catch (e) {
+          console.warn("Timer start failed", e);
+        }
       }
     }
 
