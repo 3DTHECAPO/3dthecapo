@@ -91,7 +91,14 @@
     if(!code) return {ok:false, reason:"empty"};
 
     const row = await fetchCodeRecord(code);
+
+    if(!row){
+      logVaultEvent({code, code_type:''}, 'invalid');
+      return {ok:false, reason:"invalid"};
+    }
+
     // 🔥 START TIMER ON FIRST USE (SAFE VERSION)
+    // Uses the duration saved by the generator dropdown for every code.
     if (!row.expires_at) {
 
       const map = {
@@ -131,11 +138,6 @@
           console.warn("Timer failed", e);
         }
       }
-    }
-
-    if(!row){
-      logVaultEvent({code, code_type:''}, 'invalid');
-      return {ok:false, reason:"invalid"};
     }
 
     if(row.used && cfg.consumeOnRedeem === true){
