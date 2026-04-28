@@ -175,6 +175,69 @@ async function getCode(codeValue){
   return data.length ? data[0] : null;
 }
 
+
+async function startTimerIfNeeded(record){
+  if(!record || record.expires_at) return record;
+
+  const map = {
+    "1h": 1 * 60 * 60 * 1000,
+    "6h": 6 * 60 * 60 * 1000,
+    "12h": 12 * 60 * 60 * 1000,
+    "1d": 24 * 60 * 60 * 1000,
+    "3d": 3 * 24 * 60 * 60 * 1000,
+    "7d": 7 * 24 * 60 * 60 * 1000,
+    "30d": 30 * 24 * 60 * 60 * 1000
+  };
+
+  const key = String(record.duration || "1h").trim();
+
+  // "none" means no expiration by choice.
+  if(key === "none") return record;
+
+  const durationMs = map[key] || map["1h"];
+  const expires = new Date(Date.now() + durationMs).toISOString();
+
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?id=eq.${encodeURIComponent(record.id)}`,{
+      method:'PATCH',
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':`Bearer ${SUPABASE_ANON}`,
+        'Content-Type':'application/json',
+        'Prefer':'return=representation'
+      },
+      body:JSON.stringify({ expires_at: expires })
+    });
+
+    if(res.ok){
+      const rows = await res.json().catch(()=>[]);
+      if(Array.isArray(rows) && rows[0]){
+        return rows[0];
+      }
+      record.expires_at = expires;
+    }
+  }catch(e){
+    console.warn('Timer start failed', e);
+  }
+
+  return record;
+}
+
+function saveVaultPass(record, tier){
+  try{
+    const expires = record && record.expires_at
+      ? record.expires_at
+      : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
+    localStorage.setItem("play3d_vault_pass_v1", JSON.stringify({
+      tier: tier || record.code_type || "ENTRY",
+      code: record.code || code,
+      route: record.route || "",
+      expires_at: expires
+    }));
+  }catch(e){}
+}
+
 async function init(){
   if(!code){
     showLocked('No code provided');
@@ -190,6 +253,9 @@ async function init(){
       return;
     }
 
+    const timedRecord = await startTimerIfNeeded(record);
+    Object.assign(record, timedRecord);
+
     if(record.expires_at){
       const expiry = new Date(record.expires_at).getTime();
       if(Number.isFinite(expiry) && Date.now() > expiry){
@@ -200,6 +266,7 @@ async function init(){
     }
 
     const tier = String(record.code_type || 'ENTRY').toLowerCase();
+    saveVaultPass(record, tier);
     patchCodeHit(code);
     fireBrevoSafe(code, tier);
     logEvent(code, tier, 'success');
