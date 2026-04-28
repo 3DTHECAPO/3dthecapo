@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Buy Access | 3D THE CAPO</title>
+  <meta name="description" content="Buy PLAY 3D vault access with Cash App. Manual code delivery for now, automation ready later.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --gold:#caa24a;
+      --gold2:#f2d27b;
+      --cream:#f4f1ea;
+      --muted:rgba(244,241,234,.74);
+      --line:rgba(202,162,74,.34);
+      --cash:#00d632;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      color:var(--cream);
+      font-family:Oswald,Arial,sans-serif;
+      background:
+        linear-gradient(rgba(0,0,0,.74),rgba(0,0,0,.94)),
+        url('./bg_texture.jpg?v=pay1') center/cover fixed;
+      min-height:100vh;
+    }
+    .wrap{
+      width:min(1180px,94vw);
+      margin:0 auto;
+      padding:28px 0 46px;
+    }
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:28px;
+    }
+    .logo{
+      max-width:280px;
+      width:min(280px,60vw);
+      height:auto;
+      filter:drop-shadow(0 0 18px rgba(202,162,74,.25));
+    }
+    .nav{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:42px;
+      padding:0 16px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.46);
+      color:var(--cream);
+      text-decoration:none;
+      font-weight:700;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      box-shadow:0 12px 28px rgba(0,0,0,.42);
+    }
+    .pill.gold{
+      color:#17130c;
+      background:linear-gradient(180deg,#f2d27b,#caa24a 55%,#8b641e);
+      border-color:rgba(255,231,153,.72);
+    }
+    .hero{
+      text-align:center;
+      padding:32px 18px 18px;
+    }
+    .kicker{
+      color:var(--gold2);
+      letter-spacing:2px;
+      text-transform:uppercase;
+      font-weight:700;
+    }
+    h1{
+      font-family:"Black Ops One",system-ui,sans-serif;
+      font-size:clamp(42px,7vw,86px);
+      line-height:.96;
+      margin:10px 0;
+      letter-spacing:1.5px;
+      text-transform:uppercase;
+      text-shadow:0 4px 0 rgba(0,0,0,.85),0 0 28px rgba(202,162,74,.20);
+    }
+    .sub{
+      max-width:720px;
+      margin:0 auto;
+      color:var(--muted);
+      font-size:18px;
+      line-height:1.5;
+    }
+    .notice{
+      margin:22px auto 0;
+      max-width:760px;
+      border:1px solid rgba(0,214,50,.35);
+      border-radius:18px;
+      background:rgba(0,40,12,.30);
+      padding:14px 16px;
+      color:#dfffe8;
+      font-weight:700;
+      letter-spacing:.3px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:18px;
+      margin-top:30px;
+    }
+    .card{
+      position:relative;
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:
+        radial-gradient(circle at 80% 12%,rgba(202,162,74,.16),transparent 25%),
+        linear-gradient(180deg,rgba(12,10,7,.88),rgba(0,0,0,.72));
+      box-shadow:0 30px 86px rgba(0,0,0,.82), inset 0 1px 0 rgba(255,255,255,.07);
+      padding:22px;
+      min-height:360px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .tag{
+      display:inline-flex;
+      align-self:flex-start;
+      border:1px solid var(--line);
+      color:var(--gold2);
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      background:rgba(0,0,0,.34);
+    }
+    .card h2{
+      font-family:"Black Ops One",system-ui,sans-serif;
+      margin:14px 0 6px;
+      font-size:32px;
+      letter-spacing:1px;
+      color:var(--gold2);
+      text-transform:uppercase;
+    }
+    .price{
+      font-size:46px;
+      font-weight:900;
+      color:#fff;
+      margin:0;
+      line-height:1;
+    }
+    .duration{
+      color:var(--muted);
+      margin:8px 0 16px;
+      font-size:17px;
+    }
+    ul{
+      margin:0 0 20px;
+      padding-left:20px;
+      color:rgba(244,241,234,.82);
+      line-height:1.65;
+    }
+    .cash-btn{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:100%;
+      min-height:54px;
+      border-radius:16px;
+      color:#041207;
+      background:linear-gradient(180deg,#45ff72,#00d632 58%,#039e29);
+      text-decoration:none;
+      font-weight:900;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      box-shadow:0 0 28px rgba(0,214,50,.20),0 18px 38px rgba(0,0,0,.55);
+      border:1px solid rgba(199,255,211,.65);
+    }
+    .steps{
+      margin-top:22px;
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:rgba(0,0,0,.58);
+      padding:22px;
+      box-shadow:0 22px 60px rgba(0,0,0,.64);
+    }
+    .steps h3{
+      font-family:"Black Ops One",system-ui,sans-serif;
+      color:var(--gold2);
+      margin:0 0 10px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+    .steps ol{
+      margin:0;
+      padding-left:22px;
+      color:rgba(244,241,234,.86);
+      line-height:1.75;
+      font-size:17px;
+    }
+    .auto{
+      margin-top:18px;
+      color:rgba(244,241,234,.62);
+      text-align:center;
+      font-size:14px;
+      letter-spacing:.5px;
+    }
+    @media(max-width:900px){
+      .top{flex-direction:column}
+      .nav{justify-content:center}
+      .grid{grid-template-columns:1fr}
+      .card{min-height:auto}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <a href="./"><img class="logo" src="./header_logo.png" alt="3D THE CAPO"></a>
+      <nav class="nav">
+        <a class="pill" href="./">Home</a>
+        <a class="pill" href="./nfc/scan.html">Enter Code</a>
+        <a class="pill gold" href="https://cash.app/$3dcashin" target="_blank" rel="noopener">Cash App</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="kicker">PLAY 3D VAULT ACCESS</div>
+      <h1>Buy Access</h1>
+      <p class="sub">Cash App checkout is manual for now so you can start selling today. Automation can be added later without changing this page structure.</p>
+      <div class="notice">After payment, send your Cash App receipt + email/name. Your vault code will be sent manually.</div>
+    </section>
+
+    <section class="grid" aria-label="Pricing">
+      <article class="card">
+        <div>
+          <span class="tag">Entry</span>
+          <h2>Entry Access</h2>
+          <p class="price">$5</p>
+          <p class="duration">1 Hour Vault Access</p>
+          <ul>
+            <li>Vault entry code</li>
+            <li>Access starts when code is used</li>
+            <li>Good starter tier</li>
+          </ul>
+        </div>
+        <a class="cash-btn" href="https://cash.app/$3dcashin/5" target="_blank" rel="noopener">Pay $5 Cash App</a>
+      </article>
+
+      <article class="card">
+        <div>
+          <span class="tag">Gold</span>
+          <h2>Gold Access</h2>
+          <p class="price">$15</p>
+          <p class="duration">6 Hour Vault Access</p>
+          <ul>
+            <li>Longer vault window</li>
+            <li>Better for full content access</li>
+            <li>Good promo tier</li>
+          </ul>
+        </div>
+        <a class="cash-btn" href="https://cash.app/$3dcashin/15" target="_blank" rel="noopener">Pay $15 Cash App</a>
+      </article>
+
+      <article class="card">
+        <div>
+          <span class="tag">Elite</span>
+          <h2>Elite Access</h2>
+          <p class="price">$25</p>
+          <p class="duration">24 Hour Vault Access</p>
+          <ul>
+            <li>Premium vault window</li>
+            <li>Best for exclusive drops</li>
+            <li>Upgrade-ready for automation</li>
+          </ul>
+        </div>
+        <a class="cash-btn" href="https://cash.app/$3dcashin/25" target="_blank" rel="noopener">Pay $25 Cash App</a>
+      </article>
+    </section>
+
+    <section class="steps">
+      <h3>How it works</h3>
+      <ol>
+        <li>Choose your access tier.</li>
+        <li>Pay through Cash App: <strong>$3dcashin</strong>.</li>
+        <li>Send your receipt, email, and name.</li>
+        <li>Your PLAY 3D vault code will be sent manually.</li>
+        <li>Enter your code to unlock the vault. Timer starts when the code is used.</li>
+      </ol>
+    </section>
+
+    <p class="auto">Automation upgrade path: Stripe checkout → auto-code delivery → tracked sales dashboard.</p>
+  </main>
+</body>
+</html>
