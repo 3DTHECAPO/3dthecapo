@@ -3,7 +3,32 @@ window.GV = {
   isBonus() { return this.params.get('nfc') === '1' || localStorage.getItem('gv_bonus') === '1'; },
   setReward(key, value='1'){ localStorage.setItem('gv_reward_'+key, value); },
   getReward(key){ return localStorage.getItem('gv_reward_'+key); },
-  enableBonus(){ localStorage.setItem('gv_bonus','1'); }
+  enableBonus(){ localStorage.setItem('gv_bonus','1'); },
+
+  // Rewards bridge: lets games/rewards know a valid vault pass is active.
+  hasActivePass(){
+    try{
+      const raw = localStorage.getItem('play3d_vault_pass_v1');
+      if(!raw) return false;
+      const pass = JSON.parse(raw);
+      if(!pass || !pass.expires_at) return false;
+      const expiry = new Date(pass.expires_at).getTime();
+      return Number.isFinite(expiry) && expiry > Date.now();
+    }catch(e){
+      return false;
+    }
+  },
+
+  getActivePass(){
+    try{
+      const raw = localStorage.getItem('play3d_vault_pass_v1');
+      if(!raw) return null;
+      const pass = JSON.parse(raw);
+      return this.hasActivePass() ? pass : null;
+    }catch(e){
+      return null;
+    }
+  }
 };
 
 if (GV.params.get('nfc') === '1') GV.enableBonus();
