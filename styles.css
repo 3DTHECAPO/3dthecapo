@@ -449,3 +449,38 @@ body{
   0% { left: -55%; }
   100% { left: 110%; }
 }
+/* BUY PAGE ANIMATION + SOLD OUT FEEL */
+.vault-pressure,
+.card,
+.buy-card,
+.price-card {
+  animation: buyFadeUp .7s ease both;
+}
+
+@keyframes buyFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cash-btn,
+.buy-btn,
+a[href*="cash.app"] {
+  transition: transform .22s ease, box-shadow .22s ease, opacity .22s ease;
+}
+
+.cash-btn:hover,
+.buy-btn:hover,
+a[href*="cash.app"]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 22px rgba(242,210,123,.28);
+}
+
+.vault-pressure {
+  animation-delay: .08s;
+}
