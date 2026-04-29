@@ -439,3 +439,42 @@ body{
     0 0 15px rgba(242,210,123,0.35),
     0 0 35px rgba(202,162,74,0.25);
 }
+/* 🔥 FINAL CARD STYLE (LUXURY VAULT LOOK) */
+.card {
+  position: relative;
+  background: linear-gradient(180deg, #0c0c0c, #050505);
+  border: 1px solid rgba(202,162,74,0.35);
+  border-radius: 18px;
+  padding: 16px;
+  
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.6),
+    inset 0 0 20px rgba(255,255,255,0.03);
+  
+  transition: all 0.25s ease;
+}
+
+/* ✨ GOLD TOP ACCENT (THIS MAKES IT POP) */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 15px;
+  right: 15px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #f2d27b,
+    transparent
+  );
+}
+
+/* 🔥 HOVER (SUBTLE LIFT = PREMIUM) */
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 15px 40px rgba(0,0,0,0.8),
+    0 0 20px rgba(202,162,74,0.15),
+    inset 0 0 20px rgba(255,255,255,0.04);
+}
