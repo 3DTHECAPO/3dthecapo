@@ -236,3 +236,53 @@ async function loadVaultPressure(){
 }
 
 loadVaultPressure();
+// PLAY 3D BUY PAGE — VAULT PRESSURE + SOLD OUT LOCK
+async function loadVaultPressure(){
+  const ids = ["entryCount","entry","gold","elite"];
+  if(!ids.some(id => document.getElementById(id))) return;
+
+  try{
+    const res = await fetch("https://fupoedrovfloudefyzna.supabase.co/rest/v1/vault_codes?select=code_type,sent,recipient_email", {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: "Bearer " + SUPABASE_KEY
+      }
+    });
+
+    const data = await res.json();
+
+    const available = type =>
+      data.filter(x =>
+        x.code_type === type &&
+        !x.sent &&
+        !x.recipient_email
+      ).length;
+
+    const entry = available("ENTRY");
+    const gold = available("GOLD");
+    const elite = available("ELITE");
+
+    if(document.getElementById("entryCount")) document.getElementById("entryCount").innerText = entry;
+    if(document.getElementById("entry")) document.getElementById("entry").innerText = entry;
+    if(document.getElementById("gold")) document.getElementById("gold").innerText = gold;
+    if(document.getElementById("elite")) document.getElementById("elite").innerText = elite;
+
+    if(entry <= 0){
+      document.querySelectorAll("a[href*='cash.app'], .cash-btn, .buy-btn").forEach(btn=>{
+        btn.innerText = "SOLD OUT";
+        btn.style.pointerEvents = "none";
+        btn.style.opacity = ".45";
+        btn.style.filter = "grayscale(1)";
+      });
+
+      if(document.getElementById("entryCount")){
+        document.getElementById("entryCount").innerText = "SOLD OUT";
+      }
+    }
+
+  }catch(err){
+    console.log("Vault pressure not loaded:", err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadVaultPressure);
