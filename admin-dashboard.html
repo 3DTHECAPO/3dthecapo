@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PLAY 3D Admin Dashboard</title>
+  <style>
+    body{margin:0;background:#050505;color:#f4f1ea;font-family:Arial,sans-serif}
+    .wrap{width:min(1100px,94vw);margin:0 auto;padding:32px 0}
+    h1{color:#f2d27b;letter-spacing:1px}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .card{border:1px solid rgba(202,162,74,.4);border-radius:18px;background:#0b0b0b;padding:20px}
+    .num{font-size:42px;font-weight:900;color:#f2d27b}
+    button{background:#f2d27b;color:#090806;border:0;border-radius:999px;padding:12px 18px;font-weight:800;cursor:pointer}
+    input{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(202,162,74,.4);background:#111;color:#fff;margin:6px 0 14px}
+    table{width:100%;border-collapse:collapse;margin-top:20px}
+    td,th{border-bottom:1px solid rgba(202,162,74,.25);padding:10px;text-align:left}
+    .muted{color:#bfb7a6}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>PLAY 3D Admin Dashboard</h1>
+    <p class="muted">Private inventory view. Keep this page private.</p>
+    <button onclick="loadInventory()">Refresh Inventory</button>
+    <div class="grid" id="inventoryGrid" style="margin-top:20px"></div>
+
+    <div class="card" style="margin-top:22px">
+      <h2>Admin Override Send</h2>
+      <input id="adminEmail" placeholder="customer@email.com">
+      <input id="adminName" placeholder="Name optional">
+      <input id="adminTier" placeholder="ENTRY / GOLD / ELITE" value="ENTRY">
+      <button onclick="adminOverrideSend()">Send Override Code</button>
+      <p id="adminStatus" class="muted"></p>
+    </div>
+  </div>
+
+<script>
+const FUNCTION_URL = "https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint";
+const SUPABASE_KEY = "REPLACE_WITH_YOUR_PUBLIC_ANON_KEY_IF_NEEDED";
+
+async function loadInventory(){
+  const grid = document.getElementById("inventoryGrid");
+  grid.innerHTML = "<p>Loading...</p>";
+  const res = await fetch(FUNCTION_URL, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ action:"inventory" })
+  });
+  const data = await res.json();
+  if(!data.success){ grid.innerHTML = "<p>Inventory load failed.</p>"; return; }
+  grid.innerHTML = Object.entries(data.inventory).map(([tier, info]) => `
+    <div class="card">
+      <h2>${tier}</h2>
+      <div class="num">${info.available}</div>
+      <p>${info.label}</p>
+      <p>${info.price}</p>
+    </div>
+  `).join("");
+}
+
+async function adminOverrideSend(){
+  const email = document.getElementById("adminEmail").value.trim().toLowerCase();
+  const name = document.getElementById("adminName").value.trim();
+  const tier = document.getElementById("adminTier").value.trim().toUpperCase() || "ENTRY";
+  const adminToken = prompt("Admin override token:");
+  const status = document.getElementById("adminStatus");
+  status.textContent = "Sending...";
+  const res = await fetch(FUNCTION_URL, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ email, name, tier, admin:true, adminToken })
+  });
+  const data = await res.json();
+  status.textContent = res.ok ? `Sent ${data.tier || tier} code.` : (data.error || "Failed");
+  loadInventory();
+}
+
+loadInventory();
+</script>
+</body>
+</html>

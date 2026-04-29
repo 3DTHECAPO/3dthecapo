@@ -35,111 +35,51 @@
 
   tick();
 
-  // 🔒 PUBLIC EMAIL CODE REQUEST — HARD BLOCK DUPLICATE EMAILS
-  function normalizePublicEmail(email){
-    return String(email || '').trim().toLowerCase();
-  }
-
-  async function publicEmailAlreadyUsed(email){
-    const clean = normalizePublicEmail(email);
-    if(!clean) return { blocked:false };
-
-    try{
-      const res = await fetch(`https://fupoedrovfloudefyzna.supabase.co/rest/v1/vault_codes?recipient_email=eq.${encodeURIComponent(clean)}&select=code,recipient_email&limit=1`, {
-        headers:{
-          "apikey": SUPABASE_KEY,
-          "Authorization": "Bearer " + SUPABASE_KEY
-        }
-      });
-
-      if(!res.ok){
-        const text = await res.text();
-        console.warn("Duplicate email check failed:", text);
-        return { blocked:false, error:text };
-      }
-
-      const rows = await res.json().catch(()=>[]);
-
-      // HARD LOCK: if the email exists once in Supabase, block forever.
-      if(Array.isArray(rows) && rows.length > 0){
-        return { blocked:true, row: rows[0] };
-      }
-
-      return { blocked:false };
-    }catch(err){
-      console.warn("Duplicate email check error:", err);
-      return { blocked:false, error:err.message };
-    }
-  }
-
+  // 🔥 EMAIL FUNCTION (THIS FIXES EVERYTHING)
   window.emailFirstCode = async function () {
-    const emailInput = document.getElementById("email");
-    const nameInput = document.getElementById("name");
+  const emailInput = document.getElementById("email");
+  const nameInput = document.getElementById("name");
+  const tierInput = document.getElementById("tier") || document.getElementById("accessTier");
 
-    const email = normalizePublicEmail(emailInput?.value);
-    const name = nameInput?.value || "";
+  const email = String(emailInput?.value || "").trim().toLowerCase();
+  const name = String(nameInput?.value || "").trim();
+  const tier = String(tierInput?.value || "ENTRY").trim().toUpperCase();
 
-    if (!email) {
-      alert("Enter email");
+  if (!email) {
+    alert("Enter email");
+    return;
+  }
+
+  try {
+    const res = await fetch("https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, name, tier })
+    });
+
+    const data = await res.json().catch(async () => ({ error: await res.text() }));
+
+    if (!res.ok) {
+      const msg = String(data.error || "").toUpperCase();
+      if (msg.includes("SOLD OUT")) {
+        alert("SOLD OUT - NEXT DROP SOON");
+        return;
+      }
+      if (msg.includes("EMAIL ALREADY USED")) {
+        alert("This email already received a PLAY 3D access code.");
+        return;
+      }
+      alert(data.error || "Something went wrong");
       return;
     }
 
-    const existing = await publicEmailAlreadyUsed(email);
+    alert("Check your email");
 
-    if(existing.blocked){
-      alert("This email already received a PLAY 3D access code.");
-      return;
-    }
-
-    try {
-      const res = await fetch("https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + SUPABASE_KEY
-        },
-        body: JSON.stringify({
-          email: email,
-          name: name
-        })
-      });
-
-      let data;
-      try {
-        data = await res.json();
-      } catch {
-        const text = await res.text();
-        alert("RAW ERROR: " + text);
-        return;
-      }
-
-      console.log("Response:", data);
-
-      if (!res.ok) {
-        const msg = (data.error || JSON.stringify(data) || "").toLowerCase();
-
-        if(msg.includes("duplicate") || msg.includes("already") || msg.includes("23505")){
-          alert("This email already received a PLAY 3D access code.");
-          return;
-        }
-
-        alert("SERVER ERROR: " + (data.error || JSON.stringify(data)));
-        return;
-      }
-
-      if (data.success) {
-        alert("Check your email");
-      } else {
-        alert("Error: " + (data.error || "Something went wrong"));
-      }
-
-    } catch (err) {
-      console.error(err);
-      alert("Request failed: " + err.message);
-    }
-  };
-
-  window.publicEmailAlreadyUsed = publicEmailAlreadyUsed;
+  } catch (err) {
+    console.error(err);
+    alert("Request failed: " + err.message);
+  }
+};
 
   // Merch filter
   qsa('.filter').forEach(btn => {
