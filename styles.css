@@ -344,18 +344,14 @@ body.site-loaded .single-card{
 body{
   overflow-x: hidden !important;
 }
+
 /* ONLY FIX YOUTUBE — NOT SPOTIFY */
-.youtube-preview iframe {
-  display: block !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 315px !important;
-}
 .youtube-preview {
   display: block !important;
   width: 100% !important;
   min-height: 315px !important;
   overflow: visible !important;
+  border-radius: 14px;
 }
 
 .youtube-preview > div {
@@ -375,83 +371,81 @@ body{
   min-height: 315px !important;
 }
 
-/* 🔥 FINAL CARD STYLE (LUXURY VAULT LOOK) */
+
+/* FINAL CARD STYLE — SOFT LUXURY VAULT LOOK */
 .card {
   position: relative;
   background: linear-gradient(180deg, #0c0c0c, #050505);
-  border: 1px solid rgba(202,162,74,0.35);
+  border: 1px solid rgba(202,162,74,0.24);
   border-radius: 18px;
-  padding: 16px;
-  
   box-shadow:
-    0 10px 30px rgba(0,0,0,0.6),
-    inset 0 0 20px rgba(255,255,255,0.03);
-  
-  transition: all 0.25s ease;
+    0 8px 24px rgba(0,0,0,0.72),
+    inset 0 0 14px rgba(255,255,255,0.025);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
-/* ✨ GOLD TOP ACCENT (THIS MAKES IT POP) */
 .card::before {
   content: "";
   position: absolute;
   top: 0;
-  left: 15px;
-  right: 15px;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #f2d27b,
-    transparent
-  );
+  left: 18px;
+  right: 18px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(242,210,123,0.42), transparent);
+  pointer-events: none;
 }
 
-/* 🔥 HOVER (SUBTLE LIFT = PREMIUM) */
 .card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
+  border-color: rgba(202,162,74,0.34);
   box-shadow:
-    0 15px 40px rgba(0,0,0,0.8),
-    0 0 20px rgba(202,162,74,0.15),
-    inset 0 0 20px rgba(255,255,255,0.04);
+    0 12px 34px rgba(0,0,0,0.82),
+    0 0 10px rgba(202,162,74,0.08),
+    inset 0 0 14px rgba(255,255,255,0.03);
 }
-/* 🔥 FORCE DIVIDER TO SHOW */
+
+/* ANIMATED DIVIDER LINES — CLEAN GOLD */
 .divider {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
-  margin: 40px 0;
+  margin: 40px 0 18px;
+  font-family: "Black Ops One", system-ui, sans-serif;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  background: transparent !important;
 }
 
 .divider span {
   color: #caa24a;
   font-size: 12px;
   letter-spacing: 2px;
+  white-space: nowrap;
 }
 
-/* 💥 MAKE LINES VISIBLE */
 .divider .line {
   flex: 1;
   height: 2px;
-  background: rgba(202,162,74,0.4);
+  background: linear-gradient(90deg, transparent, rgba(202,162,74,0.45), transparent);
   position: relative;
   overflow: hidden;
+  border-radius: 999px;
 }
 
-/* ✨ ANIMATION YOU CAN ACTUALLY SEE */
 .divider .line::after {
   content: "";
   position: absolute;
   top: 0;
-  left: -100%;
-  width: 50%;
+  left: -55%;
+  width: 45%;
   height: 100%;
-  background: rgba(242,210,123,0.8);
-  filter: blur(2px);
-  animation: slideGlow 2s linear infinite;
+  background: linear-gradient(90deg, transparent, rgba(242,210,123,0.85), transparent);
+  filter: blur(1px);
+  animation: slideGlow 2.8s linear infinite;
 }
 
 @keyframes slideGlow {
-  0% { left: -50%; }
-  100% { left: 100%; }
+  0% { left: -55%; }
+  100% { left: 110%; }
 }
-
