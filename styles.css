@@ -478,3 +478,43 @@ body{
     0 0 20px rgba(202,162,74,0.15),
     inset 0 0 20px rgba(255,255,255,0.04);
 }
+/* 🔥 FORCE DIVIDER TO SHOW */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 40px 0;
+}
+
+.divider span {
+  color: #caa24a;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+/* 💥 MAKE LINES VISIBLE */
+.divider .line {
+  flex: 1;
+  height: 2px;
+  background: rgba(202,162,74,0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ✨ ANIMATION YOU CAN ACTUALLY SEE */
+.divider .line::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: rgba(242,210,123,0.8);
+  filter: blur(2px);
+  animation: slideGlow 2s linear infinite;
+}
+
+@keyframes slideGlow {
+  0% { left: -50%; }
+  100% { left: 100%; }
+}
