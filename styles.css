@@ -484,3 +484,7 @@ a[href*="cash.app"]:hover {
 .vault-pressure {
   animation-delay: .08s;
 }
+/* 🔥 REMOVE LOGO ON BUY PAGE ONLY */
+body:has(title:contains("Buy")) .top-logo {
+  display: none !important;
+}
