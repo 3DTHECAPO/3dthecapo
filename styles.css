@@ -344,10 +344,11 @@ body.site-loaded .single-card{
 body{
   overflow-x: hidden !important;
 }
-iframe {
+.youtube-preview iframe {
   display: block !important;
   width: 100% !important;
-  height: 315px !important;
+  height: 100% !important;
+  min-height: 315px !important;
 }
 .youtube-preview {
   display: block !important;
