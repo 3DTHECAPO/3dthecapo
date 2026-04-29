@@ -344,4 +344,8 @@ body.site-loaded .single-card{
 body{
   overflow-x: hidden !important;
 }
-
+iframe {
+  display: block !important;
+  width: 100% !important;
+  height: 315px !important;
+}
