@@ -51,11 +51,12 @@
   }
 
   try {
-    const res = await fetch("https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, name, tier })
-    });
+    fetch("https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer " + SUPABASE_KEY
+  },
 
     const data = await res.json().catch(async () => ({ error: await res.text() }));
 
