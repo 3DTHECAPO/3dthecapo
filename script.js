@@ -213,3 +213,26 @@
     document.body.classList.add('site-loaded');
   });
 })();
+// 🔥 VAULT PRESSURE SYSTEM
+async function loadVaultPressure(){
+
+  const res = await fetch("https://fupoedrovfloudefyzna.supabase.co/rest/v1/vault_codes?select=code_type,sent", {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: "Bearer " + SUPABASE_KEY
+    }
+  });
+
+  const data = await res.json();
+
+  const entry = data.filter(x=>x.code_type==="ENTRY" && !x.sent).length;
+  const gold = data.filter(x=>x.code_type==="GOLD" && !x.sent).length;
+  const elite = data.filter(x=>x.code_type==="ELITE" && !x.sent).length;
+
+  document.getElementById("entryCount").innerText = entry;
+  document.getElementById("entry").innerText = entry;
+  document.getElementById("gold").innerText = gold;
+  document.getElementById("elite").innerText = elite;
+}
+
+loadVaultPressure();
