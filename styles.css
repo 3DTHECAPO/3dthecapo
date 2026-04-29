@@ -349,3 +349,26 @@ iframe {
   width: 100% !important;
   height: 315px !important;
 }
+.youtube-preview {
+  display: block !important;
+  width: 100% !important;
+  min-height: 315px !important;
+  overflow: visible !important;
+}
+
+.youtube-preview > div {
+  display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  padding-top: 56.25% !important;
+  min-height: 315px !important;
+}
+
+.youtube-preview iframe {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 315px !important;
+}
