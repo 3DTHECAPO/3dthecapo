@@ -488,3 +488,7 @@ a[href*="cash.app"]:hover {
 body:has(title:contains("Buy")) .top-logo {
   display: none !important;
 }
+/* BUY PAGE LOGO OFF */
+body.buy-page .top-logo {
+  display: none !important;
+}
