@@ -374,71 +374,7 @@ body{
   height: 100% !important;
   min-height: 315px !important;
 }
-/* 🔥 GOLD GLOW BORDER EFFECT */
-.card {
-  border: 1px solid rgba(202,162,74,0.5);
-  border-radius: 20px;
-  position: relative;
-  overflow: hidden;
-  box-shadow:
-    0 0 0 1px rgba(202,162,74,0.2),
-    0 0 15px rgba(202,162,74,0.25),
-    0 0 40px rgba(202,162,74,0.15);
-}
 
-/* ✨ ANIMATED EDGE GLOW */
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  pointer-events: none;
-  box-shadow:
-    0 0 20px rgba(242,210,123,0.25),
-    0 0 40px rgba(202,162,74,0.15);
-}
-
-/* 💫 HOVER INTENSITY */
-.card:hover {
-  box-shadow:
-    0 0 0 1px rgba(242,210,123,0.4),
-    0 0 25px rgba(242,210,123,0.4),
-    0 0 60px rgba(202,162,74,0.3);
-}
-/* FORCE GOLD GLOW — stronger */
-.card,
-.panel,
-.new-drop-card,
-.coming-soon-card,
-.single-card,
-.product {
-  border: 2px solid rgba(242, 210, 123, 0.75) !important;
-  box-shadow:
-    0 0 12px rgba(242, 210, 123, 0.55),
-    0 0 28px rgba(202, 162, 74, 0.35),
-    inset 0 0 14px rgba(242, 210, 123, 0.10) !important;
-}
-
-.card:hover,
-.panel:hover,
-.product:hover {
-  box-shadow:
-    0 0 18px rgba(242, 210, 123, 0.85),
-    0 0 46px rgba(202, 162, 74, 0.55),
-    inset 0 0 18px rgba(242, 210, 123, 0.16) !important;
-}
-.card {
-  border: 1px solid rgba(202,162,74,0.6);
-  box-shadow:
-    0 0 10px rgba(202,162,74,0.25),
-    0 0 25px rgba(202,162,74,0.15);
-}
-
-.card:hover {
-  box-shadow:
-    0 0 15px rgba(242,210,123,0.35),
-    0 0 35px rgba(202,162,74,0.25);
-}
 /* 🔥 FINAL CARD STYLE (LUXURY VAULT LOOK) */
 .card {
   position: relative;
