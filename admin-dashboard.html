@@ -1,82 +1,164 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>PLAY 3D Admin Dashboard</title>
+  <title>PLAY 3D ADMIN</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body{margin:0;background:#050505;color:#f4f1ea;font-family:Arial,sans-serif}
-    .wrap{width:min(1100px,94vw);margin:0 auto;padding:32px 0}
-    h1{color:#f2d27b;letter-spacing:1px}
-    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-    .card{border:1px solid rgba(202,162,74,.4);border-radius:18px;background:#0b0b0b;padding:20px}
-    .num{font-size:42px;font-weight:900;color:#f2d27b}
-    button{background:#f2d27b;color:#090806;border:0;border-radius:999px;padding:12px 18px;font-weight:800;cursor:pointer}
-    input{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(202,162,74,.4);background:#111;color:#fff;margin:6px 0 14px}
-    table{width:100%;border-collapse:collapse;margin-top:20px}
-    td,th{border-bottom:1px solid rgba(202,162,74,.25);padding:10px;text-align:left}
-    .muted{color:#bfb7a6}
+    body {
+      background:#050505;
+      color:#f4f1ea;
+      font-family:Arial;
+      padding:20px;
+    }
+
+    h1 { color:#f2d27b; }
+
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:12px;
+      margin-bottom:20px;
+    }
+
+    .card {
+      background:#0c0c0c;
+      border:1px solid rgba(202,162,74,.3);
+      padding:16px;
+      border-radius:12px;
+      text-align:center;
+    }
+
+    button {
+      background:#caa24a;
+      border:none;
+      padding:10px;
+      margin:5px;
+      cursor:pointer;
+      font-weight:bold;
+    }
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      margin-top:20px;
+    }
+
+    td, th {
+      border:1px solid rgba(255,255,255,.1);
+      padding:8px;
+      font-size:12px;
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>PLAY 3D Admin Dashboard</h1>
-    <p class="muted">Private inventory view. Keep this page private.</p>
-    <button onclick="loadInventory()">Refresh Inventory</button>
-    <div class="grid" id="inventoryGrid" style="margin-top:20px"></div>
 
-    <div class="card" style="margin-top:22px">
-      <h2>Admin Override Send</h2>
-      <input id="adminEmail" placeholder="customer@email.com">
-      <input id="adminName" placeholder="Name optional">
-      <input id="adminTier" placeholder="ENTRY / GOLD / ELITE" value="ENTRY">
-      <button onclick="adminOverrideSend()">Send Override Code</button>
-      <p id="adminStatus" class="muted"></p>
-    </div>
-  </div>
+<h1>PLAY 3D ADMIN</h1>
+
+<button onclick="loadData()">REFRESH</button>
+
+<div class="grid">
+  <div class="card">ENTRY LEFT<br><span id="entry">-</span></div>
+  <div class="card">GOLD LEFT<br><span id="gold">-</span></div>
+  <div class="card">ELITE LEFT<br><span id="elite">-</span></div>
+  <div class="card">EMAILS<br><span id="emails">-</span></div>
+  <div class="card">SENT<br><span id="sent">-</span></div>
+  <div class="card">DUPES BLOCKED<br><span id="dupes">-</span></div>
+</div>
+
+<h2>ADMIN SEND CODE</h2>
+
+<input id="adminEmail" placeholder="email">
+<select id="type">
+  <option>ENTRY</option>
+  <option>GOLD</option>
+  <option>ELITE</option>
+</select>
+
+<button onclick="sendCode()">SEND CODE</button>
+
+<h2>CLAIM LOG</h2>
+
+<table id="log">
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Code</th>
+      <th>Type</th>
+      <th>Time</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
 <script>
-const FUNCTION_URL = "https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint";
-const SUPABASE_KEY = "REPLACE_WITH_YOUR_PUBLIC_ANON_KEY_IF_NEEDED";
+const SUPABASE_URL = "https://fupoedrovfloudefyzna.supabase.co";
+const SERVICE_KEY = "YOUR_SERVICE_ROLE_KEY"; // replace
 
-async function loadInventory(){
-  const grid = document.getElementById("inventoryGrid");
-  grid.innerHTML = "<p>Loading...</p>";
-  const res = await fetch(FUNCTION_URL, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ action:"inventory" })
+async function loadData() {
+
+  // INVENTORY
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/vault_codes?select=*`, {
+    headers: {
+      apikey: SERVICE_KEY,
+      Authorization: "Bearer " + SERVICE_KEY
+    }
   });
+
   const data = await res.json();
-  if(!data.success){ grid.innerHTML = "<p>Inventory load failed.</p>"; return; }
-  grid.innerHTML = Object.entries(data.inventory).map(([tier, info]) => `
-    <div class="card">
-      <h2>${tier}</h2>
-      <div class="num">${info.available}</div>
-      <p>${info.label}</p>
-      <p>${info.price}</p>
-    </div>
-  `).join("");
+
+  document.getElementById("entry").innerText =
+    data.filter(x=>x.code_type==="ENTRY" && !x.sent).length;
+
+  document.getElementById("gold").innerText =
+    data.filter(x=>x.code_type==="GOLD" && !x.sent).length;
+
+  document.getElementById("elite").innerText =
+    data.filter(x=>x.code_type==="ELITE" && !x.sent).length;
+
+  document.getElementById("sent").innerText =
+    data.filter(x=>x.sent).length;
+
+  document.getElementById("emails").innerText =
+    [...new Set(data.map(x=>x.recipient_email).filter(Boolean))].length;
+
+  // LOG
+  const tbody = document.querySelector("#log tbody");
+  tbody.innerHTML = "";
+
+  data
+    .filter(x=>x.sent)
+    .slice(-20)
+    .reverse()
+    .forEach(row=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${row.recipient_email||""}</td>
+        <td>${row.code}</td>
+        <td>${row.code_type}</td>
+        <td>${row.sent_at||""}</td>
+      `;
+      tbody.appendChild(tr);
+    });
 }
 
-async function adminOverrideSend(){
-  const email = document.getElementById("adminEmail").value.trim().toLowerCase();
-  const name = document.getElementById("adminName").value.trim();
-  const tier = document.getElementById("adminTier").value.trim().toUpperCase() || "ENTRY";
-  const adminToken = prompt("Admin override token:");
-  const status = document.getElementById("adminStatus");
-  status.textContent = "Sending...";
-  const res = await fetch(FUNCTION_URL, {
+async function sendCode(){
+  const email = document.getElementById("adminEmail").value;
+  const type = document.getElementById("type").value;
+
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/dynamic-endpoint`, {
     method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ email, name, tier, admin:true, adminToken })
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization":"Bearer " + SERVICE_KEY
+    },
+    body:JSON.stringify({ email, force:true, type })
   });
-  const data = await res.json();
-  status.textContent = res.ok ? `Sent ${data.tier || tier} code.` : (data.error || "Failed");
-  loadInventory();
+
+  alert("Sent");
 }
 
-loadInventory();
+loadData();
 </script>
+
 </body>
 </html>
