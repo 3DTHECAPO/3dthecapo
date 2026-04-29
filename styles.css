@@ -427,3 +427,6 @@ body{
     0 0 46px rgba(202, 162, 74, 0.55),
     inset 0 0 18px rgba(242, 210, 123, 0.16) !important;
 }
+body {
+  background: red !important;
+}
