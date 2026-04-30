@@ -541,29 +541,28 @@ body.buy-page .pill.gold {
 @keyframes buyPulse {
   0%,100% { transform:translateY(0); box-shadow:0 0 16px rgba(242,210,123,.18); }
   50% { transform:translateY(-2px); box-shadow:0 0 28px rgba(242,210,123,.36); }
+}.p3d-ipod{
+  position:fixed;
+  left:20px;
+  bottom:20px;
+  width:180px;
+  padding:10px 10px 14px;
+  border-radius:26px;
+  background:linear-gradient(145deg,#f3f0e7,#b9b7ad 48%,#6f6f68);
+  box-shadow:0 20px 60px rgba(0,0,0,.7);
+  z-index:99999;
 }
-/* PLAY 3D DRAGGABLE OLD iPAD MUSIC PLAYER */
-.p3d-ipad-player{position:fixed;left:24px;bottom:24px;width:330px;max-width:calc(100vw - 24px);z-index:99999;border-radius:30px;padding:14px;background:linear-gradient(145deg,#2a2a2a,#090909 55%,#000);border:2px solid rgba(255,255,255,.10);box-shadow:0 28px 80px rgba(0,0,0,.85),0 0 28px rgba(202,162,74,.16),inset 0 0 0 2px rgba(255,255,255,.045);user-select:none}
-.p3d-ipad-player::before{content:"";position:absolute;inset:7px;border-radius:24px;border:1px solid rgba(202,162,74,.18);pointer-events:none}
-.p3d-ipad-topbar{height:34px;display:flex;align-items:center;justify-content:space-between;cursor:grab;padding:0 8px 10px;color:#caa24a;font-weight:900;letter-spacing:2px;font-size:12px;text-transform:uppercase}
-.p3d-ipad-topbar:active{cursor:grabbing}
-#p3dMinimize{width:28px;height:24px;border-radius:999px;border:1px solid rgba(202,162,74,.38);background:#050505;color:#f2d27b;cursor:pointer;font-weight:900}
-.p3d-ipad-screen{position:relative;border-radius:20px;padding:14px;background:radial-gradient(circle at top,rgba(242,210,123,.13),transparent 38%),linear-gradient(180deg,#0b0b0b,#020202);border:1px solid rgba(202,162,74,.24);box-shadow:inset 0 0 25px rgba(0,0,0,.88);overflow:hidden}
-.p3d-cover-frame{width:100%;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(202,162,74,.35);background:#050505;box-shadow:0 18px 45px rgba(0,0,0,.75)}
-.p3d-cover-frame img{width:100%;height:100%;object-fit:cover;display:block}
-.p3d-song-info{text-align:center;margin:12px 0 8px}
-#p3dFloatTitle{color:#f2d27b;font-family:"Black Ops One",Oswald,Arial,sans-serif;font-size:20px;letter-spacing:1px;text-transform:uppercase;line-height:1.1}
-#p3dFloatArtist{color:rgba(244,241,234,.62);font-size:13px;letter-spacing:1.4px;text-transform:uppercase;margin-top:4px}
-.p3d-float-progress{display:grid;grid-template-columns:38px 1fr 38px;gap:8px;align-items:center;color:rgba(244,241,234,.58);font-size:12px}
-#p3dFloatProgress{width:100%;accent-color:#f2d27b}
-.p3d-float-controls{display:flex;justify-content:center;align-items:center;gap:10px;margin:12px 0}
-.p3d-float-controls button{width:42px;height:42px;border-radius:999px;border:1px solid rgba(202,162,74,.35);background:rgba(0,0,0,.55);color:#f2d27b;cursor:pointer;font-size:16px}
-.p3d-float-controls button.main{width:54px;height:54px;background:linear-gradient(180deg,#f2d27b,#caa24a 55%,#8b641e);color:#100c05;font-weight:900;box-shadow:0 0 24px rgba(242,210,123,.22)}
-.p3d-float-playlist{display:grid;gap:7px;max-height:130px;overflow:auto;padding-right:2px}
-.p3d-float-row{display:grid;grid-template-columns:34px 1fr;gap:8px;align-items:center;border:1px solid rgba(202,162,74,.14);border-radius:10px;padding:6px;background:rgba(0,0,0,.32);cursor:pointer}
-.p3d-float-row.active,.p3d-float-row:hover{border-color:rgba(242,210,123,.38);background:rgba(202,162,74,.08)}
-.p3d-float-row img{width:34px;height:34px;border-radius:7px;object-fit:cover}
-.p3d-float-row-title{color:#f4f1ea;font-size:13px;font-weight:900;text-transform:uppercase;line-height:1.1}
-.p3d-ipad-player.minimized{width:190px}
-.p3d-ipad-player.minimized .p3d-ipad-screen{display:none}
-@media(max-width:520px){.p3d-ipad-player{left:12px;bottom:12px;width:300px}}
+.p3d-ipod-handle{display:flex;justify-content:space-between;cursor:grab;font-size:10px;font-weight:bold}
+.p3d-ipod-screen{background:#111;border-radius:10px;padding:6px;color:#fff}
+#p3dIpodCover{width:50px;height:50px;float:left;margin-right:6px;border-radius:6px}
+.p3d-ipod-meta{font-size:10px}
+.p3d-ipod-time{font-size:9px;display:grid;grid-template-columns:30px 1fr 30px;gap:4px}
+#p3dIpodProgress{width:100%}
+.p3d-clickwheel{width:120px;height:120px;margin:10px auto;border-radius:50%;background:#ddd;position:relative}
+.center-btn{width:48px;height:48px;border-radius:50%;background:#aaa;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+.wheel-btn{position:absolute;background:none;border:none;font-size:10px}
+.menu{top:5px;left:50%;transform:translateX(-50%)}
+.prev{left:5px;top:50%;transform:translateY(-50%)}
+.next{right:5px;top:50%;transform:translateY(-50%)}
+.play{bottom:5px;left:50%;transform:translateX(-50%)}
+
