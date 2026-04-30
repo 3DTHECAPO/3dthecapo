@@ -6,7 +6,7 @@
   const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 
   // 🔑 PASTE YOUR SUPABASE ANON KEY HERE
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1cG9lZHJvdmZsb3VkZWZ5em5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzU2NjEsImV4cCI6MjA5MjM1MTY2MX0.CGgOxXXSXWMjNPcnQR_zMBHk8WkWSb0lhcNlTfCR4xo";
+  const SUPABASE_KEY = "";
 
   const yearEl = byId('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
