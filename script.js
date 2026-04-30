@@ -286,26 +286,34 @@ async function loadVaultPressure(){
 }
 
 document.addEventListener("DOMContentLoaded", loadVaultPressure);
-// PLAY 3D DRAGGABLE OLD iPAD MUSIC PLAYER
-const p3dFloatTracks=[
-  {title:"100x3",artist:"3D THE CAPO",src:"./music/100x3.mp3",cover:"./assets/player-placeholder.jpg"},
-  {title:"Fuck A Grammy",artist:"3D THE CAPO",src:"./music/fuck-a-grammy.mp3",cover:"./assets/player-placeholder.jpg"},
-  {title:"True Story",artist:"3D THE CAPO",src:"./music/true-story.mp3",cover:"./assets/player-placeholder.jpg"}
-];
-let p3dFloatIndex=0;
-const p3dPlayer=document.getElementById("play3dDraggablePlayer"),p3dHandle=document.getElementById("p3dPlayerHandle"),p3dMinimize=document.getElementById("p3dMinimize"),p3dAudio=document.getElementById("p3dFloatAudio"),p3dCover=document.getElementById("p3dFloatCover"),p3dTitle=document.getElementById("p3dFloatTitle"),p3dArtist=document.getElementById("p3dFloatArtist"),p3dPlay=document.getElementById("p3dFloatPlay"),p3dPrev=document.getElementById("p3dFloatPrev"),p3dNext=document.getElementById("p3dFloatNext"),p3dProgress=document.getElementById("p3dFloatProgress"),p3dCurrent=document.getElementById("p3dFloatCurrent"),p3dDuration=document.getElementById("p3dFloatDuration"),p3dList=document.getElementById("p3dFloatPlaylist");
-function p3dTime(sec){if(!Number.isFinite(sec))return"0:00";const m=Math.floor(sec/60),s=Math.floor(sec%60).toString().padStart(2,"0");return`${m}:${s}`}
-function p3dLoadFloatTrack(i,autoplay=false){p3dFloatIndex=(i+p3dFloatTracks.length)%p3dFloatTracks.length;const t=p3dFloatTracks[p3dFloatIndex];p3dAudio.src=t.src;p3dCover.src=t.cover||"./assets/player-placeholder.jpg";p3dTitle.textContent=t.title;p3dArtist.textContent=t.artist;p3dPlay.textContent="▶";document.querySelectorAll(".p3d-float-row").forEach((row,idx)=>row.classList.toggle("active",idx===p3dFloatIndex));if(autoplay)p3dAudio.play().then(()=>p3dPlay.textContent="⏸").catch(()=>{})}
-function p3dBuildFloatList(){p3dList.innerHTML="";p3dFloatTracks.forEach((t,i)=>{const row=document.createElement("div");row.className="p3d-float-row";row.innerHTML=`<img src="${t.cover||"./assets/player-placeholder.jpg"}" alt=""><div class="p3d-float-row-title">${t.title}</div>`;row.addEventListener("click",()=>p3dLoadFloatTrack(i,true));p3dList.appendChild(row)})}
-p3dPlay.addEventListener("click",()=>{if(p3dAudio.paused){p3dAudio.play().then(()=>p3dPlay.textContent="⏸").catch(()=>alert("Audio file missing. Check your /music file paths."))}else{p3dAudio.pause();p3dPlay.textContent="▶"}});
-p3dPrev.addEventListener("click",()=>p3dLoadFloatTrack(p3dFloatIndex-1,true));
-p3dNext.addEventListener("click",()=>p3dLoadFloatTrack(p3dFloatIndex+1,true));
-p3dAudio.addEventListener("timeupdate",()=>{if(p3dAudio.duration){p3dProgress.value=(p3dAudio.currentTime/p3dAudio.duration)*100;p3dCurrent.textContent=p3dTime(p3dAudio.currentTime);p3dDuration.textContent=p3dTime(p3dAudio.duration)}});
-p3dProgress.addEventListener("input",()=>{if(p3dAudio.duration)p3dAudio.currentTime=(p3dProgress.value/100)*p3dAudio.duration});
-p3dAudio.addEventListener("ended",()=>p3dLoadFloatTrack(p3dFloatIndex+1,true));
-p3dMinimize.addEventListener("click",()=>{p3dPlayer.classList.toggle("minimized");p3dMinimize.textContent=p3dPlayer.classList.contains("minimized")?"+":"—"});
-let dragging=false,offsetX=0,offsetY=0;
+
 p3dHandle.addEventListener("pointerdown",e=>{dragging=true;p3dHandle.setPointerCapture(e.pointerId);const r=p3dPlayer.getBoundingClientRect();offsetX=e.clientX-r.left;offsetY=e.clientY-r.top;p3dPlayer.style.left=r.left+"px";p3dPlayer.style.top=r.top+"px";p3dPlayer.style.bottom="auto";p3dPlayer.style.transform="none"});
 p3dHandle.addEventListener("pointermove",e=>{if(!dragging)return;const maxX=innerWidth-p3dPlayer.offsetWidth,maxY=innerHeight-p3dPlayer.offsetHeight;let x=e.clientX-offsetX,y=e.clientY-offsetY;x=Math.max(0,Math.min(maxX,x));y=Math.max(0,Math.min(maxY,y));p3dPlayer.style.left=x+"px";p3dPlayer.style.top=y+"px"});
 p3dHandle.addEventListener("pointerup",()=>dragging=false);
 document.addEventListener("DOMContentLoaded",()=>{p3dBuildFloatList();p3dLoadFloatTrack(0,false)});
+document.addEventListener("DOMContentLoaded",()=>{
+const tracks=[{title:"100x3",src:"./music/100x3.mp3"}];
+let i=0;
+const a=document.getElementById("p3dIpodAudio");
+const t=document.getElementById("p3dIpodTitle");
+
+function load(x){
+ i=x%tracks.length;
+ a.src=tracks[i].src;
+ t.textContent=tracks[i].title;
+}
+
+document.getElementById("p3dIpodCenter").onclick=()=>a.paused?a.play():a.pause();
+document.getElementById("p3dIpodNext").onclick=()=>{load(i+1);a.play()};
+document.getElementById("p3dIpodPrev").onclick=()=>{load(i-1);a.play()};
+
+let d=false,ox=0,oy=0;
+const p=document.getElementById("play3dIpodPlayer");
+const h=document.getElementById("p3dIpodHandle");
+
+h.onmousedown=e=>{d=true;ox=e.clientX-p.offsetLeft;oy=e.clientY-p.offsetTop};
+document.onmousemove=e=>{if(!d)return;p.style.left=e.clientX-ox+"px";p.style.top=e.clientY-oy+"px"};
+document.onmouseup=()=>d=false;
+
+load(0);
+});
