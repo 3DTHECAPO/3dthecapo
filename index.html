@@ -298,6 +298,42 @@
   </main>
 
   <script src="./script.js?v=email-lock-1"></script>
+  <!-- PLAY 3D DRAGGABLE iPAD MUSIC PLAYER -->
+<div id="play3dDraggablePlayer" class="p3d-ipad-player">
+  <div class="p3d-ipad-topbar" id="p3dPlayerHandle">
+    <span>3D PLAYER</span>
+    <button type="button" id="p3dMinimize">—</button>
+  </div>
+
+  <div class="p3d-ipad-screen">
+    <div class="p3d-cover-frame">
+      <img id="p3dFloatCover" src="./assets/player-placeholder.jpg" alt="Cover art">
+    </div>
+
+    <div class="p3d-song-info">
+      <div id="p3dFloatTitle">No Track Loaded</div>
+      <div id="p3dFloatArtist">3D THE CAPO</div>
+    </div>
+
+    <audio id="p3dFloatAudio" preload="metadata"></audio>
+
+    <div class="p3d-float-progress">
+      <span id="p3dFloatCurrent">0:00</span>
+      <input id="p3dFloatProgress" type="range" value="0" min="0" max="100">
+      <span id="p3dFloatDuration">0:00</span>
+    </div>
+
+    <div class="p3d-float-controls">
+      <button type="button" id="p3dFloatPrev">⏮</button>
+      <button type="button" id="p3dFloatPlay" class="main">▶</button>
+      <button type="button" id="p3dFloatNext">⏭</button>
+    </div>
+
+    <div id="p3dFloatPlaylist" class="p3d-float-playlist"></div>
+  </div>
+</div>
+<!-- END PLAY 3D DRAGGABLE iPAD MUSIC PLAYER -->
+
 </body>
 </html>
 
