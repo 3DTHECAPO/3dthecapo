@@ -1,160 +1,462 @@
 <!doctype html>
 <html>
 <head>
-  <title>PLAY 3D ADMIN</title>
+  <title>PLAY 3D CONTROL PANEL</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      background:#050505;
-      color:#f4f1ea;
-      font-family:Arial;
-      padding:20px;
+    :root{
+      --gold:#caa24a;
+      --gold2:#f2d27b;
+      --cream:#f4f1ea;
+      --muted:rgba(244,241,234,.68);
+      --line:rgba(202,162,74,.34);
+      --bg:#050505;
+      --panel:#0c0c0c;
+      --danger:#ff4d4d;
+      --good:#00d632;
     }
 
-    h1 { color:#f2d27b; }
+    *{box-sizing:border-box}
 
-    .grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-      gap:12px;
-      margin-bottom:20px;
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--cream);
+      font-family:Oswald,Arial,sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(242,210,123,.14), transparent 36%),
+        radial-gradient(circle at 90% 10%, rgba(202,162,74,.10), transparent 28%),
+        linear-gradient(rgba(0,0,0,.78), rgba(0,0,0,.96)),
+        url("./bg_texture.jpg") center/cover fixed;
+      padding:24px;
     }
 
-    .card {
-      background:#0c0c0c;
-      border:1px solid rgba(202,162,74,.3);
-      padding:16px;
-      border-radius:12px;
-      text-align:center;
+    .wrap{
+      width:min(1220px,96vw);
+      margin:0 auto;
     }
 
-    button {
-      background:#caa24a;
-      border:none;
-      padding:10px;
-      margin:5px;
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      margin-bottom:22px;
+      padding:18px 20px;
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:
+        radial-gradient(circle at 75% 0%, rgba(242,210,123,.12), transparent 30%),
+        linear-gradient(180deg, rgba(12,10,7,.88), rgba(0,0,0,.70));
+      box-shadow:0 28px 80px rgba(0,0,0,.78), inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+    h1{
+      margin:0;
+      font-family:"Black Ops One",system-ui,sans-serif;
+      color:var(--gold2);
+      letter-spacing:2px;
+      text-transform:uppercase;
+      text-shadow:0 0 20px rgba(242,210,123,.25),0 4px 0 rgba(0,0,0,.65);
+      line-height:1;
+      font-size:clamp(28px,5vw,52px);
+    }
+
+    .sub{
+      margin:7px 0 0;
+      color:var(--muted);
+      letter-spacing:1.2px;
+      text-transform:uppercase;
+      font-size:13px;
+    }
+
+    .btn{
+      border:0;
+      border-radius:999px;
+      background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);
+      color:#100c05;
+      padding:12px 18px;
+      font-weight:900;
+      letter-spacing:1px;
+      text-transform:uppercase;
       cursor:pointer;
-      font-weight:bold;
+      box-shadow:0 14px 34px rgba(202,162,74,.22);
+      transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
     }
 
-    table {
+    .btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 0 26px rgba(242,210,123,.34);
+    }
+
+    .btn.dark{
+      background:rgba(0,0,0,.58);
+      color:var(--cream);
+      border:1px solid var(--line);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(6,minmax(0,1fr));
+      gap:14px;
+      margin:0 0 22px;
+    }
+
+    .card{
+      position:relative;
+      min-height:132px;
+      border:1px solid rgba(202,162,74,.32);
+      border-radius:22px;
+      padding:18px;
+      background:
+        radial-gradient(circle at 80% 10%, rgba(242,210,123,.11), transparent 32%),
+        linear-gradient(180deg,rgba(12,12,12,.96),rgba(0,0,0,.82));
+      box-shadow:0 24px 70px rgba(0,0,0,.78), inset 0 1px 0 rgba(255,255,255,.045);
+      overflow:hidden;
+      animation:fadeUp .6s ease both;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      top:0;
+      left:18px;
+      right:18px;
+      height:2px;
+      background:linear-gradient(90deg,transparent,rgba(242,210,123,.74),transparent);
+    }
+
+    .label{
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:1.6px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .value{
+      display:block;
+      margin-top:12px;
+      color:var(--gold2);
+      font-size:42px;
+      line-height:1;
+      font-weight:900;
+      text-shadow:0 0 16px rgba(242,210,123,.20);
+    }
+
+    .section{
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:20px;
+      margin:18px 0;
+      background:linear-gradient(180deg,rgba(12,10,7,.82),rgba(0,0,0,.66));
+      box-shadow:0 24px 74px rgba(0,0,0,.72);
+    }
+
+    h2{
+      margin:0 0 14px;
+      font-family:"Black Ops One",system-ui,sans-serif;
+      color:var(--gold2);
+      letter-spacing:1px;
+      text-transform:uppercase;
+      font-size:24px;
+    }
+
+    .formrow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+
+    input,select{
+      min-height:46px;
+      border-radius:14px;
+      border:1px solid rgba(202,162,74,.28);
+      background:rgba(0,0,0,.56);
+      color:var(--cream);
+      padding:0 13px;
+      outline:none;
+      font-family:Oswald,Arial,sans-serif;
+      font-size:16px;
+    }
+
+    input{min-width:260px;flex:1}
+
+    .status{
+      margin-top:12px;
+      color:var(--muted);
+      min-height:22px;
+    }
+
+    .table-wrap{
+      overflow:auto;
+      border-radius:18px;
+      border:1px solid rgba(202,162,74,.22);
+      background:rgba(0,0,0,.45);
+    }
+
+    table{
       width:100%;
       border-collapse:collapse;
-      margin-top:20px;
+      min-width:760px;
     }
 
-    td, th {
-      border:1px solid rgba(255,255,255,.1);
-      padding:8px;
+    th{
+      color:var(--gold2);
+      text-transform:uppercase;
+      letter-spacing:1.3px;
       font-size:12px;
+      background:rgba(202,162,74,.06);
+    }
+
+    td,th{
+      padding:12px 10px;
+      border-bottom:1px solid rgba(255,255,255,.075);
+      text-align:left;
+      font-size:14px;
+    }
+
+    tbody tr:hover{
+      background:rgba(202,162,74,.055);
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      padding:4px 9px;
+      border-radius:999px;
+      border:1px solid rgba(202,162,74,.28);
+      color:var(--gold2);
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.8px;
+    }
+
+    .alert-low{
+      color:var(--danger) !important;
+      animation:pulseLow 1.25s ease-in-out infinite;
+    }
+
+    .divider{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin:20px 0;
+      color:var(--gold);
+      text-transform:uppercase;
+      letter-spacing:2px;
+      font-size:12px;
+    }
+
+    .divider::before,.divider::after{
+      content:"";
+      flex:1;
+      height:2px;
+      background:linear-gradient(90deg,transparent,rgba(242,210,123,.55),transparent);
+      overflow:hidden;
+    }
+
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(18px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    @keyframes pulseLow{
+      0%,100%{text-shadow:0 0 8px rgba(255,77,77,.28)}
+      50%{text-shadow:0 0 18px rgba(255,77,77,.75)}
+    }
+
+    @media(max-width:1100px){
+      .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+    }
+
+    @media(max-width:720px){
+      body{padding:14px}
+      .topbar{align-items:flex-start;flex-direction:column}
+      .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .card{min-height:112px}
+      .value{font-size:34px}
+      input{min-width:100%}
+    }
+
+    @media(max-width:460px){
+      .grid{grid-template-columns:1fr}
     }
   </style>
 </head>
+
 <body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>PLAY 3D CONTROL PANEL</h1>
+        <p class="sub">Vault inventory • claims • admin override</p>
+      </div>
+      <button class="btn" onclick="loadData()">Refresh</button>
+    </div>
 
-<h1>PLAY 3D ADMIN</h1>
+    <div class="grid">
+      <div class="card"><div class="label">ENTRY LEFT</div><span class="value" id="entry">-</span></div>
+      <div class="card"><div class="label">GOLD LEFT</div><span class="value" id="gold">-</span></div>
+      <div class="card"><div class="label">ELITE LEFT</div><span class="value" id="elite">-</span></div>
+      <div class="card"><div class="label">EMAILS</div><span class="value" id="emails">-</span></div>
+      <div class="card"><div class="label">SENT</div><span class="value" id="sent">-</span></div>
+      <div class="card"><div class="label">DUPES BLOCKED</div><span class="value" id="dupes">-</span></div>
+    </div>
 
-<button onclick="loadData()">REFRESH</button>
+    <div class="section">
+      <h2>Admin Override Send</h2>
+      <div class="formrow">
+        <input id="adminEmail" type="email" placeholder="customer@email.com">
+        <select id="type">
+          <option>ENTRY</option>
+          <option>GOLD</option>
+          <option>ELITE</option>
+        </select>
+        <button class="btn" onclick="sendCode()">Send Code</button>
+        <button class="btn dark" onclick="loadData()">Refresh Data</button>
+      </div>
+      <div class="status" id="adminStatus">Ready.</div>
+    </div>
 
-<div class="grid">
-  <div class="card">ENTRY LEFT<br><span id="entry">-</span></div>
-  <div class="card">GOLD LEFT<br><span id="gold">-</span></div>
-  <div class="card">ELITE LEFT<br><span id="elite">-</span></div>
-  <div class="card">EMAILS<br><span id="emails">-</span></div>
-  <div class="card">SENT<br><span id="sent">-</span></div>
-  <div class="card">DUPES BLOCKED<br><span id="dupes">-</span></div>
-</div>
+    <div class="divider">Recent Claim Log</div>
 
-<h2>ADMIN SEND CODE</h2>
-
-<input id="adminEmail" placeholder="email">
-<select id="type">
-  <option>ENTRY</option>
-  <option>GOLD</option>
-  <option>ELITE</option>
-</select>
-
-<button onclick="sendCode()">SEND CODE</button>
-
-<h2>CLAIM LOG</h2>
-
-<table id="log">
-  <thead>
-    <tr>
-      <th>Email</th>
-      <th>Code</th>
-      <th>Type</th>
-      <th>Time</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+    <div class="section">
+      <div class="table-wrap">
+        <table id="log">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Code</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
 <script>
 const SUPABASE_URL = "https://fupoedrovfloudefyzna.supabase.co";
-const SERVICE_KEY = "SEVICE_KEY"; // replace
+const SERVICE_KEY = "SERVICE_KEY_HERE"; // paste yours back here
 
-async function loadData() {
+function setText(id,value){
+  const el = document.getElementById(id);
+  if(el) el.innerText = value;
+}
 
-  // INVENTORY
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/vault_codes?select=*`, {
-    headers: {
-      apikey: SERVICE_KEY,
-      Authorization: "Bearer " + SERVICE_KEY
-    }
-  });
+function markLow(id,value){
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(Number(value) <= 5) el.classList.add("alert-low");
+  else el.classList.remove("alert-low");
+}
 
-  const data = await res.json();
+async function loadData(){
+  const status = document.getElementById("adminStatus");
+  if(status) status.innerText = "Loading vault data...";
 
-  document.getElementById("entry").innerText =
-    data.filter(x=>x.code_type==="ENTRY" && !x.sent).length;
-
-  document.getElementById("gold").innerText =
-    data.filter(x=>x.code_type==="GOLD" && !x.sent).length;
-
-  document.getElementById("elite").innerText =
-    data.filter(x=>x.code_type==="ELITE" && !x.sent).length;
-
-  document.getElementById("sent").innerText =
-    data.filter(x=>x.sent).length;
-
-  document.getElementById("emails").innerText =
-    [...new Set(data.map(x=>x.recipient_email).filter(Boolean))].length;
-
-  // LOG
-  const tbody = document.querySelector("#log tbody");
-  tbody.innerHTML = "";
-
-  data
-    .filter(x=>x.sent)
-    .slice(-20)
-    .reverse()
-    .forEach(row=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${row.recipient_email||""}</td>
-        <td>${row.code}</td>
-        <td>${row.code_type}</td>
-        <td>${row.sent_at||""}</td>
-      `;
-      tbody.appendChild(tr);
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/vault_codes?select=*`, {
+      headers: {
+        apikey: SERVICE_KEY,
+        Authorization: "Bearer " + SERVICE_KEY
+      }
     });
+
+    const data = await res.json();
+
+    if(!Array.isArray(data)){
+      throw new Error(data.message || data.error || "Database response failed");
+    }
+
+    const available = type => data.filter(x => x.code_type === type && !x.sent && !x.recipient_email).length;
+    const entry = available("ENTRY");
+    const gold = available("GOLD");
+    const elite = available("ELITE");
+
+    setText("entry", entry);
+    setText("gold", gold);
+    setText("elite", elite);
+    setText("sent", data.filter(x => x.sent || x.recipient_email).length);
+    setText("emails", [...new Set(data.map(x => x.recipient_email).filter(Boolean))].length);
+    setText("dupes", data.filter(x => String(x.action || "").includes("blocked")).length || "-");
+
+    markLow("entry", entry);
+    markLow("gold", gold);
+    markLow("elite", elite);
+
+    const tbody = document.querySelector("#log tbody");
+    tbody.innerHTML = "";
+
+    data
+      .filter(x => x.sent || x.recipient_email)
+      .slice(-30)
+      .reverse()
+      .forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row.recipient_email || row.sent_to || ""}</td>
+          <td><span class="pill">${row.code || ""}</span></td>
+          <td>${row.code_type || ""}</td>
+          <td>${row.used ? "USED" : row.sent ? "SENT" : "ASSIGNED"}</td>
+          <td>${row.sent_at || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+    if(status) status.innerText = "Dashboard updated.";
+  }catch(err){
+    if(status) status.innerText = "Load failed: " + err.message;
+    alert("Dashboard load failed: " + err.message);
+  }
 }
 
 async function sendCode(){
-  const email = document.getElementById("adminEmail").value;
+  const status = document.getElementById("adminStatus");
+  const email = document.getElementById("adminEmail").value.trim().toLowerCase();
   const type = document.getElementById("type").value;
 
-  const res = await fetch(`${SUPABASE_URL}/functions/v1/dynamic-endpoint`, {
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      "Authorization":"Bearer " + SERVICE_KEY
-    },
-    body:JSON.stringify({ email, force:true, type })
-  });
+  if(!email){
+    alert("Enter email first.");
+    return;
+  }
 
-  alert("Sent");
+  if(status) status.innerText = "Sending code...";
+
+  try{
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/dynamic-endpoint`, {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "apikey": SERVICE_KEY,
+        "Authorization":"Bearer " + SERVICE_KEY
+      },
+      body:JSON.stringify({ email, force:true, type })
+    });
+
+    const data = await res.json().catch(async()=>({error:await res.text()}));
+
+    if(!res.ok){
+      throw new Error(data.error || "Send failed");
+    }
+
+    if(status) status.innerText = "Code sent.";
+    alert("Sent");
+    loadData();
+  }catch(err){
+    if(status) status.innerText = "Send failed: " + err.message;
+    alert("Send failed: " + err.message);
+  }
 }
 
 loadData();
