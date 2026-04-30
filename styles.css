@@ -492,3 +492,53 @@ body:has(title:contains("Buy")) .top-logo {
 body.buy-page .top-logo {
   display: none !important;
 }
+/* BUY PAGE CINEMATIC MODE */
+body.buy-page {
+  background:
+    radial-gradient(circle at top, rgba(202,162,74,.18), transparent 35%),
+    linear-gradient(rgba(0,0,0,.72), rgba(0,0,0,.94)),
+    url("./bg_texture.jpg?v=4") center/cover fixed !important;
+}
+
+body.buy-page .hero,
+body.buy-page .card,
+body.buy-page .vault-pressure {
+  border: 1px solid rgba(202,162,74,.38) !important;
+  background:
+    radial-gradient(circle at 75% 10%, rgba(242,210,123,.10), transparent 28%),
+    linear-gradient(180deg, rgba(12,10,7,.94), rgba(0,0,0,.82)) !important;
+  box-shadow:
+    0 28px 80px rgba(0,0,0,.85),
+    0 0 26px rgba(202,162,74,.10),
+    inset 0 0 18px rgba(255,255,255,.03) !important;
+}
+
+body.buy-page .card::before,
+body.buy-page .vault-pressure::before {
+  content:"";
+  display:block;
+  height:2px;
+  width:100%;
+  background:linear-gradient(90deg, transparent, rgba(242,210,123,.75), transparent);
+  margin-bottom:16px;
+}
+
+body.buy-page h1,
+body.buy-page h2 {
+  color:#f2d27b !important;
+  text-shadow:0 0 18px rgba(242,210,123,.22);
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+
+body.buy-page .cash-btn,
+body.buy-page a[href*="cash.app"],
+body.buy-page .pill.gold {
+  box-shadow:0 0 22px rgba(242,210,123,.22) !important;
+  animation: buyPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes buyPulse {
+  0%,100% { transform:translateY(0); box-shadow:0 0 16px rgba(242,210,123,.18); }
+  50% { transform:translateY(-2px); box-shadow:0 0 28px rgba(242,210,123,.36); }
+}
