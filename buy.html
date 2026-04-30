@@ -220,12 +220,132 @@
       .grid{grid-template-columns:1fr}
       .card{min-height:auto}
     }
-  </style>
+  
+/* ===== BUY PAGE CINEMATIC LOCKED STYLE ===== */
+body.buy-page{
+  background:
+    radial-gradient(circle at top, rgba(242,210,123,.16), transparent 34%),
+    radial-gradient(circle at 80% 15%, rgba(202,162,74,.12), transparent 25%),
+    linear-gradient(rgba(0,0,0,.80), rgba(0,0,0,.96)),
+    url('./bg_texture.jpg?v=cinema2') center/cover fixed !important;
+}
+
+body.buy-page .top,
+body.buy-page header.top{
+  justify-content:center !important;
+  margin-bottom:18px !important;
+}
+
+body.buy-page .logo,
+body.buy-page .top-logo,
+body.buy-page img[src*="header_logo"],
+body.buy-page img[src*="logo"]{
+  display:none !important;
+  visibility:hidden !important;
+  width:0 !important;
+  height:0 !important;
+}
+
+body.buy-page .hero{
+  position:relative;
+  padding:42px 18px 28px !important;
+  border:1px solid rgba(202,162,74,.38);
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(242,210,123,.16), transparent 42%),
+    linear-gradient(180deg, rgba(12,10,7,.88), rgba(0,0,0,.68));
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.82),
+    0 0 34px rgba(202,162,74,.10),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  overflow:hidden;
+}
+
+body.buy-page .hero::before,
+body.buy-page .hero::after{
+  content:"";
+  position:absolute;
+  left:10%;
+  right:10%;
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(242,210,123,.72), transparent);
+  pointer-events:none;
+}
+
+body.buy-page .hero::before{top:0;}
+body.buy-page .hero::after{bottom:0;}
+
+body.buy-page h1{
+  color:#f2d27b !important;
+  text-shadow:
+    0 0 18px rgba(242,210,123,.28),
+    0 5px 0 rgba(0,0,0,.75) !important;
+}
+
+body.buy-page .notice{
+  box-shadow:0 0 26px rgba(0,214,50,.10), inset 0 0 18px rgba(255,255,255,.03);
+}
+
+body.buy-page .card{
+  border:1px solid rgba(202,162,74,.42) !important;
+  background:
+    radial-gradient(circle at 80% 10%, rgba(242,210,123,.12), transparent 28%),
+    linear-gradient(180deg, rgba(12,10,7,.94), rgba(0,0,0,.80)) !important;
+  box-shadow:
+    0 28px 80px rgba(0,0,0,.86),
+    0 0 30px rgba(202,162,74,.10),
+    inset 0 1px 0 rgba(255,255,255,.06) !important;
+  transform:translateY(0);
+  animation: buyReveal .75s ease both;
+}
+
+body.buy-page .card:nth-child(2){animation-delay:.08s;}
+body.buy-page .card:nth-child(3){animation-delay:.16s;}
+
+body.buy-page .card::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:18px;
+  right:18px;
+  height:2px;
+  background:linear-gradient(90deg, transparent, rgba(242,210,123,.78), transparent);
+}
+
+body.buy-page .card:hover{
+  transform:translateY(-5px);
+  box-shadow:
+    0 34px 96px rgba(0,0,0,.9),
+    0 0 28px rgba(202,162,74,.20),
+    inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+
+body.buy-page .cash-btn,
+body.buy-page a[href*="cash.app"],
+body.buy-page .pill.gold{
+  box-shadow:0 0 22px rgba(242,210,123,.20) !important;
+  transition:transform .22s ease, box-shadow .22s ease, filter .22s ease;
+}
+
+body.buy-page .cash-btn:hover,
+body.buy-page a[href*="cash.app"]:hover,
+body.buy-page .pill.gold:hover{
+  transform:translateY(-3px);
+  box-shadow:0 0 36px rgba(242,210,123,.38) !important;
+}
+
+@keyframes buyReveal{
+  from{opacity:0; transform:translateY(18px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+</style>
 </head>
-<body>
+<body class="buy-page">
   <main class="wrap">
     <header class="top">
-      <a href="./"><img class="logo" src="./header_logo.png" alt="3D THE CAPO"></a>
+      <a href="./">
+</a>
       <nav class="nav">
         <a class="pill" href="./">Home</a>
         <a class="pill" href="./nfc/scan.html">Enter Code</a>
@@ -234,26 +354,8 @@
     </header>
 
     <section class="hero">
-      <div class="kicker">ONCE YOU ENTER THE VAULT YOUR TIME STARTS </div>
+      
       <h1>Buy Access</h1>
-      <!-- 🔥 VAULT PRESSURE -->
-<section style="margin:30px 0;text-align:center;border:1px solid rgba(202,162,74,.3);border-radius:20px;padding:20px;background:#0c0c0c;">
-  
-  <div style="color:#f2d27b;font-weight:bold;letter-spacing:2px;font-size:12px;">
-    LIMITED VAULT ACCESS
-  </div>
-
-  <h2 style="margin-top:10px;">
-    Only <span id="entryCount">--</span> ENTRY codes left
-  </h2>
-
-  <div style="display:flex;justify-content:center;gap:20px;margin-top:20px;">
-    <div>ENTRY: <b id="entry">--</b></div>
-    <div>GOLD: <b id="gold">--</b></div>
-    <div>ELITE: <b id="elite">--</b></div>
-  </div>
-
-</section>
       <p class="sub">.</p>
       <div class="notice">After payment, send your Cash App receipt + email/name. Your vault code will be sent manually.</div>
     </section>
@@ -266,12 +368,12 @@
           <p class="price">$TBA</p>
           <p class="duration"> Vault Access</p>
           <ul>
-            <li>TBA</li>
-            <li>TBA</li>
-            <li>TBA</li>
+            <li>Vault entry code</li>
+            <li>Access starts when code is used</li>
+            <li>Good starter tier</li>
           </ul>
         </div>
-        <a class="cash-btn" href="https://cash.app/$3dcashin/5" target="_blank" rel="noopener">Pay $3D Cash App</a>
+        <a class="cash-btn" href="https://cash.app/$3dcashin/5" target="_blank" rel="noopener">Pay $$ Cash App</a>
       </article>
 
       <article class="card">
@@ -281,12 +383,12 @@
           <p class="price">$TBA</p>
           <p class="duration"> Vault Access</p>
           <ul>
-            <li>TBA</li>
-            <li>full content access</li>
-            <li>TBA</li>
+            <li>Longer vault window</li>
+            <li>Better for full content access</li>
+            <li>Good promo tier</li>
           </ul>
         </div>
-        <a class="cash-btn" href="https://cash.app/$3dcashin/15" target="_blank" rel="noopener">Pay $3D Cash App</a>
+        <a class="cash-btn" href="https://cash.app/$3dcashin/15" target="_blank" rel="noopener">Pay $$ Cash App</a>
       </article>
 
       <article class="card">
@@ -296,12 +398,12 @@
           <p class="price">$TBA</p>
           <p class="duration"> Vault Access</p>
           <ul>
-            <li>TBA</li>
-            <li>exclusive drops</li>
-            <li>TBA</li>
+            <li>Premium vault window</li>
+            <li>Best for exclusive drops</li>
+            <li>Upgrade-ready for automation</li>
           </ul>
         </div>
-        <a class="cash-btn" href="https://cash.app/$3dcashin/25" target="_blank" rel="noopener">Pay $3D Cash App</a>
+        <a class="cash-btn" href="https://cash.app/$3dcashin/25" target="_blank" rel="noopener">Pay $$ Cash App</a>
       </article>
     </section>
 
@@ -318,5 +420,5 @@
 
     <p class="$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"</p>
   </main>
-</body> class="buy-page">
+</body>
 </html>
