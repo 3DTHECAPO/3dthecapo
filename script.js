@@ -213,8 +213,7 @@
     document.body.classList.add('site-loaded');
   });
 })();
-// 🔥 VAULT PRESSURE SYSTEM
-async function loadVaultPressure(){
+
 
   const res = await fetch("https://fupoedrovfloudefyzna.supabase.co/rest/v1/vault_codes?select=code_type,sent", {
     headers: {
@@ -233,9 +232,7 @@ async function loadVaultPressure(){
   document.getElementById("entry").innerText = entry;
   document.getElementById("gold").innerText = gold;
   document.getElementById("elite").innerText = elite;
-}
 
-loadVaultPressure();
 // PLAY 3D BUY PAGE — VAULT PRESSURE + SOLD OUT LOCK
 async function loadVaultPressure(){
   const ids = ["entryCount","entry","gold","elite"];
@@ -287,10 +284,7 @@ async function loadVaultPressure(){
 
 document.addEventListener("DOMContentLoaded", loadVaultPressure);
 
-p3dHandle.addEventListener("pointerdown",e=>{dragging=true;p3dHandle.setPointerCapture(e.pointerId);const r=p3dPlayer.getBoundingClientRect();offsetX=e.clientX-r.left;offsetY=e.clientY-r.top;p3dPlayer.style.left=r.left+"px";p3dPlayer.style.top=r.top+"px";p3dPlayer.style.bottom="auto";p3dPlayer.style.transform="none"});
-p3dHandle.addEventListener("pointermove",e=>{if(!dragging)return;const maxX=innerWidth-p3dPlayer.offsetWidth,maxY=innerHeight-p3dPlayer.offsetHeight;let x=e.clientX-offsetX,y=e.clientY-offsetY;x=Math.max(0,Math.min(maxX,x));y=Math.max(0,Math.min(maxY,y));p3dPlayer.style.left=x+"px";p3dPlayer.style.top=y+"px"});
-p3dHandle.addEventListener("pointerup",()=>dragging=false);
-document.addEventListener("DOMContentLoaded",()=>{p3dBuildFloatList();p3dLoadFloatTrack(0,false)});
+
 document.addEventListener("DOMContentLoaded",()=>{
 const tracks=[{title:"100x3",src:"./music/100x3.mp3"}];
 let i=0;
