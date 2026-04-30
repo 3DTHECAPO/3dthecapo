@@ -297,41 +297,39 @@
     </footer>
   </main>
   
-  <!-- PLAY 3D DRAGGABLE iPAD MUSIC PLAYER -->
-<div id="play3dDraggablePlayer" class="p3d-ipad-player">
-  <div class="p3d-ipad-topbar" id="p3dPlayerHandle">
-    <span>3D PLAYER</span>
-    <button type="button" id="p3dMinimize">—</button>
+
+  
+ <!-- PLAY 3D DRAGGABLE iPOD MUSIC PLAYER (SMALL) -->
+<div id="play3dIpodPlayer" class="p3d-ipod">
+  <div class="p3d-ipod-handle" id="p3dIpodHandle">
+    <span>3D</span>
+    <button type="button" id="p3dIpodMin">—</button>
   </div>
 
-  <div class="p3d-ipad-screen">
-    <div class="p3d-cover-frame">
-      <img id="p3dFloatCover" src="./assets/player-placeholder.jpg" alt="Cover art">
+  <div class="p3d-ipod-screen">
+    <img id="p3dIpodCover" src="./assets/player-placeholder.jpg" alt="Cover art">
+    <div class="p3d-ipod-meta">
+      <div id="p3dIpodTitle">No Track</div>
+      <div id="p3dIpodArtist">3D THE CAPO</div>
     </div>
-
-    <div class="p3d-song-info">
-      <div id="p3dFloatTitle">No Track Loaded</div>
-      <div id="p3dFloatArtist">3D THE CAPO</div>
+    <div class="p3d-ipod-time">
+      <span id="p3dIpodCurrent">0:00</span>
+      <input id="p3dIpodProgress" type="range" min="0" max="100" value="0">
+      <span id="p3dIpodDuration">0:00</span>
     </div>
+  </div>
 
-    <audio id="p3dFloatAudio" preload="metadata"></audio>
+  <audio id="p3dIpodAudio" preload="metadata"></audio>
 
-    <div class="p3d-float-progress">
-      <span id="p3dFloatCurrent">0:00</span>
-      <input id="p3dFloatProgress" type="range" value="0" min="0" max="100">
-      <span id="p3dFloatDuration">0:00</span>
-    </div>
-
-    <div class="p3d-float-controls">
-      <button type="button" id="p3dFloatPrev">⏮</button>
-      <button type="button" id="p3dFloatPlay" class="main">▶</button>
-      <button type="button" id="p3dFloatNext">⏭</button>
-    </div>
-
-    <div id="p3dFloatPlaylist" class="p3d-float-playlist"></div>
+  <div class="p3d-clickwheel">
+    <button class="wheel-btn menu">MENU</button>
+    <button class="wheel-btn prev" id="p3dIpodPrev">⏪</button>
+    <button class="wheel-btn next" id="p3dIpodNext">⏩</button>
+    <button class="wheel-btn play" id="p3dIpodPlayPause">▶</button>
+    <button class="center-btn" id="p3dIpodCenter">▶</button>
   </div>
 </div>
-<!-- END PLAY 3D DRAGGABLE iPAD MUSIC PLAYER -->
+
 <script src="./script.js?v=email-lock-1"></script>
 </body>
 </html>
