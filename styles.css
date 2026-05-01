@@ -565,67 +565,8 @@ body.buy-page .pill.gold {
 .prev{left:5px;top:50%;transform:translateY(-50%)}
 .next{right:5px;top:50%;transform:translateY(-50%)}
 .play{bottom:5px;left:50%;transform:translateX(-50%)}
-.ipod{
-  position:fixed;
-  bottom:20px;
-  left:20px;
-  width:180px;
-  background:linear-gradient(145deg,#111,#000);
-  border-radius:30px;
-  padding:12px;
-  box-shadow:0 20px 60px rgba(0,0,0,.8),0 0 20px rgba(202,162,74,.3);
-  z-index:99999;
-}
 
-.ipod-screen{
-  background:#000;
-  border-radius:12px;
-  padding:6px;
-  box-shadow:inset 0 0 20px rgba(0,0,0,.9);
-}
 
-#ipodCover{
-  width:100%;
-  border-radius:8px;
-}
 
-#ipodTitle{
-  color:#f2d27b;
-  font-size:12px;
-}
 
-#ipodArtist{
-  color:#aaa;
-  font-size:10px;
-}
 
-.ipod-wheel{
-  width:120px;
-  height:120px;
-  margin:12px auto;
-  border-radius:50%;
-  background:radial-gradient(circle,#222,#000);
-  position:relative;
-}
-
-.center{
-  width:50px;
-  height:50px;
-  background:gold;
-  border-radius:50%;
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-}
-
-.btn{
-  position:absolute;
-  color:#caa24a;
-  font-size:10px;
-}
-
-.menu{top:5px;left:50%;transform:translateX(-50%)}
-.prev{left:5px;top:50%;transform:translateY(-50%)}
-.next{right:5px;top:50%;transform:translateY(-50%)}
-.play{bottom:5px;left:50%;transform:translateX(-50%)}
