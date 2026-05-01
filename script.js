@@ -434,3 +434,39 @@ document.addEventListener("DOMContentLoaded", function(){
 
   loadTrack(0, false);
 });
+document.addEventListener("DOMContentLoaded", ()=>{
+
+const p = document.getElementById("ipodPlayer");
+const h = document.getElementById("ipodHandle");
+const audio = document.getElementById("ipodAudio");
+
+if(!p || !h) return;
+
+let dragging = false, ox = 0, oy = 0;
+
+h.onmousedown = e=>{
+  dragging = true;
+  ox = e.clientX - p.offsetLeft;
+  oy = e.clientY - p.offsetTop;
+};
+
+document.onmousemove = e=>{
+  if(!dragging) return;
+  p.style.left = (e.clientX - ox) + "px";
+  p.style.top = (e.clientY - oy) + "px";
+  p.style.bottom = "auto";
+};
+
+document.onmouseup = ()=> dragging = false;
+
+// basic audio test
+document.getElementById("ipodCenter").onclick = ()=>{
+  if(audio.paused){
+    audio.src = "./music/100x3.mp3";
+    audio.play();
+  } else {
+    audio.pause();
+  }
+};
+
+});
