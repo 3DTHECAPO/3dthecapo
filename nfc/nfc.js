@@ -4,6 +4,7 @@
 const byId = (id)=>document.getElementById(id);
 const params = new URLSearchParams(window.location.search);
 const code = (params.get('code')||'').toUpperCase().trim();
+const upgrade = (params.get('upgrade')||'').toLowerCase().trim();
 
 const statusPill=byId('statusPill');
 const vaultState=byId('vaultState');
@@ -266,12 +267,14 @@ async function init(){
     }
 
     const tier = String(record.code_type || 'ENTRY').toLowerCase();
+    const previewTier = upgrade === 'gold' || upgrade === 'elite' ? upgrade : tier;
     saveVaultPass(record, tier);
     patchCodeHit(code);
     fireBrevoSafe(code, tier);
     logEvent(code, tier, 'success');
-    unlockUI(tier);
-    injectVaultConversionScreen(code, tier);
+    if(previewTier !== tier) logEvent(code, previewTier, 'upgrade_preview');
+    unlockUI(previewTier);
+    injectVaultConversionScreen(code, previewTier);
   }catch(err){
     console.error(err);
     showLocked('Connection error');
@@ -320,7 +323,7 @@ async function init(){
     </div>
 
     <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0;">
-      <a href="https://3dthecapo.com/nfc/index.html?upgrade=gold" style="
+      <a href="/nfc/index.html?code=${encodeURIComponent(codeValue)}&upgrade=gold" style="
         text-decoration:none;
         border-radius:999px;
         background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);
@@ -332,7 +335,7 @@ async function init(){
         font-family:Oswald,Arial,sans-serif;
       ">Upgrade To Gold</a>
 
-      <a href="https://3dthecapo.com/nfc/index.html?upgrade=elite" style="
+      <a href="/nfc/index.html?code=${encodeURIComponent(codeValue)}&upgrade=elite" style="
         text-decoration:none;
         border-radius:999px;
         background:rgba(0,0,0,.65);
@@ -422,3 +425,4 @@ async function init(){
 }
 init();
 })();
+
