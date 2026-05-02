@@ -317,5 +317,109 @@ function injectEmailCapture(codeValue){
     }
   };
 }
+  function injectEmailCapture(codeValue){
+  if(document.getElementById("vaultEmailCapture")) return;
+
+  const container = document.createElement("div");
+  container.id = "vaultEmailCapture";
+  container.style.cssText = `
+    width:min(720px,92vw);
+    margin:28px auto 0;
+    padding:22px;
+    border:1px solid rgba(202,162,74,.34);
+    border-radius:24px;
+    background:linear-gradient(180deg,rgba(12,10,7,.86),rgba(0,0,0,.72));
+    box-shadow:0 24px 74px rgba(0,0,0,.72), inset 0 1px 0 rgba(255,255,255,.05);
+    color:#f4f1ea;
+    font-family:Oswald,Arial,sans-serif;
+    text-align:center;
+  `;
+
+  container.innerHTML = `
+    <div style="color:#f2d27b;font-family:'Black Ops One',system-ui,sans-serif;letter-spacing:1px;text-transform:uppercase;font-size:22px;margin-bottom:8px;">
+      Unlock Bonus Access
+    </div>
+    <div style="color:rgba(244,241,234,.68);font-size:14px;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;">
+      Enter email for future drops, bonus codes, and vault updates
+    </div>
+    <input id="vaultEmailInput" type="email" placeholder="customer@email.com" style="
+      width:100%;
+      min-height:48px;
+      border-radius:14px;
+      border:1px solid rgba(202,162,74,.34);
+      background:rgba(0,0,0,.62);
+      color:#f4f1ea;
+      padding:0 14px;
+      outline:none;
+      font-family:Oswald,Arial,sans-serif;
+      font-size:16px;
+      margin-bottom:12px;
+    ">
+    <button id="vaultEmailBtn" style="
+      border:0;
+      border-radius:999px;
+      background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);
+      color:#100c05;
+      padding:12px 20px;
+      font-weight:900;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      cursor:pointer;
+      box-shadow:0 14px 34px rgba(202,162,74,.22);
+      font-family:Oswald,Arial,sans-serif;
+    ">
+      Save Email + Unlock Bonus
+    </button>
+    <div id="vaultEmailStatus" style="margin-top:12px;color:rgba(244,241,234,.68);font-size:13px;"></div>
+  `;
+
+  const target = document.getElementById("connect") || document.querySelector("main") || document.body;
+  target.parentNode.insertBefore(container, target);
+
+  document.getElementById("vaultEmailBtn").onclick = async ()=>{
+    const email = document.getElementById("vaultEmailInput").value.trim().toLowerCase();
+    const status = document.getElementById("vaultEmailStatus");
+
+    if(!email){
+      status.textContent = "Enter email first.";
+      return;
+    }
+
+    status.textContent = "Saving...";
+
+    try{
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(codeValue)}`,{
+        method:"PATCH",
+        headers:{
+          "Content-Type":"application/json",
+          "apikey":SUPABASE_ANON,
+          "Authorization":"Bearer " + SUPABASE_ANON,
+          "Prefer":"return=minimal"
+        },
+        body:JSON.stringify({
+          recipient_email: email,
+          sent: true,
+          sent_at: new Date().toISOString()
+        })
+      });
+
+      if(!res.ok){
+        const text = await res.text();
+        throw new Error(text || "Save failed");
+      }
+
+      container.innerHTML = `
+        <div style="color:#f2d27b;font-family:'Black Ops One',system-ui,sans-serif;letter-spacing:1px;text-transform:uppercase;font-size:22px;">
+          Email Saved ✔
+        </div>
+        <p style="color:rgba(244,241,234,.72);margin:10px 0 0;">
+          Bonus access connected to ${email}.
+        </p>
+      `;
+    }catch(e){
+      status.textContent = "Save failed. Try again.";
+    }
+  };
+}
 init();
 })();
