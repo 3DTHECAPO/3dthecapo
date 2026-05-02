@@ -112,7 +112,7 @@ function renderVaultConversionScreen(codeValue, tier){
     </div>
 
     <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0;">
-      <a href="/nfc/index.html?code=${encodeURIComponent(vaultCode)}&upgrade=gold" style="
+      <a href="./scan.html" style="
         text-decoration:none;
         border-radius:999px;
         background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);
@@ -122,9 +122,9 @@ function renderVaultConversionScreen(codeValue, tier){
         letter-spacing:1px;
         text-transform:uppercase;
         font-family:Oswald,Arial,sans-serif;
-      ">Upgrade To Gold</a>
+      ">Enter Gold Code</a>
 
-      <a href="/nfc/index.html?code=${encodeURIComponent(vaultCode)}&upgrade=elite" style="
+      <a href="./scan.html" style="
         text-decoration:none;
         border-radius:999px;
         background:rgba(0,0,0,.65);
@@ -135,7 +135,7 @@ function renderVaultConversionScreen(codeValue, tier){
         letter-spacing:1px;
         text-transform:uppercase;
         font-family:Oswald,Arial,sans-serif;
-      ">Upgrade To Elite</a>
+      ">Enter Elite Code</a>
     </div>
 
     <input id="vaultEmailInput" type="email" placeholder="Enter email for bonus access" style="
