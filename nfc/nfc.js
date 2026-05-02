@@ -277,46 +277,6 @@ async function init(){
     showLocked('Connection error');
   }
 }
-function injectEmailCapture(codeValue){
-  const container = document.createElement("div");
-  container.style.marginTop = "20px";
-
-  container.innerHTML = `
-    <input id="vaultEmailInput" type="email" placeholder="Enter email for bonus rewards" style="padding:10px;width:100%;margin-bottom:10px;">
-    <button id="vaultEmailBtn" style="padding:10px 16px;">Unlock Bonus</button>
-  `;
-
-  document.body.appendChild(container);
-
-  document.getElementById("vaultEmailBtn").onclick = async ()=>{
-    const email = document.getElementById("vaultEmailInput").value.trim().toLowerCase();
-
-    if(!email){
-      alert("Enter email");
-      return;
-    }
-
-    try{
-      await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(codeValue)}`,{
-        method:"PATCH",
-        headers:{
-          "Content-Type":"application/json",
-          "apikey":SUPABASE_ANON,
-          "Authorization":"Bearer " + SUPABASE_ANON
-        },
-        body:JSON.stringify({
-          recipient_email: email,
-          sent: true,
-          sent_at: new Date().toISOString()
-        })
-      });
-
-      container.innerHTML = "<p>Email saved ✔</p>";
-    }catch(e){
-      alert("Save failed");
-    }
-  };
-}
   function injectEmailCapture(codeValue){
   if(document.getElementById("vaultEmailCapture")) return;
 
@@ -410,7 +370,7 @@ function injectEmailCapture(codeValue){
 
       container.innerHTML = `
         <div style="color:#f2d27b;font-family:'Black Ops One',system-ui,sans-serif;letter-spacing:1px;text-transform:uppercase;font-size:22px;">
-          Email Saved ✔
+          Email Saved âœ”
         </div>
         <p style="color:rgba(244,241,234,.72);margin:10px 0 0;">
           Bonus access connected to ${email}.
@@ -441,7 +401,7 @@ function injectEmailCapture(codeValue){
 
   box.innerHTML=`
     <div style="font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;font-size:26px;letter-spacing:1px;text-transform:uppercase;">
-      You’re Inside The Vault
+      Youâ€™re Inside The Vault
     </div>
 
     <p style="color:rgba(244,241,234,.72);font-size:15px;letter-spacing:1px;text-transform:uppercase;margin:10px 0 18px;">
@@ -463,37 +423,34 @@ function injectEmailCapture(codeValue){
       </div>
     </div>
 
-    <input id="vaultEmailInput" type="email" placeholder="Enter email for bonus access" 
-    style="<!-- 🔥 ADD THIS -->
-<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0;">
-  <a href="https://3dthecapo.com/nfc/index.html?upgrade=gold" style="
-    text-decoration:none;
-    border-radius:999px;
-    background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);
-    color:#100c05;
-    padding:12px 20px;
-    font-weight:900;
-    letter-spacing:1px;
-    text-transform:uppercase;
-    font-family:Oswald,Arial,sans-serif;
-  ">Upgrade To Gold</a>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0;">
+      <a href="https://3dthecapo.com/nfc/index.html?upgrade=gold" style="
+        text-decoration:none;
+        border-radius:999px;
+        background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);
+        color:#100c05;
+        padding:12px 20px;
+        font-weight:900;
+        letter-spacing:1px;
+        text-transform:uppercase;
+        font-family:Oswald,Arial,sans-serif;
+      ">Upgrade To Gold</a>
 
-  <a href="https://3dthecapo.com/nfc/index.html?upgrade=elite" style="
-    text-decoration:none;
-    border-radius:999px;
-    background:rgba(0,0,0,.65);
-    color:#f2d27b;
-    border:1px solid rgba(202,162,74,.45);
-    padding:12px 20px;
-    font-weight:900;
-    letter-spacing:1px;
-    text-transform:uppercase;
-    font-family:Oswald,Arial,sans-serif;
-  ">Upgrade To Elite</a>
-</div>
+      <a href="https://3dthecapo.com/nfc/index.html?upgrade=elite" style="
+        text-decoration:none;
+        border-radius:999px;
+        background:rgba(0,0,0,.65);
+        color:#f2d27b;
+        border:1px solid rgba(202,162,74,.45);
+        padding:12px 20px;
+        font-weight:900;
+        letter-spacing:1px;
+        text-transform:uppercase;
+        font-family:Oswald,Arial,sans-serif;
+      ">Upgrade To Elite</a>
+    </div>
 
-<!-- 🔥 YOUR EXISTING INPUT (DO NOT TOUCH) -->
-<input id="vaultEmailInput" ...
+    <input id="vaultEmailInput" type="email" placeholder="Enter email for bonus access" style="
       width:100%;
       min-height:48px;
       border-radius:14px;
@@ -558,7 +515,7 @@ function injectEmailCapture(codeValue){
 
       box.innerHTML=`
         <div style="font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;font-size:26px;text-transform:uppercase;">
-          Vault Connected ✔
+          Vault Connected âœ”
         </div>
         <p style="color:rgba(244,241,234,.72);">Bonus access connected to ${email}.</p>
       `;
