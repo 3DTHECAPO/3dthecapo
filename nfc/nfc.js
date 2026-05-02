@@ -4,7 +4,6 @@
 const byId = (id)=>document.getElementById(id);
 const params = new URLSearchParams(window.location.search);
 const code = (params.get('code')||'').toUpperCase().trim();
-const upgrade = (params.get('upgrade')||'').toLowerCase().trim();
 
 const statusPill=byId('statusPill');
 const vaultState=byId('vaultState');
@@ -267,7 +266,7 @@ async function init(){
     }
 
     const tier = String(record.code_type || 'ENTRY').toLowerCase();
-    const previewTier = upgrade === 'gold' || upgrade === 'elite' ? upgrade : tier;
+    const previewTier = tier;
     saveVaultPass(record, tier);
     patchCodeHit(code);
     fireBrevoSafe(code, tier);
