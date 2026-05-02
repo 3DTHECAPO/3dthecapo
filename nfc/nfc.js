@@ -271,6 +271,7 @@ async function init(){
     fireBrevoSafe(code, tier);
     logEvent(code, tier, 'success');
     unlockUI(tier);
+    injectEmailCapture(code);
   }catch(err){
     console.error(err);
     showLocked('Connection error');
