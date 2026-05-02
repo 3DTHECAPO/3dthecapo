@@ -3,11 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>PLAY 3D REWARDS</title>
+  <title>PLAY 3D REWARDS - Members Only</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
+  <script src="/public/shared/config.js"></script>
+  <script src="/public/shared/pass-session.js"></script>
+  <script>
+    (function(){
+      function hasMemberAccess(){
+        try{
+          if(localStorage.getItem('play3d_member_v1') === '1') return true;
+        }catch(e){}
+
+        if(window.Play3DPassSession && Play3DPassSession.current()){
+          return true;
+        }
+
+        return false;
+      }
+
+      if(!hasMemberAccess()){
+        location.replace('/nfc/scan.html');
+      }
+    })();
+  </script>
 </head>
 <body>
   <main class="app">
@@ -15,7 +36,7 @@
       <a class="back" href="../index.html" aria-label="Back">←</a>
       <div class="headcopy">
         <div class="kicker">3D THE CAPO</div>
-        <div class="title">REWARD WALLET</div>
+        <div class="title">Rewards (Members Only)</div>
       </div>
     </header>
 
