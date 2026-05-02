@@ -274,7 +274,10 @@ async function init(){
     logEvent(code, tier, 'success');
     if(previewTier !== tier) logEvent(code, previewTier, 'upgrade_preview');
     unlockUI(previewTier);
-    injectVaultConversionScreen(code, previewTier);
+
+    setTimeout(()=>{
+      injectVaultConversionScreen(code, previewTier);
+    }, 1800);
   }catch(err){
     console.error(err);
     showLocked('Connection error');
@@ -296,6 +299,11 @@ async function init(){
     color:#f4f1ea;
     font-family:Oswald,Arial,sans-serif;
     text-align:center;
+    position:relative;
+    z-index:99999;
+    display:block;
+    visibility:visible;
+    opacity:1;
   `;
 
   box.innerHTML=`
@@ -425,4 +433,3 @@ async function init(){
 }
 init();
 })();
-
