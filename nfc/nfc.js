@@ -276,6 +276,45 @@ async function init(){
     showLocked('Connection error');
   }
 }
+function injectEmailCapture(codeValue){
+  const container = document.createElement("div");
+  container.style.marginTop = "20px";
 
+  container.innerHTML = `
+    <input id="vaultEmailInput" type="email" placeholder="Enter email for bonus rewards" style="padding:10px;width:100%;margin-bottom:10px;">
+    <button id="vaultEmailBtn" style="padding:10px 16px;">Unlock Bonus</button>
+  `;
+
+  document.body.appendChild(container);
+
+  document.getElementById("vaultEmailBtn").onclick = async ()=>{
+    const email = document.getElementById("vaultEmailInput").value.trim().toLowerCase();
+
+    if(!email){
+      alert("Enter email");
+      return;
+    }
+
+    try{
+      await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(codeValue)}`,{
+        method:"PATCH",
+        headers:{
+          "Content-Type":"application/json",
+          "apikey":SUPABASE_ANON,
+          "Authorization":"Bearer " + SUPABASE_ANON
+        },
+        body:JSON.stringify({
+          recipient_email: email,
+          sent: true,
+          sent_at: new Date().toISOString()
+        })
+      });
+
+      container.innerHTML = "<p>Email saved ✔</p>";
+    }catch(e){
+      alert("Save failed");
+    }
+  };
+}
 init();
 })();
