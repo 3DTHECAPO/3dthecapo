@@ -373,34 +373,51 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 
   let dragging = false;
-  let offsetX = 0;
-  let offsetY = 0;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let dragStartLeft = 0;
+  let dragStartRight = 0;
+  let dragStartTop = 0;
+  let dragStartBottom = 0;
+  let dragStartTranslateX = 0;
+  let dragStartTranslateY = 0;
+  let currentTranslateX = 0;
+  let currentTranslateY = 0;
+
+  player.addEventListener("dragstart", function(e){
+    e.preventDefault();
+  });
 
   function startDrag(clientX, clientY){
     dragging = true;
     const rect = player.getBoundingClientRect();
-    offsetX = clientX - rect.left;
-    offsetY = clientY - rect.top;
-    player.style.left = rect.left + "px";
-    player.style.top = rect.top + "px";
-    player.style.bottom = "auto";
-    player.style.right = "auto";
+    dragStartX = clientX;
+    dragStartY = clientY;
+    dragStartLeft = rect.left;
+    dragStartRight = rect.right;
+    dragStartTop = rect.top;
+    dragStartBottom = rect.bottom;
+    dragStartTranslateX = currentTranslateX;
+    dragStartTranslateY = currentTranslateY;
   }
 
   function moveDrag(clientX, clientY){
     if(!dragging) return;
 
-    const maxX = window.innerWidth - player.offsetWidth;
-    const maxY = window.innerHeight - player.offsetHeight;
+    const minDeltaX = -dragStartLeft;
+    const maxDeltaX = window.innerWidth - dragStartRight;
+    const minDeltaY = -dragStartTop;
+    const maxDeltaY = window.innerHeight - dragStartBottom;
 
-    let x = clientX - offsetX;
-    let y = clientY - offsetY;
+    let deltaX = clientX - dragStartX;
+    let deltaY = clientY - dragStartY;
 
-    x = Math.max(0, Math.min(maxX, x));
-    y = Math.max(0, Math.min(maxY, y));
+    deltaX = Math.max(minDeltaX, Math.min(maxDeltaX, deltaX));
+    deltaY = Math.max(minDeltaY, Math.min(maxDeltaY, deltaY));
 
-    player.style.left = x + "px";
-    player.style.top = y + "px";
+    currentTranslateX = dragStartTranslateX + deltaX;
+    currentTranslateY = dragStartTranslateY + deltaY;
+    player.style.transform = "translate3d(" + currentTranslateX + "px, " + currentTranslateY + "px, 0)";
   }
 
   function isDragControl(target){
