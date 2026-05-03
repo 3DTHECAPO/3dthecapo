@@ -228,13 +228,15 @@ function saveVaultPass(record, tier){
     const expires = record && record.expires_at
       ? record.expires_at
       : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    const savedCode = record.code || code;
 
     localStorage.setItem("play3d_vault_pass_v1", JSON.stringify({
       tier: tier || record.code_type || "ENTRY",
-      code: record.code || code,
+      code: savedCode,
       route: record.route || "",
       expires_at: expires
     }));
+    localStorage.setItem("play3d_last_code", savedCode);
   }catch(e){}
 }
 
