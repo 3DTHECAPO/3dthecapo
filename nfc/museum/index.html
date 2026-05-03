@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>PLAY 3D Vault Museum</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="museum-noise" aria-hidden="true"></div>
+
+  <main class="museum-shell">
+    <header class="museum-header">
+      <a class="museum-back" href="../index.html">Back To Vault</a>
+      <div>
+        <div class="museum-kicker">3D THE CAPO</div>
+        <h1>Vault Museum</h1>
+      </div>
+      <div class="museum-pass" id="museumPassState">ENTRY ACCESS</div>
+    </header>
+
+    <section class="museum-hero">
+      <div class="hero-copy">
+        <div class="museum-kicker">Private Archive</div>
+        <h2>Exhibits From The Capo Vault</h2>
+        <p>Music, visuals, merch concepts, and hidden-room placeholders arranged like a luxury archive for the next phase of the vault.</p>
+      </div>
+      <div class="hero-mark" aria-hidden="true">3D</div>
+    </section>
+
+    <section class="room-section" data-room="entry">
+      <div class="room-head">
+        <div>
+          <div class="room-tier">ENTRY</div>
+          <h3>Entry Gallery</h3>
+        </div>
+        <span class="room-status">Open</span>
+      </div>
+      <div class="exhibit-grid" id="entryGrid"></div>
+    </section>
+
+    <section class="room-section locked" data-room="gold">
+      <div class="room-head">
+        <div>
+          <div class="room-tier">GOLD</div>
+          <h3>Gold Gallery</h3>
+        </div>
+        <span class="room-status">Locked</span>
+      </div>
+      <div class="exhibit-grid" id="goldGrid"></div>
+    </section>
+
+    <section class="room-section locked" data-room="elite">
+      <div class="room-head">
+        <div>
+          <div class="room-tier">ELITE</div>
+          <h3>Elite Gallery</h3>
+        </div>
+        <span class="room-status">Locked</span>
+      </div>
+      <div class="exhibit-grid" id="eliteGrid"></div>
+    </section>
+  </main>
+
+  <div class="exhibit-modal hidden" id="exhibitModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-panel">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
+      <div class="modal-art" id="modalArt"></div>
+      <div class="modal-copy">
+        <div class="modal-type" id="modalType"></div>
+        <h2 id="modalTitle"></h2>
+        <p id="modalText"></p>
+        <div class="audio-placeholder">Audio Placeholder</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
