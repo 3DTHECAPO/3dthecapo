@@ -17,7 +17,7 @@
     if(window.Play3DMemberSystem && window.Play3DMemberSystem.tierInfo){
       return window.Play3DMemberSystem.tierInfo();
     }
-    return { rewardsEnabled:false, label:'FREE PLAY' };
+    return { rewardsEnabled:false, label:'Free Play — sign up to earn rewards.' };
   }
 
   function getBank(){
@@ -72,10 +72,10 @@
     const subEl = document.getElementById('rewardTrackerSub');
     const fillEl = document.getElementById('rewardTrackerFill');
 
-    if(modeEl) modeEl.textContent = info.label || 'FREE PLAY';
-    if(bankEl) bankEl.textContent = formatNumber(bank);
+    if(modeEl) modeEl.textContent = info.label || 'Free Play — sign up to earn rewards.';
 
     if(!info.rewardsEnabled){
+      if(bankEl) bankEl.textContent = '0';
       if(nextEl) nextEl.textContent = 'REWARDS LOCKED';
       if(subEl){
         subEl.textContent = '';
@@ -84,6 +84,8 @@
       if(fillEl) fillEl.style.width = '0%';
       return;
     }
+
+    if(bankEl) bankEl.textContent = formatNumber(bank);
 
     if(subEl) subEl.style.display = '';
 

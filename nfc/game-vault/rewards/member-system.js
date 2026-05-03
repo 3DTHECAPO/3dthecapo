@@ -1,9 +1,18 @@
 (function(){
   const MEMBER_KEY = 'play3d_member_v1';
   const BANK_KEY = 'play3d_global_bank_v1';
+  const PASS_KEY = 'play3d_vault_pass_v1';
 
   function isMember(){
-    return localStorage.getItem(MEMBER_KEY) === '1';
+    if(localStorage.getItem(MEMBER_KEY) === '1') return true;
+    try{
+      const raw = localStorage.getItem(PASS_KEY);
+      const pass = raw ? JSON.parse(raw) : null;
+      if(!pass || !pass.expires_at) return false;
+      return new Date(pass.expires_at).getTime() > Date.now();
+    }catch(e){
+      return false;
+    }
   }
 
   function setMember(val){
@@ -24,7 +33,7 @@
   function tierInfo(){
     return {
       rewardsEnabled: isMember(),
-      label: isMember() ? 'MEMBER' : 'FREE PLAY'
+      label: isMember() ? 'MEMBER' : 'Free Play — sign up to earn rewards.'
     };
   }
 
