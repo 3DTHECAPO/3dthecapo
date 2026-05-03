@@ -1,4 +1,7 @@
 const ENGINE_KEY = 'play3d_reward_engine_v1';
+const MEMBER_KEY = 'play3d_member_v1';
+const PASS_KEY = 'play3d_vault_pass_v1';
+const CLAIMS_TABLE = 'reward_claims';
 let activeFilter = 'all';
 
 const els = {
@@ -64,6 +67,8 @@ function normalizeRewards(state){
     game: entry.game || 'game',
     trigger: entry.trigger || 'reward',
     claimed: !!entry.claimed,
+    claim_status: entry.claim_status || '',
+    reward_event_id: entry.reward_event_id || entry.rewardEventId || entry.event_id || '',
     reward: entry.reward || {}
   })).reverse();
 }
@@ -77,6 +82,127 @@ function updateSummary(rewards){
 function copyCode(code){
   if(!code) return;
   navigator.clipboard?.writeText(code).catch(() => {});
+}
+
+function readVaultPass(){
+  try{
+    const raw = localStorage.getItem(PASS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){
+    return null;
+  }
+}
+
+function validVaultPass(){
+  if(window.Play3DPassSession && Play3DPassSession.current){
+    return Play3DPassSession.current();
+  }
+
+  const pass = readVaultPass();
+  if(!pass || !pass.expires_at) return null;
+
+  const expires = new Date(pass.expires_at).getTime();
+  return Number.isFinite(expires) && expires > Date.now() ? pass : null;
+}
+
+function getClaimIdentity(){
+  const pass = validVaultPass();
+  const isLocalMember = localStorage.getItem(MEMBER_KEY) === '1';
+
+  if(!isLocalMember && !pass) return null;
+
+  return {
+    pass,
+    member_id: pass && (pass.member_id || pass.memberId || pass.user_id || pass.userId) || null,
+    email: pass && (pass.email || pass.recipient_email || pass.recipientEmail) || null
+  };
+}
+
+function getRewardEventId(item){
+  return item.reward_event_id
+    || item.rewardEventId
+    || item.event_id
+    || (item.reward && (item.reward.reward_event_id || item.reward.rewardEventId || item.reward.event_id))
+    || null;
+}
+
+function getRewardKey(item){
+  return (item.reward && (item.reward.reward_key || item.reward.rewardKey || item.reward.code || item.reward.type))
+    || item.trigger
+    || 'reward';
+}
+
+function getSupabaseConfig(){
+  const cfg = window.PLAY3D_SECURE_CONFIG || {};
+  return {
+    url: cfg.supabaseUrl || 'https://fupoedrovfloudefyzna.supabase.co',
+    key: cfg.supabaseAnonKey || 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1'
+  };
+}
+
+async function hasDuplicateClaim(rewardEventId){
+  if(!rewardEventId) return false;
+
+  const cfg = getSupabaseConfig();
+  const url = `${cfg.url}/rest/v1/${CLAIMS_TABLE}?reward_event_id=eq.${encodeURIComponent(rewardEventId)}&select=id&limit=1`;
+  const res = await fetch(url,{
+    headers:{
+      'apikey':cfg.key,
+      'Authorization':`Bearer ${cfg.key}`
+    }
+  });
+
+  if(!res.ok) return false;
+
+  const rows = await res.json().catch(()=>[]);
+  return Array.isArray(rows) && rows.length > 0;
+}
+
+async function submitRewardClaim(item){
+  const identity = getClaimIdentity();
+  if(!identity){
+    return { ok:false, message:'Members or valid pass holders only.' };
+  }
+
+  const rewardEventId = getRewardEventId(item);
+
+  if(rewardEventId && await hasDuplicateClaim(rewardEventId)){
+    return { ok:false, duplicate:true, message:'Claim already submitted.' };
+  }
+
+  const cfg = getSupabaseConfig();
+  const body = {
+    email: identity.email,
+    member_id: identity.member_id,
+    reward_event_id: rewardEventId,
+    reward_key: getRewardKey(item),
+    reward_title: item.reward && item.reward.label || 'Reward',
+    status: 'pending',
+    created_at: new Date().toISOString()
+  };
+
+  const res = await fetch(`${cfg.url}/rest/v1/${CLAIMS_TABLE}`,{
+    method:'POST',
+    headers:{
+      'apikey':cfg.key,
+      'Authorization':`Bearer ${cfg.key}`,
+      'Content-Type':'application/json',
+      'Prefer':'return=representation'
+    },
+    body:JSON.stringify(body)
+  });
+
+  if(!res.ok){
+    return { ok:false, message:'Claim could not be submitted.' };
+  }
+
+  const rows = await res.json().catch(()=>[]);
+  return { ok:true, claim:Array.isArray(rows) ? rows[0] : null, message:'Claim submitted. Pending review.' };
+}
+
+function setClaimMessage(node, message){
+  const extra = node.querySelector('.reward-extra');
+  if(extra) extra.textContent = message;
 }
 
 function render(){
@@ -107,14 +233,29 @@ function render(){
     const claimBtn = node.querySelector('.claim-btn');
     const copyBtn = node.querySelector('.copy-btn');
 
-    if(item.claimed){
-      claimBtn.textContent = 'Claimed';
+    if(item.claimed || item.claim_status === 'pending'){
+      claimBtn.textContent = item.claim_status === 'pending' ? 'Pending' : 'Claimed';
       claimBtn.disabled = true;
     }else{
-      claimBtn.addEventListener('click', () => {
+      claimBtn.addEventListener('click', async () => {
+        claimBtn.disabled = true;
+        claimBtn.textContent = 'Submitting';
+        setClaimMessage(node, 'Submitting claim...');
+
+        const result = await submitRewardClaim(item);
+
+        if(!result.ok){
+          claimBtn.disabled = false;
+          claimBtn.textContent = 'Claim';
+          setClaimMessage(node, result.message);
+          return;
+        }
+
         const latest = loadRewardState();
         if(latest.history[item.id]){
           latest.history[item.id].claimed = true;
+          latest.history[item.id].claim_status = 'pending';
+          if(result.claim && result.claim.id) latest.history[item.id].reward_claim_id = result.claim.id;
           saveRewardState(latest);
           render();
         }
