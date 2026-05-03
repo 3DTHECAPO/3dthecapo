@@ -403,34 +403,65 @@ document.addEventListener("DOMContentLoaded", function(){
     player.style.top = y + "px";
   }
 
-  handle.addEventListener("mousedown", function(e){
-    e.preventDefault();
-    startDrag(e.clientX, e.clientY);
-  });
+  function isDragControl(target){
+    return target && target.closest && target.closest("button,input");
+  }
 
-  document.addEventListener("mousemove", function(e){
-    moveDrag(e.clientX, e.clientY);
-  });
-
-  document.addEventListener("mouseup", function(){
+  function stopDrag(){
     dragging = false;
-  });
+    handle.classList.remove("dragging");
+  }
 
-  handle.addEventListener("touchstart", function(e){
-    if(!e.touches || !e.touches.length) return;
-    const t = e.touches[0];
-    startDrag(t.clientX, t.clientY);
-  }, { passive:true });
+  if(window.PointerEvent){
+    handle.addEventListener("pointerdown", function(e){
+      if(isDragControl(e.target)) return;
+      e.preventDefault();
+      startDrag(e.clientX, e.clientY);
+      handle.classList.add("dragging");
+      try{ handle.setPointerCapture(e.pointerId); }catch(err){}
+    });
 
-  document.addEventListener("touchmove", function(e){
-    if(!dragging || !e.touches || !e.touches.length) return;
-    const t = e.touches[0];
-    moveDrag(t.clientX, t.clientY);
-  }, { passive:true });
+    document.addEventListener("pointermove", function(e){
+      if(!dragging) return;
+      e.preventDefault();
+      moveDrag(e.clientX, e.clientY);
+    }, { passive:false });
 
-  document.addEventListener("touchend", function(){
-    dragging = false;
-  });
+    document.addEventListener("pointerup", stopDrag);
+    document.addEventListener("pointercancel", stopDrag);
+  }else{
+    handle.addEventListener("mousedown", function(e){
+      if(isDragControl(e.target)) return;
+      e.preventDefault();
+      startDrag(e.clientX, e.clientY);
+      handle.classList.add("dragging");
+    });
+
+    document.addEventListener("mousemove", function(e){
+      moveDrag(e.clientX, e.clientY);
+    });
+
+    document.addEventListener("mouseup", stopDrag);
+
+    handle.addEventListener("touchstart", function(e){
+      if(isDragControl(e.target)) return;
+      if(!e.touches || !e.touches.length) return;
+      e.preventDefault();
+      const t = e.touches[0];
+      startDrag(t.clientX, t.clientY);
+      handle.classList.add("dragging");
+    }, { passive:false });
+
+    document.addEventListener("touchmove", function(e){
+      if(!dragging || !e.touches || !e.touches.length) return;
+      e.preventDefault();
+      const t = e.touches[0];
+      moveDrag(t.clientX, t.clientY);
+    }, { passive:false });
+
+    document.addEventListener("touchend", stopDrag);
+    document.addEventListener("touchcancel", stopDrag);
+  }
 
   loadTrack(0, false);
 });

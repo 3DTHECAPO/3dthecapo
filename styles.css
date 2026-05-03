@@ -551,8 +551,10 @@ body.buy-page .pill.gold {
   background:linear-gradient(145deg,#f3f0e7,#b9b7ad 48%,#6f6f68);
   box-shadow:0 20px 60px rgba(0,0,0,.7);
   z-index:99999;
+  touch-action:none;
 }
-.p3d-ipod-handle{display:flex;justify-content:space-between;cursor:grab;font-size:10px;font-weight:bold}
+.p3d-ipod-handle{display:flex;justify-content:space-between;cursor:grab;font-size:10px;font-weight:bold;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.p3d-ipod-handle.dragging{cursor:grabbing}
 .p3d-ipod-screen{background:#111;border-radius:10px;padding:6px;color:#fff}
 #p3dIpodCover{width:50px;height:50px;float:left;margin-right:6px;border-radius:6px}
 .p3d-ipod-meta{font-size:10px}
@@ -723,6 +725,5 @@ body.buy-page .pill.gold {
 .wheel-btn:hover{
   color:#f2d27b !important;
 }
-
 
 
