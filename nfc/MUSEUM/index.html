@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>PLAY 3D Vault Museum</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="museum-noise" aria-hidden="true"></div>
+
+  <main class="museum-shell">
+    <header class="museum-header">
+      <a class="museum-back" href="../index.html">Back To Vault</a>
+      <div>
+        <div class="museum-kicker">3D THE CAPO</div>
+        <h1>Vault Museum</h1>
+      </div>
+      <div class="museum-pass" id="museumPassState">ENTRY ACCESS</div>
+    </header>
+
+    <section class="museum-hero">
+      <div class="hero-copy">
+        <div class="museum-kicker">Private Archive</div>
+        <h2>Exhibits From The Capo Vault</h2>
+        <p>Music, visuals, merch concepts, and hidden-room placeholders arranged like a luxury archive for the next phase of the vault.</p>
+      </div>
+      <div class="hero-mark" aria-hidden="true">3D</div>
+    </section>
+
+    <section class="room-section" data-room="entry">
+      <div class="room-head">
+        <div>
+          <div class="room-tier">ENTRY</div>
+          <h3>Entry Gallery</h3>
+        </div>
+        <span class="room-status">Open</span>
+      </div>
+      <div class="exhibit-grid" id="entryGrid"></div>
+    </section>
+
+    <section class="room-section locked" data-room="gold">
+      <div class="room-head">
+        <div>
+          <div class="room-tier">GOLD</div>
+          <h3>Gold Gallery</h3>
+        </div>
+        <span class="room-status">Locked</span>
+      </div>
+      <div class="exhibit-grid" id="goldGrid"></div>
+    </section>
+
+    <section class="room-section locked" data-room="elite">
+      <div class="room-head">
+        <div>
+          <div class="room-tier">ELITE</div>
+          <h3>Elite Gallery</h3>
+        </div>
+        <span class="room-status">Locked</span>
+      </div>
+      <div class="exhibit-grid" id="eliteGrid"></div>
+    </section>
+  </main>
+
+  <div class="exhibit-modal hidden" id="exhibitModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-panel">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
+      <div class="modal-art" id="modalArt"></div>
+      <div class="modal-copy">
+        <div class="modal-type" id="modalType"></div>
+        <h2 id="modalTitle"></h2>
+        <p id="modalText"></p>
+        <div class="audio-placeholder">Audio Placeholder</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
+
+(function(){
+  const PASS_KEY = 'play3d_vault_pass_v1';
+  const tierRank = { entry:1, gold:2, elite:3, drop:3, merch:3 };
+
+  const exhibits = {
+    entry: [
+      {
+        title:'First Door Archive',
+        type:'Visual',
+        mark:'ENTRY',
+        text:'A placeholder exhibit for the opening vault door, early visuals, and first-room access moments.'
+      },
+      {
+        title:'Capo Audio Lane',
+        type:'Audio',
+        mark:'3D',
+        text:'A future slot for private audio previews, drops, voice notes, or coded listening sessions.'
+      },
+      {
+        title:'Starter Relic',
+        type:'Artifact',
+        mark:'VAULT',
+        text:'An entry-tier archive card for early supporters and first scans from in-person NFC sales.'
+      }
+    ],
+    gold: [
+      {
+        title:'Gold Chamber Cover',
+        type:'Music',
+        mark:'GOLD',
+        text:'A premium placeholder for album chambers, coded covers, and private rollout material.'
+      },
+      {
+        title:'Hidden Interface Study',
+        type:'Interface',
+        mark:'UI',
+        text:'A gold-tier exhibit for future vault interface moments, access panels, and member-only screens.'
+      },
+      {
+        title:'Drop Route Map',
+        type:'Route',
+        mark:'MAP',
+        text:'A cinematic placeholder for future drop routes, merch windows, and private code paths.'
+      }
+    ],
+    elite: [
+      {
+        title:'Elite Merch Vault',
+        type:'Merch',
+        mark:'ELITE',
+        text:'A top-tier exhibit for exclusive merch previews, premium bundles, and claimable collector pieces.'
+      },
+      {
+        title:'Private Film Wall',
+        type:'Video',
+        mark:'FILM',
+        text:'A future gallery slot for unreleased visuals, behind-the-scenes clips, and premium vault cinema.'
+      },
+      {
+        title:'Holder Relic',
+        type:'Artifact',
+        mark:'RARE',
+        text:'A placeholder for high-value holder perks, archive drops, and luxury museum moments.'
+      }
+    ]
+  };
+
+  function readPass(){
+    try{
+      const raw = localStorage.getItem(PASS_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){
+      return null;
+    }
+  }
+
+  function currentTier(){
+    const pass = readPass();
+    if(!pass || !pass.expires_at) return 'entry';
+
+    const expires = new Date(pass.expires_at).getTime();
+    if(!Number.isFinite(expires) || expires <= Date.now()) return 'entry';
+
+    return String(pass.tier || 'entry').toLowerCase();
+  }
+
+  function canOpen(room, tier){
+    if(room === 'entry') return true;
+    return (tierRank[tier] || 1) >= (tierRank[room] || 1);
+  }
+
+  function coverClass(room){
+    if(room === 'gold') return 'cover gold';
+    if(room === 'elite') return 'cover elite';
+    return 'cover';
+  }
+
+  function renderRoom(room, tier){
+    const section = document.querySelector(`[data-room="${room}"]`);
+    const grid = document.getElementById(`${room}Grid`);
+    const open = canOpen(room, tier);
+
+    if(section){
+      section.classList.toggle('locked', !open);
+      const status = section.querySelector('.room-status');
+      if(status) status.textContent = open ? 'Open' : 'Locked';
+    }
+
+    if(!grid) return;
+
+    grid.innerHTML = exhibits[room].map((item, index) => `
+      <article class="exhibit-card">
+        <div class="${coverClass(room)}">${item.mark}</div>
+        <div class="exhibit-body">
+          <div class="exhibit-type">${item.type}</div>
+          <div class="exhibit-title">${item.title}</div>
+          <button class="enter-btn" type="button" data-room="${room}" data-index="${index}" ${open ? '' : 'disabled'}>${open ? 'Enter' : 'Locked'}</button>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  function setPassState(tier){
+    const state = document.getElementById('museumPassState');
+    if(state) state.textContent = `${String(tier || 'entry').toUpperCase()} ACCESS`;
+  }
+
+  function openModal(room, index){
+    const item = exhibits[room] && exhibits[room][index];
+    if(!item) return;
+
+    const modal = document.getElementById('exhibitModal');
+    const art = document.getElementById('modalArt');
+    const type = document.getElementById('modalType');
+    const title = document.getElementById('modalTitle');
+    const text = document.getElementById('modalText');
+
+    if(art){
+      art.className = 'modal-art';
+      art.style.background = room === 'elite'
+        ? 'radial-gradient(circle at 50% 32%,rgba(255,255,255,.24),transparent 32%),linear-gradient(145deg,#1b1b1b,#050403)'
+        : room === 'gold'
+          ? 'radial-gradient(circle at 50% 32%,rgba(242,210,123,.36),transparent 32%),linear-gradient(145deg,#3b2a10,#050403)'
+          : 'radial-gradient(circle at 50% 32%,rgba(242,210,123,.3),transparent 32%),linear-gradient(145deg,#2b200f,#050403)';
+    }
+
+    if(type) type.textContent = item.type;
+    if(title) title.textContent = item.title;
+    if(text) text.textContent = item.text;
+    if(modal) modal.classList.remove('hidden');
+  }
+
+  function closeModal(){
+    const modal = document.getElementById('exhibitModal');
+    if(modal) modal.classList.add('hidden');
+  }
+
+  function init(){
+    const tier = currentTier();
+    setPassState(tier);
+    renderRoom('entry', tier);
+    renderRoom('gold', tier);
+    renderRoom('elite', tier);
+
+    document.body.addEventListener('click', event => {
+      const button = event.target.closest('.enter-btn');
+      if(!button || button.disabled) return;
+      openModal(button.dataset.room, Number(button.dataset.index));
+    });
+
+    const close = document.getElementById('modalClose');
+    if(close) close.addEventListener('click', closeModal);
+
+    const modal = document.getElementById('exhibitModal');
+    if(modal){
+      modal.addEventListener('click', event => {
+        if(event.target === modal) closeModal();
+      });
+    }
+
+    document.addEventListener('keydown', event => {
+      if(event.key === 'Escape') closeModal();
+    });
+  }
+
+  init();
+})();
+
+:root{
+  --gold:#caa24a;
+  --bright:#f2d27b;
+  --bg:#050403;
+  --panel:#120e0a;
+  --text:#f4f1ea;
+  --muted:rgba(244,241,234,.68);
+  --line:rgba(202,162,74,.28);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(202,162,74,.16),transparent 34%),
+    radial-gradient(circle at 10% 20%,rgba(242,210,123,.08),transparent 24%),
+    linear-gradient(180deg,#090705,#020202 58%,#080604);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+}
+
+.museum-noise{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.14;
+  background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:100% 4px;
+  mix-blend-mode:screen;
+}
+
+.museum-shell{
+  width:min(1180px,92vw);
+  margin:0 auto;
+  padding:24px 0 48px;
+}
+
+.museum-header{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:16px;
+  margin-bottom:22px;
+}
+
+.museum-back,
+.museum-pass{
+  justify-self:start;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--text);
+  text-decoration:none;
+  padding:10px 14px;
+  background:rgba(0,0,0,.34);
+  font-size:12px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.museum-pass{
+  justify-self:end;
+  color:var(--bright);
+}
+
+.museum-kicker,
+.room-tier,
+.modal-type{
+  color:var(--bright);
+  font-size:11px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+}
+
+h1,h2,h3,p{margin:0}
+
+h1{
+  color:var(--bright);
+  font-size:clamp(28px,4vw,48px);
+  letter-spacing:.08em;
+  text-align:center;
+  text-transform:uppercase;
+}
+
+.museum-hero{
+  min-height:320px;
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  align-items:center;
+  gap:24px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:28px;
+  margin-bottom:22px;
+  background:
+    linear-gradient(90deg,rgba(0,0,0,.82),rgba(0,0,0,.18)),
+    radial-gradient(circle at 76% 38%,rgba(242,210,123,.22),transparent 34%),
+    linear-gradient(145deg,#17120f,#050403);
+  box-shadow:0 28px 86px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.06);
+  overflow:hidden;
+}
+
+.hero-copy h2{
+  max-width:650px;
+  margin:10px 0 12px;
+  font-size:clamp(34px,6vw,72px);
+  line-height:.95;
+  letter-spacing:.02em;
+  text-transform:uppercase;
+}
+
+.hero-copy p{
+  max-width:560px;
+  color:var(--muted);
+  line-height:1.65;
+}
+
+.hero-mark{
+  justify-self:center;
+  width:min(320px,52vw);
+  aspect-ratio:1;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(242,210,123,.3);
+  border-radius:50%;
+  color:rgba(242,210,123,.16);
+  font-size:110px;
+  font-weight:900;
+  box-shadow:0 0 88px rgba(202,162,74,.18),inset 0 0 42px rgba(202,162,74,.08);
+}
+
+.room-section{
+  position:relative;
+  margin-top:22px;
+  border-top:1px solid var(--line);
+  padding-top:18px;
+}
+
+.room-head{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:14px;
+}
+
+.room-head h3{
+  margin-top:4px;
+  font-size:24px;
+  text-transform:uppercase;
+}
+
+.room-status{
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--bright);
+  padding:8px 12px;
+  font-size:12px;
+  text-transform:uppercase;
+}
+
+.exhibit-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:14px;
+}
+
+.exhibit-card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0) 20%),linear-gradient(180deg,#16110d,#070604);
+  box-shadow:0 18px 48px rgba(0,0,0,.36);
+}
+
+.cover{
+  min-height:210px;
+  display:grid;
+  place-items:end start;
+  padding:16px;
+  background:
+    radial-gradient(circle at 62% 26%,rgba(242,210,123,.24),transparent 28%),
+    linear-gradient(145deg,#241a0d,#050403);
+  color:rgba(242,210,123,.36);
+  font-size:44px;
+  font-weight:900;
+}
+
+.cover.gold{
+  background:radial-gradient(circle at 50% 30%,rgba(242,210,123,.34),transparent 32%),linear-gradient(145deg,#3b2a10,#080604);
+}
+
+.cover.elite{
+  background:radial-gradient(circle at 44% 28%,rgba(255,255,255,.2),transparent 28%),linear-gradient(145deg,#1b1b1b,#080604);
+}
+
+.exhibit-body{
+  padding:14px;
+}
+
+.exhibit-type{
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.exhibit-title{
+  margin:6px 0 12px;
+  color:var(--text);
+  font-size:18px;
+  text-transform:uppercase;
+}
+
+.enter-btn{
+  width:100%;
+  min-height:44px;
+  border:0;
+  border-radius:999px;
+  background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);
+  color:#100c05;
+  cursor:pointer;
+  font-weight:900;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.locked .exhibit-card{
+  opacity:.48;
+  filter:saturate(.55);
+}
+
+.locked .enter-btn{
+  background:#14100b;
+  color:var(--muted);
+  border:1px solid var(--line);
+  cursor:not-allowed;
+}
+
+.exhibit-modal{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:rgba(0,0,0,.82);
+}
+
+.exhibit-modal.hidden{display:none}
+
+.modal-panel{
+  position:relative;
+  width:min(920px,94vw);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  border:1px solid var(--line);
+  border-radius:18px;
+  overflow:hidden;
+  background:linear-gradient(180deg,#17120f,#050403);
+  box-shadow:0 30px 120px rgba(0,0,0,.86);
+}
+
+.modal-close{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:2;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  border:1px solid var(--line);
+  background:#070604;
+  color:var(--bright);
+  cursor:pointer;
+  font-size:24px;
+}
+
+.modal-art{
+  min-height:420px;
+  background:radial-gradient(circle at 50% 32%,rgba(242,210,123,.3),transparent 32%),linear-gradient(145deg,#2b200f,#050403);
+}
+
+.modal-copy{
+  padding:34px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.modal-copy h2{
+  margin:10px 0 14px;
+  color:var(--bright);
+  font-size:34px;
+  text-transform:uppercase;
+}
+
+.modal-copy p{
+  color:var(--muted);
+  line-height:1.65;
+}
+
+.audio-placeholder{
+  margin-top:22px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:12px 14px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:12px;
+}
+
+@media (max-width:760px){
+  .museum-header{
+    grid-template-columns:1fr;
+    text-align:center;
+  }
+
+  .museum-back,
+  .museum-pass{
+    justify-self:center;
+  }
+
+  .museum-hero,
+  .modal-panel{
+    grid-template-columns:1fr;
+  }
+
+  .hero-mark{
+    width:min(240px,70vw);
+  }
+
+  .modal-art{
+    min-height:260px;
+  }
+}
