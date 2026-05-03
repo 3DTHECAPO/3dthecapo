@@ -64,6 +64,35 @@ function patchNfcLinks(codeValue){
   });
 }
 
+async function upsertEmailSignup(email, codeValue, tier){
+  try{
+    const cleanEmail = String(email || '').trim().toLowerCase();
+    if(!cleanEmail) return;
+    const cleanTier = String(tier || 'entry').toLowerCase();
+    const now = new Date().toISOString();
+
+    await fetch(`${SUPABASE_URL}/rest/v1/email_signups?on_conflict=email`,{
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':'Bearer '+SUPABASE_ANON,
+        'Content-Type':'application/json',
+        'Prefer':'resolution=merge-duplicates,return=minimal'
+      },
+      body:JSON.stringify({
+        email:cleanEmail,
+        source:'vault_conversion',
+        code:codeValue || '',
+        tier:cleanTier,
+        page:window.location.pathname,
+        user_agent:navigator.userAgent,
+        tags:['vault', cleanTier],
+        last_seen_at:now
+      })
+    });
+  }catch(e){}
+}
+
 function renderVaultConversionScreen(codeValue, tier){
   const vaultCode = String(codeValue || getVaultCode()).toUpperCase().trim();
   if(!vaultCode) return;
@@ -200,6 +229,8 @@ function renderVaultConversionScreen(codeValue, tier){
       });
 
       if(!res.ok) throw new Error(await res.text());
+
+      await upsertEmailSignup(email, vaultCode, displayTier);
 
       box.innerHTML=`
         <div style="font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;font-size:26px;text-transform:uppercase;">
