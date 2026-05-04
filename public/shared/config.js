@@ -7,6 +7,7 @@ window.PLAY3D_SECURE_CONFIG = {
     ENTRY: "/nfc/entry-backdrop.html",
     GOLD: "/nfc/vault-interface.html",
     ELITE: "/nfc/album-chamber.html",
+    MASTER: "/nfc/index.html",
     DROP: "/nfc/merch-drop-room.html",
     MERCH: "/nfc/exclusive-merch-vault.html"
   },
@@ -14,6 +15,7 @@ window.PLAY3D_SECURE_CONFIG = {
     ENTRY: 24,
     GOLD: 168,
     ELITE: 720,
+    MASTER: 720,
     DROP: 72,
     MERCH: 336
   }

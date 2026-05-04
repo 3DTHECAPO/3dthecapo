@@ -10,6 +10,22 @@
     return Number(hoursByTier[t] || 24);
   }
 
+  function tierRank(tier){
+    const ranks = { ENTRY: 1, GOLD: 2, ELITE: 3, DROP: 3, MERCH: 3, MASTER: 4 };
+    return ranks[String(tier || "").toUpperCase()] || 0;
+  }
+
+  function isMasterPass(pass){
+    const active = pass || current();
+    return !!(active && String(active.tier || "").toUpperCase() === "MASTER" && isValid(active));
+  }
+
+  function hasTierAtLeast(requiredTier, pass){
+    const active = pass || current();
+    if(!isValid(active)) return false;
+    return tierRank(active.tier) >= tierRank(requiredTier);
+  }
+
   function load(){
     try{
       const raw = localStorage.getItem(KEY);
@@ -74,7 +90,7 @@
       return null;
     }
     const needed = opts && opts.allowedTiers ? opts.allowedTiers.map(x => String(x).toUpperCase()) : [];
-    if(needed.length && !needed.includes(pass.tier)){
+    if(needed.length && !needed.some(tier => hasTierAtLeast(tier, pass))){
       window.location.href = (opts && opts.redirect) || "/nfc/index.html";
       return null;
     }
@@ -91,6 +107,7 @@
   }
 
   window.Play3DPassSession = {
-    create, clear, current, requireAccess, formatExpiry
+    create, clear, current, requireAccess, formatExpiry, tierRank, hasTierAtLeast, isMasterPass
   };
+  window.isMasterPass = function(){ return isMasterPass(); };
 })();
