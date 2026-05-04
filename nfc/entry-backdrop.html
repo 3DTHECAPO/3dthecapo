@@ -1,19 +1,34 @@
-﻿<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Entry Chamber</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./nfc.css"><style>body{background:linear-gradient(180deg, rgba(0,0,0,.46), rgba(0,0,0,.88)), url("./assets/entry_backdrop.jpg") center/cover fixed no-repeat}.page-wrap{width:min(1180px,92vw);margin:0 auto;padding:18px 0 56px;position:relative;z-index:2}.page-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:980px){.page-grid{grid-template-columns:1fr}}</style>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entry Chamber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./nfc.css"><link rel="stylesheet" href="./vault-polish.css">
+  <link rel="stylesheet" href="./cinematic-vault-rooms.css">
   <script src="/public/shared/config.js"></script>
   <script src="/public/shared/pass-session.js"></script>
   <script src="/public/shared/room-guard.js"></script>
   <script>
     Play3DRoomGuard.requireTier("ENTRY");
   </script>
-
-</head><body>
-<div class="cinematic-overlay" aria-hidden="true">
+</head>
+<body class="cinematic-vault-room room-cinematic room-entry entry-room"><div class="cinematic-overlay" aria-hidden="true">
   <div class="cinematic-fog-back"></div>
   <div class="cinematic-glow"></div>
   <div class="cinematic-particles"></div>
   <div class="cinematic-fog-front"></div>
   <div class="cinematic-vignette"></div>
 </div>
-<div class="noise" aria-hidden="true"></div><div class="page-wrap"><header class="topbar"><a class="logo-link" href="./index.html"><img class="logo" src="./assets/vault_stamp_gold.png" alt="Vault Seal"></a><a class="back-btn" href="./index.html">Back To Vault</a></header><section class="page-card"><div class="eyebrow">Private Chamber</div><h1>Entry Chamber</h1><p>The first vault chamber for early access music and visual discovery.</p><div class="action-row" style="margin-top:16px"><a class="btn gold" href="https://youtube.com/@iiidtv">Watch Channel</a><a class="btn gold" href="/nfc/album-chamber.html">BUY ALBUM</a><a class="btn" href="./index.html">Back To Vault</a></div></section><section class="page-grid"><div class="page-card"><h3>Music</h3><div class="embed-frame"><iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4R7uJYf4ts6pthecl9IVBF?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div></div>
-<div class="page-card"><h3>Video</h3><div class="video-card"><iframe src="https://www.youtube.com/embed?listType=user_uploads&list=iiidtv" allowfullscreen loading="lazy"></iframe></div></div></section><section class="page-grid" style="margin-top:16px"><div class="page-card"><h3>Buy Album</h3><p>Step from Entry access into the full album lane when your Gold pass is ready.</p><div class="action-row" style="margin-top:16px"><a class="btn gold" href="/nfc/album-chamber.html">BUY ALBUM</a></div></div><div class="page-card"><h3>Teaser Preview</h3><p>Preview placeholder for cover art, snippet notes, and the next room reveal.</p><p>Unlock full experience with Gold.</p><div class="action-row" style="margin-top:16px"><a class="btn" href="/nfc/scan.html">Unlock full experience with Gold</a></div></div></section></div></body></html>
-
+  <div class="vault-smoke" aria-hidden="true"></div>
+  <main class="vault-page">
+    <header class="vault-topbar"><a class="vault-logo-mark" href="./index.html">VAULT</a><nav class="vault-nav" aria-label="Entry room navigation"><a class="back-btn" href="./index.html">Back To Vault</a><a class="back-btn" href="./game-vault/">Game Vault</a></nav></header>
+    <section class="vault-hero"><p class="vault-kicker">Entry Access</p><h1>Welcome to the Vault</h1><p class="vault-lede">Your first room opens the music lane, vault previews, and the next step toward Gold access.</p><div class="vault-actions"><a class="vault-btn gold" href="/nfc/album-chamber.html">BUY ALBUM</a><a class="vault-btn ghost" href="https://youtube.com/@iiidtv">Watch Channel</a><a class="vault-btn ghost" href="/nfc/museum/">Museum</a></div></section>
+    <section class="vault-grid two" aria-label="Entry feature previews"><article class="vault-card"><h2>Buy Album</h2><p>Step into the album lane when your Gold access is ready. This button keeps the existing route into the Album Chamber.</p><a class="vault-btn gold" href="/nfc/album-chamber.html">BUY ALBUM</a></article><article class="vault-card"><h2>Gold Teaser</h2><p>Unlock full experience with Gold. Preview deeper tracks, cover art, private media cards, and the full Album Chamber.</p><a class="vault-btn ghost" href="/nfc/scan.html">Unlock full experience with Gold</a></article></section>
+    <section class="vault-grid" aria-label="Entry room teasers"><article class="vault-card"><strong>Game Vault Teaser</strong><p>Play the public games and see what member rewards can unlock once your pass is active.</p><a class="vault-btn ghost" href="/nfc/game-vault/">Open Game Vault</a></article><article class="vault-card"><strong>Museum Teaser</strong><p>Browse the public vault museum and discover locked rooms that open with stronger access.</p><a class="vault-btn ghost" href="/nfc/museum/">Open Museum</a></article><article class="vault-card"><strong>Visual Preview</strong><p>Cover art, snippet notes, and drop visuals can live here without depending on missing image files.</p></article></section>
+  </main>
+</body>
+</html>

@@ -1,43 +1,9 @@
-﻿<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Vault Interface</title>
-  <link rel="stylesheet" href="./nfc.css">
-  <link rel="stylesheet" href="./vault-polish.css">
-  <style>
-    body{
-      background:
-        linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.20)),
-        url("./assets/vault_interface.jpg") center/cover fixed no-repeat;
-    }
-    .page-wrap{width:min(1180px,92vw);margin:0 auto;padding:18px 0 56px}
-  </style>
-  <script src="/public/shared/config.js"></script>
-  <script src="/public/shared/pass-session.js"></script>
-  <script src="/public/shared/room-guard.js"></script>
-  <script>
-    Play3DRoomGuard.requireTier("GOLD");
-  </script>
-</head>
-<body class="room-cinematic room-interface">
-  <div class="noise"></div>
-  <div class="page-wrap">
-    <header class="topbar">
-      <a class="logo-link" href="./index.html"><img class="logo" src="./assets/vault_stamp_gold.png" alt="Vault Seal"></a>
-      <a class="back-btn" href="./index.html">Back To Vault</a>
-    </header>
-    <section class="page-card" style="padding:22px">
-      <div class="eyebrow">Elite Control</div>
-      <h1>Vault Interface</h1>
-      <p>This room serves as a premium access lane for private navigation, coded entry, and deeper vault routes.</p>
-      <div class="action-row" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
-        <a class="btn gold" href="./scan.html">Open Scan Page</a>
-        <a class="btn" href="./index.html">Back To Vault</a>
-      </div>
-    </section>
-  </div>
-</body>
-</html>
-
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Vault Interface</title><link rel="stylesheet" href="./nfc.css"><link rel="stylesheet" href="./vault-polish.css"><link rel="stylesheet" href="./cinematic-vault-rooms.css"><script src="/public/shared/config.js"></script><script src="/public/shared/pass-session.js"></script><script src="/public/shared/room-guard.js"></script><script>Play3DRoomGuard.requireTier("GOLD");</script></head>
+<body class="cinematic-vault-room room-cinematic room-interface interface-room"><div class="cinematic-overlay" aria-hidden="true">
+  <div class="cinematic-fog-back"></div>
+  <div class="cinematic-glow"></div>
+  <div class="cinematic-particles"></div>
+  <div class="cinematic-fog-front"></div>
+  <div class="cinematic-vignette"></div>
+</div><div class="vault-smoke" aria-hidden="true"></div><main class="vault-page"><header class="vault-topbar"><a class="vault-logo-mark" href="./index.html">CTRL</a><nav class="vault-nav" aria-label="Vault interface navigation"><a class="back-btn" href="./album-chamber.html">Gold</a><a class="back-btn" href="./merch-drop-room.html">Elite</a><a class="back-btn" href="./index.html">Back To Vault</a></nav></header><section class="vault-hero"><p class="vault-kicker">Vault Interface</p><h1>Access Dashboard</h1><p class="vault-lede">A polished user-facing control room for pass status, room navigation, and safe vault routes.</p><div class="vault-actions"><a class="vault-btn gold" href="./scan.html">Open Scan Page</a><a class="vault-btn ghost" href="./index.html">Back To Vault</a></div></section><section class="vault-status" aria-label="Pass status"><article class="vault-card"><span class="vault-stat">Pass Tier</span><p id="passTierStatus">Checking...</p></article><article class="vault-card"><span class="vault-stat">Access State</span><p id="passAccessStatus">Active pass required</p></article><article class="vault-card"><span class="vault-stat">Vault Mode</span><p>User-facing rooms only</p></article></section><section class="vault-dashboard"><article class="vault-panel"><h2>Allowed Room Routes</h2><div class="vault-link-list"><a class="vault-btn ghost" href="./entry-backdrop.html">Entry Room</a><a class="vault-btn gold" href="./album-chamber.html">Gold Room</a><a class="vault-btn gold" href="/nfc/rooms/gold-album/">Gold Album Room</a><a class="vault-btn ghost" href="./merch-drop-room.html">Elite Room</a><a class="vault-btn ghost" href="/nfc/rooms/elite-vault/">Elite Vault</a></div></article><article class="vault-panel"><h2>Public Vault Routes</h2><div class="vault-link-list"><a class="vault-btn ghost" href="./museum/">Museum</a><a class="vault-btn ghost" href="./game-vault/">Game Vault</a><a class="vault-btn ghost" href="./game-vault/rewards/">Rewards</a><a class="vault-btn ghost" href="./scan.html">Scan</a></div><p class="vault-safe-note">No Boss or admin links are shown here.</p></article></section></main><script>(function(){var tierEl=document.getElementById("passTierStatus");var accessEl=document.getElementById("passAccessStatus");var pass=window.Play3DPassSession&&Play3DPassSession.getActivePass?Play3DPassSession.getActivePass():null;var tier=pass&&pass.tier?String(pass.tier).toUpperCase():"UNKNOWN";if(tierEl)tierEl.textContent=tier;if(accessEl)accessEl.textContent=pass?"Vault access active":"No active pass found";})();</script></body></html>
