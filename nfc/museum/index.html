@@ -2,93 +2,97 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Vault Museum</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../nfc.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>PLAY 3D Vault Museum</title>
+  <link rel="stylesheet" href="./style.css">
   <style>
-    .museum-shell{width:min(1100px,92vw);margin:0 auto;padding:28px 0 44px}
-    .museum-hero{border:1px solid rgba(210,167,79,.28);border-radius:18px;padding:24px;background:linear-gradient(180deg,rgba(16,12,8,.9),rgba(0,0,0,.72));box-shadow:0 24px 70px rgba(0,0,0,.5)}
-    .museum-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
-    .exhibit{border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px;background:rgba(255,255,255,.045);min-height:230px;display:flex;flex-direction:column;gap:12px}
-    .exhibit h2{margin:0;color:#f2d27b;font-family:'Black Ops One',system-ui,sans-serif;font-size:24px}
-    .exhibit p{margin:0;color:rgba(244,241,234,.75);line-height:1.55}
-    .exhibit .btn{margin-top:auto;text-align:center}
-    .lock-note{border:1px solid rgba(210,167,79,.3);border-radius:12px;padding:10px;color:#f2d27b;background:rgba(0,0,0,.38);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px}
-    @media (max-width:760px){.museum-grid{grid-template-columns:1fr}.museum-hero{padding:18px}}
+html, body{
+  background: none !important;
+}
+body{
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.50),rgba(0,0,0,.88)),
+    url("../assets/museum_bg.jpg") center/cover no-repeat !important;
+  background-attachment: fixed;
+}
+.museum-shell,
+.museum-hero,
+.museum-noise,
+body::before{
+  background: none !important;
+  background-image: none !important;
+}
   </style>
 </head>
 <body>
-  <div class="noise" aria-hidden="true"></div>
+  <div class="museum-noise" aria-hidden="true"></div>
+
   <main class="museum-shell">
-    <header class="header">
-      <a class="vault-logo-link" href="../../index.html"><img src="../assets/vault_stamp_gold.png" class="vault-logo" alt="Vault Seal"></a>
-      <nav class="nav" aria-label="Museum">
-        <a href="../../index.html">Home</a>
-        <a href="../scan.html">Enter Code</a>
-        <a href="../index.html">Vault</a>
-      </nav>
-    </header>
+    <header class="museum-header">
+      <button class="museum-back" type="button" onclick="history.back()">← Back</button>
+      <div>
+        <div class="museum-kicker">3D THE CAPO</div>
+        <h1>Vault Museum</h1>
+      </div>
+      <div class="museum-pass" id="museumPassState">ENTRY ACCESS</div>
+    </header><nav class="vault-main-nav"><a href="/nfc/index.html">Vault</a><a href="/nfc/scan.html">Scan</a><a href="/nfc/game-vault/index.html">Game</a><a href="/nfc/game-vault/rewards/index.html">Rewards</a></nav>
+
     <section class="museum-hero">
-      <div class="eyebrow">Vault Museum</div>
-      <h1>The Capo Vault Museum</h1>
-      <p>Entry exhibits are open for everyone. Gold and Elite exhibits stay locked until a valid pass is active on this device.</p>
+      <div class="hero-copy">
+        <div class="museum-kicker">Private Archive</div>
+        <h2>Exhibits From The Capo Vault</h2>
+        <p>Music, visuals, merch concepts, and hidden-room placeholders arranged like a luxury archive for the next phase of the vault.</p>
+      </div>
+      <div class="hero-mark" aria-hidden="true">3D</div>
     </section>
-    <section class="museum-grid" id="museumGrid">
-      <article class="exhibit">
-        <div class="room-tag">Entry Exhibit</div>
-        <h2>Entry</h2>
-        <p>Open audio, visuals, and first-room previews from the public museum lane.</p>
-        <a class="btn gold" href="../entry-backdrop.html">Open Entry Exhibit</a>
-      </article>
-      <article class="exhibit" data-locked-tier="GOLD">
-        <div class="room-tag">Gold Exhibit</div>
-        <h2>Gold</h2>
-        <p>Album chamber and private vault interface material for pass holders.</p>
-        <div class="lock-note">Locked without pass</div>
-        <a class="btn gold locked-link" href="../album-chamber.html">Open Gold Exhibit</a>
-      </article>
-      <article class="exhibit" data-locked-tier="ELITE">
-        <div class="room-tag">Elite Exhibit</div>
-        <h2>Elite</h2>
-        <p>Merch room, exclusive chamber, and deeper premium vault exhibits.</p>
-        <div class="lock-note">Locked without pass</div>
-        <a class="btn gold locked-link" href="../merch-drop-room.html">Open Elite Exhibit</a>
-      </article>
+
+    <section class="room-section" data-room="entry">
+      <div class="room-head">
+        <div>
+          <div class="room-tier">ENTRY</div>
+          <h3>Entry Gallery</h3>
+        </div>
+        <span class="room-status">Open</span>
+      </div>
+      <div class="exhibit-grid" id="entryGrid"></div>
+    </section>
+
+    <section class="room-section locked" data-room="gold">
+      <div class="room-head">
+        <div>
+          <div class="room-tier">GOLD</div>
+          <h3>Gold Gallery</h3>
+        </div>
+        <span class="room-status">Locked</span>
+      </div>
+      <div class="exhibit-grid" id="goldGrid"></div>
+    </section>
+
+    <section class="room-section locked" data-room="elite">
+      <div class="room-head">
+        <div>
+          <div class="room-tier">ELITE</div>
+          <h3>Elite Gallery</h3>
+        </div>
+        <span class="room-status">Locked</span>
+      </div>
+      <div class="exhibit-grid" id="eliteGrid"></div>
     </section>
   </main>
-  <script src="../../public/shared/pass-session.js"></script>
-  <script>
-    (function(){
-      function pass(){
-        try{
-          if(window.Play3DPassSession && Play3DPassSession.current()) return Play3DPassSession.current();
-          const raw = localStorage.getItem('play3d_vault_pass_v1');
-          const parsed = raw ? JSON.parse(raw) : null;
-          if(!parsed || !parsed.expires_at) return null;
-          return new Date(parsed.expires_at).getTime() > Date.now() ? parsed : null;
-        }catch(e){ return null; }
-      }
-      function tierRank(tier){
-        if(window.Play3DPassSession && Play3DPassSession.tierRank) return Play3DPassSession.tierRank(tier);
-        const ranks = { entry:1, gold:2, elite:3, drop:3, merch:3, master:4 };
-        return ranks[String(tier || '').toLowerCase()] || 0;
-      }
-      const active = pass();
-      document.querySelectorAll('[data-locked-tier]').forEach(card=>{
-        const link = card.querySelector('.locked-link');
-        const note = card.querySelector('.lock-note');
-        const needed = card.getAttribute('data-locked-tier') || '';
-        if(!active || tierRank(active.tier) < tierRank(needed)){
-          if(link) link.href = '../scan.html';
-          if(note) note.textContent = 'Locked without pass';
-          return;
-        }
-        if(note) note.textContent = String(active.tier || '').toLowerCase() === 'master' ? 'Master pass active' : 'Pass active';
-      });
-    })();
-  </script>
+
+  <div class="exhibit-modal hidden" id="exhibitModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-panel">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
+      <div class="modal-art" id="modalArt"></div>
+      <div class="modal-copy">
+        <div class="modal-type" id="modalType"></div>
+        <h2 id="modalTitle"></h2>
+        <p id="modalText"></p>
+        <div class="audio-placeholder">Audio Placeholder</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
 </body>
 </html>
