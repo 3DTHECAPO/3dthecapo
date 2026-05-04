@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Elite Vault</title>
+  <link rel="stylesheet" href="../../nfc.css">
+  <link rel="stylesheet" href="../../vault-polish.css">
+  <script src="../../../public/shared/config.js"></script>
+  <script src="../../../public/shared/pass-session.js"></script>
+  <script src="../../../public/shared/room-guard.js"></script>
+  <script>
+    Play3DRoomGuard.requireTier("ELITE");
+  </script>
+</head>
+<body class="room-cinematic room-merch">
+  <div class="noise"></div>
+  <div class="page-wrap" style="width:min(1180px,92vw);margin:0 auto;padding:18px 0 56px">
+    <header class="topbar">
+      <a class="back-btn" href="../../merch-drop-room.html">Back To Elite</a>
+      <a class="back-btn" href="../../index.html">Back To Vault</a>
+    </header>
+
+    <section class="page-card" style="padding:22px">
+      <div class="eyebrow">Elite Access</div>
+      <h1>Elite Vault</h1>
+      <p>Deeper exclusive content placeholder for Elite and Master passes.</p>
+      <div class="action-row" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn gold" href="../../exclusive-merch-vault.html">Merch Vault</a>
+        <a class="btn" href="../../secret-page.html">Secret Access</a>
+        <a class="btn" href="../gold-album/">Album Chamber</a>
+      </div>
+    </section>
+
+    <section class="page-grid" style="margin-top:16px">
+      <div class="page-card" style="padding:18px"><h3>Exclusive Content</h3><p>Private clip, message, or download placeholder.</p></div>
+      <div class="page-card" style="padding:18px"><h3>Merch Drop Preview</h3><p>Elite merch preview placeholder.</p></div>
+    </section>
+
+    <section class="page-card" style="padding:18px;margin-top:16px">
+      <h3>Secret Access CTA</h3>
+      <p>Route deeper into the secret room when ready.</p>
+      <div class="action-row" style="margin-top:16px"><a class="btn gold" href="../../secret-page.html">Open Secret Room</a></div>
+    </section>
+  </div>
+</body>
+</html>
+
