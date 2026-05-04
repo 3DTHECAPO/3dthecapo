@@ -26,6 +26,7 @@ const ROOM_MAP = {
   entry: 'room-entry',
   gold: 'room-gold',
   elite: 'room-elite',
+  master: 'room-elite',
   drop: 'room-elite',
   merch: 'room-elite'
 };
@@ -145,11 +146,15 @@ function unlockUI(rawTier){
 
   ['entry','gold','elite'].forEach(t=>hide(byId('room-'+t)));
 
-  const roomId = ROOM_MAP[tier] || 'room-entry';
-  show(byId(roomId));
+  if(tier === 'master'){
+    ['entry','gold','elite'].forEach(t=>show(byId('room-'+t)));
+  }else{
+    const roomId = ROOM_MAP[tier] || 'room-entry';
+    show(byId(roomId));
+  }
 
   if(statusPill) statusPill.textContent = tier.toUpperCase();
-  if(vaultState) vaultState.textContent = tier.charAt(0).toUpperCase()+tier.slice(1)+' Room';
+  if(vaultState) vaultState.textContent = tier === 'master' ? 'Master Vault Pass' : tier.charAt(0).toUpperCase()+tier.slice(1)+' Room';
 
   hide(lockedActions);
   hide(lockedRoom);
@@ -228,15 +233,13 @@ function saveVaultPass(record, tier){
     const expires = record && record.expires_at
       ? record.expires_at
       : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-    const savedCode = record.code || code;
 
     localStorage.setItem("play3d_vault_pass_v1", JSON.stringify({
       tier: tier || record.code_type || "ENTRY",
-      code: savedCode,
+      code: record.code || code,
       route: record.route || "",
       expires_at: expires
     }));
-    localStorage.setItem("play3d_last_code", savedCode);
   }catch(e){}
 }
 
@@ -262,7 +265,9 @@ function preserveNfcLinks(codeValue){
     "/nfc/merch-drop-room.html",
     "/nfc/exclusive-merch-vault.html",
     "/nfc/secret-page.html",
-    "/nfc/scan.html"
+    "/nfc/scan.html",
+    "/nfc/game-vault/index.html",
+    "/nfc/game-vault/rewards/index.html"
   ];
 
   document.querySelectorAll("a[href]").forEach((link)=>{
@@ -277,35 +282,6 @@ function preserveNfcLinks(codeValue){
       link.setAttribute("href", url.pathname + url.search + url.hash);
     }catch(e){}
   });
-}
-
-async function upsertEmailSignup(email, codeValue, tier){
-  try{
-    const cleanEmail = String(email || '').trim().toLowerCase();
-    if(!cleanEmail) return;
-    const cleanTier = String(tier || 'entry').toLowerCase();
-    const now = new Date().toISOString();
-
-    await fetch(`${SUPABASE_URL}/rest/v1/email_signups?on_conflict=email`,{
-      method:'POST',
-      headers:{
-        'apikey':SUPABASE_ANON,
-        'Authorization':`Bearer ${SUPABASE_ANON}`,
-        'Content-Type':'application/json',
-        'Prefer':'resolution=merge-duplicates,return=minimal'
-      },
-      body:JSON.stringify({
-        email:cleanEmail,
-        source:'vault_conversion',
-        code:codeValue || '',
-        tier:cleanTier,
-        page:window.location.pathname,
-        user_agent:navigator.userAgent,
-        tags:['vault', cleanTier],
-        last_seen_at:now
-      })
-    });
-  }catch(e){}
 }
 
 async function init(){
@@ -487,8 +463,6 @@ async function init(){
       });
 
       if(!res.ok) throw new Error(await res.text());
-
-      await upsertEmailSignup(email, codeValue, tier);
 
       box.innerHTML=`
         <div style="font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;font-size:26px;text-transform:uppercase;">

@@ -28,8 +28,26 @@ window.GV = {
     }catch(e){
       return null;
     }
+  },
+
+  tierRank(tier){
+    const ranks = { entry:1, gold:2, elite:3, drop:3, merch:3, master:4 };
+    return ranks[String(tier || '').toLowerCase()] || 0;
+  },
+
+  isMasterPass(){
+    const pass = this.getActivePass();
+    return !!(pass && String(pass.tier || '').toLowerCase() === 'master');
+  },
+
+  hasTierAtLeast(requiredTier){
+    const pass = this.getActivePass();
+    if(!pass) return false;
+    return this.tierRank(pass.tier) >= this.tierRank(requiredTier);
   }
 };
+
+window.isMasterPass = window.isMasterPass || function(){ return GV.isMasterPass(); };
 
 if (GV.params.get('nfc') === '1') GV.enableBonus();
 
