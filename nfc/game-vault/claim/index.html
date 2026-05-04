@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -7,24 +7,9 @@
   <link rel="stylesheet" href="./style.css">
   <script src="/public/shared/config.js"></script>
   <script src="/public/shared/pass-session.js"></script>
+  <script src="/public/shared/room-guard.js"></script>
   <script>
-    (function(){
-      function hasMemberAccess(){
-        try{
-          if(localStorage.getItem('play3d_member_v1') === '1') return true;
-        }catch(e){}
-
-        if(window.Play3DPassSession && Play3DPassSession.current()){
-          return true;
-        }
-
-        return false;
-      }
-
-      if(!hasMemberAccess()){
-        location.replace('/nfc/scan.html');
-      }
-    })();
+    Play3DRoomGuard.requireMemberOrPass();
   </script>
 </head>
 <body>
@@ -49,3 +34,4 @@
   <script src="./claim.js"></script>
 </body>
 </html>
+
