@@ -7,3 +7,14 @@
 .cinematic-vault-room .vault-page{z-index:3}
 .cinematic-vault-room .vault-smoke{z-index:1}
 .cinematic-vault-room:before,.cinematic-vault-room:after{z-index:0}
+
+
+/* Cinematic room navigation transitions. */
+.vault-transition-layer{position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 42%,rgba(243,199,102,.26),transparent 24%),linear-gradient(135deg,rgba(0,0,0,.98),rgba(43,30,10,.96) 48%,rgba(0,0,0,.98));transition:opacity .46s ease}
+.vault-transition-glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 48%,rgba(243,199,102,.42),transparent 18%),radial-gradient(circle at 50% 50%,rgba(255,255,255,.16),transparent 6%);filter:blur(10px);opacity:.7;transform:scale(.92)}
+.vault-transition-ready .vault-transition-layer{opacity:1}
+.vault-transition-in .vault-transition-layer{animation:vaultRoomFadeIn .62s ease forwards}
+.vault-transition-out .vault-transition-layer{opacity:1}
+.vault-transition-out .vault-transition-glow{animation:vaultRoomGlowPulse .46s ease forwards}
+@keyframes vaultRoomFadeIn{0%{opacity:1}100%{opacity:0}}
+@keyframes vaultRoomGlowPulse{0%{transform:scale(.92);opacity:.55}55%{transform:scale(1.06);opacity:1}100%{transform:scale(1.18);opacity:.75}}
