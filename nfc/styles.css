@@ -1,4 +1,3 @@
-
 :root{
   --bg:#060606;
   --panel:rgba(18,18,18,.82);
@@ -17,13 +16,13 @@ body{
   background:
     radial-gradient(circle at 50% 0%, rgba(210,167,79,.12), transparent 34%),
     linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.94)),
-    url("../assets/merch_bg.jpg?v=4") center/cover fixed no-repeat;
+    url("./assets/merch_drop_room.jpg?v=4") center/cover fixed no-repeat;
 }
 body.game-page{
   background:
     radial-gradient(circle at 50% 0%, rgba(210,167,79,.10), transparent 34%),
     linear-gradient(180deg, rgba(0,0,0,.72), rgba(0,0,0,.96)),
-    url("../../assets/elite_bg.jpg?v=4") center/cover fixed no-repeat;
+    url("./assets/elite_bg.jpg?v=4") center/cover fixed no-repeat;
 }
 .wrap{width:min(1280px,94vw);margin:0 auto;padding:20px 0 60px;position:relative;z-index:2}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
