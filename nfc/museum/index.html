@@ -71,16 +71,22 @@
           return new Date(parsed.expires_at).getTime() > Date.now() ? parsed : null;
         }catch(e){ return null; }
       }
+      function tierRank(tier){
+        if(window.Play3DPassSession && Play3DPassSession.tierRank) return Play3DPassSession.tierRank(tier);
+        const ranks = { entry:1, gold:2, elite:3, drop:3, merch:3, master:4 };
+        return ranks[String(tier || '').toLowerCase()] || 0;
+      }
       const active = pass();
       document.querySelectorAll('[data-locked-tier]').forEach(card=>{
         const link = card.querySelector('.locked-link');
         const note = card.querySelector('.lock-note');
-        if(!active){
+        const needed = card.getAttribute('data-locked-tier') || '';
+        if(!active || tierRank(active.tier) < tierRank(needed)){
           if(link) link.href = '../scan.html';
           if(note) note.textContent = 'Locked without pass';
           return;
         }
-        if(note) note.textContent = 'Pass active';
+        if(note) note.textContent = String(active.tier || '').toLowerCase() === 'master' ? 'Master pass active' : 'Pass active';
       });
     })();
   </script>
