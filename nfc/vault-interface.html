@@ -24,8 +24,9 @@
       }
       const pass = Play3DPassSession.current();
       const tier = pass && pass.tier ? String(pass.tier).toUpperCase() : '';
-      const allowed = ['GOLD','ELITE','DROP','MERCH'];
-      if(!pass || !allowed.includes(tier)){
+      const allowed = ['GOLD','ELITE','DROP','MERCH','MASTER'];
+      const ranked = Play3DPassSession.hasTierAtLeast && Play3DPassSession.hasTierAtLeast('GOLD', pass);
+      if(!pass || (!allowed.includes(tier) && !ranked)){
         location.replace('/public/redeem/');
       }
     })();
