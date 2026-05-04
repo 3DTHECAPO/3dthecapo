@@ -38,7 +38,7 @@ body{
   position:relative;
   z-index:2;
 }
-.page-card,.hero-card,.viewer-card,.product-card{
+.page-card,.hero-card,.viewer-card,.legacy-product-card{
   border:1px solid rgba(255,255,255,.14) !important;
   border-radius:24px !important;
   background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)) !important;
@@ -46,8 +46,8 @@ body{
   backdrop-filter:blur(10px);
 }
 .btn,.back-btn{border-radius:999px !important;}
-.merch-stage .product-card{overflow:hidden;}
-.merch-stage .product-card img{
+.merch-stage .legacy-product-card{overflow:hidden;}
+.merch-stage .legacy-product-card img{
   width:100%;
   aspect-ratio:4/5;
   object-fit:cover;
