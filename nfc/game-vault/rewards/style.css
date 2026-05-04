@@ -8,10 +8,12 @@
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
+  background-color:#000;
   min-height:100vh;
   color:var(--cream);
   font-family:'Orbitron',sans-serif;
   background:
+    url('../../assets/entry_backdrop.jpg') center/cover no-repeat fixed,
     radial-gradient(circle at 50% 8%, rgba(200,137,22,.17), transparent 22%),
     linear-gradient(rgba(0,0,0,.72), rgba(0,0,0,.86)),
     linear-gradient(180deg,#090807 0%, #030303 100%);
@@ -20,9 +22,9 @@ body{
 .app{max-width:430px;margin:0 auto}
 .topbar{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .back{
-  width:44px;height:44px;display:grid;place-items:center;border-radius:50%;
+  min-width:86px;width:auto;height:44px;display:grid;place-items:center;border-radius:999px;
   text-decoration:none;color:var(--cream);background:rgba(0,0,0,.34);
-  border:1px solid rgba(255,255,255,.06);font-size:22px;flex:0 0 auto;
+  border:1px solid rgba(255,255,255,.06);font-size:13px;flex:0 0 auto;
 }
 .headcopy{min-width:0}
 .kicker{font-size:10px;letter-spacing:.24em;color:var(--gold);text-transform:uppercase}
@@ -66,6 +68,24 @@ body{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:6px;
+}
+.game-main-nav,
+.buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+  margin:0 0 10px;
+}
+.game-main-nav a,
+.buttons a,
+.buttons button{
+  flex:1 1 150px;
+  min-height:40px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
 }
 .filter-row{
   grid-template-columns:repeat(3,1fr);
@@ -182,4 +202,147 @@ body{
   color:var(--muted);
   font-size:11px;
   line-height:1.6;
+}
+
+button{
+  overflow-wrap:anywhere;
+  white-space:normal;
+  text-align:center;
+}
+
+/* VAULT GLOBAL UI DUPLICATE + OVERLAP SWEEP V4 */
+body > * {
+  position: relative;
+  z-index: 5;
+}
+
+.access-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.access-text {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  max-width: 90%;
+}
+
+.access-stamp {
+  position: absolute;
+  z-index: 1;
+  width: 60%;
+  max-width: 400px;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+.clean-buttons,
+.vault-main-nav,
+.buttons,
+.action-row,
+.vault-actions,
+.album-actions,
+.master-buttons,
+.controls,
+.actions,
+.reward-actions,
+.vault-link-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.clean-buttons button,
+.clean-buttons a,
+.vault-main-nav button,
+.vault-main-nav a,
+.buttons button,
+.buttons a,
+.action-row button,
+.action-row a,
+.vault-actions button,
+.vault-actions a,
+.album-actions button,
+.album-actions a,
+.master-buttons button,
+.master-buttons a,
+.controls button,
+.controls a,
+.actions button,
+.actions a,
+.reward-actions button,
+.reward-actions a,
+.vault-link-list button,
+.vault-link-list a {
+  flex: 1 1 180px;
+  max-width: 260px;
+}
+
+button,
+a {
+  display: inline-block;
+  text-align: center;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+@media (max-width: 520px) {
+  .clean-buttons button,
+  .clean-buttons a,
+  .vault-main-nav button,
+  .vault-main-nav a,
+  .buttons button,
+  .buttons a,
+  .action-row button,
+  .action-row a,
+  .vault-actions button,
+  .vault-actions a,
+  .album-actions button,
+  .album-actions a,
+  .master-buttons button,
+  .master-buttons a,
+  .controls button,
+  .controls a,
+  .actions button,
+  .actions a,
+  .reward-actions button,
+  .reward-actions a,
+  .vault-link-list button,
+  .vault-link-list a {
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+}
+
+/* VAULT GLOBAL UI SWEEP V4 - EFFECT LAYER STACK FIX */
+.cinematic-overlay,
+.cinematic-fog-back,
+.cinematic-glow,
+.cinematic-particles,
+.cinematic-fog-front,
+.cinematic-vignette,
+.noise,
+.fog,
+.particles {
+  z-index: 1;
+  pointer-events: none;
+}
+
+.vault-page,
+.page,
+main,
+header,
+.vault-main-nav,
+.access-text {
+  position: relative;
+  z-index: 5;
 }
