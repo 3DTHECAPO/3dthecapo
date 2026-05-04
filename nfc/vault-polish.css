@@ -38,7 +38,7 @@ body{
   position:relative;
   z-index:2;
 }
-.page-card,.hero-card,.viewer-card,.legacy-product-card{
+.page-card,.hero-card,.viewer-card,.product-card{
   border:1px solid rgba(255,255,255,.14) !important;
   border-radius:24px !important;
   background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)) !important;
@@ -46,8 +46,8 @@ body{
   backdrop-filter:blur(10px);
 }
 .btn,.back-btn{border-radius:999px !important;}
-.merch-stage .legacy-product-card{overflow:hidden;}
-.merch-stage .legacy-product-card img{
+.merch-stage .product-card{overflow:hidden;}
+.merch-stage .product-card img{
   width:100%;
   aspect-ratio:4/5;
   object-fit:cover;
@@ -75,4 +75,72 @@ body{
   background:
     radial-gradient(circle at 50% 18%, rgba(210,167,79,.12), transparent 32%),
     linear-gradient(180deg, rgba(0,0,0,.26), rgba(0,0,0,.60));
+}
+
+/* VAULT OVERLAP LAYOUT FIX V1 */
+.room-cinematic::before,
+.room-cinematic::after{
+  pointer-events:none;
+}
+
+.page-wrap,
+.page-card,
+.page-grid,
+.topbar,
+.product-grid,
+.hero-card,
+.viewer-card{
+  z-index:3;
+  min-width:0;
+}
+
+.btn,
+.back-btn{
+  font-family:Oswald,Arial,sans-serif !important;
+  letter-spacing:.3px !important;
+  line-height:1.2 !important;
+  overflow-wrap:anywhere;
+  white-space:normal;
+  text-align:center;
+}
+
+.page-card h1,
+.page-card h2,
+.page-card h3,
+.product-card h3,
+.product-card h4{
+  line-height:1.12;
+  overflow-wrap:anywhere;
+}
+
+.page-grid,
+.product-grid{
+  gap:18px;
+}
+
+@media (max-width:900px){
+  .page-grid,
+  .product-grid{
+    grid-template-columns:1fr !important;
+  }
+}
+
+@media (max-width:520px){
+  .topbar,
+  .action-row{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .btn,
+  .back-btn{
+    width:100%;
+  }
+
+  .page-card,
+  .hero-card,
+  .viewer-card,
+  .product-card{
+    border-radius:18px !important;
+  }
 }

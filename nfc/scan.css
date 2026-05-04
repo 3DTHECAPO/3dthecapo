@@ -146,3 +146,68 @@ input:focus{
   .scan-text{font-size:12px;padding:10px 14px;width:min(260px,76%)}
   h1{font-size:clamp(34px,10vw,50px)}
 }
+
+/* VAULT OVERLAP LAYOUT FIX V1 */
+.back-btn,
+.btn,
+.scan-text{
+  font-family:'Oswald',Arial,sans-serif;
+  letter-spacing:.3px;
+  line-height:1.2;
+  overflow-wrap:anywhere;
+  white-space:normal;
+  text-align:center;
+}
+
+h1{
+  letter-spacing:0;
+  line-height:1;
+  overflow-wrap:anywhere;
+}
+
+.scan-box,
+.entry-panel{
+  min-width:0;
+}
+
+.scan-frame,
+.scan-line,
+.scan-aura,
+.tap-flash{
+  pointer-events:none;
+}
+
+@media (max-width:900px){
+  .scan-hero{grid-template-columns:1fr}
+  .scan-box{min-height:420px}
+}
+
+@media (max-width:520px){
+  .topbar,
+  .action-row{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .back-btn,
+  .btn{
+    width:100%;
+    min-height:46px;
+  }
+
+  .entry-panel{
+    padding:20px 16px;
+    border-radius:18px;
+  }
+
+  .scan-box{
+    min-height:300px;
+    border-radius:18px;
+  }
+
+  .scan-text{
+    width:min(260px,78%);
+    padding:10px 14px;
+    letter-spacing:.2px;
+  }
+}

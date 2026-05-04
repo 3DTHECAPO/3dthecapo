@@ -1,48 +1,333 @@
-:root{--vault-bg:#050403;--vault-panel:rgba(12,10,7,.82);--vault-panel-strong:rgba(22,18,12,.92);--vault-line:rgba(224,183,84,.28);--vault-line-strong:rgba(244,199,84,.52);--vault-gold:#f3c766;--vault-ink:#f8efe0;--vault-muted:rgba(248,239,224,.72);--vault-dim:rgba(248,239,224,.48)}*{box-sizing:border-box}html{min-height:100%;background:#050403}body.cinematic-vault-room{min-height:100vh;margin:0;color:var(--vault-ink);font-family:Oswald,Arial,sans-serif;background:radial-gradient(circle at 18% 10%,rgba(243,199,102,.22),transparent 30%),radial-gradient(circle at 82% 18%,rgba(255,255,255,.08),transparent 24%),radial-gradient(circle at 50% 105%,rgba(243,199,102,.16),transparent 34%),linear-gradient(135deg,#090806 0%,#050403 44%,#11100d 100%);overflow-x:hidden}body.cinematic-vault-room:before,body.cinematic-vault-room:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0}body.cinematic-vault-room:before{background:linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(0deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 80%)}body.cinematic-vault-room:after{background:radial-gradient(ellipse at center,transparent 44%,rgba(0,0,0,.78) 100%),linear-gradient(180deg,rgba(255,255,255,.05),transparent 30%,rgba(0,0,0,.55))}.vault-smoke{position:fixed;inset:auto -10% -18% -10%;height:42vh;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 20% 70%,rgba(255,255,255,.12),transparent 42%),radial-gradient(ellipse at 72% 80%,rgba(243,199,102,.10),transparent 46%),linear-gradient(0deg,rgba(255,255,255,.08),transparent);filter:blur(28px);opacity:.75}.vault-page{position:relative;z-index:1;width:min(1180px,92vw);margin:0 auto;padding:18px 0 58px}.vault-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0 18px}.vault-logo-mark{display:inline-grid;place-items:center;min-width:58px;height:58px;padding:0 14px;border:1px solid var(--vault-line-strong);border-radius:999px;color:var(--vault-gold);background:linear-gradient(145deg,rgba(243,199,102,.18),rgba(0,0,0,.72));box-shadow:0 0 34px rgba(243,199,102,.14);font-weight:800;letter-spacing:1px;text-decoration:none}.vault-nav{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.vault-hero,.vault-card,.vault-panel{border:1px solid var(--vault-line);background:linear-gradient(145deg,var(--vault-panel-strong),rgba(0,0,0,.62));box-shadow:0 18px 70px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(16px)}.vault-hero{position:relative;overflow:hidden;border-radius:18px;padding:clamp(24px,4vw,48px);min-height:330px;display:grid;align-content:end}.vault-hero:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 68% 22%,rgba(243,199,102,.22),transparent 24%),linear-gradient(120deg,rgba(0,0,0,.12),rgba(0,0,0,.82));z-index:-1}.vault-hero:after{content:"";position:absolute;right:clamp(18px,5vw,70px);top:clamp(18px,5vw,55px);width:clamp(150px,24vw,280px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(243,199,102,.34);background:radial-gradient(circle,rgba(243,199,102,.18),transparent 58%);box-shadow:0 0 70px rgba(243,199,102,.16);z-index:-1}.vault-kicker{margin:0 0 10px;color:var(--vault-gold);text-transform:uppercase;letter-spacing:2px;font-size:.82rem;font-weight:800}h1,h2,h3,h4,p{margin-top:0}h1{margin-bottom:12px;font-size:clamp(2.3rem,6vw,5.4rem);line-height:.92;text-transform:uppercase;letter-spacing:0}h2{font-size:clamp(1.35rem,3vw,2.4rem);line-height:1.02;text-transform:uppercase;margin-bottom:12px}h3{font-size:1.25rem;text-transform:uppercase;color:var(--vault-gold);margin-bottom:8px}p{color:var(--vault-muted);font-size:1.02rem;line-height:1.55}.vault-lede{max-width:720px;font-size:1.14rem}.vault-actions,.vault-nav-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.vault-btn,.btn,.back-btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 16px;border-radius:999px;border:1px solid var(--vault-line);background:rgba(0,0,0,.52);color:var(--vault-ink);text-decoration:none;text-transform:uppercase;font-weight:800;letter-spacing:.5px;transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease}.vault-btn:hover,.btn:hover,.back-btn:hover{transform:translateY(-1px);border-color:var(--vault-line-strong);box-shadow:0 0 24px rgba(243,199,102,.12)}.vault-btn.gold,.btn.gold{background:linear-gradient(135deg,#f3c766,#9f6f22);border-color:rgba(255,226,141,.78);color:#120d05;box-shadow:0 10px 26px rgba(243,199,102,.16)}.vault-btn.ghost{background:rgba(255,255,255,.05)}.vault-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}.vault-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.vault-grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}.vault-card,.vault-panel{border-radius:14px;padding:20px;min-height:160px}.vault-card strong,.vault-stat{display:block;color:var(--vault-ink);font-size:1.05rem;text-transform:uppercase;margin-bottom:7px}.vault-visual{min-height:190px;border-radius:14px;border:1px solid rgba(243,199,102,.24);background:radial-gradient(circle at 32% 25%,rgba(243,199,102,.26),transparent 28%),linear-gradient(145deg,rgba(255,255,255,.06),rgba(0,0,0,.62));display:grid;place-items:center;color:var(--vault-gold);font-weight:800;text-transform:uppercase;text-align:center;padding:18px}.vault-track-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}.vault-track-list li{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid rgba(243,199,102,.16);padding:10px 0;color:var(--vault-muted)}.vault-tag{display:inline-flex;align-items:center;border:1px solid rgba(243,199,102,.32);border-radius:999px;padding:4px 9px;color:var(--vault-gold);font-size:.82rem;text-transform:uppercase}.vault-status{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}.vault-status .vault-card{min-height:110px}.vault-dashboard{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:16px}.vault-link-list{display:grid;gap:10px}.vault-link-list a{justify-content:flex-start}.vault-safe-note{margin-top:18px;color:var(--vault-dim);font-size:.92rem}.product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}.product-card{border-radius:14px;overflow:hidden;border:1px solid var(--vault-line);background:linear-gradient(145deg,rgba(20,16,10,.9),rgba(0,0,0,.6))}.product-card img{display:none}.product-card:before{content:"Vault Drop Preview";display:grid;place-items:center;min-height:170px;background:radial-gradient(circle at 40% 20%,rgba(243,199,102,.24),transparent 32%),linear-gradient(145deg,rgba(255,255,255,.06),rgba(0,0,0,.7));color:var(--vault-gold);font-weight:800;text-transform:uppercase}.product-body{padding:16px}@media (max-width:980px){.vault-grid,.vault-grid.two,.vault-grid.four,.vault-dashboard,.vault-status,.product-grid{grid-template-columns:1fr}.vault-hero{min-height:300px}.vault-topbar{align-items:flex-start;flex-direction:column}.vault-nav{justify-content:flex-start}h1{font-size:clamp(2rem,14vw,4rem)}}
+/* Emergency compatibility layer for newer room pages.
+   The last working snapshot did not include this file, so this keeps newer
+   routes readable without reintroducing the overlap-heavy room redesign. */
+:root{
+  --vault-bg:#050403;
+  --vault-panel:rgba(10,8,5,.82);
+  --vault-line:rgba(210,167,79,.28);
+  --vault-gold:#d2a74f;
+  --vault-text:#f3efe8;
+  --vault-muted:rgba(243,239,232,.74);
+}
 
-/* Restored old cinematic atmosphere layer over the new room layouts. */
-.cinematic-vault-room .cinematic-overlay{z-index:1;opacity:.95}
-.cinematic-vault-room .cinematic-fog-back,.cinematic-vault-room .cinematic-fog-front{background:radial-gradient(ellipse at 18% 72%,rgba(255,255,255,.16),transparent 36%),radial-gradient(ellipse at 76% 64%,rgba(243,199,102,.12),transparent 42%),linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);background-size:120% 120%;mix-blend-mode:screen}
-.cinematic-vault-room .cinematic-particles{background:radial-gradient(circle,rgba(243,199,102,.5) 0 1px,transparent 1.5px),radial-gradient(circle,rgba(255,255,255,.28) 0 1px,transparent 1.4px);background-size:92px 92px,137px 137px;background-position:0 0,42px 28px}
-.cinematic-vault-room .vault-page{z-index:3}
-.cinematic-vault-room .vault-smoke{z-index:1}
-.cinematic-vault-room:before,.cinematic-vault-room:after{z-index:0}
+body.cinematic-vault-room{
+  min-height:100vh;
+  margin:0;
+  color:var(--vault-text);
+  font-family:Oswald,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 50% 12%,rgba(210,167,79,.12),transparent 32%),
+    linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.92)),
+    #050403;
+  overflow-x:hidden;
+}
 
+.vault-smoke{
+  position:fixed;
+  inset:auto 0 0;
+  height:32vh;
+  pointer-events:none;
+  background:linear-gradient(0deg,rgba(255,255,255,.06),transparent);
+  opacity:.5;
+  z-index:1;
+}
 
-/* Cinematic room navigation transitions. */
-.vault-transition-layer{position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 42%,rgba(243,199,102,.26),transparent 24%),linear-gradient(135deg,rgba(0,0,0,.98),rgba(43,30,10,.96) 48%,rgba(0,0,0,.98));transition:opacity .46s ease}
-.vault-transition-glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 48%,rgba(243,199,102,.42),transparent 18%),radial-gradient(circle at 50% 50%,rgba(255,255,255,.16),transparent 6%);filter:blur(10px);opacity:.7;transform:scale(.92)}
-.vault-transition-ready .vault-transition-layer{opacity:1}
-.vault-transition-in .vault-transition-layer{animation:vaultRoomFadeIn .62s ease forwards}
-.vault-transition-out .vault-transition-layer{opacity:1}
-.vault-transition-out .vault-transition-glow{animation:vaultRoomGlowPulse .46s ease forwards}
-@keyframes vaultRoomFadeIn{0%{opacity:1}100%{opacity:0}}
-@keyframes vaultRoomGlowPulse{0%{transform:scale(.92);opacity:.55}55%{transform:scale(1.06);opacity:1}100%{transform:scale(1.18);opacity:.75}}
+.vault-page{
+  position:relative;
+  z-index:3;
+  width:min(1180px,92vw);
+  margin:0 auto;
+  padding:18px 0 56px;
+}
 
-/* Visual stabilization: keep room layouts readable while preserving cinematic layers. */
-body.cinematic-vault-room h1,
-body.cinematic-vault-room .vault-hero h2{font-family:'Black Ops One',sans-serif;letter-spacing:0}
-body.cinematic-vault-room h3,
-body.cinematic-vault-room h4,
-body.cinematic-vault-room p,
-body.cinematic-vault-room strong,
-body.cinematic-vault-room .vault-btn,
-body.cinematic-vault-room .btn,
-body.cinematic-vault-room .back-btn,
-body.cinematic-vault-room .vault-card{font-family:Oswald,Arial,sans-serif}
-body.cinematic-vault-room .vault-btn,
-body.cinematic-vault-room .btn,
-body.cinematic-vault-room .back-btn{overflow-wrap:anywhere;text-align:center;letter-spacing:.25px}
-body.cinematic-vault-room .vault-card h2,
-body.cinematic-vault-room .vault-card h3,
-body.cinematic-vault-room .vault-panel h2,
-body.cinematic-vault-room .vault-panel h3{font-size:clamp(1.08rem,2vw,1.42rem);line-height:1.12;letter-spacing:0}
-body.cinematic-vault-room .vault-grid,
-body.cinematic-vault-room .product-grid,
-body.cinematic-vault-room .vault-dashboard,
-body.cinematic-vault-room .vault-status{margin-top:24px}
-.vault-product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px}
-.vault-product-card{border-radius:14px;overflow:hidden;border:1px solid var(--vault-line);background:linear-gradient(145deg,rgba(20,16,10,.9),rgba(0,0,0,.6));box-shadow:0 18px 58px rgba(0,0,0,.34)}
-.vault-product-card:before{content:"Vault Drop Preview";display:grid;place-items:center;min-height:170px;background:radial-gradient(circle at 40% 20%,rgba(243,199,102,.24),transparent 32%),linear-gradient(145deg,rgba(255,255,255,.06),rgba(0,0,0,.7));color:var(--vault-gold);font-weight:800;text-transform:uppercase;text-align:center;padding:18px}
-@media (max-width:980px){.vault-product-grid{grid-template-columns:1fr}}
-@media (max-width:480px){body.cinematic-vault-room .vault-actions,body.cinematic-vault-room .vault-nav,body.cinematic-vault-room .vault-nav-row{flex-direction:column;width:100%}body.cinematic-vault-room .vault-btn,body.cinematic-vault-room .btn,body.cinematic-vault-room .back-btn{width:100%}body.cinematic-vault-room .vault-card,body.cinematic-vault-room .vault-panel{padding:16px}body.cinematic-vault-room .vault-hero{padding:22px 16px}}
+.vault-topbar,
+.vault-nav,
+.vault-actions,
+.vault-nav-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.vault-topbar{justify-content:space-between;margin-bottom:16px}
+.vault-nav{justify-content:flex-end}
+
+.vault-logo-mark,
+.vault-btn,
+.btn,
+.back-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:11px 16px;
+  border-radius:999px;
+  border:1px solid var(--vault-line);
+  background:rgba(255,255,255,.05);
+  color:var(--vault-text);
+  text-decoration:none;
+  text-transform:uppercase;
+  font-family:Oswald,Arial,sans-serif;
+  font-weight:700;
+  letter-spacing:.35px;
+  text-align:center;
+  overflow-wrap:anywhere;
+}
+
+.vault-logo-mark,
+.vault-btn.gold,
+.btn.gold{
+  background:linear-gradient(180deg,rgba(210,167,79,1),rgba(153,105,25,.92));
+  color:#130f08;
+  border-color:rgba(210,167,79,.48);
+}
+
+.vault-btn.ghost{background:rgba(255,255,255,.04)}
+
+.vault-hero,
+.vault-card,
+.vault-panel,
+.vault-product-card{
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:22px;
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));
+  box-shadow:0 24px 80px rgba(0,0,0,.58);
+}
+
+.vault-hero{
+  padding:clamp(22px,4vw,42px);
+  margin-bottom:18px;
+}
+
+.vault-kicker,
+.vault-tag{
+  color:var(--vault-gold);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:.84rem;
+  font-weight:700;
+}
+
+.vault-hero h1{
+  margin:8px 0 12px;
+  font-family:'Black Ops One',sans-serif;
+  font-size:clamp(2.2rem,7vw,5rem);
+  line-height:.95;
+  letter-spacing:0;
+  text-transform:uppercase;
+}
+
+.vault-card h2,
+.vault-card h3,
+.vault-panel h2,
+.vault-panel h3,
+.vault-product-card h2,
+.vault-product-card h3{
+  margin:0 0 8px;
+  font-size:clamp(1.05rem,2vw,1.4rem);
+  line-height:1.15;
+  letter-spacing:.1px;
+  text-transform:uppercase;
+}
+
+.vault-card p,
+.vault-panel p,
+.vault-product-card p,
+.vault-lede,
+.vault-safe-note{
+  color:var(--vault-muted);
+  line-height:1.55;
+}
+
+.vault-grid,
+.vault-product-grid,
+.product-grid,
+.vault-status,
+.vault-dashboard{
+  display:grid;
+  gap:16px;
+  margin-top:18px;
+}
+
+.vault-grid,
+.vault-product-grid,
+.product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.vault-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.vault-dashboard{grid-template-columns:1.2fr .8fr}
+.vault-status{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+.vault-card,
+.vault-panel,
+.vault-product-card{padding:18px}
+
+.vault-visual{
+  min-height:170px;
+  border-radius:16px;
+  border:1px solid rgba(210,167,79,.24);
+  display:grid;
+  place-items:center;
+  padding:18px;
+  text-align:center;
+  color:var(--vault-gold);
+  text-transform:uppercase;
+  font-weight:700;
+  background:
+    radial-gradient(circle at 35% 22%,rgba(210,167,79,.22),transparent 30%),
+    linear-gradient(145deg,rgba(255,255,255,.06),rgba(0,0,0,.66));
+}
+
+.vault-track-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:grid;
+  gap:10px;
+}
+
+.vault-track-list li{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(210,167,79,.18);
+  color:var(--vault-muted);
+}
+
+.product-body{padding:0}
+
+@media (max-width:980px){
+  .vault-grid,
+  .vault-grid.two,
+  .vault-product-grid,
+  .product-grid,
+  .vault-status,
+  .vault-dashboard{grid-template-columns:1fr}
+  .vault-topbar{align-items:flex-start;flex-direction:column}
+  .vault-nav{justify-content:flex-start}
+}
+
+@media (max-width:480px){
+  .vault-nav,
+  .vault-actions,
+  .vault-nav-row{flex-direction:column;width:100%}
+  .vault-btn,
+  .btn,
+  .back-btn{width:100%}
+  .vault-hero,
+  .vault-card,
+  .vault-panel,
+  .vault-product-card{border-radius:18px}
+}
+
+/* VAULT OVERLAP LAYOUT FIX V1 */
+.vault-page,
+.vault-hero,
+.vault-card,
+.vault-panel,
+.vault-product-card,
+.vault-grid,
+.vault-dashboard,
+.vault-status,
+.vault-topbar{
+  min-width:0;
+}
+
+.vault-btn,
+.btn,
+.back-btn,
+.vault-logo-mark,
+.vault-tag,
+.vault-kicker{
+  overflow-wrap:anywhere;
+  white-space:normal;
+  line-height:1.2;
+}
+
+.vault-hero h1,
+.vault-card h2,
+.vault-card h3,
+.vault-panel h2,
+.vault-panel h3,
+.vault-product-card h2,
+.vault-product-card h3,
+.vault-visual,
+.vault-track-list li{
+  overflow-wrap:anywhere;
+}
+
+.vault-grid,
+.vault-product-grid,
+.product-grid,
+.vault-status,
+.vault-dashboard{
+  align-items:stretch;
+}
+
+.vault-card,
+.vault-panel,
+.vault-product-card{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.vault-card .vault-btn,
+.vault-panel .vault-btn,
+.vault-product-card .vault-btn{
+  margin-top:auto;
+}
+
+.vault-smoke{
+  pointer-events:none;
+}
+
+@media (max-width:900px){
+  .vault-grid,
+  .vault-grid.two,
+  .vault-product-grid,
+  .product-grid,
+  .vault-status,
+  .vault-dashboard{
+    grid-template-columns:1fr !important;
+  }
+
+  .vault-topbar{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .vault-nav{
+    justify-content:flex-start;
+  }
+}
+
+@media (max-width:520px){
+  .vault-page{
+    width:min(94vw,1180px);
+    padding-bottom:38px;
+  }
+
+  .vault-nav,
+  .vault-actions,
+  .vault-nav-row{
+    flex-direction:column;
+    align-items:stretch;
+    width:100%;
+  }
+
+  .vault-logo-mark,
+  .vault-btn,
+  .btn,
+  .back-btn{
+    width:100%;
+  }
+
+  .vault-hero{
+    padding:20px 16px;
+  }
+
+  .vault-hero h1{
+    font-size:clamp(2rem,14vw,3.8rem);
+  }
+}
