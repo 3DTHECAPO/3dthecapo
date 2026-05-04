@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -19,17 +19,9 @@
 
   <script src="/public/shared/config.js"></script>
   <script src="/public/shared/pass-session.js"></script>
+  <script src="/public/shared/room-guard.js"></script>
   <script>
-    (function(){
-      if(!window.Play3DPassSession){
-        location.replace('/public/redeem/');
-        return;
-      }
-      const pass = Play3DPassSession.current();
-      if(!pass){
-        location.replace('/public/redeem/');
-      }
-    })();
+    Play3DRoomGuard.requireTier("GOLD");
   </script>
 
 </head>

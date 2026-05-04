@@ -165,7 +165,21 @@ function unlockUI(rawTier){
   show(connectDivider);
   show(connect);
 
+  if(tier === 'master') addMasterRoomLinks();
   playAccessSequence();
+}
+
+function addMasterRoomLinks(){
+  const targets = [privateNav, sessionLane].filter(Boolean);
+  targets.forEach((target)=>{
+    if(target.querySelector('[data-master-room-link]')) return;
+    const link = document.createElement('a');
+    link.href = '/nfc/rooms/master/';
+    link.textContent = 'Master';
+    link.setAttribute('data-master-room-link','1');
+    if(target === sessionLane) link.textContent = 'Master Room';
+    target.appendChild(link);
+  });
 }
 
 async function getCode(codeValue){
@@ -253,6 +267,22 @@ function getSavedPassCode(){
   }
 }
 
+function getActiveSavedPass(){
+  try{
+    const raw = localStorage.getItem("play3d_vault_pass_v1");
+    const pass = raw ? JSON.parse(raw) : null;
+    if(!pass || !pass.expires_at) return null;
+    const expiry = new Date(pass.expires_at).getTime();
+    if(!Number.isFinite(expiry) || expiry <= Date.now()){
+      localStorage.removeItem("play3d_vault_pass_v1");
+      return null;
+    }
+    return pass;
+  }catch(e){
+    return null;
+  }
+}
+
 function preserveNfcLinks(codeValue){
   const activeCode = String(codeValue || getSavedPassCode() || "").toUpperCase().trim();
   if(!activeCode) return;
@@ -267,7 +297,8 @@ function preserveNfcLinks(codeValue){
     "/nfc/secret-page.html",
     "/nfc/scan.html",
     "/nfc/game-vault/index.html",
-    "/nfc/game-vault/rewards/index.html"
+    "/nfc/game-vault/rewards/index.html",
+    "/nfc/rooms/master/index.html"
   ];
 
   document.querySelectorAll("a[href]").forEach((link)=>{
@@ -286,6 +317,13 @@ function preserveNfcLinks(codeValue){
 
 async function init(){
   if(!code){
+    const activePass = getActiveSavedPass();
+    if(activePass){
+      const tier = String(activePass.tier || 'ENTRY').toLowerCase();
+      unlockUI(tier);
+      preserveNfcLinks(activePass.code || '');
+      return;
+    }
     showLocked('No code provided');
     return;
   }

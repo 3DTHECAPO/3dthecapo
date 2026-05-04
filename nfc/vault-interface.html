@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -16,20 +16,9 @@
   </style>
   <script src="/public/shared/config.js"></script>
   <script src="/public/shared/pass-session.js"></script>
+  <script src="/public/shared/room-guard.js"></script>
   <script>
-    (function(){
-      if(!window.Play3DPassSession){
-        location.replace('/public/redeem/');
-        return;
-      }
-      const pass = Play3DPassSession.current();
-      const tier = pass && pass.tier ? String(pass.tier).toUpperCase() : '';
-      const allowed = ['GOLD','ELITE','DROP','MERCH','MASTER'];
-      const ranked = Play3DPassSession.hasTierAtLeast && Play3DPassSession.hasTierAtLeast('GOLD', pass);
-      if(!pass || (!allowed.includes(tier) && !ranked)){
-        location.replace('/public/redeem/');
-      }
-    })();
+    Play3DRoomGuard.requireTier("GOLD");
   </script>
 </head>
 <body class="room-cinematic room-interface">
@@ -51,3 +40,4 @@
   </div>
 </body>
 </html>
+
