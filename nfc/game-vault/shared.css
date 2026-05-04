@@ -7,10 +7,12 @@
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
+  background-color:#000;
   min-height:100vh;
   color:var(--cream);
   font-family:'Orbitron',sans-serif;
   background:
+    url('../assets/entry_backdrop.jpg') center/cover no-repeat fixed,
     radial-gradient(circle at 50% 10%, rgba(200,137,22,.14), transparent 24%),
     linear-gradient(180deg,#090807 0%, #030303 100%);
   padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 20px);
@@ -29,6 +31,22 @@ h1{margin:8px 0 0;font-size:42px;line-height:1;font-weight:900}
   box-shadow:0 16px 44px rgba(0,0,0,.45);
 }
 .hub-card + .hub-card{margin-top:18px}
+.game-main-nav,
+.buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+  margin:0 0 18px;
+}
+.game-main-nav .cta,
+.buttons .cta{
+  flex:1 1 150px;
+  min-width:0;
+  min-height:44px;
+  padding:12px 14px;
+  font-size:11px;
+}
 .pill{
   display:inline-flex;align-items:center;justify-content:center;
   padding:10px 14px;border-radius:999px;border:1px solid var(--line);
@@ -42,4 +60,147 @@ h2{margin:18px 0 18px;font-size:32px;line-height:1;font-weight:900}
   font-weight:900;font-size:17px;letter-spacing:.08em;text-transform:uppercase;
   background:linear-gradient(180deg,#f2ce75,#c98919);
   box-shadow:0 10px 22px rgba(200,137,22,.24);
+}
+
+button{
+  overflow-wrap:anywhere;
+  white-space:normal;
+  text-align:center;
+}
+
+/* VAULT GLOBAL UI DUPLICATE + OVERLAP SWEEP V4 */
+body > * {
+  position: relative;
+  z-index: 5;
+}
+
+.access-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.access-text {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  max-width: 90%;
+}
+
+.access-stamp {
+  position: absolute;
+  z-index: 1;
+  width: 60%;
+  max-width: 400px;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+.clean-buttons,
+.vault-main-nav,
+.buttons,
+.action-row,
+.vault-actions,
+.album-actions,
+.master-buttons,
+.controls,
+.actions,
+.reward-actions,
+.vault-link-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.clean-buttons button,
+.clean-buttons a,
+.vault-main-nav button,
+.vault-main-nav a,
+.buttons button,
+.buttons a,
+.action-row button,
+.action-row a,
+.vault-actions button,
+.vault-actions a,
+.album-actions button,
+.album-actions a,
+.master-buttons button,
+.master-buttons a,
+.controls button,
+.controls a,
+.actions button,
+.actions a,
+.reward-actions button,
+.reward-actions a,
+.vault-link-list button,
+.vault-link-list a {
+  flex: 1 1 180px;
+  max-width: 260px;
+}
+
+button,
+a {
+  display: inline-block;
+  text-align: center;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+@media (max-width: 520px) {
+  .clean-buttons button,
+  .clean-buttons a,
+  .vault-main-nav button,
+  .vault-main-nav a,
+  .buttons button,
+  .buttons a,
+  .action-row button,
+  .action-row a,
+  .vault-actions button,
+  .vault-actions a,
+  .album-actions button,
+  .album-actions a,
+  .master-buttons button,
+  .master-buttons a,
+  .controls button,
+  .controls a,
+  .actions button,
+  .actions a,
+  .reward-actions button,
+  .reward-actions a,
+  .vault-link-list button,
+  .vault-link-list a {
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+}
+
+/* VAULT GLOBAL UI SWEEP V4 - EFFECT LAYER STACK FIX */
+.cinematic-overlay,
+.cinematic-fog-back,
+.cinematic-glow,
+.cinematic-particles,
+.cinematic-fog-front,
+.cinematic-vignette,
+.noise,
+.fog,
+.particles {
+  z-index: 1;
+  pointer-events: none;
+}
+
+.vault-page,
+.page,
+main,
+header,
+.vault-main-nav,
+.access-text {
+  position: relative;
+  z-index: 5;
 }
