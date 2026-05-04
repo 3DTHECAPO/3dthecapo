@@ -12,9 +12,7 @@
   <script src="/public/shared/config.js"></script>
   <script src="/public/shared/pass-session.js"></script>
   <script src="/public/shared/room-guard.js"></script>
-  <script>
-    Play3DRoomGuard.requireTier("ENTRY");
-  </script>
+  <script>Play3DRoomGuard.requireTier("ENTRY");</script>
 </head>
 <body class="cinematic-vault-room room-cinematic room-entry entry-room"><div class="cinematic-overlay" aria-hidden="true">
   <div class="cinematic-fog-back"></div>
@@ -26,9 +24,9 @@
   <div class="vault-smoke" aria-hidden="true"></div>
   <main class="vault-page">
     <header class="vault-topbar"><a class="vault-logo-mark" href="./index.html">VAULT</a><nav class="vault-nav" aria-label="Entry room navigation"><a class="back-btn" href="./index.html">Back To Vault</a><a class="back-btn" href="./game-vault/">Game Vault</a></nav></header>
-    <section class="vault-hero"><p class="vault-kicker">Entry Access</p><h1>Welcome to the Vault</h1><p class="vault-lede">Your first room opens the music lane, vault previews, and the next step toward Gold access.</p><div class="vault-actions"><a class="vault-btn gold" href="/nfc/album-chamber.html">BUY ALBUM</a><a class="vault-btn ghost" href="https://youtube.com/@iiidtv">Watch Channel</a><a class="vault-btn ghost" href="/nfc/museum/">Museum</a></div></section>
-    <section class="vault-grid two" aria-label="Entry feature previews"><article class="vault-card"><h2>Buy Album</h2><p>Step into the album lane when your Gold access is ready. This button keeps the existing route into the Album Chamber.</p><a class="vault-btn gold" href="/nfc/album-chamber.html">BUY ALBUM</a></article><article class="vault-card"><h2>Gold Teaser</h2><p>Unlock full experience with Gold. Preview deeper tracks, cover art, private media cards, and the full Album Chamber.</p><a class="vault-btn ghost" href="/nfc/scan.html">Unlock full experience with Gold</a></article></section>
-    <section class="vault-grid" aria-label="Entry room teasers"><article class="vault-card"><strong>Game Vault Teaser</strong><p>Play the public games and see what member rewards can unlock once your pass is active.</p><a class="vault-btn ghost" href="/nfc/game-vault/">Open Game Vault</a></article><article class="vault-card"><strong>Museum Teaser</strong><p>Browse the public vault museum and discover locked rooms that open with stronger access.</p><a class="vault-btn ghost" href="/nfc/museum/">Open Museum</a></article><article class="vault-card"><strong>Visual Preview</strong><p>Cover art, snippet notes, and drop visuals can live here without depending on missing image files.</p></article></section>
+    <section class="vault-hero"><p class="vault-kicker">Entry Access</p><h1>Welcome to the Vault</h1><p class="vault-lede">Start inside the artist vault with the album lane, game access, museum route, and the first taste of the Gold experience.</p><div class="vault-actions"><a class="vault-btn gold" href="/nfc/album-chamber.html">BUY ALBUM</a><a class="vault-btn ghost" href="https://youtube.com/@iiidtv">Watch Channel</a><a class="vault-btn ghost" href="/nfc/museum/">Museum</a></div></section>
+    <section class="vault-grid two" aria-label="Entry feature previews"><article class="vault-card"><h2>Buy Album</h2><p>Move from Entry access into the album path. Gold opens the deeper chamber with track cards, visual panels, and support links.</p><a class="vault-btn gold" href="/nfc/album-chamber.html">BUY ALBUM</a></article><article class="vault-card"><h2>Upgrade Teaser</h2><p>Gold access unlocks the full album room, a cleaner media lane, and a private dashboard route for pass holders.</p><a class="vault-btn ghost" href="/nfc/scan.html">Unlock With Code</a></article></section>
+    <section class="vault-grid" aria-label="Entry room teasers"><article class="vault-card"><strong>Game Vault</strong><p>Play the public arcade lane and connect member access when rewards are enabled for your pass.</p><a class="vault-btn ghost" href="/nfc/game-vault/">Open Game Vault</a></article><article class="vault-card"><strong>Museum Route</strong><p>Enter the museum wing for Entry exhibits and a preview of Gold and Elite collection cards.</p><a class="vault-btn ghost" href="/nfc/museum/">Open Museum</a></article><article class="vault-card"><strong>Vault Preview</strong><p>A cinematic room card for drop notes, cover direction, release clues, and the next access level.</p></article></section>
   </main>
-</body>
+<script src="./cinematic-room-transitions.js"></script></body>
 </html>
