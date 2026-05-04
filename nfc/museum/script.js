@@ -1,6 +1,6 @@
 (function(){
   const PASS_KEY = 'play3d_vault_pass_v1';
-  const tierRank = { entry:1, gold:2, elite:3, drop:3, merch:3 };
+  const tierRank = { entry:1, gold:2, elite:3, drop:3, merch:3, master:4 };
 
   const exhibits = {
     entry: [
