@@ -183,3 +183,143 @@ body{
   font-size:11px;
   line-height:1.6;
 }
+
+
+/* ===== REWARDS PAGE STABILIZE FIX ===== */
+.app{
+  width:min(100%,1100px);
+  max-width:1100px;
+  padding:0 12px 30px;
+}
+
+.topbar{
+  max-width:1100px;
+}
+
+.back{
+  width:auto;
+  min-width:120px;
+  padding:0 16px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.vault-main-nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:0 0 14px;
+}
+
+.vault-main-nav a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:10px 18px;
+  border-radius:999px;
+  border:1px solid rgba(228,184,95,.24);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0) 10%),
+    linear-gradient(180deg,#17120e,#0a0908);
+  color:var(--cream);
+  text-decoration:none;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.wallet-list{
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+}
+
+.reward-card{
+  min-height:100%;
+}
+
+.reward-name,
+.reward-meta,
+.reward-desc,
+.reward-extra,
+.reward-code,
+.label,
+.value,
+.note,
+.title,
+.kicker{
+  word-break:break-word;
+  overflow-wrap:anywhere;
+}
+
+.reward-code{
+  font-size:13px;
+  line-height:1.4;
+}
+
+.reward-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.action-btn,
+.claim-btn,
+.copy-btn,
+.filter-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:46px;
+  padding:12px 16px;
+  border-radius:999px;
+  cursor:pointer;
+  text-decoration:none;
+}
+
+.action-btn.gold,
+.claim-btn,
+.filter-btn.active{
+  color:#111;
+  background:
+    radial-gradient(circle at 50% 35%, #f7dd96 0%, #e5b54d 48%, #c78615 100%);
+}
+
+.action-btn.dark,
+.copy-btn,
+.filter-btn{
+  color:var(--cream);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0) 10%),
+    linear-gradient(180deg,#17120e,#0a0908);
+  border:1px solid rgba(228,184,95,.22);
+}
+
+@media (max-width:640px){
+  .summary-grid{
+    grid-template-columns:1fr;
+  }
+
+  .filter-row,
+  .actions-grid,
+  .reward-actions{
+    grid-template-columns:1fr;
+  }
+
+  .vault-main-nav{
+    flex-direction:column;
+  }
+
+  .vault-main-nav a,
+  .back{
+    width:100%;
+  }
+
+  .topbar{
+    align-items:stretch;
+    flex-direction:column;
+  }
+}
