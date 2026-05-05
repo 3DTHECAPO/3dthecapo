@@ -59,6 +59,11 @@ function unlockUI(tier){
   const room = byId('room-'+tier);
   if(room) room.classList.remove('hidden');
 
+  setTimeout(()=>{
+    const room = document.getElementById('room-'+tier);
+    if(room) room.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 5600);
+
   if(statusPill) statusPill.textContent = tier.toUpperCase();
   if(vaultState) vaultState.textContent = tier.charAt(0).toUpperCase()+tier.slice(1)+' Room';
 
