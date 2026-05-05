@@ -211,3 +211,102 @@ h1{
     letter-spacing:.2px;
   }
 }
+
+
+/* ===== SCAN CINEMATIC UPGRADE ===== */
+.scan-cinematic{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  background:
+    radial-gradient(circle at center, rgba(210,167,79,.16), transparent 32%),
+    linear-gradient(180deg, rgba(0,0,0,.96), rgba(0,0,0,.99));
+}
+
+.scan-cinematic.active{
+  display:flex;
+}
+
+.scan-core{
+  position:relative;
+  width:min(320px,78vw);
+  aspect-ratio:1/1;
+}
+
+.scan-ring{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  border:2px solid rgba(210,167,79,.58);
+  box-shadow:
+    0 0 24px rgba(210,167,79,.36),
+    inset 0 0 30px rgba(210,167,79,.14);
+  animation:scanSpin 2s linear infinite;
+}
+
+.scan-ring.ring2{
+  inset:28px;
+  opacity:.68;
+  animation-duration:3.2s;
+  animation-direction:reverse;
+}
+
+.scan-ring.ring3{
+  inset:56px;
+  opacity:.46;
+  animation-duration:4.4s;
+}
+
+.scan-center{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  text-align:center;
+}
+
+.scan-key{
+  width:74px;
+  height:74px;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(210,167,79,.55);
+  background:linear-gradient(180deg, rgba(210,167,79,.22), rgba(0,0,0,.50));
+  color:#f2d27b;
+  font-size:42px;
+  transform:rotate(45deg);
+  box-shadow:0 0 34px rgba(210,167,79,.24);
+  animation:keyPulse 1.25s ease-in-out infinite;
+}
+
+.scan-status{
+  font-family:'Black Ops One',sans-serif;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  color:#f2d27b;
+  font-size:clamp(15px,4vw,22px);
+  text-shadow:0 0 18px rgba(210,167,79,.38);
+}
+
+.scan-cinematic.granted .scan-key{
+  background:linear-gradient(180deg,#f2d27b,#caa24a 60%,#8b641e);
+  color:#100c05;
+}
+
+@keyframes scanSpin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+@keyframes keyPulse{
+  0%,100%{transform:rotate(45deg) scale(1)}
+  50%{transform:rotate(45deg) scale(1.12)}
+}
