@@ -14,9 +14,9 @@ body{
   color:var(--cream);
   font-family:'Orbitron',sans-serif;
   background:
-    radial-gradient(circle at 50% 6%, rgba(200,137,22,.17), transparent 20%),
-    linear-gradient(rgba(0,0,0,.72), rgba(0,0,0,.86)),
-    linear-gradient(180deg,#090807 0%, #030303 100%);
+    linear-gradient(180deg,rgba(0,0,0,.65),rgba(0,0,0,.95)),
+    url("../../../assets/blackjack_bg.jpg") center/cover no-repeat;
+  background-attachment:fixed;
   padding:calc(env(safe-area-inset-top,0px) + 10px) 10px calc(env(safe-area-inset-bottom,0px) + 14px);
 }
 .app{max-width:430px;margin:0 auto}
