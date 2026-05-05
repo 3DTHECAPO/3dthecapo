@@ -45,80 +45,15 @@ h2{margin:18px 0 18px;font-size:32px;line-height:1;font-weight:900}
   box-shadow:0 10px 22px rgba(200,137,22,.24);
 }
 
+/* Stable link/button reset: prevents purple links without forcing layouts */
 a,
 a:visited{
-  color:#f2d27b !important;
-  text-decoration:none !important;
+  color:inherit;
+  text-decoration:none;
 }
 
 button,
-a button,
-a.btn,
 .btn,
-.game-btn,
-.vault-btn,
-.claim-btn,
-.reward-btn,
-.play-btn,
-.back-btn,
-.nav-btn,
-.menu-btn,
-.choice-btn,
-.primary-btn,
-.secondary-btn,
-.card a,
-.actions a,
-.action-row a,
-.game-card a,
-.reward-card a{
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  gap:8px !important;
-  min-height:42px !important;
-  padding:10px 18px !important;
-  border-radius:999px !important;
-  border:1px solid rgba(202,162,74,.55) !important;
-  background:linear-gradient(180deg,#f2d27b,#caa24a 60%,#8b641e) !important;
-  color:#100c05 !important;
-  font-family:Oswald,Arial,sans-serif !important;
-  font-weight:900 !important;
-  letter-spacing:1px !important;
-  text-transform:uppercase !important;
-  text-decoration:none !important;
-  cursor:pointer !important;
-  box-shadow:0 12px 28px rgba(0,0,0,.38) !important;
-}
-
-button:hover,
-a.btn:hover,
-.btn:hover,
-.game-btn:hover,
-.vault-btn:hover,
-.claim-btn:hover,
-.reward-btn:hover,
-.play-btn:hover,
-.back-btn:hover,
-.nav-btn:hover,
-.menu-btn:hover,
-.choice-btn:hover,
-.primary-btn:hover,
-.secondary-btn:hover,
-.card a:hover,
-.actions a:hover,
-.action-row a:hover,
-.game-card a:hover,
-.reward-card a:hover{
-  filter:brightness(1.08) !important;
-  transform:translateY(-1px);
-}
-
-nav a,
-.vault-main-nav a,
-.game-nav a,
-.topbar a,
-.header a{
-  color:#f2d27b !important;
-  text-decoration:none !important;
-  font-weight:800 !important;
+a.btn{
+  border-radius:999px;
 }
