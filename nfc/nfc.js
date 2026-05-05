@@ -90,31 +90,38 @@ function playAccessSequence(){
 
   if(!seq) return;
 
-  // show sequence
-  seq.classList.add('active');
+  // reset
+  seq.classList.remove('active','play','fadeout');
+  if(overlay) overlay.classList.remove('show');
 
-  // start door animation
-  setTimeout(()=>{
-    seq.classList.add('play');
-  }, 100);
+  seq.style.display = 'block';
 
-  // show ACCESS GRANTED
+  // STEP 1: ACCESS GRANTED flash
   if(overlay){
-    setTimeout(()=>{
-      overlay.classList.add('show');
-    }, 1200);
+    overlay.classList.add('show');
   }
 
-  // fade out entire sequence
+  // STEP 2: bring in sequence
+  setTimeout(()=>{
+    seq.classList.add('active');
+  }, 300);
+
+  // STEP 3: open doors AFTER text hits
+  setTimeout(()=>{
+    if(overlay) overlay.classList.remove('show');
+    seq.classList.add('play');
+  }, 1200);
+
+  // STEP 4: fade out entire sequence
   setTimeout(()=>{
     seq.classList.add('fadeout');
-  }, 4000);
+  }, 4200);
 
-  // fully remove after animation
+  // STEP 5: cleanup
   setTimeout(()=>{
     seq.classList.remove('active','play','fadeout');
-    if(overlay) overlay.classList.remove('show');
-  }, 5200);
+    seq.style.display = 'none';
+  }, 5400);
 }
 
 async function init(){
