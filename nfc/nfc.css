@@ -55,9 +55,7 @@ p,.state-line,.locked-room p,.subpanel p,.bundle-head p,.product-body p,.video-c
 .connect-card{padding:18px;display:flex;flex-wrap:wrap;gap:12px}.connect-card a{border:1px solid var(--line);border-radius:999px;padding:10px 14px;background:rgba(255,255,255,.04)}
 .footer{text-align:center;margin-top:24px;color:var(--muted)}
 .hidden{display:none!important}
-body.locked #sessionLane,body.locked #sessionDivider,body.locked #connect,body.locked #connectDivider,body.locked #room-entry,body.locked #room-gold,body.locked #room-elite{display:none!important}
-body.locked #lockedRoom{display:block!important}
-body.locked .vault-main-nav,body.locked .footer{display:block!important}
+body.locked #sessionLane,body.locked #sessionDivider,body.locked #connect,body.locked #connectDivider,body.locked #lockedRoom,body.locked #room-entry,body.locked #room-gold,body.locked #room-elite,body.locked .vault-main-nav,body.locked .footer{display:none!important}
 .scanner{position:relative;min-height:340px;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg, rgba(0,0,0,.30), rgba(0,0,0,.60)),url("./assets/vault_interface.jpg") center/cover no-repeat;overflow:hidden;cursor:pointer}
 .scan-aura{position:absolute;inset:0;background:radial-gradient(circle at center, rgba(210,167,79,.10), transparent 45%);mix-blend-mode:screen;animation:auraPulse 2.8s ease-in-out infinite}
 .scan-frame{position:absolute;left:50%;top:50%;width:min(470px,76%);height:min(470px,76%);transform:translate(-50%,-50%);border:2px solid rgba(210,167,79,.7);box-shadow:0 0 0 9999px rgba(0,0,0,.12),0 0 26px rgba(210,167,79,.18) inset}
@@ -90,28 +88,33 @@ body.locked .vault-main-nav,body.locked .footer{display:block!important}
 @keyframes doorOpenLeft{0%{transform:translateX(0)}100%{transform:translateX(-112%)}}
 @keyframes doorOpenRight{0%{transform:translateX(0)}100%{transform:translateX(112%)}}
 @keyframes fadeWhole{to{opacity:0;visibility:hidden}}
-35%{opacity:1}
+body.vault-glow-pulse::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:99998;
+  background:radial-gradient(circle at center,rgba(242,210,123,.22),transparent 45%);
+  animation:vaultGlowPulse 1.4s ease-out 2;
+}
+@keyframes vaultGlowPulse{
+  0%{opacity:0}
+  35%{opacity:1}
   100%{opacity:0}
 }
 @media (max-width:980px){.hero-card,.room-grid,.triple-grid{grid-template-columns:1fr}.merch-placeholder-grid{grid-template-columns:1fr}.bundle-head{flex-direction:column;align-items:flex-start}}
 @media (max-width:640px){.shell{width:min(92vw,1180px)}.scanner{min-height:300px}.scan-frame{width:min(340px,78%);height:min(340px,78%)}.scan-line{width:min(340px,78%)}.scan-text{font-size:12px;padding:10px 14px;width:min(260px,76%)}}
 
-/* fixed lock state */
+/* hard lock state */
 body.locked .room,
 body.locked #sessionLane,
 body.locked #sessionDivider,
 body.locked #connect,
-body.locked #connectDivider{
-  display:none !important;
-}
-
-body.locked #lockedRoom{
-  display:block !important;
-}
-
+body.locked #connectDivider,
+body.locked #lockedRoom,
 body.locked .vault-main-nav,
 body.locked .footer{
-  display:block !important;
+  display:none !important;
 }
 
 /* scan page layout cleanup */
