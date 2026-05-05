@@ -48,6 +48,7 @@ function showLocked(msg){
   if(privateNav) privateNav.classList.add('hidden');
 }
 function unlockUI(tier){
+  playAccessSequence();
   document.body.classList.remove('locked');
 
   ['entry','gold','elite'].forEach(t=>{
@@ -83,6 +84,39 @@ async function getCode(code){
 
 
 // ---------- MAIN ----------
+function playAccessSequence(){
+  const seq = document.getElementById('vaultSequence');
+  const overlay = document.getElementById('accessOverlay');
+
+  if(!seq) return;
+
+  // show sequence
+  seq.classList.add('active');
+
+  // start door animation
+  setTimeout(()=>{
+    seq.classList.add('play');
+  }, 100);
+
+  // show ACCESS GRANTED
+  if(overlay){
+    setTimeout(()=>{
+      overlay.classList.add('show');
+    }, 1200);
+  }
+
+  // fade out entire sequence
+  setTimeout(()=>{
+    seq.classList.add('fadeout');
+  }, 4000);
+
+  // fully remove after animation
+  setTimeout(()=>{
+    seq.classList.remove('active','play','fadeout');
+    if(overlay) overlay.classList.remove('show');
+  }, 5200);
+}
+
 async function init(){
 
   if(!code){
