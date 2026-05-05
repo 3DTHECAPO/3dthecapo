@@ -117,9 +117,3 @@
     grid-template-columns: 1fr;
   }
 }
-
-/* Keeps CAPO GUIDE clickable above normal site UI without changing layout. */
-.capo-guide-root,
-.capo-guide-root * {
-  box-sizing: border-box;
-}

@@ -5,7 +5,7 @@
   window.CAPO_GUIDE_LOADED = true;
 
   const ANSWERS = {
-    code: 'Tap Enter Code, then use the access code from your merch, pass, or drop. If you are already inside NFC, it stays inside the NFC folder and does not jump to the wrong page.',
+    code: 'Tap Vault or Enter Code, then use the access code from your merch, pass, or drop. Start at the scan page.',
     rewards: 'Rewards are tied to member or pass activity. Free players can play, but rewards need a member/pass.',
     claim: 'Go to the rewards area, pick your available reward, and submit the claim form. Some rewards require manual review.',
     museum: 'The Vault Museum is the public exhibit space for drops and vault history.',
@@ -22,37 +22,9 @@
     ['Contact / support', 'support']
   ];
 
-  /*
-    Route fixer:
-    - If this guide is loaded anywhere inside /nfc/, links stay inside the real /nfc/ folder.
-    - If this guide is loaded on the main site, links go into ./nfc/.
-    - This prevents the old broken ../nfc/... behavior.
-  */
-  function nfcBase(){
-    const pathName = window.location.pathname || '';
-    const marker = '/nfc/';
-    const at = pathName.indexOf(marker);
-    if(at !== -1) return pathName.slice(0, at + marker.length - 1);
-
-    // Handles exact /nfc without trailing slash.
-    if(pathName.endsWith('/nfc')) return pathName;
-
-    // Main site fallback.
-    return './nfc';
-  }
-
-  function nfcUrl(relativePath, keepCode){
-    const clean = String(relativePath || '').replace(/^\/+/, '');
-    let href = nfcBase().replace(/\/$/, '') + '/' + clean;
-
-    if(keepCode){
-      const code = new URLSearchParams(window.location.search).get('code');
-      if(code){
-        href += (href.includes('?') ? '&' : '?') + 'code=' + encodeURIComponent(code);
-      }
-    }
-
-    return href;
+  function path(url){
+    const isNfc = location.pathname.includes('/nfc/');
+    return isNfc ? '../' + url.replace(/^\.\//, '') : url;
   }
 
   function hasActivePass(){
@@ -87,8 +59,6 @@
   }
 
   function render(){
-    if(document.querySelector('.capo-guide-root')) return;
-
     const root = makeEl('div', 'capo-guide-root');
     const button = makeEl('button', 'capo-guide-button', 'GUIDE');
     button.type = 'button';
@@ -101,7 +71,7 @@
 
     const head = makeEl('div', 'capo-guide-head');
     head.appendChild(makeEl('div', 'capo-guide-title', 'CAPO GUIDE'));
-    const close = makeEl('button', 'capo-guide-close', '×');
+    const close = makeEl('button', 'capo-guide-close', 'x');
     close.type = 'button';
     close.setAttribute('aria-label', 'Close CAPO GUIDE');
     head.appendChild(close);
@@ -123,10 +93,10 @@
 
     const links = makeEl('div', 'capo-guide-links');
     [
-      ['Enter Code', nfcUrl('scan.html', true)],
-      ['Game Vault', nfcUrl('game-vault/', false)],
-      ['Rewards', nfcUrl('game-vault/rewards/', false)],
-      ['Museum', nfcUrl('museum/', false)]
+      ['Enter Code', './index.html'],
+      ['Game Vault', './game-vault/'],
+      ['Rewards', './game-vault/rewards/'],
+      ['Museum', './museum/']
     ].forEach(([label, href]) => {
       const link = makeEl('a', 'capo-guide-link', label);
       link.href = href;
@@ -152,10 +122,6 @@
 
     button.addEventListener('click', () => setOpen(panel.hidden));
     close.addEventListener('click', () => setOpen(false));
-
-    document.addEventListener('keydown', (event) => {
-      if(event.key === 'Escape') setOpen(false);
-    });
   }
 
   if(document.readyState === 'loading'){
