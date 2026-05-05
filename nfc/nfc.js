@@ -93,6 +93,15 @@ function playAccessSequence(){
   // reset
   seq.classList.remove('active','play','fadeout');
   if(overlay) overlay.classList.remove('show');
+  document.body.classList.remove('vault-glow-pulse');
+
+  if(navigator.vibrate) navigator.vibrate([80,40,120]);
+
+  const audio = new Audio('./assets/vault_unlock.mp3');
+  audio.volume = 0.45;
+  audio.play().catch(()=>{});
+
+  document.body.classList.add('vault-glow-pulse');
 
   seq.style.display = 'block';
 
@@ -121,6 +130,7 @@ function playAccessSequence(){
   setTimeout(()=>{
     seq.classList.remove('active','play','fadeout');
     seq.style.display = 'none';
+    document.body.classList.remove('vault-glow-pulse');
   }, 5400);
 }
 
