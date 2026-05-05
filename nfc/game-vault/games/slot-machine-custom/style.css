@@ -11,10 +11,9 @@ body{
   color:var(--cream);
   font-family:'Orbitron',sans-serif;
   background:
-    radial-gradient(circle at 50% 8%, rgba(200,137,22,.18), transparent 20%),
-    linear-gradient(rgba(0,0,0,.72), rgba(0,0,0,.84)),
-    url('./assets/bg-vault-room.jpg') center/cover no-repeat,
-    linear-gradient(180deg,#090807 0%, #030303 100%);
+    linear-gradient(180deg,rgba(0,0,0,.65),rgba(0,0,0,.95)),
+    url("../../../assets/slots_bg.jpg") center/cover no-repeat;
+  background-attachment:fixed;
   padding:calc(env(safe-area-inset-top,0px) + 10px) 10px calc(env(safe-area-inset-bottom,0px) + 14px);
 }
 .shell{max-width:430px;margin:0 auto}
