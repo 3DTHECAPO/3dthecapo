@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -26,9 +26,17 @@
 
   <script src="/public/shared/config.js"></script>
   <script src="/public/shared/pass-session.js"></script>
-  <script src="/public/shared/room-guard.js"></script>
   <script>
-    Play3DRoomGuard.requireTier("ELITE");
+    (function(){
+      if(!window.Play3DPassSession){
+        location.replace('/public/redeem/');
+        return;
+      }
+      const pass = Play3DPassSession.current();
+      if(!pass){
+        location.replace('/public/redeem/');
+      }
+    })();
   </script>
 
 </head>
@@ -38,8 +46,8 @@
   <div class="page-wrap">
     <header class="topbar">
       <a class="logo-link" href="./index.html"><img class="logo" src="./assets/vault_stamp_gold.png" alt="Vault Seal"></a>
-      <button class="back-btn" type="button" onclick="history.back()">← Back</button>
-    </header><nav class="vault-main-nav"><a href="/nfc/index.html">Vault</a><a href="/nfc/scan.html">Scan</a><a href="/nfc/game-vault/index.html">Game</a><a href="/nfc/game-vault/rewards/index.html">Rewards</a></nav>
+      <a class="back-btn" href="./index.html">Back To Vault</a>
+    </header>
 
     <section class="vault-grid">
       <div class="page-card">
@@ -48,7 +56,7 @@
         <p>This room is built for hidden product drops, limited merch access, and premium pieces reserved for vault holders.</p>
         <div class="action-row" style="margin-top:16px">
           <a class="btn gold" href="../index.html">Main Site</a>
-          
+          <a class="btn" href="./index.html">Return To Vault</a>
         </div>
         <div class="action-row" style="margin-top:12px">
           <span class="vault-badge">Vault Only</span>
@@ -57,12 +65,12 @@
         </div>
       </div>
 
-      <div class="page-card">
+      <div class="page-card" id="drop-details">
         <h3>How This Drop Works</h3>
         <p>Use this page for hidden product launches, reserve-only releases, or private links to checkout when you are ready.</p>
         <div class="action-row" style="margin-top:16px">
-          <span class="btn gold" aria-disabled="true">Reserve Drop Coming Soon</span>
-          <span class="btn" aria-disabled="true">Bundle Coming Soon</span>
+          <a class="btn gold" href="mailto:your@email.com?subject=Reserve%20Vault%20Drop">Reserve Drop</a>
+          <a class="btn" href="#drop-details">Unlock Bundle</a>
         </div>
         <p class="reserve-note" style="margin-top:14px">You can replace these buttons later with your real checkout, reserve form, or drop link.</p>
       </div>
@@ -75,8 +83,8 @@
           <h4>Vault Hoodie</h4>
           <p>Premium hidden release.</p>
           <div class="action-row" style="margin-top:12px">
-            <span class="btn gold small" aria-disabled="true">Reserve Soon</span>
-            <span class="btn small" aria-disabled="true">Details Soon</span>
+            <a class="btn gold small" href="mailto:your@email.com?subject=Reserve%20Vault%20Hoodie">Reserve</a>
+            <a class="btn small" href="#drop-details">Details</a>
           </div>
         </div>
       </article>
@@ -87,8 +95,8 @@
           <h4>Vault Cap</h4>
           <p>Members-only headwear drop.</p>
           <div class="action-row" style="margin-top:12px">
-            <span class="btn gold small" aria-disabled="true">Reserve Soon</span>
-            <span class="btn small" aria-disabled="true">Details Soon</span>
+            <a class="btn gold small" href="mailto:your@email.com?subject=Reserve%20Vault%20Cap">Reserve</a>
+            <a class="btn small" href="#drop-details">Details</a>
           </div>
         </div>
       </article>
@@ -99,8 +107,8 @@
           <h4>Vault Tee</h4>
           <p>Private release placeholder.</p>
           <div class="action-row" style="margin-top:12px">
-            <span class="btn gold small" aria-disabled="true">Reserve Soon</span>
-            <span class="btn small" aria-disabled="true">Details Soon</span>
+            <a class="btn gold small" href="mailto:your@email.com?subject=Reserve%20Vault%20Tee">Reserve</a>
+            <a class="btn small" href="#drop-details">Details</a>
           </div>
         </div>
       </article>
@@ -108,4 +116,3 @@
   </div>
 </body>
 </html>
-
