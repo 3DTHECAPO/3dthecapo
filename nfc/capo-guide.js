@@ -5,7 +5,7 @@
   window.CAPO_GUIDE_LOADED = true;
 
   const ANSWERS = {
-    code: 'Tap Vault or Enter Code, then use the access code from your merch, pass, or drop.',
+    code: 'Tap Vault or Enter Code, then use the access code from your merch, pass, or drop. Start at the scan page.',
     rewards: 'Rewards are tied to member or pass activity. Free players can play, but rewards need a member/pass.',
     claim: 'Go to the rewards area, pick your available reward, and submit the claim form. Some rewards require manual review.',
     museum: 'The Vault Museum is the public exhibit space for drops and vault history.',
@@ -21,6 +21,11 @@
     ['How do I join?', 'member'],
     ['Contact / support', 'support']
   ];
+
+  function path(url){
+    const isNfc = location.pathname.includes('/nfc/');
+    return isNfc ? '../' + url.replace(/^\.\//, '') : url;
+  }
 
   function hasActivePass(){
     try{
@@ -66,14 +71,14 @@
 
     const head = makeEl('div', 'capo-guide-head');
     head.appendChild(makeEl('div', 'capo-guide-title', 'CAPO GUIDE'));
-    const close = makeEl('button', 'capo-guide-close', '×');
+    const close = makeEl('button', 'capo-guide-close', 'x');
     close.type = 'button';
     close.setAttribute('aria-label', 'Close CAPO GUIDE');
     head.appendChild(close);
 
     const body = makeEl('div', 'capo-guide-body');
     const status = makeEl('div', 'capo-guide-status', statusText());
-    const drop = makeEl('div', 'capo-guide-drop', 'Current drop: new music and vault access are live. Tap merch, scan your code, or visit the museum.');
+    const drop = makeEl('div', 'capo-guide-drop', 'Current drop: new music and vault access are live. Tap into merch, scan your code, or visit the museum.');
     const answer = makeEl('div', 'capo-guide-answer', 'Pick a question and I will point you in the right direction.');
     const grid = makeEl('div', 'capo-guide-grid');
 
@@ -88,10 +93,10 @@
 
     const links = makeEl('div', 'capo-guide-links');
     [
-      ['Enter Code', './index.html'],
-      ['Game Vault', './game-vault/'],
-      ['Rewards', './game-vault/rewards/'],
-      ['Museum', './museum/']
+      ['Enter Code', path('./nfc/scan.html')],
+      ['Game Vault', path('./nfc/game-vault/')],
+      ['Rewards', path('./nfc/game-vault/rewards/')],
+      ['Museum', path('./nfc/museum/')]
     ].forEach(([label, href]) => {
       const link = makeEl('a', 'capo-guide-link', label);
       link.href = href;
