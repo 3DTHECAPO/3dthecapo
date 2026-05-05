@@ -9,18 +9,8 @@
   <style>
     body{
       background:
-        linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.9)),
-        url("../assets/museum_bg.jpg") center/cover fixed no-repeat;
-    }
-    .panel, .card{
-      background:rgba(0,0,0,.55);
-      backdrop-filter: blur(6px);
-      border:1px solid rgba(202,162,74,.25);
-      box-shadow:0 10px 40px rgba(0,0,0,.6);
-    }
-    h1,h2,h3{
-      color:#f2d27b;
-      text-shadow:0 0 12px rgba(202,162,74,.25);
+        linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.20)),
+        url("./assets/album_chamber.jpg") center/cover fixed no-repeat;
     }
     .page-wrap{width:min(1180px,92vw);margin:0 auto;padding:18px 0 56px}
     .page-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -29,8 +19,18 @@
 
   <script src="/public/shared/config.js"></script>
   <script src="/public/shared/pass-session.js"></script>
-  <script src="/public/shared/room-guard.js"></script>
-  <script>Play3DRoomGuard.requireTier("GOLD");</script>
+  <script>
+    (function(){
+      if(!window.Play3DPassSession){
+        location.replace('/public/redeem/');
+        return;
+      }
+      const pass = Play3DPassSession.current();
+      if(!pass){
+        location.replace('/public/redeem/');
+      }
+    })();
+  </script>
 
 </head>
 <body class="room-cinematic room-album">
@@ -38,15 +38,14 @@
   <div class="page-wrap">
     <header class="topbar">
       <a class="logo-link" href="./index.html"><img class="logo" src="./assets/vault_stamp_gold.png" alt="Vault Seal"></a>
-      <button class="back-btn" type="button" onclick="history.back()">← Back</button>
-    </header><nav class="vault-main-nav"><a href="/nfc/index.html">Vault</a><a href="/nfc/scan.html">Scan</a><a href="/nfc/game-vault/index.html">Game</a><a href="/nfc/game-vault/rewards/index.html">Rewards</a></nav>
-    <section class="page-card header-container" style="padding:22px">
+      <a class="back-btn" href="./index.html">Back To Vault</a>
+    </header>
+    <section class="page-card" style="padding:22px">
       <div class="eyebrow">Gold Room</div>
       <h1>Album Chamber</h1>
       <p>The album chamber holds your deeper music lane, visuals, and premium access moments.</p>
-      <div class="action-row album-actions" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <div class="action-row" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
         <a class="btn gold" href="https://open.spotify.com/artist/4R7uJYf4ts6pthecl9IVBF?si=GoMcEWQASFKnyKxKfnAFWg">Open Spotify</a>
-        
       </div>
     </section>
     <section class="page-grid">
