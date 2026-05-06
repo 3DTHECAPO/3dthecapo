@@ -1,4 +1,33 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>The Capo Vault</title><meta name="description" content="Private NFC vault for 3D THE CAPO."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./nfc.css"></head><body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>The Capo Vault</title><meta name="description" content="Private NFC vault for 3D THE CAPO."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./nfc.css">
+<style>
+/* MASTER CONTROL ROOM BACKGROUND + VISIBILITY */
+.room-master .room-bg{
+  background:
+    linear-gradient(rgba(0,0,0,.16), rgba(0,0,0,.34)),
+    url("./assets/master_control_bg.png") center/cover no-repeat !important;
+  opacity:1 !important;
+  filter:brightness(1.18) contrast(1.08) !important;
+}
+.room-master .room-overlay{
+  background:linear-gradient(to bottom, rgba(0,0,0,.14), rgba(0,0,0,.30)) !important;
+}
+.room-master .room-glow{
+  opacity:.22 !important;
+}
+.master-link-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:10px;
+}
+.room-master .subpanel h3{
+  color:#f2d27b;
+}
+.room-master .btn{
+  width:100%;
+}
+</style>
+
+</head><body>
 <div class="cinematic-overlay" aria-hidden="true">
   <div class="cinematic-fog-back"></div>
   <div class="cinematic-glow"></div>
@@ -38,6 +67,7 @@
   <h3>NFC Access Required</h3>
   <p>This vault stays closed until a valid access code opens the correct path.</p>
 </section><section class="room room-entry hidden" id="room-entry"><div class="room-bg"></div><div class="room-overlay"></div><div class="room-glow"></div><div class="room-content"><div class="bundle-head glass"><div><div class="room-tag">Entry</div><h3 id="entryTitle">Entry Room</h3><p id="entryCopy">The opening lane for coded audio access, artist-world visuals, and the first private room.</p><div class="chip-row" id="entryChips"></div></div><div class="action-row"><a class="btn small gold" href="./entry-backdrop.html">Open Entry Room</a><a class="btn small" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">Watch Channel</a></div></div><div class="room-grid"><div class="subpanel glass"><h3>Music</h3><div class="embed-frame"><iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4R7uJYf4ts6pthecl9IVBF?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div></div><div class="subpanel glass"><h3>Video</h3><div class="video-card"><iframe width="100%" height="315" src="https://www.youtube.com/embed/sroTF0qw92k" frameborder="0" allowfullscreen></iframe></div></div></div></div></section><section class="room room-gold hidden" id="room-gold"><div class="room-bg"></div><div class="room-overlay"></div><div class="room-glow"></div><div class="room-content"><div class="bundle-head glass"><div><div class="room-tag">Gold</div><h3 id="goldTitle">Gold Room</h3><p id="goldCopy">Private music, coded visual access, and hidden route-ins for stronger vault value.</p><div class="chip-row" id="goldChips"></div></div><div class="action-row"><a class="btn small gold" href="./album-chamber.html">Album Chamber</a><a class="btn small" href="./vault-interface.html">Open Vault Interface</a></div></div><div class="room-grid"><div class="subpanel glass"><h3>Music</h3><div class="embed-frame"><iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4R7uJYf4ts6pthecl9IVBF?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div></div><div class="subpanel glass"><h3>Video</h3><div class="video-card"><iframe width="100%" height="315" src="https://www.youtube.com/embed/sroTF0qw92k" frameborder="0" allowfullscreen></iframe></div></div></div></div></section><section class="room room-elite hidden" id="room-elite"><div class="room-bg"></div><div class="room-overlay"></div><div class="room-glow"></div><div class="room-content"><div class="bundle-head glass"><div><div class="room-tag">Elite</div><h3 id="eliteTitle">Elite Room</h3><p id="eliteCopy">The premium room for music, visuals, merch placeholders, hidden bundles, and future holder perks.</p><div class="chip-row" id="eliteChips"></div></div><div class="action-row"><a class="btn small gold" href="./merch-drop-room.html">Merch Room</a><a class="btn small" href="./secret-page.html">Exclusive Room</a></div></div><div class="room-grid triple-grid"><div class="subpanel glass"><h3>Music</h3><div class="embed-frame"><iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4R7uJYf4ts6pthecl9IVBF?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div></div><div class="subpanel glass"><h3>Video</h3><div class="video-card"><iframe width="100%" height="315" src="https://www.youtube.com/embed/sroTF0qw92k" frameborder="0" allowfullscreen></iframe></div></div><div class="subpanel glass"><h3>Merch</h3><div class="merch-placeholder-grid"><article class="product-card"><img onerror="this.hidden=true" src="./assets/merch_hat.jpg" alt="Capo Hat"><div class="product-body"><h4>Cap</h4><p>Limited vault merch preview</p></div></article><article class="product-card"><img onerror="this.hidden=true" src="./assets/merch_hoodie.jpg" alt="Capo Hoodie"><div class="product-body"><h4>Hoodie</h4><p>Limited vault merch preview</p></div></article><article class="product-card"><img onerror="this.hidden=true" src="./assets/merch_shirt.jpg" alt="Capo Shirt"><div class="product-body"><h4>Shirt</h4><p>Limited vault merch preview</p></div></article></div></div></div></div></section>
+
 <section class="room room-master hidden" id="room-master">
   <div class="room-bg"></div>
   <div class="room-overlay"></div>
@@ -48,44 +78,79 @@
       <div>
         <div class="room-tag">Master Pass</div>
         <h3>Master Control Room</h3>
-        <p>Full vault access granted. Choose where you want to go.</p>
+        <p>Full vault access granted. This panel links to every consumer-facing vault room, game room, reward area, and social lane.</p>
       </div>
 
       <div class="action-row">
-        <a class="btn small gold" href="./game-vault/index.html">Game Vault</a>
-        <a class="btn small" href="./game-vault/rewards/index.html">Rewards</a>
-        <a class="btn small" href="./museum/index.html">Museum</a>
+        <a class="btn small gold" href="./index.html">Vault Home</a>
+        <a class="btn small" href="../index.html">Main Site</a>
+        <a class="btn small" href="./game-vault/index.html">Game Vault</a>
       </div>
     </div>
 
     <div class="room-grid triple-grid">
+
       <div class="subpanel glass">
-        <h3>Vault Rooms</h3>
-        <div class="action-row">
-          <a class="btn small gold" href="./entry-backdrop.html">Entry Room</a>
-          <a class="btn small" href="./album-chamber.html">Album Chamber</a>
-          <a class="btn small" href="./merch-drop-room.html">Merch Room</a>
-          <a class="btn small" href="./secret-page.html">Exclusive Room</a>
+        <h3>Tier Rooms</h3>
+        <div class="master-link-grid">
+          <a class="btn small gold" href="#room-entry" data-master-room="entry">Entry Room</a>
+          <a class="btn small gold" href="#room-gold" data-master-room="gold">Gold Room</a>
+          <a class="btn small gold" href="#room-elite" data-master-room="elite">Elite Room</a>
+          <a class="btn small" href="#room-master" data-master-room="master">Master Panel</a>
         </div>
       </div>
 
       <div class="subpanel glass">
-        <h3>Vault Access</h3>
-        <div class="action-row">
-          <a class="btn small gold" href="./vault-interface.html">Vault Interface</a>
-          <a class="btn small" href="./exclusive-merch-vault.html">Exclusive Merch</a>
-          <a class="btn small" href="./index.html">Vault Home</a>
+        <h3>Vault Pages</h3>
+        <div class="master-link-grid">
+          <a class="btn small gold" href="./entry-backdrop.html">Entry Backdrop</a>
+          <a class="btn small" href="./album-chamber.html">Album Chamber</a>
+          <a class="btn small" href="./merch-drop-room.html">Merch Drop Room</a>
+          <a class="btn small" href="./secret-page.html">Exclusive Room</a>
+          <a class="btn small" href="./vault-interface.html">Vault Interface</a>
+          <a class="btn small" href="./exclusive-merch-vault.html">Exclusive Merch Vault</a>
+          <a class="btn small" href="./museum/index.html">Vault Museum</a>
+        </div>
+      </div>
+
+      <div class="subpanel glass">
+        <h3>Game + Rewards</h3>
+        <div class="master-link-grid">
+          <a class="btn small gold" href="./game-vault/index.html">Game Vault</a>
+          <a class="btn small" href="./game-vault/games/slot-machine-custom/index.html">Slots</a>
+          <a class="btn small" href="./game-vault/games/poker/index.html">Poker</a>
+          <a class="btn small" href="./game-vault/games/blackjack/index.html">Blackjack</a>
+          <a class="btn small" href="./game-vault/rewards/index.html">Rewards</a>
+          <a class="btn small" href="./game-vault/claim/index.html">Claim Page</a>
         </div>
       </div>
 
       <div class="subpanel glass">
         <h3>Music + Social</h3>
-        <div class="action-row">
+        <div class="master-link-grid">
           <a class="btn small gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">YouTube</a>
           <a class="btn small" href="https://open.spotify.com/artist/4R7uJYf4ts6pthecl9IVBF" target="_blank" rel="noopener">Spotify</a>
-          <a class="btn small" href="../index.html">Main Site</a>
+          <a class="btn small" href="https://music.apple.com/" target="_blank" rel="noopener">Apple Music</a>
         </div>
       </div>
+
+      <div class="subpanel glass">
+        <h3>Access Pipeline</h3>
+        <div class="master-link-grid">
+          <a class="btn small gold" href="./index.html">NFC Access</a>
+          <a class="btn small" href="./scan.html">Scan Redirect</a>
+          <a class="btn small" href="/public/vault/">Old Public Vault Redirect</a>
+        </div>
+      </div>
+
+      <div class="subpanel glass">
+        <h3>Admin Check</h3>
+        <p>Use this panel to test every room without loading all heavy embeds at once.</p>
+        <div class="master-link-grid">
+          <a class="btn small gold" href="#room-master" data-master-room="master">Back To Master Panel</a>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -108,4 +173,4 @@
     });
   });
 })();
-</script><script src="./nfc.js?v=masterfix-final-001"></script></body></html>
+</script><script src="./nfc.js?v=master-panel-v2"></script></body></html>
