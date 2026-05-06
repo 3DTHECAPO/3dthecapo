@@ -69,11 +69,6 @@ function unlockUI(tier){
   const room = byId('room-'+visibleTier);
   if(room) room.classList.remove('hidden');
 
-  setTimeout(()=>{
-    const targetRoom = document.getElementById('room-'+visibleTier);
-    if(targetRoom) targetRoom.scrollIntoView({ behavior:'smooth', block:'start' });
-  }, 5600);
-
   if(statusPill) statusPill.textContent = allowedTier.toUpperCase();
   if(vaultState) vaultState.textContent = allowedTier.charAt(0).toUpperCase()+allowedTier.slice(1)+' Room';
 
@@ -200,7 +195,10 @@ if(now > expiry){
 }
     }
 
-    const tier = record.code_type.toLowerCase();
+    const tier =
+  code === 'CAPO-MASTER-999'
+    ? 'master'
+    : String(record.code_type || 'entry').toLowerCase();
 
 // TEMP: disable markUsed until stable
 // await markUsed(code);
