@@ -2,7 +2,7 @@
 *{box-sizing:border-box}
 :root{--text:#f3efe8;--muted:rgba(243,239,232,.76);--gold:#d2a74f;--line:rgba(255,255,255,.12);--shadow:0 24px 80px rgba(0,0,0,.58)}
 html{scroll-behavior:smooth}
-body{margin:0;color:var(--text);font-family:'Oswald',Arial,sans-serif;background:radial-gradient(circle at 50% 0%, rgba(210,167,79,.15), transparent 34%),linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.94)),url("./assets/nfc_vallejo_night.jpg") center/cover fixed no-repeat}
+body{margin:0;color:var(--text);font-family:'Oswald',Arial,sans-serif;background:radial-gradient(circle at 50% 0%, rgba(210,167,79,.16), transparent 34%),linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.94)),url("./assets/scan_bg.jpg") center/cover fixed no-repeat}
 img{max-width:100%;display:block} a{text-decoration:none;color:inherit}
 h1,h2,h3,strong,.nav a,.btn,.chip,.room-tag,.scan-text,.access-fallback{font-family:'Black Ops One',sans-serif;letter-spacing:1px;text-transform:uppercase}
 .noise{position:fixed;inset:0;pointer-events:none;opacity:.08;background-image:radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);background-size:3px 3px;mix-blend-mode:soft-light;z-index:1}
@@ -105,7 +105,7 @@ body.vault-glow-pulse::after{
 @media (max-width:980px){.hero-card,.room-grid,.triple-grid{grid-template-columns:1fr}.merch-placeholder-grid{grid-template-columns:1fr}.bundle-head{flex-direction:column;align-items:flex-start}}
 @media (max-width:640px){.shell{width:min(92vw,1180px)}.scanner{min-height:300px}.scan-frame{width:min(340px,78%);height:min(340px,78%)}.scan-line{width:min(340px,78%)}.scan-text{font-size:12px;padding:10px 14px;width:min(260px,76%)}}
 
-/* clean lock state: keep scan-style front page/nav visible while locked */
+/* clean lock state */
 body.locked .room,
 body.locked #sessionLane,
 body.locked #sessionDivider,
@@ -201,14 +201,207 @@ body{position:relative}
 }
 
 
-/* FINAL SCAN-STYLE INDEX SAFETY */
-body.locked #lockedGate,
-body.locked #lockedRoom,
-body.locked .vault-main-nav,
-body.locked .footer{
-  display:block !important;
-}
-
+/* ===== INDEX FRONT EXACT SCAN PAGE MATCH ===== */
 body.locked #lockedGate.scan-hero{
   display:grid !important;
+}
+
+body.locked #lockedRoom{
+  display:none !important;
+}
+
+body.locked .footer{
+  display:none !important;
+}
+
+body.locked .topbar{
+  display:flex !important;
+}
+
+body.locked .vault-main-nav{
+  display:none !important;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  padding:8px 0 14px;
+  position:relative;
+  top:auto;
+  z-index:30;
+  backdrop-filter:none;
+  background:none;
+}
+
+.logo{
+  width:clamp(120px,18vw,190px);
+  filter:drop-shadow(0 0 10px rgba(210,167,79,.36)) drop-shadow(0 0 24px rgba(210,167,79,.22));
+}
+
+.logo-link,
+.back-btn,
+.btn{
+  text-decoration:none;
+  color:inherit;
+}
+
+.back-btn,
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:48px;
+  padding:12px 18px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.05);
+  font-family:'Oswald',Arial,sans-serif;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+  line-height:1.2;
+  overflow-wrap:anywhere;
+  white-space:normal;
+  text-align:center;
+}
+
+.btn.gold{
+  background:linear-gradient(180deg, rgba(210,167,79,1), rgba(153,105,25,.92));
+  color:#130f08;
+  border-color:rgba(210,167,79,.45);
+}
+
+.scan-hero{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:18px;
+  align-items:stretch;
+}
+
+.scan-box,
+.entry-panel{
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:24px;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  box-shadow:var(--shadow);
+  min-width:0;
+}
+
+.scan-box{
+  position:relative;
+  min-height:560px;
+  overflow:hidden;
+  cursor:pointer;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,.60)),
+    url("./assets/vault_interface.jpg") center/cover no-repeat !important;
+}
+
+.entry-panel{
+  padding:28px 24px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:12px;
+  backdrop-filter:blur(10px);
+}
+
+.entry-panel h1{
+  margin:0;
+  font-family:'Black Ops One',sans-serif;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  line-height:.94;
+  font-size:clamp(40px,5vw,68px);
+}
+
+.entry-panel input{
+  width:100%;
+  min-height:58px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.05);
+  color:#f3efe8;
+  padding:0 18px;
+  font-family:Oswald,Arial,sans-serif;
+  font-size:18px;
+  outline:none;
+}
+
+.entry-panel input:focus{
+  border-color:rgba(210,167,79,.55);
+  box-shadow:0 0 0 3px rgba(210,167,79,.12);
+}
+
+.scan-frame,
+.scan-line,
+.scan-aura,
+.tap-flash{
+  pointer-events:none;
+}
+
+.scan-box .status-pill{
+  display:none !important;
+}
+
+@media (max-width:980px){
+  .scan-hero{
+    grid-template-columns:1fr;
+  }
+
+  .scan-box{
+    min-height:420px;
+  }
+}
+
+@media (max-width:640px){
+  .shell{
+    width:min(92vw,1100px);
+  }
+
+  .scan-box{
+    min-height:320px;
+  }
+
+  .scan-frame{
+    width:min(340px,78%);
+    height:min(340px,78%);
+  }
+
+  .scan-line{
+    width:min(340px,78%);
+  }
+
+  .scan-text{
+    font-size:12px;
+    padding:10px 14px;
+    width:min(260px,76%);
+  }
+
+  .topbar,
+  .action-row{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .back-btn,
+  .btn{
+    width:100%;
+    min-height:46px;
+  }
+
+  .entry-panel{
+    padding:20px 16px;
+    border-radius:18px;
+  }
+
+  .scan-box{
+    border-radius:18px;
+  }
+
+  .entry-panel h1{
+    font-size:clamp(34px,10vw,50px);
+  }
 }
