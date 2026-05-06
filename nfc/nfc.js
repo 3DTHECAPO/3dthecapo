@@ -49,38 +49,52 @@ function showLocked(msg){
 }
 function unlockUI(tier){
   const cleanTier = String(tier || 'entry').toLowerCase();
-  const allowedTier = (cleanTier === 'gold' || cleanTier === 'elite' || cleanTier === 'master') ? cleanTier : 'entry';
-  const visibleTier = allowedTier === 'master' ? 'elite' : allowedTier;
+  const allowedTier =
+    (cleanTier === 'gold' || cleanTier === 'elite' || cleanTier === 'master')
+      ? cleanTier
+      : 'entry';
 
   playAccessSequence();
   document.body.classList.remove('locked');
 
-  // Hide locked-state UI so it does not sit above the unlocked rooms.
+  // Hide lock/access screen after valid unlock.
+  const lockedGate = byId('lockedGate');
+  if(lockedGate) lockedGate.classList.add('hidden');
+
   if(lockedActions) lockedActions.classList.add('hidden');
   if(lockedRoom) lockedRoom.classList.add('hidden');
 
-  // Hide every tier room first.
-  ['entry','gold','elite'].forEach(t=>{
+  // Hide all possible rooms first.
+  ['entry','gold','elite','master'].forEach(t=>{
     const el = byId('room-'+t);
     if(el) el.classList.add('hidden');
   });
 
-  // Show the unlocked room. Master keys land in Elite if no master room exists.
-  const room = byId('room-'+visibleTier);
-  if(room) room.classList.remove('hidden');
+  // MASTER shows only the Master dashboard.
+  // This prevents freezing from loading every heavy embed at once.
+  if(allowedTier === 'master'){
+    const masterRoom = byId('room-master');
+    if(masterRoom) masterRoom.classList.remove('hidden');
+  }else{
+    const room = byId('room-'+allowedTier);
+    if(room) room.classList.remove('hidden');
+  }
 
-  setTimeout(()=>{
-    const targetRoom = document.getElementById('room-'+visibleTier);
-    if(targetRoom) targetRoom.scrollIntoView({ behavior:'smooth', block:'start' });
-  }, 5600);
+  // NO AUTO-SCROLL / NO AUTO-SLIDE.
+  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 
   if(statusPill) statusPill.textContent = allowedTier.toUpperCase();
-  if(vaultState) vaultState.textContent = allowedTier.charAt(0).toUpperCase()+allowedTier.slice(1)+' Room';
+
+  if(vaultState){
+    vaultState.textContent =
+      allowedTier === 'master'
+        ? 'Master Access Granted'
+        : allowedTier.charAt(0).toUpperCase()+allowedTier.slice(1)+' Room';
+  }
 
   if(publicNav) publicNav.classList.add('hidden');
   if(privateNav) privateNav.classList.remove('hidden');
 }
-
 
 // ---------- SUPABASE ----------
 async function getCode(code){
