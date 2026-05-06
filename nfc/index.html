@@ -1,38 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>The Capo Vault</title><meta name="description" content="Private NFC vault for 3D THE CAPO."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./nfc.css">
-<style>
-.room-master .room-bg{
-  background:
-    linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.72)),
-    url("./assets/master_control_bg.png") center/cover no-repeat !important;
-  opacity:1 !important;
-}
-</style>
-<style>
-.room-master .room-bg{
-  background:
-    linear-gradient(
-      rgba(0,0,0,.18),
-      rgba(0,0,0,.32)
-    ),
-    url("./assets/master_control_bg.png") center/cover no-repeat !important;
-
-  opacity:1 !important;
-  filter:brightness(1.18) contrast(1.08);
-}
-
-.room-master .room-overlay{
-  background:linear-gradient(
-    to bottom,
-    rgba(0,0,0,.18),
-    rgba(0,0,0,.32)
-  ) !important;
-}
-
-.room-master .room-glow{
-  opacity:.35;
-}
-</style>
-</head><body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>The Capo Vault</title><meta name="description" content="Private NFC vault for 3D THE CAPO."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./nfc.css"></head><body>
 <div class="cinematic-overlay" aria-hidden="true">
   <div class="cinematic-fog-back"></div>
   <div class="cinematic-glow"></div>
@@ -96,9 +62,9 @@
       <div class="subpanel glass">
         <h3>Vault Rooms</h3>
         <div class="action-row">
-          <a class="btn small gold" href="#room-entry">Entry Room</a>
-          <a class="btn small" href="#room-gold">Gold Room</a>
-          <a class="btn small" href="#room-elite">Elite Room</a>
+          <a class="btn small gold" href="#room-entry" data-master-room="entry">Entry Room</a>
+          <a class="btn small gold" href="#room-gold" data-master-room="gold">Gold Room</a>
+          <a class="btn small gold" href="#room-elite" data-master-room="elite">Elite Room</a>
           <a class="btn small" href="./album-chamber.html">Album Chamber</a>
           <a class="btn small" href="./merch-drop-room.html">Merch Room</a>
           <a class="btn small" href="./secret-page.html">Exclusive Room</a>

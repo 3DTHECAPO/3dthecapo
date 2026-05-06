@@ -49,52 +49,69 @@ function showLocked(msg){
 }
 function unlockUI(tier){
   const cleanTier = String(tier || 'entry').toLowerCase();
-  const allowedTier =
-    (cleanTier === 'gold' || cleanTier === 'elite' || cleanTier === 'master')
-      ? cleanTier
-      : 'entry';
+  const allowedTier = (cleanTier === 'gold' || cleanTier === 'elite' || cleanTier === 'master') ? cleanTier : 'entry';
+  const visibleTier = allowedTier === 'master' ? 'elite' : allowedTier;
 
   playAccessSequence();
   document.body.classList.remove('locked');
 
-  // Hide lock/access screen after valid unlock.
-  const lockedGate = byId('lockedGate');
-  if(lockedGate) lockedGate.classList.add('hidden');
-
+  // Hide locked-state UI so it does not sit above the unlocked rooms.
   if(lockedActions) lockedActions.classList.add('hidden');
   if(lockedRoom) lockedRoom.classList.add('hidden');
 
-  // Hide all possible rooms first.
+  // Hide every tier room first.
+  ['entry','gold','elite'].forEach(t=>{
+    const el = byId('room-'+t);
+    if(el) el.classList.add('hidden');
+  });
+
+  // Show the unlocked room. Master keys land in Elite if no master room exists.
+  const room = byId('room-'+visibleTier);
+  if(room) room.classList.remove('hidden');
+
+  setTimeout(()=>{
+    const targetRoom = document.getElementById('room-'+visibleTier);
+    if(targetRoom) targetRoom.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 5600);
+
+  if(statusPill) statusPill.textContent = allowedTier.toUpperCase();
+  if(vaultState) vaultState.textContent = allowedTier.charAt(0).toUpperCase()+allowedTier.slice(1)+' Room';
+
+  if(publicNav) publicNav.classList.add('hidden');
+  if(privateNav) privateNav.classList.remove('hidden');
+}
+
+
+function showMasterRoomTarget(tier){
+  if(window.__vaultUnlockedTier !== 'master') return;
+
+  const cleanTier = String(tier || '').toLowerCase();
+  if(!['entry','gold','elite','master'].includes(cleanTier)) return;
+
   ['entry','gold','elite','master'].forEach(t=>{
     const el = byId('room-'+t);
     if(el) el.classList.add('hidden');
   });
 
-  // MASTER shows only the Master dashboard.
-  // This prevents freezing from loading every heavy embed at once.
-  if(allowedTier === 'master'){
-    const masterRoom = byId('room-master');
-    if(masterRoom) masterRoom.classList.remove('hidden');
-  }else{
-    const room = byId('room-'+allowedTier);
-    if(room) room.classList.remove('hidden');
-  }
+  const target = byId('room-'+cleanTier);
+  if(target) target.classList.remove('hidden');
 
-  // NO AUTO-SCROLL / NO AUTO-SLIDE.
-  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-
-  if(statusPill) statusPill.textContent = allowedTier.toUpperCase();
-
-  if(vaultState){
-    vaultState.textContent =
-      allowedTier === 'master'
-        ? 'Master Access Granted'
-        : allowedTier.charAt(0).toUpperCase()+allowedTier.slice(1)+' Room';
-  }
-
-  if(publicNav) publicNav.classList.add('hidden');
-  if(privateNav) privateNav.classList.remove('hidden');
+  window.scrollTo({ top:0, left:0, behavior:'auto' });
 }
+
+document.addEventListener('click', function(e){
+  const link = e.target.closest('[data-master-room], a[href="#room-entry"], a[href="#room-gold"], a[href="#room-elite"], a[href="#room-master"]');
+  if(!link) return;
+
+  if(window.__vaultUnlockedTier !== 'master') return;
+
+  const tier =
+    link.getAttribute('data-master-room') ||
+    (link.getAttribute('href') || '').replace('#room-','');
+
+  e.preventDefault();
+  showMasterRoomTarget(tier);
+});
 
 // ---------- SUPABASE ----------
 async function getCode(code){
