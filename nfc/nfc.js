@@ -48,28 +48,39 @@ function showLocked(msg){
   if(privateNav) privateNav.classList.add('hidden');
 }
 function unlockUI(tier){
+  const cleanTier = String(tier || 'entry').toLowerCase();
+  const allowedTier = (cleanTier === 'gold' || cleanTier === 'elite' || cleanTier === 'master') ? cleanTier : 'entry';
+  const visibleTier = allowedTier === 'master' ? 'elite' : allowedTier;
+
   playAccessSequence();
   document.body.classList.remove('locked');
 
+  // Hide locked-state UI so it does not sit above the unlocked rooms.
+  if(lockedActions) lockedActions.classList.add('hidden');
+  if(lockedRoom) lockedRoom.classList.add('hidden');
+
+  // Hide every tier room first.
   ['entry','gold','elite'].forEach(t=>{
     const el = byId('room-'+t);
     if(el) el.classList.add('hidden');
   });
 
-  const room = byId('room-'+tier);
+  // Show the unlocked room. Master keys land in Elite if no master room exists.
+  const room = byId('room-'+visibleTier);
   if(room) room.classList.remove('hidden');
 
   setTimeout(()=>{
-    const room = document.getElementById('room-'+tier);
-    if(room) room.scrollIntoView({ behavior:'smooth', block:'start' });
+    const targetRoom = document.getElementById('room-'+visibleTier);
+    if(targetRoom) targetRoom.scrollIntoView({ behavior:'smooth', block:'start' });
   }, 5600);
 
-  if(statusPill) statusPill.textContent = tier.toUpperCase();
-  if(vaultState) vaultState.textContent = tier.charAt(0).toUpperCase()+tier.slice(1)+' Room';
+  if(statusPill) statusPill.textContent = allowedTier.toUpperCase();
+  if(vaultState) vaultState.textContent = allowedTier.charAt(0).toUpperCase()+allowedTier.slice(1)+' Room';
 
   if(publicNav) publicNav.classList.add('hidden');
   if(privateNav) privateNav.classList.remove('hidden');
 }
+
 
 // ---------- SUPABASE ----------
 async function getCode(code){
@@ -95,47 +106,37 @@ function playAccessSequence(){
 
   if(!seq) return;
 
-  // reset
+  // Reset cinematic state.
   seq.classList.remove('active','play','fadeout');
   if(overlay) overlay.classList.remove('show');
-  document.body.classList.remove('vault-glow-pulse');
-
-  if(navigator.vibrate) navigator.vibrate([80,40,120]);
-
-  const audio = new Audio('./assets/vault_unlock.mp3');
-  audio.volume = 0.45;
-  audio.play().catch(()=>{});
-
-  document.body.classList.add('vault-glow-pulse');
 
   seq.style.display = 'block';
 
-  // STEP 1: ACCESS GRANTED flash
+  // ACCESS GRANTED first.
   if(overlay){
     overlay.classList.add('show');
   }
 
-  // STEP 2: bring in sequence
+  // Bring in vault sequence.
   setTimeout(()=>{
     seq.classList.add('active');
   }, 300);
 
-  // STEP 3: open doors AFTER text hits
+  // Open doors after the access message.
   setTimeout(()=>{
     if(overlay) overlay.classList.remove('show');
     seq.classList.add('play');
   }, 1200);
 
-  // STEP 4: fade out entire sequence
+  // Fade out.
   setTimeout(()=>{
     seq.classList.add('fadeout');
   }, 4200);
 
-  // STEP 5: cleanup
+  // Cleanup.
   setTimeout(()=>{
     seq.classList.remove('active','play','fadeout');
     seq.style.display = 'none';
-    document.body.classList.remove('vault-glow-pulse');
   }, 5400);
 }
 

@@ -405,3 +405,34 @@ body.locked .vault-main-nav{
     font-size:clamp(34px,10vw,50px);
   }
 }
+
+
+/* ===== SINGLE PIPELINE LOCK/UNLOCK VISIBILITY FIX ===== */
+body.locked #room-entry,
+body.locked #room-gold,
+body.locked #room-elite,
+body.locked #sessionLane,
+body.locked #sessionDivider,
+body.locked #connect,
+body.locked #connectDivider{
+  display:none !important;
+}
+
+body.locked #lockedGate.scan-hero{
+  display:grid !important;
+}
+
+body.locked #lockedRoom{
+  display:none !important;
+}
+
+body:not(.locked) #lockedGate,
+body:not(.locked) #lockedRoom{
+  display:none !important;
+}
+
+body:not(.locked) #room-entry:not(.hidden),
+body:not(.locked) #room-gold:not(.hidden),
+body:not(.locked) #room-elite:not(.hidden){
+  display:block !important;
+}
