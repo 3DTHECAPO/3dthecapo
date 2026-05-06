@@ -7,7 +7,31 @@
   opacity:1 !important;
 }
 </style>
+<style>
+.room-master .room-bg{
+  background:
+    linear-gradient(
+      rgba(0,0,0,.18),
+      rgba(0,0,0,.32)
+    ),
+    url("./assets/master_control_bg.png") center/cover no-repeat !important;
 
+  opacity:1 !important;
+  filter:brightness(1.18) contrast(1.08);
+}
+
+.room-master .room-overlay{
+  background:linear-gradient(
+    to bottom,
+    rgba(0,0,0,.18),
+    rgba(0,0,0,.32)
+  ) !important;
+}
+
+.room-master .room-glow{
+  opacity:.35;
+}
+</style>
 </head><body>
 <div class="cinematic-overlay" aria-hidden="true">
   <div class="cinematic-fog-back"></div>
