@@ -4,31 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>PLAY 3D — Game Vault</title>
-  <meta name="description" content="PLAY 3D premium game vault for 3D THE CAPO.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./shared.css">
 </head>
 <body>
   <div class="vault-bg" aria-hidden="true">
     <div class="bg-layer bg-active" id="bgLayerA"></div>
     <div class="bg-layer" id="bgLayerB"></div>
-    <div class="bg-fog"></div>
-    <div class="bg-grid"></div>
-    <div class="bg-noise"></div>
+    <div class="bg-vignette"></div>
   </div>
 
   <main class="vault-app">
     <header class="vault-top">
       <a class="brand" href="../index.html">
         <span class="seal">3D</span>
-        <span>
-          <b>PLAY 3D</b>
-          <small>Game Vault</small>
-        </span>
+        <span><b>PLAY 3D</b><small>Game Vault</small></span>
       </a>
-
       <nav class="vault-nav">
         <a href="/nfc/index.html">Vault</a>
         <a href="/nfc/game-vault/rewards/index.html">Rewards</a>
@@ -41,9 +34,8 @@
       <div>
         <div class="kicker">3D THE CAPO • LUXURY GAME FLOOR</div>
         <h1>Game Vault</h1>
-        <p>Premium black-and-gold arcade lounge. Pick a game, earn rewards, challenge fans, and keep the whole room moving smooth.</p>
+        <p>Side-by-side premium game lounge. Clean cards, no text covering the artwork.</p>
       </div>
-
       <div class="hero-stat">
         <span id="featuredLabel">Featured</span>
         <b id="featuredName">Vault Chess</b>
@@ -51,14 +43,14 @@
     </section>
 
     <section class="toolbar">
-      <div class="search-wrap">
+      <label class="search-wrap">
         <span>Search</span>
         <input id="gameSearch" type="search" placeholder="Search games...">
-      </div>
-
+      </label>
       <div class="filters" id="filters">
         <button class="filter active" data-filter="all">All</button>
         <button class="filter" data-filter="casino">Casino</button>
+        <button class="filter" data-filter="cards">Cards</button>
         <button class="filter" data-filter="strategy">Strategy</button>
         <button class="filter" data-filter="multiplayer">Fan Mode</button>
       </div>
@@ -67,36 +59,33 @@
     <section class="game-row-wrap">
       <div class="row-head">
         <div>
-          <div class="kicker">Featured Row</div>
+          <div class="kicker">Game Lineup</div>
           <h2>Choose Your Room</h2>
         </div>
         <div class="row-buttons">
-          <button id="scrollLeft">‹</button>
-          <button id="scrollRight">›</button>
+          <button id="scrollLeft" type="button">‹</button>
+          <button id="scrollRight" type="button">›</button>
         </div>
       </div>
-
-      <div class="game-row" id="gameRow" aria-label="Game carousel"></div>
+      <div class="game-row" id="gameRow"></div>
     </section>
 
-    <section class="mini-sections">
+    <section class="quick-panels">
       <article class="glass-card">
         <div class="kicker">Continue</div>
-        <h3 id="lastPlayedTitle">No recent game</h3>
+        <h3 id="lastPlayedTitle">No Recent Game</h3>
         <p id="lastPlayedCopy">Launch a game and it will show up here.</p>
         <a id="continueBtn" class="cta ghost" href="#">Continue Playing</a>
       </article>
-
       <article class="glass-card">
-        <div class="kicker">Multiplayer Foundation</div>
-        <h3>Fan Challenges</h3>
-        <p>Room codes and Supabase Realtime structure are ready for the next multiplayer upgrade.</p>
+        <div class="kicker">Fan Mode</div>
+        <h3>Challenges</h3>
+        <p>Room-code multiplayer foundation ready for Supabase Realtime.</p>
       </article>
-
       <article class="glass-card">
         <div class="kicker">Rewards</div>
         <h3>Vault Rewards</h3>
-        <p>Keep reward flow separate and lightweight so games do not freeze.</p>
+        <p>Rewards stay separate so the game hub stays smooth.</p>
         <a class="cta ghost" href="./rewards/">Open Rewards</a>
       </article>
     </section>
