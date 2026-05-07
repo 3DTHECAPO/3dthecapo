@@ -4,12 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>PLAY 3D — Game Vault</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="./shared.css">
+  <link rel="stylesheet" href="/nfc/shared/platform.css">
 </head>
-<body>
+
+<body data-p3d-nav="auto">
   <div class="vault-bg" aria-hidden="true">
     <div class="bg-layer bg-active" id="bgLayerA"></div>
     <div class="bg-layer" id="bgLayerB"></div>
@@ -22,6 +26,7 @@
         <span class="seal">3D</span>
         <span><b>PLAY 3D</b><small>Game Vault</small></span>
       </a>
+
       <nav class="vault-nav">
         <a href="/nfc/index.html">Vault</a>
         <a href="/nfc/game-vault/rewards/index.html">Rewards</a>
@@ -34,8 +39,9 @@
       <div>
         <div class="kicker">3D THE CAPO • LUXURY GAME FLOOR</div>
         <h1>Game Vault</h1>
-        <p>Side-by-side premium game lounge. Clean cards, no text covering the artwork.</p>
+        <p>Side-by-side premium game lounge. Clean cards, smooth routing, no broken vertical stacking.</p>
       </div>
+
       <div class="hero-stat">
         <span id="featuredLabel">Featured</span>
         <b id="featuredName">Vault Chess</b>
@@ -47,6 +53,7 @@
         <span>Search</span>
         <input id="gameSearch" type="search" placeholder="Search games...">
       </label>
+
       <div class="filters" id="filters">
         <button class="filter active" data-filter="all">All</button>
         <button class="filter" data-filter="casino">Casino</button>
@@ -62,11 +69,13 @@
           <div class="kicker">Game Lineup</div>
           <h2>Choose Your Room</h2>
         </div>
+
         <div class="row-buttons">
           <button id="scrollLeft" type="button">‹</button>
           <button id="scrollRight" type="button">›</button>
         </div>
       </div>
+
       <div class="game-row" id="gameRow"></div>
     </section>
 
@@ -77,11 +86,13 @@
         <p id="lastPlayedCopy">Launch a game and it will show up here.</p>
         <a id="continueBtn" class="cta ghost" href="#">Continue Playing</a>
       </article>
+
       <article class="glass-card">
         <div class="kicker">Fan Mode</div>
         <h3>Challenges</h3>
         <p>Room-code multiplayer foundation ready for Supabase Realtime.</p>
       </article>
+
       <article class="glass-card">
         <div class="kicker">Rewards</div>
         <h3>Vault Rewards</h3>
@@ -92,5 +103,6 @@
   </main>
 
   <script src="./vault-ui.js"></script>
+  <script src="/nfc/shared/platform.js"></script>
 </body>
 </html>
