@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<defs>
+<radialGradient id="g" cx=".35" cy=".18" r=".8">
+<stop offset="0" stop-color="#fff3bf"/><stop offset=".55" stop-color="#050505"/><stop offset="1" stop-color="#6f4c12"/>
+</radialGradient>
+<filter id="ds" x="-30%" y="-30%" width="160%" height="160%">
+<feDropShadow dx="0" dy="8" stdDeviation="4" flood-color="#f2d27b" flood-opacity=".55"/>
+</filter>
+</defs>
+<circle cx="64" cy="64" r="56" fill="rgba(0,0,0,.28)" stroke="#caa24a" stroke-width="3"/>
+<text x="64" y="88" text-anchor="middle" font-size="76" font-family="Georgia,serif" font-weight="900" fill="url(#g)" stroke="#d7ad54" stroke-width="1.5" filter="url(#ds)">♞</text>
+</svg>
