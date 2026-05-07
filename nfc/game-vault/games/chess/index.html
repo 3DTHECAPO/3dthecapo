@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY 3D — Vault Chess</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="noise"></div>
+<main class="app">
+<header class="topbar">
+  <a class="brand" href="../../index.html"><span class="seal">3D</span><span><b>PLAY 3D</b><small>Vault Chess</small></span></a>
+  <nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a><a href="../../../../index.html">Main Site</a></nav>
+</header>
+<section class="hero"><div><div class="kicker">BLACK / GOLD • LUXURY BOARD ROOM</div><h1>Vault Chess</h1><p>Legal moves, checkmate detection, captures, undo, timer, computer mode, and fan challenge placeholder.</p></div><div class="status"><span id="gameStatus">White to move</span><b id="modeLabel">LOCAL 2P</b></div></section>
+<section class="layout">
+<aside class="panel">
+<h2>Mode</h2><div class="grid2"><button class="mode active" data-mode="local">Local 2P</button><button class="mode" data-mode="cpu">Vs CPU</button><button class="mode" data-mode="online">Fan Room</button></div>
+<div id="onlinePanel" class="online"><label>Room Code</label><div class="roomrow"><input id="roomCode" readonly value="PLAY3D-"><button id="createRoom">Create</button></div><small>Realtime placeholder for Supabase/Firebase later.</small></div>
+<h2>Controls</h2><div class="grid2"><button id="newGame">Restart</button><button id="undoMove">Undo</button><button id="flipBoard">Flip</button><button id="soundToggle">Sound On</button></div>
+<h2>Timer</h2><div class="grid3"><button class="timer active" data-min="0">Off</button><button class="timer" data-min="5">5</button><button class="timer" data-min="10">10</button></div>
+<div class="clocks"><div><small>White</small><b id="whiteClock">--:--</b></div><div><small>Black</small><b id="blackClock">--:--</b></div></div>
+</aside>
+<section class="boardShell"><div class="labels" id="topFiles"></div><div class="boardRow"><div class="ranks" id="leftRanks"></div><div id="board" class="board"></div><div class="ranks" id="rightRanks"></div></div><div class="labels" id="bottomFiles"></div></section>
+<aside class="panel"><h2>Captured</h2><h3>White took</h3><div id="capturedByWhite" class="bin"></div><h3>Black took</h3><div id="capturedByBlack" class="bin"></div><h2>Move History</h2><ol id="moveHistory"></ol></aside>
+</section>
+</main>
+<div class="modal hidden" id="endModal"><div class="modalCard"><div class="kicker">Game Over</div><h2 id="endTitle">Checkmate</h2><p id="endCopy">Victory secured.</p><button id="playAgain">Run It Back</button></div></div>
+<script src="./script.js"></script>
+</body></html>
