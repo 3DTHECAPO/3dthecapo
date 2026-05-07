@@ -3,51 +3,105 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>PLAY 3D</title>
+  <title>PLAY 3D — Game Vault</title>
+  <meta name="description" content="PLAY 3D premium game vault for 3D THE CAPO.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./shared.css">
 </head>
 <body>
-  <main class="hub">
-    <header class="hub-head">
-      <div class="kicker">3D THE CAPO</div>
-      <h1>Game Vault (Free)</h1>
-      <p>Free Play — sign up to earn rewards.</p>
-    </header><nav class="vault-main-nav"><a href="/nfc/index.html">Vault</a><a href="/nfc/scan.html">Scan</a><a href="/nfc/game-vault/index.html">Game</a><a href="/nfc/game-vault/rewards/index.html">Rewards</a></nav>
+  <div class="vault-bg" aria-hidden="true">
+    <div class="bg-layer bg-active" id="bgLayerA"></div>
+    <div class="bg-layer" id="bgLayerB"></div>
+    <div class="bg-fog"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-noise"></div>
+  </div>
 
-    
+  <main class="vault-app">
+    <header class="vault-top">
+      <a class="brand" href="../index.html">
+        <span class="seal">3D</span>
+        <span>
+          <b>PLAY 3D</b>
+          <small>Game Vault</small>
+        </span>
+      </a>
 
-    <section class="hub-card">
-      <div class="pill">3D CASINO</div>
-      <h2>Slots</h2>
-      <a class="cta" href="./games/slot-machine-custom/">PLAY SLOTS</a>
+      <nav class="vault-nav">
+        <a href="/nfc/index.html">Vault</a>
+        <a href="/nfc/game-vault/rewards/index.html">Rewards</a>
+        <a href="/nfc/museum/index.html">Museum</a>
+        <a href="/index.html">Main Site</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div>
+        <div class="kicker">3D THE CAPO • LUXURY GAME FLOOR</div>
+        <h1>Game Vault</h1>
+        <p>Premium black-and-gold arcade lounge. Pick a game, earn rewards, challenge fans, and keep the whole room moving smooth.</p>
+      </div>
+
+      <div class="hero-stat">
+        <span id="featuredLabel">Featured</span>
+        <b id="featuredName">Vault Chess</b>
+      </div>
     </section>
 
-    <section class="hub-card">
-      <div class="pill">HIGH LIMIT</div>
-      <h2>Blackjack</h2>
-      <a class="cta" href="./games/blackjack/">PLAY BLACKJACK</a>
+    <section class="toolbar">
+      <div class="search-wrap">
+        <span>Search</span>
+        <input id="gameSearch" type="search" placeholder="Search games...">
+      </div>
+
+      <div class="filters" id="filters">
+        <button class="filter active" data-filter="all">All</button>
+        <button class="filter" data-filter="casino">Casino</button>
+        <button class="filter" data-filter="strategy">Strategy</button>
+        <button class="filter" data-filter="multiplayer">Fan Mode</button>
+      </div>
     </section>
 
-    <section class="hub-card">
-      <div class="pill">CARD ROOM</div>
-      <h2>Poker</h2>
-      <a class="cta" href="./games/poker/">PLAY POKER</a>
+    <section class="game-row-wrap">
+      <div class="row-head">
+        <div>
+          <div class="kicker">Featured Row</div>
+          <h2>Choose Your Room</h2>
+        </div>
+        <div class="row-buttons">
+          <button id="scrollLeft">‹</button>
+          <button id="scrollRight">›</button>
+        </div>
+      </div>
+
+      <div class="game-row" id="gameRow" aria-label="Game carousel"></div>
     </section>
 
-    <section class="hub-card">
-      <div class="pill">VAULT STRATEGY</div>
-      <h2>Chess</h2>
-      <a class="cta" href="./games/chess/">PLAY CHESS</a>
-    </section>
+    <section class="mini-sections">
+      <article class="glass-card">
+        <div class="kicker">Continue</div>
+        <h3 id="lastPlayedTitle">No recent game</h3>
+        <p id="lastPlayedCopy">Launch a game and it will show up here.</p>
+        <a id="continueBtn" class="cta ghost" href="#">Continue Playing</a>
+      </article>
 
-    <section class="hub-card">
-      <div class="pill">Rewards (Members Only)</div>
-      <h2>Rewards</h2>
-      <a class="cta" href="./rewards/">VIEW REWARDS</a>
+      <article class="glass-card">
+        <div class="kicker">Multiplayer Foundation</div>
+        <h3>Fan Challenges</h3>
+        <p>Room codes and Supabase Realtime structure are ready for the next multiplayer upgrade.</p>
+      </article>
+
+      <article class="glass-card">
+        <div class="kicker">Rewards</div>
+        <h3>Vault Rewards</h3>
+        <p>Keep reward flow separate and lightweight so games do not freeze.</p>
+        <a class="cta ghost" href="./rewards/">Open Rewards</a>
+      </article>
     </section>
   </main>
+
+  <script src="./vault-ui.js"></script>
 </body>
 </html>
