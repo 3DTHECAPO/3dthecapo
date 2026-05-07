@@ -1,0 +1,18 @@
+PLAY 3D PHASE 1 — STEP 1 FOUNDATION
+
+UPLOAD:
+nfc/shared/platform.css
+nfc/shared/platform.js
+nfc/shared/route-map.json
+
+This does NOT replace your existing pages yet.
+
+NEXT TEST:
+Add these to ONE test page only:
+<link rel="stylesheet" href="/nfc/shared/platform.css">
+<script src="/nfc/shared/platform.js"></script>
+
+Then confirm:
+- no layout break
+- controller back button only appears with ?from=controller
+- shared nav can be enabled later with body data-p3d-nav="auto"

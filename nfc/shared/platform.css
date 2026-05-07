@@ -1,0 +1,71 @@
+/* PLAY 3D PHASE 1 FOUNDATION CSS */
+:root{
+  --p3d-gold:#caa24a;
+  --p3d-gold2:#f2d27b;
+  --p3d-cream:#f5efe3;
+  --p3d-muted:rgba(245,239,227,.72);
+  --p3d-line:rgba(242,210,123,.26);
+  --p3d-black:#050505;
+}
+.p3d-top-nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  justify-content:center;
+  margin:12px auto 18px;
+  width:min(1100px,94vw);
+  position:relative;
+  z-index:50;
+}
+.p3d-top-nav a,
+.p3d-pill-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:11px 15px;
+  border-radius:999px;
+  border:1px solid var(--p3d-line);
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(0,0,0,.35));
+  color:var(--p3d-cream) !important;
+  text-decoration:none !important;
+  font-family:Arial,sans-serif;
+  font-weight:900;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  box-shadow:0 12px 28px rgba(0,0,0,.22);
+}
+.p3d-top-nav a:hover,
+.p3d-pill-btn:hover,
+.p3d-pill-btn.gold{
+  background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#805c1a);
+  color:#100c05 !important;
+}
+.p3d-controller-back{
+  position:fixed;
+  left:14px;
+  bottom:14px;
+  z-index:2147483647;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:12px 18px;
+  border-radius:999px;
+  border:1px solid rgba(242,210,123,.58);
+  background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#805c1a);
+  color:#100c05 !important;
+  font-family:Arial,sans-serif;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  text-decoration:none !important;
+  box-shadow:0 14px 34px rgba(0,0,0,.46);
+}
+body.p3d-from-controller .p3d-controller-back{display:inline-flex}
+@media(max-width:640px){
+  .p3d-top-nav a,.p3d-pill-btn{width:100%}
+  .p3d-controller-back{left:10px;right:10px;bottom:10px;width:auto}
+}
