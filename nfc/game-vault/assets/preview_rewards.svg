@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#070707"/><stop offset=".52" stop-color="#1b1409"/><stop offset="1" stop-color="#000"/>
+</linearGradient>
+<radialGradient id="g" cx=".5" cy=".25" r=".65">
+<stop offset="0" stop-color="#f2d27b" stop-opacity=".34"/><stop offset="1" stop-color="#000" stop-opacity="0"/>
+</radialGradient>
+<filter id="ds"><feDropShadow dx="0" dy="18" stdDeviation="10" flood-color="#000" flood-opacity=".65"/></filter>
+</defs>
+<rect width="1200" height="760" fill="url(#bg)"/>
+<rect width="1200" height="760" fill="url(#g)"/>
+<g opacity=".16" stroke="#f2d27b" stroke-width="2">
+<path d="M0 560 C260 410 410 500 620 390 C850 270 990 330 1200 245"/>
+<path d="M0 650 C300 520 490 590 760 455 C960 360 1080 410 1200 360"/>
+</g>
+<circle cx="600" cy="310" r="170" fill="rgba(0,0,0,.42)" stroke="#caa24a" stroke-width="5"/>
+<text x="600" y="360" text-anchor="middle" font-size="190" fill="#f2d27b" filter="url(#ds)" font-family="Georgia,serif">◆</text>
+<text x="70" y="650" font-size="86" fill="#f5efe3" font-family="Impact,Arial Black,sans-serif">REWARDS</text>
+<text x="74" y="704" font-size="28" fill="#f2d27b" font-family="Arial,sans-serif" letter-spacing="8">CLAIM VAULT</text>
+</svg>
