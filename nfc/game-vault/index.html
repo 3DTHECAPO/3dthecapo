@@ -104,5 +104,14 @@
 
   <script src="./vault-ui.js"></script>
   <script src="/nfc/shared/platform.js"></script>
+  <script src="/nfc/shared/access-bridge.js"></script>
+  <script>
+    // Phase 1 Step 3 safe test:
+    // We load the access bridge, but we do NOT force redirect yet.
+    // This confirms Game Vault can read master/session state without breaking.
+    if(window.Play3DAccess){
+      window.Play3DAccess.requireAccess({ redirect:false });
+    }
+  </script>
 </body>
 </html>
