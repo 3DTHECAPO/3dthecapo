@@ -5,6 +5,7 @@ const byId = (id)=>document.getElementById(id);
 const params = new URLSearchParams(window.location.search);
 
 const code = (params.get('code')||'').toUpperCase().trim();
+const target = params.get('target') || '';
 
 const statusPill = byId('statusPill');
 const vaultState = byId('vaultState');
@@ -14,6 +15,31 @@ const lockedRoom = byId('lockedRoom');
 const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
 const TABLE = 'vault_codes';
+
+
+function setMasterSession(){
+  try{
+    localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify({
+      active:true,
+      code:'CAPO-MASTER-999',
+      started_at:Date.now(),
+      expires_at:Date.now() + (1000 * 60 * 60 * 12)
+    }));
+  }catch(e){}
+}
+
+function buildTargetUrl(path){
+  if(!path) return '';
+
+  try{
+    const u = new URL(path, window.location.origin);
+    u.searchParams.set('from', 'master');
+    u.searchParams.set('master', '1');
+    return u.toString();
+  }catch(e){
+    return '';
+  }
+}
 
 function showLocked(msg){
   document.body.classList.add('locked');
@@ -54,6 +80,13 @@ function unlockUI(tier){
   hideAllRooms();
 
   if(allowedTier === 'master'){
+    setMasterSession();
+
+    const destination = buildTargetUrl(target);
+    if(destination){
+      window.location.replace(destination);
+      return;
+    }
 
     const masterRoom = byId('room-master');
 
