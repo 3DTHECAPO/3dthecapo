@@ -1,75 +1,171 @@
+/*
+  PLAY 3D / CAPO ROOM GUARD
+  Full replacement: public/shared/room-guard.js
+
+  Purpose:
+  - Let normal pass/member sessions through.
+  - Let Master Controller sessions through.
+  - Stop protected pages from sending you back to locked vault after Master unlock.
+
+  Master session is created by nfc/index.html after CAPO-MASTER-999 unlock:
+  localStorage.CAPO_MASTER_SESSION = {
+    active:true,
+    code:"CAPO-MASTER-999",
+    started_at:Date.now(),
+    expires_at:Date.now() + 12 hours
+  }
+
+  Also allows URLs opened as:
+  ?master=1
+  ?from=master
+*/
+
 (function(){
-  const DEFAULT_REDIRECT = "/public/redeem/";
+  'use strict';
 
-  function session(){
-    return window.Play3DPassSession || null;
+  const MASTER_KEY = 'CAPO_MASTER_SESSION';
+  const PASS_KEYS = [
+    'CAPO_PASS_SESSION',
+    'PLAY3D_PASS_SESSION',
+    'play3d_pass_session',
+    'vault_pass_session',
+    'capo_pass_session'
+  ];
+
+  function now(){
+    return Date.now();
   }
 
-  function currentPass(){
-    const api = session();
-    return api && typeof api.current === "function" ? api.current() : null;
-  }
-
-  function hasTierAtLeast(requiredTier){
-    const api = session();
-    const pass = currentPass();
-    if(!pass) return false;
-    if(api && typeof api.hasTierAtLeast === "function"){
-      return api.hasTierAtLeast(requiredTier, pass);
-    }
-    const ranks = { ENTRY:1, GOLD:2, ELITE:3, DROP:3, MERCH:3, MASTER:4 };
-    const rank = tier => ranks[String(tier || "").toUpperCase()] || 0;
-    return rank(pass.tier) >= rank(requiredTier);
-  }
-
-  function isMasterPass(){
-    const api = session();
-    if(api && typeof api.isMasterPass === "function") return api.isMasterPass();
-    const pass = currentPass();
-    return !!(pass && String(pass.tier || "").toUpperCase() === "MASTER");
-  }
-
-  function requireTier(requiredTier, opts){
-    const redirect = opts && opts.redirect ? opts.redirect : DEFAULT_REDIRECT;
-    if(!hasTierAtLeast(requiredTier)){
-      location.replace(redirect);
-      return null;
-    }
-    return currentPass();
-  }
-
-  function requireMaster(opts){
-    const redirect = opts && opts.redirect ? opts.redirect : DEFAULT_REDIRECT;
-    if(!isMasterPass()){
-      location.replace(redirect);
-      return null;
-    }
-    return currentPass();
-  }
-
-  function hasMemberOrPass(){
+  function readJSON(key){
     try{
-      if(localStorage.getItem("play3d_member_v1") === "1") return true;
-    }catch(e){}
-    return !!currentPass();
-  }
-
-  function requireMemberOrPass(opts){
-    const redirect = opts && opts.redirect ? opts.redirect : "/nfc/scan.html";
-    if(!hasMemberOrPass()){
-      location.replace(redirect);
+      const raw = localStorage.getItem(key);
+      if(!raw) return null;
+      return JSON.parse(raw);
+    }catch(e){
       return null;
     }
-    return currentPass() || { tier:"MEMBER" };
+  }
+
+  function writeJSON(key, value){
+    try{
+      localStorage.setItem(key, JSON.stringify(value));
+    }catch(e){}
+  }
+
+  function getParams(){
+    return new URLSearchParams(window.location.search);
+  }
+
+  function hasMasterQuery(){
+    const params = getParams();
+    return (
+      params.get('master') === '1' ||
+      params.get('from') === 'master' ||
+      params.get('from') === 'controller'
+    );
+  }
+
+  function setMasterSession(){
+    writeJSON(MASTER_KEY, {
+      active:true,
+      code:'CAPO-MASTER-999',
+      started_at:now(),
+      expires_at:now() + (1000 * 60 * 60 * 12)
+    });
+  }
+
+  function hasMasterSession(){
+    const session = readJSON(MASTER_KEY);
+
+    if(!session || session.active !== true){
+      return false;
+    }
+
+    if(session.expires_at && now() > Number(session.expires_at)){
+      try{ localStorage.removeItem(MASTER_KEY); }catch(e){}
+      return false;
+    }
+
+    return true;
+  }
+
+  function hasPassSession(){
+    for(const key of PASS_KEYS){
+      const session = readJSON(key);
+
+      if(!session) continue;
+
+      if(session.active === true || session.unlocked === true || session.valid === true){
+        if(session.expires_at && now() > Number(session.expires_at)){
+          try{ localStorage.removeItem(key); }catch(e){}
+          continue;
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function isAllowed(){
+    if(hasMasterQuery()){
+      setMasterSession();
+      return true;
+    }
+
+    if(hasMasterSession()){
+      return true;
+    }
+
+    if(hasPassSession()){
+      return true;
+    }
+
+    return false;
+  }
+
+  function buildLockedRedirect(){
+    const current = window.location.pathname + window.location.search;
+    const target = '/nfc/index.html?target=' + encodeURIComponent(current);
+    return target;
+  }
+
+  function requireMemberOrPass(){
+    if(isAllowed()){
+      return true;
+    }
+
+    window.location.replace(buildLockedRedirect());
+    return false;
+  }
+
+  function requireMaster(){
+    if(hasMasterQuery()){
+      setMasterSession();
+      return true;
+    }
+
+    if(hasMasterSession()){
+      return true;
+    }
+
+    window.location.replace('/nfc/index.html?code=CAPO-MASTER-999');
+    return false;
+  }
+
+  function clearMasterSession(){
+    try{ localStorage.removeItem(MASTER_KEY); }catch(e){}
   }
 
   window.Play3DRoomGuard = {
-    currentPass,
-    hasTierAtLeast,
-    isMasterPass,
-    requireTier,
+    isAllowed,
+    hasMasterSession,
+    hasPassSession,
+    requireMemberOrPass,
     requireMaster,
-    hasMemberOrPass,
-    requireMemberOrPass
+    clearMasterSession,
+    setMasterSession
   };
+
 })();
