@@ -1,1 +1,77 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PLAY 3D — Dominoes</title><link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./style.css"></head><body><div class="bg"></div><main class="app"><header class="top"><a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a><nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav></header><section class="hero"><div><div class="kicker">STREET TABLE RESTORE</div><h1>Dominoes</h1><p>Emergency restored stable build with visible table/board environment.</p></div><div class="score"><span>Status</span><b id="mainScore">0</b><small id="stateText">READY</small></div></section><section class="table"><div class="casino-table"><div class="table-logo">DOMINOES</div><div class="table-content"><div class="row"><button id="newGame">New Game</button><button id="drawBtn">Draw</button><button id="passBtn">Pass</button></div><h2>Table Chain</h2><div class="board" id="board"></div><h2>Your Hand</h2><div id="hand" class="domino-hand"></div></div></div><div class="panel"><h2>Log</h2><ol id="log"></ol></div></section></main><script src="./script.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY 3D — Dominoes AAA</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="bg"></div>
+
+<main class="app">
+<header class="top">
+<a class="brand" href="../../index.html">
+<span>3D</span>
+<b>PLAY 3D</b>
+</a>
+
+<nav>
+<a href="../../index.html">Vault</a>
+<a href="../../../index.html">Main</a>
+</nav>
+</header>
+
+<section class="hero">
+<div>
+<div class="kicker">AAA DOMINO LOUNGE</div>
+<h1>DOMINOES</h1>
+<p>Luxury multiplayer-ready domino table rebuilt for stable gameplay and responsive scaling.</p>
+</div>
+
+<div class="status">
+<span>SCORE</span>
+<b id="scoreText">0 - 0</b>
+<small id="turnText">YOUR TURN</small>
+</div>
+</section>
+
+<section class="casino-table">
+<div class="table-logo">PLAY 3D</div>
+
+<div class="seat top-seat">FAN / CPU</div>
+<div class="seat bottom-seat">YOU</div>
+
+<div class="table-center">
+<div id="chain" class="chain"></div>
+</div>
+
+<div class="chip-stack">
+<div class="chip"></div>
+<div class="chip"></div>
+<div class="chip"></div>
+</div>
+</section>
+
+<section class="controls panel">
+<button id="newBtn">NEW GAME</button>
+<button id="drawBtn">DRAW</button>
+<button id="passBtn">PASS</button>
+</section>
+
+<section class="panel">
+<h2>YOUR HAND</h2>
+<div id="hand" class="hand"></div>
+</section>
+
+<section class="panel">
+<h2>GAME LOG</h2>
+<ol id="log"></ol>
+</section>
+
+</main>
+
+<script src="./script.js"></script>
+</body>
+</html>
