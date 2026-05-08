@@ -1,181 +1,21 @@
+
 (()=>{
-
-let stock=[];
-let player=[];
-let cpu=[];
-let chain=[];
-let scores={you:0,cpu:0};
-let turn='you';
-
-const chainEl=document.getElementById('chain');
-const handEl=document.getElementById('hand');
-
-function buildStock(){
-stock=[];
-for(let a=0;a<=6;a++){
-for(let b=a;b<=6;b++){
-stock.push([a,b]);
-}
-}
-stock.sort(()=>Math.random()-.5);
-}
-
-function newGame(){
-buildStock();
-player=stock.splice(0,7);
-cpu=stock.splice(0,7);
-chain=[];
-turn='you';
-log('New game started.');
-render();
-}
-
-function ends(){
-if(!chain.length) return null;
-return [chain[0][0],chain[chain.length-1][1]];
-}
-
-function legal(tile){
-const e=ends();
-if(!e) return true;
-
-return (
-tile[0]===e[0]||
-tile[1]===e[0]||
-tile[0]===e[1]||
-tile[1]===e[1]
-);
-}
-
-function place(arr,tile){
-const e=ends();
-
-if(!e){
-chain.push(tile);
-}
-else if(tile[1]===e[0]){
-chain.unshift(tile);
-}
-else if(tile[0]===e[0]){
-chain.unshift([tile[1],tile[0]]);
-}
-else if(tile[0]===e[1]){
-chain.push(tile);
-}
-else if(tile[1]===e[1]){
-chain.push([tile[1],tile[0]]);
-}
-else{
-return false;
-}
-
-arr.splice(arr.indexOf(tile),1);
-return true;
-}
-
-function play(tile){
-
-if(turn!=='you') return;
-
-if(!place(player,tile)){
-log('Illegal tile.');
-return;
-}
-
-turn='cpu';
-
-if(!player.length){
-scores.you++;
-scoreText.textContent=scores.you+' - '+scores.cpu;
-turnText.textContent='YOU WIN';
-render();
-return;
-}
-
-render();
-
-setTimeout(cpuTurn,700);
-}
-
-function cpuTurn(){
-
-let move=cpu.find(legal);
-
-if(move){
-place(cpu,move);
-log('CPU played.');
-}
-else if(stock.length){
-cpu.push(stock.pop());
-log('CPU drew.');
-}
-else{
-log('CPU passed.');
-}
-
-if(!cpu.length){
-scores.cpu++;
-scoreText.textContent=scores.you+' - '+scores.cpu;
-turnText.textContent='CPU WINS';
-render();
-return;
-}
-
-turn='you';
-render();
-}
-
-function drawTile(){
-if(turn!=='you') return;
-
-if(stock.length){
-player.push(stock.pop());
-log('You drew.');
-render();
-}
-}
-
-function passTurn(){
-if(turn!=='you') return;
-turn='cpu';
-cpuTurn();
-}
-
-function tileHTML(tile,index){
-return `
-<button class="tile" data-i="${index}">
-<span>${tile[0]}</span>
-<i></i>
-<span>${tile[1]}</span>
-</button>
-`;
-}
-
-function render(){
-
-chainEl.innerHTML=chain.map(tileHTML).join('');
-handEl.innerHTML=player.map(tileHTML).join('');
-
-document.querySelectorAll('#hand .tile').forEach(btn=>{
-btn.onclick=()=>{
-play(player[+btn.dataset.i]);
-};
-});
-
-scoreText.textContent=scores.you+' - '+scores.cpu;
-turnText.textContent=turn==='you'?'YOUR TURN':'CPU TURN';
-}
-
-function log(msg){
-document.getElementById('log').innerHTML =
-'<li>'+msg+'</li>' +
-document.getElementById('log').innerHTML;
-}
-
-newBtn.onclick=newGame;
-drawBtn.onclick=drawTile;
-passBtn.onclick=passTurn;
-
-newGame();
-
+let boneyard=[],player=[],bot=[],chain=[],over=false,creditsVal=1000,betVal=25;
+function tileSet(){let a=[];for(let i=0;i<=6;i++)for(let j=i;j<=6;j++)a.push([i,j]);return a.sort(()=>Math.random()-.5)}
+function ends(){if(!chain.length)return null;return [chain[0][0],chain[chain.length-1][1]]}
+function legalTile(t){let e=ends();return !e||t[0]===e[0]||t[1]===e[0]||t[0]===e[1]||t[1]===e[1]}
+function anyLegal(arr){return arr.some(legalTile)}
+function pips(arr){return arr.flat().reduce((a,b)=>a+b,0)}
+function place(arr,t){let i=arr.indexOf(t),e=ends();if(i<0)return false;if(!e)chain.push(t);else if(t[1]===e[0])chain.unshift(t);else if(t[0]===e[0])chain.unshift([t[1],t[0]]);else if(t[0]===e[1])chain.push(t);else if(t[1]===e[1])chain.push([t[1],t[0]]);else return false;arr.splice(i,1);return true}
+function finish(who){over=true;let diff=Math.abs(pips(player)-pips(bot));let pay=who==='YOU WIN'?betVal*2+diff:0;if(pay)creditsVal+=pay;msg(who+(pay?' +'+pay:''));render()}
+function check(){if(!player.length){finish('YOU WIN');return true}if(!bot.length){finish('BOT WINS');return true}if(!boneyard.length&&!anyLegal(player)&&!anyLegal(bot)){finish(pips(player)<=pips(bot)?'YOU WIN':'BOT WINS');return true}return false}
+function botTurn(){if(over)return;let t=bot.find(legalTile);if(t){place(bot,t);msg('Bot played. Your move.')}else if(boneyard.length){bot.push(boneyard.pop());msg('Bot drew. Your move.')}else msg('Bot passed. Your move.');check();render()}
+function play(i){if(over)return;let t=player[i];if(!legalTile(t)){msg('Illegal tile');return}place(player,t);if(!check())botTurn();render()}
+function drawTile(){if(over)return;if(anyLegal(player)){msg('You have a playable tile.');return}if(boneyard.length){player.push(boneyard.pop());msg('Drew tile');render()}else{msg('No tiles left. Pass.')}}
+function pass(){if(over)return;if(anyLegal(player)){msg('You cannot pass with a playable tile.');return}botTurn()}
+function msg(t){log.textContent=t;stateText.textContent=t.toUpperCase().slice(0,12)}
+function tile(t,i,playable=false){return `<button class="tile ${playable?'playable':''}" ${i!==undefined?`data-i="${i}"`:''}><span>${t[0]}</span><span>${t[1]}</span></button>`}
+function render(){chainEl.innerHTML=chain.map(t=>tile(t)).join('')||'<span class="pill">Start the chain</span>';handEl.innerHTML=player.map((t,i)=>tile(t,i,legalTile(t))).join('');document.querySelectorAll('#handEl .tile').forEach(b=>b.onclick=()=>play(+b.dataset.i));mainScore.textContent=player.length;}
+function start(){if(creditsVal<betVal){msg('Not enough credits');return}creditsVal-=betVal;boneyard=tileSet();player=boneyard.splice(0,7);bot=boneyard.splice(0,7);chain=[];over=false;msg('New round. Play any tile.');render()}
+drawBtn.onclick=drawTile;passBtn.onclick=pass;newBtn.onclick=start;start();
 })();
