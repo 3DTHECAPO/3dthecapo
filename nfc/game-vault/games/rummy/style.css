@@ -26,3 +26,5 @@ p{color:var(--muted);line-height:1.45}.score{min-width:190px;border:1px solid rg
 ol{max-height:360px;overflow:auto;color:var(--muted)}
 @media(max-width:760px){.hero{grid-template-columns:1fr}.score{text-align:left}nav a,button{width:100%}.card{width:54px;height:82px;font-size:17px}.panel,.table,.hero{border-radius:20px;padding:13px}.casino-table{border-width:7px;border-radius:28px;min-height:360px}}
 
+
+.rules{margin-top:16px;border:1px solid rgba(242,210,123,.28);border-radius:18px;padding:14px;background:rgba(0,0,0,.38)}.rules h2,.rules h3{margin:0 0 8px;color:#f2d27b}.rules ul{margin:0;padding-left:20px;color:rgba(245,239,227,.82);line-height:1.45}.disabled{opacity:.38;filter:grayscale(1)}
