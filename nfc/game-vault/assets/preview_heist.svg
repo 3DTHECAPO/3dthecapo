@@ -1,21 +1,61 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760">
-<defs>
-<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#070707"/><stop offset=".52" stop-color="#1b1409"/><stop offset="1" stop-color="#000"/>
-</linearGradient>
-<radialGradient id="g" cx=".5" cy=".25" r=".65">
-<stop offset="0" stop-color="#f2d27b" stop-opacity=".34"/><stop offset="1" stop-color="#000" stop-opacity="0"/>
-</radialGradient>
-<filter id="ds"><feDropShadow dx="0" dy="18" stdDeviation="10" flood-color="#000" flood-opacity=".65"/></filter>
-</defs>
-<rect width="1200" height="760" fill="url(#bg)"/>
-<rect width="1200" height="760" fill="url(#g)"/>
-<g opacity=".16" stroke="#f2d27b" stroke-width="2">
-<path d="M0 560 C260 410 410 500 620 390 C850 270 990 330 1200 245"/>
-<path d="M0 650 C300 520 490 590 760 455 C960 360 1080 410 1200 360"/>
-</g>
-<circle cx="600" cy="310" r="170" fill="rgba(0,0,0,.42)" stroke="#caa24a" stroke-width="5"/>
-<text x="600" y="360" text-anchor="middle" font-size="190" fill="#f2d27b" filter="url(#ds)" font-family="Georgia,serif">♞</text>
-<text x="70" y="650" font-size="86" fill="#f5efe3" font-family="Impact,Arial Black,sans-serif">VAULT HEIST</text>
-<text x="74" y="704" font-size="28" fill="#f2d27b" font-family="Arial,sans-serif" letter-spacing="8">SURPRISE ROOM</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-label="VAULT HEIST preview card">
+  <defs>
+    <radialGradient id="goldGlow" cx="28%" cy="15%" r="70%">
+      <stop offset="0%" stop-color="#f2d27b" stop-opacity=".55"/>
+      <stop offset="42%" stop-color="#caa24a" stop-opacity=".16"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="redGlow" cx="82%" cy="18%" r="58%">
+      <stop offset="0%" stop-color="#8d0d0d" stop-opacity=".38"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#211a0d"/>
+      <stop offset="45%" stop-color="#080806"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff4ad"/>
+      <stop offset="48%" stop-color="#f2d27b"/>
+      <stop offset="100%" stop-color="#8b641f"/>
+    </linearGradient>
+    <linearGradient id="darkGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f2d27b"/>
+      <stop offset="100%" stop-color="#6b4712"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="16" stdDeviation="13" flood-color="#000000" flood-opacity=".82"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="13" flood-color="#f2d27b" flood-opacity=".28"/>
+    </filter>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#000000" flood-opacity=".7"/>
+    </filter>
+    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M56 0H0v56" fill="none" stroke="#ffffff" stroke-opacity=".035" stroke-width="2"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="720" fill="url(#bg)"/>
+  <rect width="1200" height="720" fill="url(#grid)"/>
+  <rect width="1200" height="720" fill="url(#goldGlow)"/>
+  <rect width="1200" height="720" fill="url(#redGlow)"/>
+  <rect x="62" y="62" width="1076" height="596" rx="34" fill="none" stroke="#f2d27b" stroke-opacity=".22" stroke-width="3"/>
+  <rect x="92" y="92" width="1016" height="536" rx="26" fill="none" stroke="#ffffff" stroke-opacity=".07" stroke-width="2"/>
+  <path d="M0 530 C240 438 394 465 600 536 C804 608 990 590 1200 504 L1200 720 L0 720 Z" fill="#000" opacity=".52"/>
+
+  
+  <g filter="url(#soft)">
+    <rect x="415" y="168" width="370" height="290" rx="44" fill="#060504" stroke="#f2d27b" stroke-opacity=".5" stroke-width="6"/>
+    <circle cx="600" cy="305" r="100" fill="#10100d" stroke="#f2d27b" stroke-opacity=".55" stroke-width="12"/>
+    <circle cx="600" cy="305" r="46" fill="#060504" stroke="#caa24a" stroke-width="8"/>
+    <path d="M600 205 V405 M500 305 H700 M532 237 L668 373 M668 237 L532 373" stroke="#f2d27b" stroke-opacity=".42" stroke-width="10" stroke-linecap="round"/>
+    <rect x="462" y="458" width="276" height="24" rx="12" fill="url(#gold)"/>
+    <text x="600" y="148" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="46" fill="url(#gold)" letter-spacing="6">VAULT RUN</text>
+    <path d="M875 256 l42 42 l-42 42" fill="none" stroke="#8d0d0d" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <text x="600" y="552" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="66" fill="#f5efe3" letter-spacing="5" filter="url(#soft)">VAULT HEIST</text>
+  <text x="600" y="604" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#f2d27b" letter-spacing="9" font-weight="800">SURPRISE ROOM</text>
+  <text x="86" y="670" font-family="Arial, sans-serif" font-size="18" fill="#f2d27b" opacity=".78" letter-spacing="5">PLAY 3D</text>
+  <text x="1000" y="670" font-family="Arial, sans-serif" font-size="18" fill="#f2d27b" opacity=".78" letter-spacing="5">FAN MODE</text>
 </svg>
