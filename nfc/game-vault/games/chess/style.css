@@ -273,3 +273,5 @@ width:min(94vw,520px);
 height:min(94vw,520px);
 }
 }
+
+.rules{margin-top:16px;border:1px solid rgba(242,210,123,.28);border-radius:18px;padding:14px;background:rgba(0,0,0,.38)}.rules h2,.rules h3{margin:0 0 8px;color:#f2d27b}.rules ul{margin:0;padding-left:20px;color:rgba(245,239,227,.82);line-height:1.45}.disabled{opacity:.38;filter:grayscale(1)}
