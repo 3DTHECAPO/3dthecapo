@@ -5,23 +5,21 @@
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#211a0d"/><stop offset="45%" stop-color="#080806"/><stop offset="100%" stop-color="#000"/></linearGradient>
     <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff4ad"/><stop offset="48%" stop-color="#f2d27b"/><stop offset="100%" stop-color="#8b641f"/></linearGradient>
     <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000" flood-opacity=".82"/><feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#f2d27b" flood-opacity=".22"/></filter>
-    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse"><path d="M56 0H0v56" fill="none" stroke="#fff" stroke-opacity=".035" stroke-width="2"/></pattern>
   </defs>
-  <rect width="1200" height="760" fill="url(#bg)"/><rect width="1200" height="760" fill="url(#grid)"/><rect width="1200" height="760" fill="url(#g1)"/><rect width="1200" height="760" fill="url(#g2)"/>
+  <rect width="1200" height="760" fill="url(#bg)"/><rect width="1200" height="760" fill="url(#g1)"/><rect width="1200" height="760" fill="url(#g2)"/>
   <rect x="62" y="62" width="1076" height="636" rx="34" fill="none" stroke="#f2d27b" stroke-opacity=".22" stroke-width="3"/>
   <g filter="url(#shadow)">
-    <rect x="310" y="132" width="520" height="430" rx="58" fill="#070604" stroke="#f2d27b" stroke-opacity=".58" stroke-width="8"/>
-    <rect x="350" y="190" width="410" height="315" rx="28" fill="#130e08" stroke="#fff" stroke-opacity=".10" stroke-width="3"/>
-    <path d="M350 295 H760 M350 400 H760 M486 190 V505 M624 190 V505" stroke="#f2d27b" stroke-opacity=".25" stroke-width="4"/>
+    <rect x="300" y="104" width="550" height="470" rx="62" fill="#070604" stroke="#f2d27b" stroke-opacity=".60" stroke-width="8"/>
+    <rect x="345" y="170" width="420" height="350" rx="30" fill="#130e08" stroke="#fff" stroke-opacity=".10" stroke-width="3"/>
+    <path d="M345 286 H765 M345 404 H765 M485 170 V520 M625 170 V520" stroke="#f2d27b" stroke-opacity=".25" stroke-width="4"/>
     <g font-family="Impact, Arial Black, sans-serif" fill="url(#gold)" text-anchor="middle">
-      <text x="418" y="260" font-size="50">7</text><text x="555" y="260" font-size="42">3D</text><text x="692" y="260" font-size="50">$</text>
-      <text x="418" y="365" font-size="36">KEY</text><text x="555" y="365" font-size="38">LOCK</text><text x="692" y="365" font-size="50">♛</text>
-      <text x="418" y="470" font-size="36">VAULT</text><text x="555" y="470" font-size="42">MIC</text><text x="692" y="470" font-size="42">CASH</text>
+      <text x="415" y="248" font-size="58">7</text><text x="555" y="248" font-size="46">3D</text><text x="695" y="248" font-size="58">$</text>
+      <text x="415" y="366" font-size="36">KEY</text><text x="555" y="366" font-size="40">LOCK</text><text x="695" y="366" font-size="58">♛</text>
+      <text x="415" y="484" font-size="36">VAULT</text><text x="555" y="484" font-size="42">MIC</text><text x="695" y="484" font-size="42">CASH</text>
     </g>
-    <circle cx="875" cy="250" r="22" fill="#8d0d0d" stroke="#f2d27b" stroke-width="4"/>
-    <path d="M875 275 C935 335 935 430 870 506" fill="none" stroke="#caa24a" stroke-width="18" stroke-linecap="round"/>
-    <circle cx="866" cy="522" r="30" fill="url(#gold)" stroke="#3a2509" stroke-width="5"/>
-    <rect x="430" y="522" width="280" height="28" rx="14" fill="url(#gold)" opacity=".9"/>
+    <circle cx="900" cy="235" r="24" fill="#8d0d0d" stroke="#f2d27b" stroke-width="4"/>
+    <path d="M900 265 C966 330 966 440 895 525" fill="none" stroke="#caa24a" stroke-width="20" stroke-linecap="round"/>
+    <circle cx="890" cy="545" r="32" fill="url(#gold)" stroke="#3a2509" stroke-width="5"/>
   </g>
-  <text x="600" y="625" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="64" fill="#f5efe3" letter-spacing="5" filter="url(#shadow)">3D SLOTS</text>
+  <text x="600" y="648" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="64" fill="#f5efe3" letter-spacing="5" filter="url(#shadow)">3D SLOTS</text>
 </svg>

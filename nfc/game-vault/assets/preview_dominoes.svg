@@ -39,24 +39,9 @@
   
   <g filter="url(#shadow)">
     <ellipse cx="600" cy="405" rx="370" ry="108" fill="#080604" stroke="#f2d27b" stroke-opacity=".30" stroke-width="5"/>
-    <g transform="rotate(-12 430 338)">
-      <rect x="345" y="278" width="170" height="92" rx="16" fill="#f5efe3" stroke="#caa24a" stroke-width="5"/>
-      <line x1="430" y1="283" x2="430" y2="365" stroke="#111" stroke-width="3"/>
-      <circle cx="385" cy="310" r="7" fill="#090806"/><circle cx="385" cy="340" r="7" fill="#090806"/>
-      <circle cx="474" cy="310" r="7" fill="#090806"/><circle cx="454" cy="340" r="7" fill="#090806"/><circle cx="494" cy="340" r="7" fill="#090806"/>
-    </g>
-    <g transform="rotate(10 620 328)">
-      <rect x="535" y="278" width="170" height="92" rx="16" fill="#f5efe3" stroke="#caa24a" stroke-width="5"/>
-      <line x1="620" y1="283" x2="620" y2="365" stroke="#111" stroke-width="3"/>
-      <circle cx="576" cy="310" r="7" fill="#090806"/><circle cx="604" cy="338" r="7" fill="#090806"/>
-      <circle cx="662" cy="310" r="7" fill="#090806"/><circle cx="682" cy="340" r="7" fill="#090806"/>
-    </g>
-    <g transform="rotate(-3 755 370)">
-      <rect x="700" y="325" width="170" height="92" rx="16" fill="#f5efe3" stroke="#caa24a" stroke-width="5"/>
-      <line x1="785" y1="330" x2="785" y2="412" stroke="#111" stroke-width="3"/>
-      <circle cx="742" cy="357" r="7" fill="#090806"/><circle cx="762" cy="387" r="7" fill="#090806"/>
-      <circle cx="826" cy="357" r="7" fill="#090806"/><circle cx="846" cy="387" r="7" fill="#090806"/>
-    </g>
+    <g transform="rotate(-12 430 338)"><rect x="345" y="278" width="170" height="92" rx="16" fill="#f5efe3" stroke="#caa24a" stroke-width="5"/><line x1="430" y1="283" x2="430" y2="365" stroke="#111" stroke-width="3"/><circle cx="385" cy="310" r="7" fill="#090806"/><circle cx="385" cy="340" r="7" fill="#090806"/><circle cx="474" cy="310" r="7" fill="#090806"/><circle cx="454" cy="340" r="7" fill="#090806"/><circle cx="494" cy="340" r="7" fill="#090806"/></g>
+    <g transform="rotate(10 620 328)"><rect x="535" y="278" width="170" height="92" rx="16" fill="#f5efe3" stroke="#caa24a" stroke-width="5"/><line x1="620" y1="283" x2="620" y2="365" stroke="#111" stroke-width="3"/><circle cx="576" cy="310" r="7" fill="#090806"/><circle cx="604" cy="338" r="7" fill="#090806"/><circle cx="662" cy="310" r="7" fill="#090806"/><circle cx="682" cy="340" r="7" fill="#090806"/></g>
+    <g transform="rotate(-3 755 370)"><rect x="700" y="325" width="170" height="92" rx="16" fill="#f5efe3" stroke="#caa24a" stroke-width="5"/><line x1="785" y1="330" x2="785" y2="412" stroke="#111" stroke-width="3"/><circle cx="742" cy="357" r="7" fill="#090806"/><circle cx="762" cy="387" r="7" fill="#090806"/><circle cx="826" cy="357" r="7" fill="#090806"/><circle cx="846" cy="387" r="7" fill="#090806"/></g>
     <text x="600" y="198" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="46" fill="url(#gold)" letter-spacing="6">DOUBLE SIX TABLE</text>
   </g>
 

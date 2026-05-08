@@ -39,21 +39,9 @@
   
   <g filter="url(#shadow)">
     <ellipse cx="600" cy="410" rx="370" ry="100" fill="#060504" stroke="#f2d27b" stroke-opacity=".30" stroke-width="5"/>
-    <g transform="rotate(-14 445 345)">
-      <rect x="390" y="235" width="130" height="185" rx="14" fill="#f5efe3" stroke="#caa24a" stroke-width="5"/>
-      <text x="455" y="285" text-anchor="middle" font-family="Impact" font-size="44" fill="#090806">A</text>
-      <text x="455" y="367" text-anchor="middle" font-family="Georgia" font-size="78" fill="#090806">♠</text>
-    </g>
-    <g>
-      <rect x="510" y="225" width="130" height="185" rx="14" fill="#f5efe3" stroke="#caa24a" stroke-width="5"/>
-      <text x="575" y="275" text-anchor="middle" font-family="Impact" font-size="44" fill="#090806">K</text>
-      <text x="575" y="357" text-anchor="middle" font-family="Georgia" font-size="78" fill="#090806">♠</text>
-    </g>
-    <g transform="rotate(14 705 345)">
-      <rect x="640" y="235" width="130" height="185" rx="14" fill="#f5efe3" stroke="#caa24a" stroke-width="5"/>
-      <text x="705" y="285" text-anchor="middle" font-family="Impact" font-size="44" fill="#090806">Q</text>
-      <text x="705" y="367" text-anchor="middle" font-family="Georgia" font-size="78" fill="#090806">♠</text>
-    </g>
+    <g transform="rotate(-14 445 345)"><rect x="390" y="235" width="130" height="185" rx="14" fill="#f5efe3" stroke="#caa24a" stroke-width="5"/><text x="455" y="285" text-anchor="middle" font-family="Impact" font-size="44" fill="#090806">A</text><text x="455" y="367" text-anchor="middle" font-family="Georgia" font-size="78" fill="#090806">♠</text></g>
+    <g><rect x="510" y="225" width="130" height="185" rx="14" fill="#f5efe3" stroke="#caa24a" stroke-width="5"/><text x="575" y="275" text-anchor="middle" font-family="Impact" font-size="44" fill="#090806">K</text><text x="575" y="357" text-anchor="middle" font-family="Georgia" font-size="78" fill="#090806">♠</text></g>
+    <g transform="rotate(14 705 345)"><rect x="640" y="235" width="130" height="185" rx="14" fill="#f5efe3" stroke="#caa24a" stroke-width="5"/><text x="705" y="285" text-anchor="middle" font-family="Impact" font-size="44" fill="#090806">Q</text><text x="705" y="367" text-anchor="middle" font-family="Georgia" font-size="78" fill="#090806">♠</text></g>
     <text x="600" y="188" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="46" fill="url(#gold)" letter-spacing="6">TRICKS AND TEAMS</text>
   </g>
 

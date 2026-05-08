@@ -42,7 +42,7 @@
     <circle cx="600" cy="330" r="105" fill="#10100d" stroke="#f2d27b" stroke-opacity=".55" stroke-width="12"/>
     <circle cx="600" cy="330" r="48" fill="#060504" stroke="#caa24a" stroke-width="8"/>
     <path d="M600 225 V435 M495 330 H705 M526 256 L674 404 M674 256 L526 404" stroke="#f2d27b" stroke-opacity=".42" stroke-width="10" stroke-linecap="round"/>
-    <rect x="462" y="492" width="276" height="24" rx="12" fill="url(#gold)"/>
+    <rect x="462" y="492" width="276" height="24" rx="12" fill="url(#gold)" opacity=".9"/>
     <text x="600" y="165" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="46" fill="url(#gold)" letter-spacing="6">CRACK THE VAULT</text>
     <path d="M875 278 l42 42 l-42 42" fill="none" stroke="#8d0d0d" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
