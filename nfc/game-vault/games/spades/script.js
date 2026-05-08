@@ -1,13 +1,218 @@
-
 (()=>{
-const suits=['♠','♥','♦','♣'],ranks=['A','K','Q','J','10','9','8','7','6','5','4','3','2'],rv=Object.fromEntries(ranks.map((r,i)=>[r,14-i]));let deck=[],hand=[],bot=[],creditsVal=1000,betVal=25,active=false,you=0,ai=0,lead=null;
-function mk(){deck=[];for(const s of suits)for(const r of ranks)deck.push({r,s,id:r+s+Math.random()});for(let i=deck.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}}
-function card(c,i){return `<button class="card ${c.s==='♥'||c.s==='♦'?'red':''}" data-i="${i}">${c.r}<br>${c.s}</button>`}
-function legal(c){if(!lead)return true;if(c.s===lead)return true;return !hand.some(x=>x.s===lead)}
-function wins(a,b){if(a.s==='♠'&&b.s!=='♠')return true;if(a.s!== '♠'&&b.s==='♠')return false;if(a.s===b.s)return rv[a.r]>rv[b.r];return true}
-function ui(){credits.textContent=creditsVal;bet.textContent=betVal;mainScore.textContent=creditsVal;stateText.textContent=active?'LIVE':'READY'}
-function render(msg){playArea.innerHTML=hand.map(card).join('');playArea.querySelectorAll('button').forEach(b=>b.onclick=()=>play(+b.dataset.i));result.textContent=msg||`Tricks You ${you} / Bot ${ai}`;ui()}
-function start(){if(active)return;if(creditsVal<betVal){result.textContent='NOT ENOUGH CREDITS';return}creditsVal-=betVal;mk();hand=deck.splice(0,13).sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||rv[b.r]-rv[a.r]);bot=deck.splice(0,13);you=0;ai=0;lead=null;active=true;render('Play a card. Must follow suit when possible. Spades trump.')}
-function play(i){if(!active)return;let pc=hand[i];if(!legal(pc)){render('Must follow suit if you have it.');return}hand.splice(i,1);lead=pc.s;let choices=bot.filter(c=>c.s===lead);let bc=(choices[0]||bot[0]);bot.splice(bot.indexOf(bc),1);if(wins(pc,bc))you++;else ai++;lead=null;if(!hand.length){active=false;let won=you>ai;if(won)creditsVal+=betVal*2;render((won?'YOU WIN ':'BOT WINS ')+`${you}-${ai}`);return}render(`You played ${pc.r}${pc.s}, bot played ${bc.r}${bc.s}. Score ${you}-${ai}`)}
-actionBtn.onclick=start;newBtn.onclick=()=>{active=false;hand=[];render('READY')};betUp.onclick=()=>{if(!active&&betVal<500){betVal+=25;ui()}};betDown.onclick=()=>{if(!active&&betVal>25){betVal-=25;ui()}};ui();
+
+const suits=['♠','♥','♦','♣'];
+const ranks=['A','K','Q','J','10','9','8','7','6','5','4','3','2'];
+const power = r => 14 - ranks.indexOf(r);
+const seats=['south','west','north','east'];
+const team={south:'NS',north:'NS',west:'EW',east:'EW'};
+
+let hands={};
+let turn='south';
+let trick=[];
+let score={NS:0,EW:0};
+let spadesBroken=false;
+
+function buildDeck(){
+let deck=[];
+for(const s of suits){
+for(const r of ranks){
+deck.push({r,s,id:r+s+Math.random()});
+}
+}
+deck.sort(()=>Math.random()-.5);
+return deck;
+}
+
+function deal(){
+const deck=buildDeck();
+hands={south:[],west:[],north:[],east:[]};
+
+for(let i=0;i<52;i++){
+hands[seats[i%4]].push(deck[i]);
+}
+
+for(const seat of seats){
+hands[seat].sort(sortCards);
+}
+
+turn='south';
+trick=[];
+spadesBroken=false;
+log('New hand dealt.');
+render();
+}
+
+function sortCards(a,b){
+return suits.indexOf(a.s)-suits.indexOf(b.s) || ranks.indexOf(a.r)-ranks.indexOf(b.r);
+}
+
+function legalCards(seat){
+const hand=hands[seat]||[];
+
+if(!trick.length){
+if(!spadesBroken){
+const nonSpades=hand.filter(c=>c.s!=='♠');
+if(nonSpades.length)return nonSpades;
+}
+return hand;
+}
+
+const lead=trick[0].card.s;
+const follow=hand.filter(c=>c.s===lead);
+
+return follow.length ? follow : hand;
+}
+
+function play(seat,card){
+
+if(seat!==turn)return;
+
+const legal=legalCards(seat);
+
+if(!legal.some(c=>c.id===card.id)){
+log('Follow suit if you can.');
+return;
+}
+
+hands[seat]=hands[seat].filter(c=>c.id!==card.id);
+trick.push({seat,card});
+
+if(card.s==='♠')spadesBroken=true;
+
+if(trick.length===4){
+finishTrick();
+return;
+}
+
+turn=seats[(seats.indexOf(turn)+1)%4];
+render();
+
+if(turn!=='south'){
+setTimeout(botTurn,600);
+}
+}
+
+function botTurn(){
+const legal=legalCards(turn);
+let card;
+
+if(trick.length===3){
+card=[...legal].sort((a,b)=>power(b.r)-power(a.r))[0];
+}
+else{
+card=[...legal].sort((a,b)=>power(a.r)-power(b.r))[0];
+}
+
+play(turn,card);
+}
+
+function winner(){
+let best=trick[0];
+
+for(const t of trick.slice(1)){
+if(t.card.s===best.card.s && power(t.card.r)>power(best.card.r)){
+best=t;
+}
+if(t.card.s==='♠' && best.card.s!=='♠'){
+best=t;
+}
+}
+
+return best.seat;
+}
+
+function finishTrick(){
+const win=winner();
+score[team[win]]++;
+
+log(seatName(win)+' won the trick.');
+
+turn=win;
+trick=[];
+
+if((hands.south||[]).length===0){
+log('Hand over.');
+turnText.textContent='HAND OVER';
+render();
+return;
+}
+
+render();
+
+if(turn!=='south'){
+setTimeout(botTurn,700);
+}
+}
+
+function render(){
+renderHand();
+renderTrick();
+scoreText.textContent=score.NS+' - '+score.EW;
+turnText.textContent=turn==='south'?'YOUR TURN':seatName(turn)+' TURN';
+stateText.textContent=spadesBroken?'SPADES BROKEN':'LIVE';
+}
+
+function cardHTML(card,index,disabled=false){
+const red=card.s==='♥'||card.s==='♦';
+return `
+<button class="card ${red?'red':''} ${disabled?'disabled':''}" data-i="${index}">
+${card.r}<br>${card.s}
+</button>
+`;
+}
+
+function renderHand(){
+const hand=hands.south||[];
+const legal=legalCards('south').map(c=>c.id);
+
+document.getElementById('hand').innerHTML=
+hand.map((card,i)=>cardHTML(card,i,!legal.includes(card.id))).join('');
+
+document.querySelectorAll('#hand .card').forEach(btn=>{
+btn.onclick=()=>{
+play('south',hand[+btn.dataset.i]);
+};
+});
+}
+
+function renderTrick(){
+document.getElementById('trickArea').innerHTML =
+trick.map(t=>{
+const red=t.card.s==='♥'||t.card.s==='♦';
+return `
+<div class="played-card">
+<span>${seatName(t.seat)}</span>
+<div class="card ${red?'red':''}">
+${t.card.r}<br>${t.card.s}
+</div>
+</div>
+`;
+}).join('');
+}
+
+function seatName(seat){
+return {
+south:'You',
+north:'North',
+east:'East',
+west:'West'
+}[seat];
+}
+
+function log(msg){
+document.getElementById('log').innerHTML =
+'<li>'+msg+'</li>' +
+document.getElementById('log').innerHTML;
+}
+
+document.getElementById('newBtn').onclick=deal;
+document.getElementById('autoBtn').onclick=()=>{
+if(turn==='south'){
+const card=legalCards('south')[0];
+if(card)play('south',card);
+}
+};
+
+deal();
+
 })();
