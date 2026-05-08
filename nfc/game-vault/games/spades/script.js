@@ -1,1 +1,1 @@
-(()=>{const game='spades';const s=document.getElementById('status');Play3DMultiplayer.installPanel(document.getElementById('mpMount'),{game});document.getElementById('hostBtn').onclick=async()=>{await Play3DMultiplayer.createRoom(game);s.textContent='ROOM LIVE';};document.getElementById('syncBtn').onclick=()=>Play3DMultiplayer.sendMove({type:'spades-sync',time:Date.now()});Play3DMultiplayer.onMove(m=>{s.textContent='MOVE SYNCED: '+JSON.stringify(m).slice(0,60)});})();
+(()=>{stateText.textContent='RESTORED';mainScore.textContent='READY';})();
