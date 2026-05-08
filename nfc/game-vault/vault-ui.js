@@ -39,7 +39,7 @@ function setBg(src){
 
 function roomCode(game){
   const prefix=(game.id||'P3D').replace(/[^a-z0-9]/gi,'').slice(0,4).toUpperCase()||'P3D';
-  return prefix + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+  return prefix+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
 }
 
 function fanHref(game){
@@ -49,7 +49,6 @@ function fanHref(game){
 function card(game){
   const secondHref = game.id === 'rewards' ? game.href : fanHref(game);
   const secondLabel = game.id === 'rewards' ? 'Open' : 'Fan Join';
-
   return `
     <article class="game-card" data-game="${game.id}" data-type="${game.type}">
       <div class="preview" style="background-image:url('${game.bg}')"></div>
