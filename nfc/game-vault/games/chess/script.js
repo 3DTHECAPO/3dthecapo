@@ -15,6 +15,7 @@ let board=[];
 let selected=null;
 let whiteTurn=true;
 let flipped=false;
+let applyingRemoteMove=false;
 
 const boardEl=document.getElementById('board');
 const turnText=document.getElementById('turnText');
@@ -100,7 +101,9 @@ function clickSquare(r,c){
     const moving=board[selected.r][selected.c];
     if(selected.r===r&&selected.c===c){selected=null;stateText.textContent='READY';render();return}
     if(moving&&legalMove(moving,selected.r,selected.c,r,c)){
-      board[r][c]=moving;board[selected.r][selected.c]='';whiteTurn=!whiteTurn;selected=null;stateText.textContent='MOVED';render();return;
+      board[r][c]=moving;board[selected.r][selected.c]='';
+      if(window.PLAY3D_SYNC && !applyingRemoteMove){ window.PLAY3D_SYNC.sendMove({type:'chess_move',from:{r:selected.r,c:selected.c},to:{r,c},piece:moving}); }
+      whiteTurn=!whiteTurn;selected=null;stateText.textContent='MOVED';render();return;
     }
     stateText.textContent='ILLEGAL MOVE';
     selected=null;render();return;
@@ -115,5 +118,23 @@ function reset(){board=cloneStart();selected=null;whiteTurn=true;stateText.textC
 document.getElementById('resetBtn').onclick=reset;
 document.getElementById('flipBtn').onclick=()=>{flipped=!flipped;render()};
 reset();
+
+if(window.PLAY3D_SYNC && window.PLAY3D_SYNC.enabled){
+  window.PLAY3D_SYNC.onMove(function(move){
+    if(!move || !move.payload || move.playerId === window.PLAY3D_SYNC.playerId) return;
+    const p = move.payload;
+    if(p.type === 'chess_move' && p.from && p.to){
+      applyingRemoteMove = true;
+      const moving = board[p.from.r][p.from.c];
+      board[p.to.r][p.to.c] = moving || p.piece || '';
+      board[p.from.r][p.from.c] = '';
+      whiteTurn = !whiteTurn;
+      selected = null;
+      stateText.textContent = 'REMOTE MOVE';
+      render();
+      applyingRemoteMove = false;
+    }
+  });
+}
 
 })();
