@@ -188,31 +188,3 @@ document.getElementById('doubleBtn').onclick=doubleDown;
 render(true);
 
 })();
-
-
-/* PLAY3D V10 blackjack bridge */
-(function(){
-  if(!window.PLAY3D_SYNC || !window.PLAY3D_SYNC.enabled) return;
-  function snap(action){
-    window.PLAY3D_SYNC.sendGameEvent('blackjack_state', {
-      action,
-      credits: typeof creditsVal !== 'undefined' ? creditsVal : (typeof credits !== 'undefined' ? credits : null),
-      bet: typeof betAmount !== 'undefined' ? betAmount : null,
-      stateText: document.getElementById('stateText')?.textContent || '',
-      mainScore: document.getElementById('mainScore')?.textContent || ''
-    });
-  }
-  document.addEventListener('click', function(e){
-    const id = e.target && e.target.id;
-    if(['dealBtn','hitBtn','standBtn','doubleBtn'].includes(id)){
-      setTimeout(()=>snap(id), 60);
-    }
-  });
-  window.PLAY3D_SYNC.onGameEvent('blackjack_state', function(msg){
-    if(!msg || msg.playerId === window.PLAY3D_SYNC.playerId) return;
-    const p = msg.payload || {};
-    const state = document.getElementById('stateText');
-    if(state) state.textContent = 'REMOTE ' + (p.action || 'MOVE');
-  });
-})();
-

@@ -179,27 +179,3 @@ passBtn.onclick=passTurn;
 newGame();
 
 })();
-
-
-/* PLAY3D V10 dominoes bridge */
-(function(){
-  if(!window.PLAY3D_SYNC || !window.PLAY3D_SYNC.enabled) return;
-  function snap(action){
-    window.PLAY3D_SYNC.sendGameEvent('dominoes_state', {
-      action,
-      score: document.getElementById('mainScore')?.textContent || '',
-      chainText: document.getElementById('chain')?.textContent || ''
-    });
-  }
-  document.addEventListener('click', function(e){
-    if(e.target.closest('.domino') || ['newBtn','drawBtn','passBtn'].includes(e.target.id)){
-      setTimeout(()=>snap(e.target.id || 'tile_play'), 60);
-    }
-  });
-  window.PLAY3D_SYNC.onGameEvent('dominoes_state', function(msg){
-    if(!msg || msg.playerId === window.PLAY3D_SYNC.playerId) return;
-    const s = document.getElementById('stateText') || document.getElementById('mainScore');
-    if(s) s.textContent = 'REMOTE';
-  });
-})();
-
