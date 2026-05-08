@@ -1,138 +1,175 @@
-
 (function(){
-  const GAMES = [
-    {title:'Vault Slots', folder:'./slot-machine-custom/', icon:'777', type:'casino', filters:['casino','multiplayer'], tags:['Casino','Fan Mode','Bets'], desc:'Premium slot floor with fan challenge routing and stake controls.'},
-    {title:'Blackjack', folder:'./blackjack/', icon:'21', type:'casino', filters:['casino','multiplayer'], tags:['Casino','Fan Mode','Bets'], desc:'Beat the dealer without going over 21. Fan table entry stays available.'},
-    {title:'Poker', folder:'./poker/', icon:'♠', type:'cards', filters:['cards','multiplayer'], tags:['Cards','Fan Mode','Bets'], desc:'Card room with front page, table flow, and fan join link.'},
-    {title:'Spades', folder:'./spades/', icon:'♠♠', type:'cards', filters:['cards','multiplayer'], tags:['Cards','Fan Mode','Team'], desc:'Team trick-taking room with fan/opponent entry visible.'},
-    {title:'Dominoes', folder:'./dominoes/', icon:'▦', type:'strategy', filters:['strategy','multiplayer'], tags:['Strategy','Fan Mode','Table'], desc:'Domino table room with fan/pass-and-play entry visible.'},
-    {title:'Vault Chess', folder:'./chess/', icon:'♛', type:'strategy', filters:['strategy','multiplayer'], tags:['Strategy','Fan Mode','2 Player'], desc:'Chess board room with two-player fan challenge entry.'},
-    {title:'Rummy', folder:'./rummy/', icon:'R', type:'cards', filters:['cards','multiplayer'], tags:['Cards','Fan Mode'], desc:'Rummy card room with its own front card instead of a blank slot.'},
-    {title:'Pinochle', folder:'./pinochle/', icon:'P', type:'cards', filters:['cards','multiplayer'], tags:['Cards','Fan Mode'], desc:'Pinochle room restored to the lineup with front cover.'},
-    {title:'Vault Heist', folder:'./vault-heist/', icon:'$', type:'arcade', filters:['strategy','multiplayer'], tags:['Arcade','Fan Mode'], desc:'Challenge room for fan races and vault runs.'}
-  ];
+'use strict';
 
-  const $ = (sel, parent=document)=>parent.querySelector(sel);
-  const $$ = (sel, parent=document)=>Array.from(parent.querySelectorAll(sel));
+const games = [
+  {id:'chess',title:'Vault Chess',pill:'Strategy',tags:['Strategy','Fan Mode','2 Player'],href:'./games/chess/',bg:'./assets/preview_chess.svg',desc:'Luxury chess board with legal moves, fan challenge entry, timers, and room-code foundation.',type:'strategy multiplayer',difficulty:'Medium',players:'1-2 Players'},
+  {id:'slots',title:'3D Slots',pill:'Casino',tags:['Casino','Fan Mode','Bets'],href:'./games/slot-machine-custom/',bg:'./assets/preview_slots.svg',desc:'Premium reel room with vault energy, jackpot glow, stake controls, and fan challenge entry.',type:'casino multiplayer',difficulty:'Easy',players:'Fan Ready'},
+  {id:'blackjack',title:'Blackjack',pill:'High Limit',tags:['Casino','Cards','Fan Mode'],href:'./games/blackjack/',bg:'./assets/preview_blackjack.svg',desc:'Black-and-gold card table for blackjack sessions with fan room-code entry.',type:'casino cards multiplayer',difficulty:'Medium',players:'Fan Ready'},
+  {id:'poker',title:'Poker',pill:'Card Room',tags:['Casino','Cards','Fan Mode'],href:'./games/poker/',bg:'./assets/preview_poker.svg',desc:'Private table energy with fan challenge room-code foundation.',type:'casino cards multiplayer',difficulty:'Medium',players:'Fan Ready'},
+  {id:'spades',title:'Spades',pill:'Team Table',tags:['Cards','Fan Mode','Teams'],href:'./games/spades/',bg:'./assets/preview_spades.svg',desc:'Classic team card room built for fan tables and room codes.',type:'cards strategy multiplayer',difficulty:'Medium',players:'2-4 Fan'},
+  {id:'pinochle',title:'Pinochle',pill:'Legacy Cards',tags:['Cards','Strategy','Fan Mode'],href:'./games/pinochle/',bg:'./assets/preview_pinochle.svg',desc:'Old-school strategic card table with fan room-code entry.',type:'cards strategy multiplayer',difficulty:'Hard',players:'2-4 Fan'},
+  {id:'rummy',title:'Rummy',pill:'Run Builder',tags:['Cards','Strategy','Fan Mode'],href:'./games/rummy/',bg:'./assets/preview_rummy.svg',desc:'Smooth card-meld room with fan join entry and room-code foundation.',type:'cards strategy multiplayer',difficulty:'Medium',players:'1-4 Fan'},
+  {id:'dominoes',title:'Dominoes',pill:'Street Table',tags:['Strategy','Fan Mode','Classic'],href:'./games/dominoes/',bg:'./assets/preview_dominoes.svg',desc:'Black-and-gold domino table with fan challenge mode.',type:'strategy multiplayer',difficulty:'Medium',players:'2-4 Fan'},
+  {id:'heist',title:'Vault Heist',pill:'Surprise Room',tags:['Action','Vault','Fan Mode'],href:'./games/vault-heist/',bg:'./assets/preview_heist.svg',desc:'Cinematic vault runner concept for fan races, rewards, and unlock missions.',type:'strategy multiplayer',difficulty:'Hard',players:'Fan Ready'},
+  {id:'rewards',title:'Rewards',pill:'Vault Perks',tags:['Rewards','Member','Claim'],href:'./rewards/',bg:'./assets/preview_rewards.svg',desc:'Rewards wallet, prize codes, and claim path for the vault ecosystem.',type:'multiplayer',difficulty:'Member',players:'All'}
+];
 
-  let activeFilter = 'all';
+const row = document.getElementById('gameRow');
+const search = document.getElementById('gameSearch');
+const filters = document.getElementById('filters');
+const bgA = document.getElementById('bgLayerA');
+const bgB = document.getElementById('bgLayerB');
+const featuredName = document.getElementById('featuredName');
+const featuredLabel = document.getElementById('featuredLabel');
+const lastPlayedTitle = document.getElementById('lastPlayedTitle');
+const lastPlayedCopy = document.getElementById('lastPlayedCopy');
+const continueBtn = document.getElementById('continueBtn');
 
-  function tagHtml(tags){
-    return tags.map(t=>`<span class="tag ${/fan/i.test(t) ? 'fan' : ''}">${t}</span>`).join('');
-  }
+let currentFilter = 'all';
+let activeBg = 'a';
 
-  function roomUrl(game){
-    const room = makeRoomCode(game.title);
-    const cleanFolder = game.folder.replace(/\/?$/,'/');
-    return `${cleanFolder}?mode=fan&room=${encodeURIComponent(room)}`;
-  }
+function makeRoomCode(game){
+  const prefix = String(game.id || game.title || 'P3D').replace(/[^a-z0-9]/gi,'').slice(0,4).toUpperCase() || 'P3D';
+  const rand = Math.random().toString(36).slice(2,6).toUpperCase();
+  return prefix + '-' + rand;
+}
 
-  function makeRoomCode(title){
-    const short = title.replace(/[^A-Za-z0-9]/g,'').slice(0,4).toUpperCase() || 'P3D';
-    const rand = Math.random().toString(36).slice(2,6).toUpperCase();
-    return `${short}-${rand}`;
-  }
+function fanHref(game){
+  if(game.id === 'rewards') return game.href;
+  const joiner = game.href.includes('?') ? '&' : '?';
+  return game.href + joiner + 'mode=fan&room=' + encodeURIComponent(makeRoomCode(game));
+}
 
-  function saveLast(title, folder){
-    localStorage.setItem('play3d:lastGame', JSON.stringify({title, folder, at:Date.now()}));
-    loadLast();
-  }
+function setBg(src){
+  if(!bgA || !bgB || !src) return;
 
-  function card(game){
-    const filters = game.filters.join(' ');
-    const fanHref = roomUrl(game);
-    return `
-      <article class="game-card" data-title="${game.title.toLowerCase()}" data-type="${game.type}" data-filter="${filters}" data-tags="${game.tags.join(' ').toLowerCase()}">
-        <span class="fan-pill">Fan Join</span>
-        <div class="game-front ${game.type}" data-icon="${game.icon}" aria-hidden="true"></div>
-        <div class="card-body">
-          <div class="tags">${tagHtml(game.tags)}</div>
-          <h3>${game.title}</h3>
-          <p>${game.desc}</p>
-          <div class="play-row">
-            <a class="cta gold launch-game" href="${game.folder}" data-title="${game.title}" data-folder="${game.folder}">Play</a>
-            <a class="cta red launch-game" href="${fanHref}" data-title="${game.title} Fan Room" data-folder="${fanHref}">Fan Join</a>
-          </div>
+  const active = activeBg === 'a' ? bgA : bgB;
+  const next = activeBg === 'a' ? bgB : bgA;
+
+  next.style.backgroundImage = `linear-gradient(180deg,rgba(0,0,0,.28),rgba(0,0,0,.78)),url("${src}")`;
+  next.classList.add('bg-active');
+  active.classList.remove('bg-active');
+
+  activeBg = activeBg === 'a' ? 'b' : 'a';
+}
+
+function card(game){
+  const fan = fanHref(game);
+  const secondLabel = game.id === 'rewards' ? 'Open' : 'Fan Join';
+
+  return `
+    <article class="game-card" data-game="${game.id}" data-type="${game.type}">
+      <div class="preview" style="background-image:url('${game.bg}')"></div>
+      <div class="card-body">
+        <div class="tags">${game.tags.slice(0,3).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        <div class="kicker">${game.pill}</div>
+        <h3>${game.title}</h3>
+        <p>${game.desc}</p>
+        <div class="meta">
+          <span>${game.players}</span>
+          <span>${game.difficulty}</span>
         </div>
-      </article>`;
-  }
+        <div class="card-actions">
+          <a class="cta gold" href="${game.href}" data-play="${game.id}">Play</a>
+          <a class="cta ghost" href="${fan}" data-play="${game.id}" data-fan="${game.id !== 'rewards' ? 'true' : 'false'}">${secondLabel}</a>
+        </div>
+      </div>
+    </article>
+  `;
+}
 
-  function renderCards(){
-    const row = $('#gameRow');
-    if(!row) return;
-    row.classList.remove('empty');
-    row.innerHTML = GAMES.map(card).join('');
-    applyFilters();
-  }
+function render(){
+  if(!row) return;
 
-  function applyFilters(){
-    const q = ($('#gameSearch')?.value || '').trim().toLowerCase();
-    $$('.game-card').forEach(el=>{
-      const matchSearch = !q || el.dataset.title.includes(q) || el.dataset.tags.includes(q);
-      const matchFilter = activeFilter === 'all'
-        || el.dataset.type === activeFilter
-        || el.dataset.filter.split(' ').includes(activeFilter);
-      el.classList.toggle('hidden', !(matchSearch && matchFilter));
+  const q = (search && search.value ? search.value : '').toLowerCase().trim();
+
+  const list = games.filter(g=>{
+    const text = (g.title + ' ' + g.tags.join(' ') + ' ' + g.desc + ' ' + g.players + ' ' + g.type).toLowerCase();
+    const matchQ = !q || text.includes(q);
+    const matchF = currentFilter === 'all' || g.type.includes(currentFilter) || g.tags.join(' ').toLowerCase().includes(currentFilter);
+    return matchQ && matchF;
+  });
+
+  row.innerHTML = list.map(card).join('');
+  setFeatured(list[0] || games[0]);
+
+  document.querySelectorAll('.game-card').forEach(el=>{
+    const g = games.find(x=>x.id === el.dataset.game);
+    el.addEventListener('mouseenter',()=>setFeatured(g));
+    el.addEventListener('focusin',()=>setFeatured(g));
+  });
+
+  document.querySelectorAll('[data-play]').forEach(a=>{
+    a.addEventListener('click',()=>{
+      const g = games.find(x=>x.id === a.dataset.play);
+      if(!g) return;
+
+      const save = {
+        ...g,
+        href: a.getAttribute('href'),
+        lastAction: a.dataset.fan === 'true' ? 'Fan Join' : 'Play'
+      };
+
+      localStorage.setItem('PLAY3D_LAST_GAME', JSON.stringify(save));
     });
-  }
+  });
+}
 
-  function bind(){
-    $('#gameSearch')?.addEventListener('input', applyFilters);
+function setFeatured(g){
+  if(!g) return;
 
-    $('#filters')?.addEventListener('click', e=>{
-      const btn = e.target.closest('.filter');
-      if(!btn) return;
-      $$('.filter', $('#filters')).forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      activeFilter = btn.dataset.filter || 'all';
-      applyFilters();
-    });
+  if(featuredName) featuredName.textContent = g.title;
+  if(featuredLabel) featuredLabel.textContent = g.pill;
 
-    $('#scrollLeft')?.addEventListener('click', ()=>$('#gameRow')?.scrollBy({left:-360,behavior:'smooth'}));
-    $('#scrollRight')?.addEventListener('click', ()=>$('#gameRow')?.scrollBy({left:360,behavior:'smooth'}));
+  setBg(g.bg);
+}
 
-    document.addEventListener('click', e=>{
-      const a = e.target.closest('.launch-game');
-      if(!a) return;
-      saveLast(a.dataset.title || a.textContent.trim(), a.dataset.folder || a.href);
-    });
+if(filters){
+  filters.addEventListener('click', e=>{
+    const btn = e.target.closest('[data-filter]');
+    if(!btn) return;
 
-    document.addEventListener('mouseover', e=>{
-      const c = e.target.closest('.game-card');
-      const name = c?.querySelector('h3')?.textContent;
-      const featured = $('#featuredName');
-      if(name && featured) featured.textContent = name;
-    });
-  }
+    document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
 
-  function loadLast(){
-    const titleEl = $('#lastPlayedTitle');
-    const copyEl = $('#lastPlayedCopy');
-    const btn = $('#continueBtn');
-    if(!titleEl || !copyEl || !btn) return;
+    currentFilter = btn.dataset.filter;
+    render();
+  });
+}
 
-    let last = null;
-    try{ last = JSON.parse(localStorage.getItem('play3d:lastGame') || 'null'); }catch(e){}
-    if(!last){
-      btn.style.pointerEvents = 'none';
-      btn.style.opacity = '.55';
-      return;
-    }
-    titleEl.textContent = last.title || 'Recent Game';
-    copyEl.textContent = 'Jump back into ' + (last.title || 'your last game') + '.';
-    btn.href = last.folder || '#';
-    btn.style.pointerEvents = 'auto';
-    btn.style.opacity = '1';
-  }
+if(search){
+  search.addEventListener('input', render);
+}
 
-  function boot(){
-    const row = $('#gameRow');
-    if(row) row.classList.add('empty');
-    renderCards();
-    bind();
-    loadLast();
-  }
+const scrollLeft = document.getElementById('scrollLeft');
+const scrollRight = document.getElementById('scrollRight');
 
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
-  else boot();
+if(scrollLeft){
+  scrollLeft.onclick = ()=>row && row.scrollBy({left:-430,behavior:'smooth'});
+}
+
+if(scrollRight){
+  scrollRight.onclick = ()=>row && row.scrollBy({left:430,behavior:'smooth'});
+}
+
+function loadLast(){
+  try{
+    const g = JSON.parse(localStorage.getItem('PLAY3D_LAST_GAME') || 'null');
+    if(!g) return;
+
+    if(lastPlayedTitle) lastPlayedTitle.textContent = g.title;
+    if(lastPlayedCopy) lastPlayedCopy.textContent = 'Jump back into ' + g.title + (g.lastAction ? ' — ' + g.lastAction : '') + '.';
+    if(continueBtn) continueBtn.href = g.href;
+  }catch(e){}
+}
+
+loadLast();
+render();
+
+window.PLAY3D_GAME_VAULT = {
+  games,
+  render,
+  fanHref,
+  setFeatured
+};
 })();
