@@ -216,3 +216,27 @@ if(card)play('south',card);
 deal();
 
 })();
+
+
+/* PLAY3D V10 spades bridge */
+(function(){
+  if(!window.PLAY3D_SYNC || !window.PLAY3D_SYNC.enabled) return;
+  function snap(action){
+    window.PLAY3D_SYNC.sendGameEvent('spades_state', {
+      action,
+      score: document.getElementById('mainScore')?.textContent || '',
+      state: document.getElementById('stateText')?.textContent || ''
+    });
+  }
+  document.addEventListener('click', function(e){
+    if(e.target.closest('.card') || ['dealBtn','autoBtn'].includes(e.target.id)){
+      setTimeout(()=>snap(e.target.id || 'card_play'), 60);
+    }
+  });
+  window.PLAY3D_SYNC.onGameEvent('spades_state', function(msg){
+    if(!msg || msg.playerId === window.PLAY3D_SYNC.playerId) return;
+    const s = document.getElementById('stateText');
+    if(s) s.textContent = 'REMOTE ' + ((msg.payload && msg.payload.action) || 'PLAY');
+  });
+})();
+

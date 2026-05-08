@@ -24,3 +24,27 @@ function playBest(){
 document.addEventListener('click',e=>{const c=e.target.closest('.card');if(!c||!c.dataset.i)return;const i=Number(c.dataset.i);if(hand[i]){discard.push(hand.splice(i,1)[0]);score+=5;render()}});
 ensureUI();document.getElementById('newBtn')?.addEventListener('click',deal);document.getElementById('drawBtn')?.addEventListener('click',draw);document.getElementById('playBtn')?.addEventListener('click',playBest);document.getElementById('backBtn')?.addEventListener('click',()=>location.href='../../index.html');deal();
 })();
+
+
+/* PLAY3D V10 rummy bridge */
+(function(){
+  if(!window.PLAY3D_SYNC || !window.PLAY3D_SYNC.enabled) return;
+  function snap(action){
+    window.PLAY3D_SYNC.sendGameEvent('rummy_state', {
+      action,
+      score: document.getElementById('mainScore')?.textContent || '',
+      handCount: document.querySelectorAll('#hand .card').length
+    });
+  }
+  document.addEventListener('click', function(e){
+    if(e.target.closest('.card') || ['newBtn','drawBtn','playBtn','backBtn'].includes(e.target.id)){
+      setTimeout(()=>snap(e.target.id || 'card_play'), 60);
+    }
+  });
+  window.PLAY3D_SYNC.onGameEvent('rummy_state', function(msg){
+    if(!msg || msg.playerId === window.PLAY3D_SYNC.playerId) return;
+    const s = document.getElementById('stateText');
+    if(s) s.textContent = 'REMOTE ' + ((msg.payload && msg.payload.action) || 'PLAY');
+  });
+})();
+
