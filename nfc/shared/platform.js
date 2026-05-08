@@ -32,8 +32,16 @@
   function isFromController(){
     return params.get('from') === 'controller' || params.get('from') === 'master';
   }
+  function siteBase(){
+    const first = window.location.pathname.split('/').filter(Boolean)[0] || '';
+    if(first && first !== 'nfc' && first !== 'public' && !first.includes('.')) return '/' + first + '/';
+    return '/';
+  }
+  function sitePath(path){
+    return siteBase() + String(path || '').replace(/^\/+/, '');
+  }
   function buildAccessUrl(target){
-    const u = new URL('/nfc/index.html', window.location.origin);
+    const u = new URL(sitePath('nfc/index.html'), window.location.origin);
     u.searchParams.set('code','CAPO-MASTER-999');
     if(target) u.searchParams.set('target', target);
     return u.toString();
@@ -61,11 +69,11 @@
     const nav = document.createElement('nav');
     nav.className = 'p3d-top-nav';
     nav.innerHTML = [
-      ['Main Site','/index.html'],
-      ['Vault','/nfc/index.html'],
-      ['Game Vault','/nfc/game-vault/index.html'],
-      ['Rewards','/nfc/game-vault/rewards/index.html'],
-      ['Museum','/nfc/museum/index.html'],
+      ['Main Site',sitePath('index.html')],
+      ['Vault',sitePath('nfc/index.html')],
+      ['Game Vault',sitePath('nfc/game-vault/index.html')],
+      ['Rewards',sitePath('nfc/game-vault/rewards/index.html')],
+      ['Museum',sitePath('nfc/museum/index.html')],
       ['YouTube','https://youtube.com/@iiidtv'],
       ['Spotify','https://open.spotify.com/artist/4R7uJYf4ts6pthecl9IVBF']
     ].map(function(x){
