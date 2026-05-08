@@ -3,115 +3,56 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>PLAY 3D — Vault Chess</title>
-<meta name="description" content="Premium PLAY 3D vault chess game.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>PLAY 3D — Multiplayer Chess</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/nfc/shared/multiplayer/multiplayer.css">
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<div class="fx-noise" aria-hidden="true"></div>
-<div class="fx-glow" aria-hidden="true"></div>
-
+<div class="bg"></div>
 <main class="app">
-  <header class="topbar">
-    <a class="brand" href="../../index.html">
-      <span class="seal">3D</span>
-      <span><b>PLAY 3D</b><small>Vault Chess</small></span>
-    </a>
-    <nav class="nav">
-      <a href="../../index.html">Game Vault</a>
-      <a href="../../rewards/index.html">Rewards</a>
-      <a href="../../../index.html">Vault</a>
-      <a href="../../../../index.html">Main Site</a>
-    </nav>
-  </header>
+<header class="top">
+  <a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a>
+  <nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav>
+</header>
 
-  <section class="hero">
-    <div>
-      <div class="kicker">BLACK / GOLD • PREMIUM BOARD ROOM</div>
-      <h1>Vault Chess</h1>
-      <p>Full legal chess with castling, en passant, promotion, checkmate, timer, captures, undo, CPU mode, and fan challenge placeholder.</p>
+<section class="hero">
+  <div><div class="kicker">ONLINE ROOM CODES • LIVE MOVE SYNC</div><h1>Vault Chess</h1><p>Host plays White. Fan joins as Black. Local/CPU still work when no room is connected.</p></div>
+  <div class="score"><span id="roomBadge">LOCAL</span><b id="turnText">WHITE</b><small id="stateText">READY</small></div>
+</section>
+
+<section class="layout">
+  <aside class="panel">
+    <h2>Mode</h2>
+    <div class="modegrid">
+      <button id="localBtn" class="active">Local</button>
+      <button id="cpuBtn">Vs CPU</button>
+      <button id="onlineBtn">Online</button>
     </div>
-    <div class="status-card">
-      <span id="gameStatus">White to move</span>
-      <b id="modeLabel">LOCAL 2P</b>
-    </div>
+    <div id="mpMount"></div>
+    <h2>Controls</h2>
+    <button id="newBtn">New Game</button>
+    <button id="flipBtn">Flip Board</button>
+    <button id="undoBtn">Undo</button>
+    <h2>Captured</h2>
+    <div id="captured" class="captured"></div>
+  </aside>
+
+  <section class="board-shell">
+    <div id="board" class="board"></div>
   </section>
 
-  <section class="game-layout">
-    <aside class="panel controls">
-      <h2>Mode</h2>
-      <div class="button-grid">
-        <button class="mode active" data-mode="local">Local 2P</button>
-        <button class="mode" data-mode="cpu">Vs CPU</button>
-        <button class="mode" data-mode="online">Fan Room</button>
-      </div>
-
-      <div id="onlinePanel" class="online-panel">
-        <label>Fan Room Code</label>
-        <div class="room-row">
-          <input id="roomCode" readonly value="PLAY3D-">
-          <button id="createRoom">Create</button>
-        </div>
-        <small>Realtime placeholder ready for Supabase later. Chat disabled by default.</small>
-      </div>
-
-      <h2>Controls</h2>
-      <div class="button-grid two">
-        <button id="newGame">Restart</button>
-        <button id="undoMove">Undo</button>
-        <button id="flipBoard">Flip</button>
-        <button id="soundToggle">Sound On</button>
-      </div>
-
-      <h2>Timer</h2>
-      <div class="button-grid three">
-        <button class="timer active" data-min="0">Off</button>
-        <button class="timer" data-min="5">5 Min</button>
-        <button class="timer" data-min="10">10 Min</button>
-      </div>
-
-      <div class="clock-grid">
-        <div><small>White</small><b id="whiteClock">--:--</b></div>
-        <div><small>Black</small><b id="blackClock">--:--</b></div>
-      </div>
-    </aside>
-
-    <section class="board-zone">
-      <div class="board-shell">
-        <div class="files" id="topFiles"></div>
-        <div class="board-row">
-          <div class="ranks" id="leftRanks"></div>
-          <div id="board" class="board" aria-label="Chess board"></div>
-          <div class="ranks" id="rightRanks"></div>
-        </div>
-        <div class="files" id="bottomFiles"></div>
-      </div>
-    </section>
-
-    <aside class="panel info">
-      <h2>Captured</h2>
-      <h3>White took</h3>
-      <div id="capturedByWhite" class="piece-bin"></div>
-      <h3>Black took</h3>
-      <div id="capturedByBlack" class="piece-bin"></div>
-      <h2>Move History</h2>
-      <ol id="moveHistory" class="move-history"></ol>
-    </aside>
-  </section>
+  <aside class="panel">
+    <h2>Move History</h2>
+    <ol id="history"></ol>
+  </aside>
+</section>
 </main>
 
-<div id="endModal" class="modal hidden">
-  <div class="modal-card">
-    <div class="kicker">Game Over</div>
-    <h2 id="endTitle">Checkmate</h2>
-    <p id="endCopy">Victory secured.</p>
-    <button id="playAgain">Run It Back</button>
-  </div>
-</div>
+<div id="modal" class="modal hidden"><div class="modal-card"><h2 id="modalTitle">Game Over</h2><p id="modalCopy"></p><button id="againBtn">Run It Back</button></div></div>
 
+<script src="/nfc/shared/multiplayer/multiplayer-config.js"></script>
+<script src="/nfc/shared/multiplayer/multiplayer-core.js"></script>
 <script src="./script.js"></script>
 </body>
 </html>
