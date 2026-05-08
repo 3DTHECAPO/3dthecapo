@@ -1,24 +1,23 @@
+
 (()=>{
+let creditsVal=1000, betVal=25, spinning=false;
 const symbols=[
- {name:'3D Logo',src:'./assets/logo.png',pay:30,w:7},
- {name:'Crown',src:'./assets/crown.png',pay:25,w:8},
- {name:'Vault',src:'./assets/vault.png',pay:22,w:9},
- {name:'Cash',src:'./assets/cash.png',pay:18,w:10},
- {name:'Key',src:'./assets/key.png',pay:14,w:12},
- {name:'Mic',src:'./assets/mic.png',pay:12,w:13},
- {name:'Speaker',src:'./assets/speaker.png',pay:10,w:14},
- {name:'Hoodie',src:'./assets/hoodie.png',pay:9,w:15},
- {name:'Chain',src:'./assets/chain.png',pay:8,w:16},
- {name:'Lock',src:'./assets/lock.png',pay:7,w:17},
- {name:'100x3',src:'./assets/cover-100x3.png',pay:20,w:8},
- {name:'My Resume',src:'./assets/cover-my-resume.png',pay:20,w:8}
+ {name:'logo',src:'./assets/logo.png',weight:2,pay:50},
+ {name:'crown',src:'./assets/crown.png',weight:4,pay:25},
+ {name:'vault',src:'./assets/vault.png',weight:5,pay:20},
+ {name:'cash',src:'./assets/cash.png',weight:7,pay:14},
+ {name:'key',src:'./assets/key.png',weight:8,pay:10},
+ {name:'lock',src:'./assets/lock.png',weight:10,pay:8},
+ {name:'mic',src:'./assets/mic.png',weight:10,pay:7},
+ {name:'speaker',src:'./assets/speaker.png',weight:12,pay:6},
+ {name:'hoodie',src:'./assets/hoodie.png',weight:12,pay:5},
+ {name:'chain',src:'./assets/chain.png',weight:12,pay:5}
 ];
-let credits=Number(localStorage.getItem('play3d_slots_credits')||1000), bet=25;
-const bag=[]; symbols.forEach(s=>{for(let i=0;i<s.w;i++)bag.push(s)});
+const bag=[];symbols.forEach(s=>{for(let i=0;i<s.weight;i++)bag.push(s)});
+const reels=[r1,r2,r3];
 function pick(){return bag[Math.floor(Math.random()*bag.length)]}
-function set(el,s){el.src=s.src; el.alt=s.name}
-function ui(){creditsEl.textContent=credits; mainScore.textContent=credits; betEl.textContent=bet; localStorage.setItem('play3d_slots_credits',credits)}
-const creditsEl=document.getElementById('credits'), betEl=document.getElementById('bet');
-function spin(){ if(credits<bet){stateText.textContent='NOT ENOUGH';return} credits-=bet; let res=[pick(),pick(),pick()]; [r1,r2,r3].forEach((el,i)=>set(el,res[i])); let win=0; if(res[0].name===res[1].name && res[1].name===res[2].name){win=bet*res[0].pay; stateText.textContent='JACKPOT'} else if(res[0].name===res[1].name || res[1].name===res[2].name || res[0].name===res[2].name){win=bet*3; stateText.textContent='MATCH WIN'} else {stateText.textContent='NO MATCH'} credits+=win; lastWin.textContent=win; ui(); }
-betUp.onclick=()=>{if(bet<500)bet+=25; ui()}; betDown.onclick=()=>{if(bet>25)bet-=25; ui()}; spinBtn.onclick=spin; ui();
+function ui(){credits.textContent=creditsVal;mainScore.textContent=creditsVal;bet.textContent=betVal;}
+function spin(){if(spinning)return;if(creditsVal<betVal){stateText.textContent='NOT ENOUGH';return}spinning=true;creditsVal-=betVal;lastWin.textContent='0';ui();let ticks=0,timer=setInterval(()=>{reels.forEach(img=>{img.src=pick().src});ticks++;if(ticks>=18){clearInterval(timer);finish();}},65)}
+function finish(){const result=[pick(),pick(),pick()];result.forEach((s,i)=>reels[i].src=s.src);let win=0;const names=result.map(s=>s.name);if(names[0]===names[1]&&names[1]===names[2]) win=betVal*result[0].pay;else if(names[0]===names[1]||names[0]===names[2]||names[1]===names[2]) win=betVal*2;creditsVal+=win;lastWin.textContent=win;stateText.textContent=win?('WIN +'+win):'MISS';spinning=false;ui();}
+spinBtn.onclick=spin;betUp.onclick=()=>{if(!spinning&&betVal<500){betVal+=25;ui();stateText.textContent='BET '+betVal}};betDown.onclick=()=>{if(!spinning&&betVal>25){betVal-=25;ui();stateText.textContent='BET '+betVal}};ui();
 })();
