@@ -1,0 +1,42 @@
+
+.p3d-fanbar{
+  position:fixed;left:12px;right:12px;bottom:12px;z-index:99999;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  padding:12px 14px;border:1px solid rgba(255,223,145,.32);border-radius:18px;
+  background:rgba(0,0,0,.82);backdrop-filter:blur(10px);color:#fff3dc;
+  box-shadow:0 15px 40px rgba(0,0,0,.45);
+  font-family:Oswald,Arial,sans-serif;
+}
+.p3d-fanbar b{font-family:"Black Ops One",Impact,sans-serif;color:#ffdf91;letter-spacing:.04em}
+.p3d-fanbar small{color:#cfc3ad}
+.p3d-fanbar .p3d-actions{display:flex;gap:8px;flex-wrap:wrap}
+.p3d-fanbar button,.p3d-fanbar a{
+  border:1px solid rgba(255,223,145,.34);border-radius:999px;padding:9px 12px;
+  background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(0,0,0,.34));color:#fff3dc;
+  text-decoration:none;font:800 12px Oswald,Arial,sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer
+}
+.p3d-fanbar .gold{background:linear-gradient(180deg,#ffdf91,#a8751b);color:#070707}
+.p3d-roombox{
+  display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.78);
+  align-items:center;justify-content:center;padding:18px;font-family:Oswald,Arial,sans-serif;color:#fff3dc
+}
+.p3d-roombox.open{display:flex}
+.p3d-roomcard{
+  width:min(520px,94vw);border:1px solid rgba(255,223,145,.32);border-radius:26px;
+  background:linear-gradient(135deg,rgba(0,0,0,.96),rgba(40,24,5,.96));padding:22px;
+  box-shadow:0 30px 90px rgba(0,0,0,.65)
+}
+.p3d-roomcard h2{margin:0 0 8px;font-family:"Black Ops One",Impact,sans-serif;color:#ffdf91}
+.p3d-roomcard input{
+  width:100%;border:1px solid rgba(255,223,145,.28);border-radius:14px;padding:12px;
+  background:#050505;color:#fff3dc;font:700 16px Oswald,Arial,sans-serif;margin:8px 0 12px
+}
+.p3d-roomcard .room-code{font-family:"Black Ops One",Impact,sans-serif;font-size:28px;color:#ffdf91;margin:8px 0}
+.p3d-roomcard .row{display:flex;gap:8px;flex-wrap:wrap}
+.p3d-roomcard button,.p3d-roomcard a{
+  border:1px solid rgba(255,223,145,.34);border-radius:999px;padding:10px 14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(0,0,0,.34));color:#fff3dc;
+  text-decoration:none;font:800 13px Oswald,Arial,sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer
+}
+.p3d-roomcard .gold{background:linear-gradient(180deg,#ffdf91,#a8751b);color:#070707}
+@media(max-width:680px){.p3d-fanbar{position:static;margin:12px}.p3d-fanbar .p3d-actions{width:100%}}

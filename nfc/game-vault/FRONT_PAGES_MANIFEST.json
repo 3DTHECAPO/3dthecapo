@@ -1,0 +1,31 @@
+{
+  "deploy_path": "/nfc/game-vault/",
+  "index_source": "EXACT uploaded index(118).html preserved",
+  "files_required_by_index": [
+    "shared.css",
+    "vault-ui.js"
+  ],
+  "games_included": [
+    "slot-machine-custom",
+    "blackjack",
+    "poker",
+    "spades",
+    "dominoes",
+    "chess",
+    "rummy",
+    "pinochle",
+    "vault-heist"
+  ],
+  "fan_lobby_injected_into": [
+    "slot-machine-custom",
+    "blackjack",
+    "poker",
+    "spades",
+    "dominoes",
+    "chess",
+    "rummy",
+    "pinochle",
+    "vault-heist"
+  ],
+  "note": "Fan room UI is local/static and Supabase Realtime-ready; live synced remote multiplayer requires backend table/channel wiring."
+}
