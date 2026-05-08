@@ -157,9 +157,8 @@ setResult('Not enough credits');
 return;
 }
 
-const handBet=betAmount;
-credits-=handBet;
-betAmount+=handBet;
+credits-=betAmount;
+betAmount*=2;
 
 player.push(deck.pop());
 
@@ -172,7 +171,7 @@ else{
 stand();
 }
 
-betAmount=Math.max(25, betAmount/2);
+betAmount=50;
 render(true);
 }
 
@@ -185,8 +184,6 @@ document.getElementById('dealBtn').onclick=deal;
 document.getElementById('hitBtn').onclick=hit;
 document.getElementById('standBtn').onclick=stand;
 document.getElementById('doubleBtn').onclick=doubleDown;
-document.getElementById('betUp').onclick=()=>{if(!live && betAmount<500){betAmount+=25;render(true)}};
-document.getElementById('betDown').onclick=()=>{if(!live && betAmount>25){betAmount-=25;render(true)}};
 
 render(true);
 
