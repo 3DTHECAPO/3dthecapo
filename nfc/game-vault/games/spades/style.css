@@ -41,3 +41,5 @@ p{color:var(--muted)}
 .chip{width:60px;height:60px;border-radius:50%;border:6px dashed #fff;background:radial-gradient(circle,#f2d27b,#7b5919);box-shadow:0 10px 20px rgba(0,0,0,.45)}
 ol{max-height:280px;overflow:auto;color:#cfc6b5}
 @media(max-width:760px){.hero{grid-template-columns:1fr}.status{text-align:left}nav a,button{width:100%}.casino-table{min-height:560px;border-width:8px;border-radius:30px}.left-seat,.right-seat{display:none}.table-center{width:92%;top:48%}.card{width:54px;height:82px;font-size:17px}.chip-stack{display:none}.seat{width:120px;min-height:56px;font-size:12px}.panel,.hero{border-radius:20px;padding:13px}}
+
+.rules{margin-top:16px;border:1px solid rgba(242,210,123,.28);border-radius:18px;padding:14px;background:rgba(0,0,0,.38)}.rules h2,.rules h3{margin:0 0 8px;color:#f2d27b}.rules ul{margin:0;padding-left:20px;color:rgba(245,239,227,.82);line-height:1.45}.disabled{opacity:.38;filter:grayscale(1)}
