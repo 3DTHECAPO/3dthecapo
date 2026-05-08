@@ -1,91 +1,27 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PLAY 3D — 3D Slots</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./style.css">
-</head>
-<body>
-<div class="bg"></div>
-
+<link rel="stylesheet" href="./style.css"></head>
+<body><div class="bg"></div>
 <main class="app">
-<header class="top">
-  <a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a>
-  <nav>
-    <a href="../../index.html">Game Vault</a>
-    <a href="../../rewards/index.html">Rewards</a>
-    <a href="../../../index.html">Vault</a>
-  </nav>
-</header>
-
-<section class="hero">
-  <div>
-    <div class="kicker">9 WINDOW SLOT MACHINE</div>
-    <h1>3D Slots</h1>
-    <p>Premium 3×3 slot machine using your original vault symbols: locks, keys, cash, crown, chain, mic, speaker, hoodie, logo and cover art.</p>
-  </div>
-  <div class="score">
-    <span>Credits</span>
-    <b id="mainScore">1000</b>
-    <small id="stateText">READY</small>
-  </div>
-</section>
-
+<header class="top"><a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a><nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav></header>
+<section class="hero"><div><div class="kicker">9 WINDOW SLOT MACHINE</div><h1>3D Slots</h1><p>Premium 3×3 slot machine using your original vault artwork symbols.</p></div><div class="score"><span>Credits</span><b id="mainScore">1000</b><small id="stateText">READY</small></div></section>
 <section class="slot-floor">
-  <div class="slot-machine" aria-label="3D Slots machine">
-    <div class="machine-top">
-      <span>PLAY 3D</span>
-      <b>JACKPOT</b>
-      <span>9 WHEEL</span>
-    </div>
-
+  <div class="slot-machine">
+    <div class="machine-top"><span>PLAY 3D</span><b>JACKPOT</b><span>9 WINDOW</span></div>
     <div class="machine-body">
       <div class="reel-grid" id="reelGrid">
-        <button class="reel-cell" id="r0" type="button"></button>
-        <button class="reel-cell" id="r1" type="button"></button>
-        <button class="reel-cell" id="r2" type="button"></button>
-        <button class="reel-cell" id="r3" type="button"></button>
-        <button class="reel-cell win-line" id="r4" type="button"></button>
-        <button class="reel-cell" id="r5" type="button"></button>
-        <button class="reel-cell" id="r6" type="button"></button>
-        <button class="reel-cell" id="r7" type="button"></button>
-        <button class="reel-cell" id="r8" type="button"></button>
+        <button class="reel-cell" id="r0" type="button"></button><button class="reel-cell" id="r1" type="button"></button><button class="reel-cell" id="r2" type="button"></button>
+        <button class="reel-cell" id="r3" type="button"></button><button class="reel-cell" id="r4" type="button"></button><button class="reel-cell" id="r5" type="button"></button>
+        <button class="reel-cell" id="r6" type="button"></button><button class="reel-cell" id="r7" type="button"></button><button class="reel-cell" id="r8" type="button"></button>
       </div>
-
-      <div class="lever">
-        <div class="lever-knob"></div>
-        <div class="lever-bar"></div>
-      </div>
+      <div class="lever"><div class="lever-knob"></div><div class="lever-bar"></div></div>
     </div>
-
-    <div class="machine-controls">
-      <button id="minusBet" type="button">- Bet</button>
-      <button id="spinBtn" class="spin" type="button">Spin</button>
-      <button id="plusBet" type="button">+ Bet</button>
-    </div>
-
-    <div class="readout">
-      <span>Credits: <b id="credits">1000</b></span>
-      <span>Bet: <b id="bet">25</b></span>
-      <span>Win: <b id="lastWin">0</b></span>
-    </div>
+    <div class="machine-controls"><button id="minusBet" type="button">- Bet</button><button id="spinBtn" class="spin" type="button">Spin</button><button id="plusBet" type="button">+ Bet</button></div>
+    <div class="readout"><span>Credits: <b id="credits">1000</b></span><span>Bet: <b id="bet">25</b></span><span>Win: <b id="lastWin">0</b></span></div>
   </div>
-
-  <aside class="rules">
-    <h2>How To Play</h2>
-    <ul>
-      <li>Spin the 3×3 machine.</li>
-      <li>Middle row match pays strong.</li>
-      <li>Any 3 matching symbols anywhere pays.</li>
-      <li>Rare symbols pay more.</li>
-      <li>Use + Bet / - Bet to raise or lower stakes.</li>
-    </ul>
-  </aside>
+  <aside class="rules"><h2>How To Play</h2><ul><li>Spin the 3×3 machine.</li><li>Any 3 matching symbols on a line pays.</li><li>4+ matching symbols anywhere pays a bonus.</li><li>Use + Bet / - Bet to adjust stakes.</li></ul></aside>
 </section>
-</main>
-
-<script src="./script.js"></script>
-</body>
-</html>
+</main><script src="./script.js"></script></body></html>
