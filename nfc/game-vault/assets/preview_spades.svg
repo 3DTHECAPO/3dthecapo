@@ -6,7 +6,7 @@
       <stop offset="100%" stop-color="#000" stop-opacity="0"/>
     </radialGradient>
     <radialGradient id="g2" cx="82%" cy="18%" r="58%">
-      <stop offset="0%" stop-color="#8d0d0d" stop-opacity=".38"/>
+      <stop offset="0%" stop-color="#0b0b0b" stop-opacity=".38"/>
       <stop offset="100%" stop-color="#000" stop-opacity="0"/>
     </radialGradient>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">

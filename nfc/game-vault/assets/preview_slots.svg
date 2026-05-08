@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-label="3D Slots preview card">
   <defs>
     <radialGradient id="g1" cx="28%" cy="15%" r="75%"><stop offset="0%" stop-color="#f2d27b" stop-opacity=".55"/><stop offset="42%" stop-color="#caa24a" stop-opacity=".16"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient>
-    <radialGradient id="g2" cx="82%" cy="18%" r="58%"><stop offset="0%" stop-color="#8d0d0d" stop-opacity=".38"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <radialGradient id="g2" cx="82%" cy="18%" r="58%"><stop offset="0%" stop-color="#0b0b0b" stop-opacity=".38"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#211a0d"/><stop offset="45%" stop-color="#080806"/><stop offset="100%" stop-color="#000"/></linearGradient>
     <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff4ad"/><stop offset="48%" stop-color="#f2d27b"/><stop offset="100%" stop-color="#8b641f"/></linearGradient>
     <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000" flood-opacity=".82"/><feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#f2d27b" flood-opacity=".22"/></filter>
@@ -17,7 +17,7 @@
       <text x="415" y="366" font-size="36">KEY</text><text x="555" y="366" font-size="40">LOCK</text><text x="695" y="366" font-size="58">♛</text>
       <text x="415" y="484" font-size="36">VAULT</text><text x="555" y="484" font-size="42">MIC</text><text x="695" y="484" font-size="42">CASH</text>
     </g>
-    <circle cx="900" cy="235" r="24" fill="#8d0d0d" stroke="#f2d27b" stroke-width="4"/>
+    <circle cx="900" cy="235" r="24" fill="#0b0b0b" stroke="#f2d27b" stroke-width="4"/>
     <path d="M900 265 C966 330 966 440 895 525" fill="none" stroke="#caa24a" stroke-width="20" stroke-linecap="round"/>
     <circle cx="890" cy="545" r="32" fill="url(#gold)" stroke="#3a2509" stroke-width="5"/>
   </g>

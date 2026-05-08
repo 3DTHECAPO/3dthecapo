@@ -6,7 +6,7 @@
       <stop offset="100%" stop-color="#000" stop-opacity="0"/>
     </radialGradient>
     <radialGradient id="g2" cx="82%" cy="18%" r="58%">
-      <stop offset="0%" stop-color="#8d0d0d" stop-opacity=".38"/>
+      <stop offset="0%" stop-color="#0b0b0b" stop-opacity=".38"/>
       <stop offset="100%" stop-color="#000" stop-opacity="0"/>
     </radialGradient>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
@@ -44,7 +44,7 @@
     <path d="M600 225 V435 M495 330 H705 M526 256 L674 404 M674 256 L526 404" stroke="#f2d27b" stroke-opacity=".42" stroke-width="10" stroke-linecap="round"/>
     <rect x="462" y="492" width="276" height="24" rx="12" fill="url(#gold)" opacity=".9"/>
     <text x="600" y="165" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="46" fill="url(#gold)" letter-spacing="6">CRACK THE VAULT</text>
-    <path d="M875 278 l42 42 l-42 42" fill="none" stroke="#8d0d0d" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M875 278 l42 42 l-42 42" fill="none" stroke="#0b0b0b" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 
   <text x="600" y="578" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="66" fill="#f5efe3" letter-spacing="5" filter="url(#shadow)">VAULT HEIST</text>
