@@ -59,6 +59,20 @@
   <ol id="log"></ol>
 </section>
 </main>
-<script src="../shared/supabase-game-bridge.js"></script><script src="../shared/multiplayer-room-ui.js"></script><script src="./script.js"></script>
+<script src="./script.js"></script><script>/* CPU SAFE FAN LOADER */
+(function(){
+  var p = new URLSearchParams(location.search);
+  if(p.get('mode') !== 'fan' || !p.get('room')) return;
+
+  function load(src){
+    var s = document.createElement('script');
+    s.src = src;
+    document.body.appendChild(s);
+  }
+
+  load('../shared/supabase-game-bridge.js');
+  load('../shared/multiplayer-room-ui.js');
+})();
+</script>
 </body>
 </html>
