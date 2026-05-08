@@ -62,6 +62,19 @@ const games = [
   {id:'rewards',title:'Rewards',pill:'Vault Perks',tags:['Rewards','Member','Claim'],href:'./rewards/',bg:'./assets/preview_rewards.svg',desc:'Rewards wallet, prize codes, and claim path for the vault ecosystem.',type:'multiplayer',difficulty:'Member',players:'All'}
 ];
 
+const hubParams = new URLSearchParams(window.location.search);
+function fanRoomQuery(){
+  const mode = hubParams.get('mode');
+  const room = hubParams.get('room');
+  if(mode !== 'fan' || !room) return '';
+  return '?mode=fan&room=' + encodeURIComponent(room);
+}
+
+function launchHref(game){
+  if(!game || game.id === 'rewards') return game ? game.href : '#';
+  return game.href.split('?')[0] + fanRoomQuery();
+}
+
 const row = document.getElementById('gameRow');
 const search = document.getElementById('gameSearch');
 const filters = document.getElementById('filters');
@@ -86,6 +99,7 @@ function setBg(src){
 }
 
 function card(game){
+  const href = launchHref(game);
   return `
     <article class="game-card" data-game="${game.id}" data-type="${game.type}">
       <div class="preview" style="background-image:url('${game.bg}')"></div>
@@ -99,8 +113,8 @@ function card(game){
           <span>${game.difficulty}</span>
         </div>
         <div class="card-actions">
-          <a class="cta gold" href="${game.href}" data-play="${game.id}">Play</a>
-          <a class="cta ghost" href="${game.href}">Open</a>
+          <a class="cta gold" href="${href}" data-play="${game.id}">Play</a>
+          <a class="cta ghost" href="${href}">Open</a>
         </div>
       </div>
     </article>
@@ -159,7 +173,7 @@ function loadLast(){
     if(!g) return;
     lastPlayedTitle.textContent = g.title;
     lastPlayedCopy.textContent = 'Jump back into ' + g.title + '.';
-    continueBtn.href = g.href;
+    continueBtn.href = launchHref(g);
   }catch(e){}
 }
 

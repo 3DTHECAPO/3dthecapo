@@ -40,6 +40,16 @@
     }catch(e){}
   }
 
+  function siteBase(){
+    const first = window.location.pathname.split('/').filter(Boolean)[0] || '';
+    if(first && first !== 'nfc' && first !== 'public' && !first.includes('.')) return '/' + first + '/';
+    return '/';
+  }
+
+  function sitePath(path){
+    return siteBase() + String(path || '').replace(/^\/+/, '');
+  }
+
   function removeKey(key){
     try{
       localStorage.removeItem(key);
@@ -121,14 +131,14 @@
 
   function buildUnlockUrl(){
     const current = window.location.pathname + window.location.search;
-    const u = new URL('/nfc/index.html', window.location.origin);
+    const u = new URL(sitePath('nfc/index.html'), window.location.origin);
     u.searchParams.set('target', current);
     return u.toString();
   }
 
   function buildMasterUrl(){
     const current = window.location.pathname + window.location.search;
-    const u = new URL('/nfc/index.html', window.location.origin);
+    const u = new URL(sitePath('nfc/index.html'), window.location.origin);
     u.searchParams.set('code','CAPO-MASTER-999');
     u.searchParams.set('target', current);
     return u.toString();

@@ -74,7 +74,7 @@ API:
   async function ensureChannel(){
     const client = getClient();
     if(!client || typeof client.channel !== 'function'){
-      console.warn('[PLAY3D_SYNC] Supabase client not found. Room link active, live sync disabled.', {game, room});
+      console.warn('[PLAY3D_SYNC] Supabase client not found. Room link active, live sync disabled.');
       return null;
     }
 
