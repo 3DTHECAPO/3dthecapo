@@ -1,1 +1,51 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PLAY 3D — Vault Chess</title><link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./style.css"></head><body><div class="bg"></div><main class="app"><header class="top"><a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a><nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav></header><section class="hero"><div><div class="kicker">BOARD RESTORE</div><h1>Vault Chess</h1><p>Emergency restored stable build with visible table/board environment.</p></div><div class="score"><span>Status</span><b id="mainScore">0</b><small id="stateText">READY</small></div></section><section class="table"><div class="casino-table"><div class="table-logo">CHESS</div><div class="table-content"><div id="board" class="chessboard"></div><div class="row"><button id="resetBtn">Reset</button></div></div></div></section></main><script src="./script.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY 3D — Chess Fixed Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="bg"></div>
+
+<main class="app">
+  <header class="top">
+    <a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a>
+    <nav>
+      <a href="../../index.html">Game Vault</a>
+      <a href="../../../index.html">Vault</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div>
+      <div class="kicker">FIXED FULL-SQUARE BOARD</div>
+      <h1>Vault Chess</h1>
+      <p>All 64 squares stay full size before and after every move.</p>
+    </div>
+    <div class="score">
+      <span>Turn</span>
+      <b id="turnText">WHITE</b>
+      <small id="stateText">READY</small>
+    </div>
+  </section>
+
+  <section class="table">
+    <div class="chess-stage">
+      <div class="board-wrap">
+        <div id="board" class="chessboard"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="resetBtn">Reset</button>
+      <button id="flipBtn">Flip Board</button>
+    </div>
+  </section>
+</main>
+
+<script src="./script.js"></script>
+</body>
+</html>
