@@ -1,21 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760">
-<defs>
-<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#070707"/><stop offset=".52" stop-color="#1b1409"/><stop offset="1" stop-color="#000"/>
-</linearGradient>
-<radialGradient id="g" cx=".5" cy=".25" r=".65">
-<stop offset="0" stop-color="#f2d27b" stop-opacity=".34"/><stop offset="1" stop-color="#000" stop-opacity="0"/>
-</radialGradient>
-<filter id="ds"><feDropShadow dx="0" dy="18" stdDeviation="10" flood-color="#000" flood-opacity=".65"/></filter>
-</defs>
-<rect width="1200" height="760" fill="url(#bg)"/>
-<rect width="1200" height="760" fill="url(#g)"/>
-<g opacity=".16" stroke="#f2d27b" stroke-width="2">
-<path d="M0 560 C260 410 410 500 620 390 C850 270 990 330 1200 245"/>
-<path d="M0 650 C300 520 490 590 760 455 C960 360 1080 410 1200 360"/>
-</g>
-<circle cx="600" cy="310" r="170" fill="rgba(0,0,0,.42)" stroke="#caa24a" stroke-width="5"/>
-<text x="600" y="360" text-anchor="middle" font-size="190" fill="#f2d27b" filter="url(#ds)" font-family="Georgia,serif">◆</text>
-<text x="70" y="650" font-size="86" fill="#f5efe3" font-family="Impact,Arial Black,sans-serif">REWARDS</text>
-<text x="74" y="704" font-size="28" fill="#f2d27b" font-family="Arial,sans-serif" letter-spacing="8">CLAIM VAULT</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-label="REWARDS cover">
+  <defs>
+    <radialGradient id="goldGlow" cx="30%" cy="18%" r="70%">
+      <stop offset="0%" stop-color="#f2d27b" stop-opacity="0.55"/>
+      <stop offset="38%" stop-color="#7b5517" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="redGlow" cx="82%" cy="22%" r="55%">
+      <stop offset="0%" stop-color="#8b0000" stop-opacity="0.38"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1b1710"/>
+      <stop offset="48%" stop-color="#080806"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    <linearGradient id="goldText" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff1a6"/>
+      <stop offset="50%" stop-color="#f2d27b"/>
+      <stop offset="100%" stop-color="#8b641f"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000" flood-opacity="0.75"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="15" flood-color="#f2d27b" flood-opacity="0.25"/>
+    </filter>
+    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M56 0H0v56" fill="none" stroke="#ffffff" stroke-opacity="0.035" stroke-width="2"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="720" fill="url(#floor)"/>
+  <rect width="1200" height="720" fill="url(#grid)" opacity="0.9"/>
+  <rect width="1200" height="720" fill="url(#goldGlow)"/>
+  <rect width="1200" height="720" fill="url(#redGlow)"/>
+
+  <path d="M0 520 C230 430 390 455 600 535 C805 612 984 585 1200 500 L1200 720 L0 720 Z" fill="#000000" opacity="0.55"/>
+  <path d="M75 90 H1125 V630 H75 Z" fill="none" stroke="#f2d27b" stroke-opacity="0.22" stroke-width="3"/>
+  <path d="M105 120 H1095 V600 H105 Z" fill="none" stroke="#ffffff" stroke-opacity="0.07" stroke-width="2"/>
+
+  <circle cx="600" cy="332" r="190" fill="#000" opacity="0.32" stroke="#f2d27b" stroke-opacity="0.22" stroke-width="4"/>
+  <text x="600" y="365" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="142" fill="url(#goldText)" filter="url(#shadow)" letter-spacing="4">3D</text>
+
+  <text x="600" y="535" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="64" fill="#f5efe3" letter-spacing="5" filter="url(#shadow)">REWARDS</text>
+  <text x="600" y="588" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#f2d27b" letter-spacing="9" font-weight="800">VAULT PERKS</text>
+
+  <text x="84" y="666" font-family="Arial, sans-serif" font-size="18" fill="#f2d27b" opacity="0.78" letter-spacing="5">PLAY 3D</text>
+  <text x="1015" y="666" font-family="Arial, sans-serif" font-size="18" fill="#f2d27b" opacity="0.78" letter-spacing="5">FAN MODE</text>
 </svg>
