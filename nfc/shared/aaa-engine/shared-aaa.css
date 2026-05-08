@@ -1,0 +1,101 @@
+
+:root{
+  --p3d-gold:#caa24a;
+  --p3d-gold2:#f2d27b;
+  --p3d-cream:#f5efe3;
+}
+.p3d-cinematic-bg{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:-1;
+}
+.p3d-fog,
+.p3d-glow,
+.p3d-grid{
+  position:absolute;
+  inset:-10%;
+}
+.p3d-fog{
+  background:
+    radial-gradient(circle at 20% 20%, rgba(242,210,123,.10), transparent 40%),
+    radial-gradient(circle at 80% 40%, rgba(242,210,123,.08), transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(255,255,255,.04), transparent 40%);
+  filter:blur(40px);
+  animation:p3dFog 18s ease-in-out infinite alternate;
+}
+.p3d-glow{
+  background:
+    radial-gradient(circle at center, rgba(242,210,123,.12), transparent 35%);
+  animation:p3dPulse 6s ease-in-out infinite;
+}
+.p3d-grid{
+  background-image:
+    linear-gradient(rgba(242,210,123,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(242,210,123,.04) 1px, transparent 1px);
+  background-size:48px 48px;
+  mask-image:linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+}
+.p3d-glass{
+  background:linear-gradient(180deg,rgba(17,14,9,.82),rgba(0,0,0,.70));
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(242,210,123,.22);
+  box-shadow:
+    0 24px 90px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.05);
+}
+.p3d-hover{
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease;
+}
+.p3d-hover:hover{
+  transform:translateY(-6px) scale(1.01);
+  border-color:rgba(242,210,123,.55);
+  box-shadow:
+    0 28px 110px rgba(0,0,0,.65),
+    0 0 30px rgba(242,210,123,.18);
+}
+.p3d-shine{
+  position:relative;
+  overflow:hidden;
+}
+.p3d-shine:before{
+  content:'';
+  position:absolute;
+  inset:-20%;
+  background:linear-gradient(120deg,transparent 20%,rgba(255,255,255,.10) 45%,transparent 70%);
+  transform:translateX(-120%);
+  animation:p3dSweep 5s linear infinite;
+}
+.p3d-particles{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+}
+.p3d-particle{
+  position:absolute;
+  width:3px;
+  height:3px;
+  border-radius:50%;
+  background:rgba(242,210,123,.65);
+  animation:p3dFloat linear infinite;
+}
+@keyframes p3dFog{
+  from{transform:translate3d(-2%,0,0) scale(1)}
+  to{transform:translate3d(2%,-2%,0) scale(1.08)}
+}
+@keyframes p3dPulse{
+  50%{opacity:.55;transform:scale(1.08)}
+}
+@keyframes p3dSweep{
+  to{transform:translateX(140%)}
+}
+@keyframes p3dFloat{
+  from{transform:translateY(100vh);opacity:0}
+  10%{opacity:1}
+  to{transform:translateY(-10vh);opacity:0}
+}
