@@ -273,3 +273,28 @@ width:min(94vw,520px);
 height:min(94vw,520px);
 }
 }
+
+
+/* PLAY 3D chess piece visual fix: image assets, no letter pieces */
+.sq{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.chess-piece{
+  width:86%;
+  height:86%;
+  object-fit:contain;
+  pointer-events:none;
+  user-select:none;
+  display:block;
+  transform:translateZ(0);
+}
+.piece-gold{
+  filter:drop-shadow(0 0 10px rgba(242,210,123,.55)) drop-shadow(0 8px 8px rgba(0,0,0,.65));
+}
+.piece-black{
+  filter:drop-shadow(0 0 8px rgba(242,210,123,.28)) drop-shadow(0 8px 8px rgba(0,0,0,.75));
+}

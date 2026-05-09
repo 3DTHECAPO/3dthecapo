@@ -18,6 +18,12 @@
   let flipped = false;
   let mode = window.Play3DModeBar ? window.Play3DModeBar.getMode() : 'cpu';
 
+  const PIECE_ASSETS = {
+    'K':'./assets/pieces/wK.svg','Q':'./assets/pieces/wQ.svg','R':'./assets/pieces/wR.svg','B':'./assets/pieces/wB.svg','N':'./assets/pieces/wN.svg','P':'./assets/pieces/wP.svg',
+    'k':'./assets/pieces/bK.svg','q':'./assets/pieces/bQ.svg','r':'./assets/pieces/bR.svg','b':'./assets/pieces/bB.svg','n':'./assets/pieces/bN.svg','p':'./assets/pieces/bP.svg'
+  };
+
+
   const boardEl = document.getElementById('board');
   const turnText = document.getElementById('turnText');
   const stateText = document.getElementById('stateText');
@@ -148,7 +154,15 @@
         const sq = document.createElement('button');
         sq.className = 'sq ' + (((r + c) % 2 === 0) ? 'light' : 'dark');
         if(selected && selected.r === r && selected.c === c) sq.classList.add('selected');
-        sq.textContent = board[r][c] || '';
+        const pieceCode = board[r][c] || '';
+        if(pieceCode){
+          const img = document.createElement('img');
+          img.className = 'chess-piece ' + (isWhite(pieceCode) ? 'piece-gold' : 'piece-black');
+          img.src = PIECE_ASSETS[pieceCode];
+          img.alt = isWhite(pieceCode) ? 'gold chess piece' : 'black chess piece';
+          img.draggable = false;
+          sq.appendChild(img);
+        }
         sq.onclick = () => clickSquare(r,c);
         boardEl.appendChild(sq);
       }
