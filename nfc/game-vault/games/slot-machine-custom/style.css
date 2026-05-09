@@ -52,3 +52,104 @@ p{color:var(--muted);line-height:1.45}
   .slot-controls{grid-template-columns:1fr}
   .lever:after{display:none}
 }
+
+
+/* PLAY 3D 9-WINDOW SLOT RESTORE — real cabinet, no 3-slot table look */
+.slot-floor{
+  position:relative;
+  overflow:hidden;
+}
+.slot-floor:before{
+  content:"";
+  position:absolute;
+  inset:auto 8% 22px 8%;
+  height:80px;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 10% 55%,#f2d27b 0 10px,#835a14 11px 16px,transparent 17px),
+    radial-gradient(circle at 18% 55%,#ff265c 0 10px,#6e1026 11px 16px,transparent 17px),
+    radial-gradient(circle at 26% 55%,#65ff55 0 10px,#1b6a23 11px 16px,transparent 17px),
+    linear-gradient(90deg,transparent,rgba(242,210,123,.18),transparent);
+  opacity:.86;
+}
+.slot-cabinet{
+  max-width:760px;
+  border-width:12px;
+  border-color:#caa24a;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(242,210,123,.18),transparent 35%),
+    linear-gradient(180deg,#2b090f 0,#12060a 26%,#050302 100%);
+  box-shadow:
+    inset 0 0 0 3px rgba(255,229,151,.28),
+    inset 0 0 65px rgba(0,0,0,.92),
+    0 0 45px rgba(242,210,123,.24),
+    0 36px 110px rgba(0,0,0,.76);
+}
+.machine-top{
+  border:2px solid rgba(242,210,123,.34);
+  box-shadow:0 0 24px rgba(242,210,123,.14);
+}
+.reel-window.reel-grid{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  grid-template-rows:repeat(3,1fr) !important;
+  gap:12px !important;
+  min-height:480px;
+  padding:20px;
+  border:7px solid #caa24a;
+  border-radius:30px;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(242,210,123,.10),transparent 60%),
+    linear-gradient(180deg,#040404,#160f08 55%,#050302);
+}
+.reel-window.reel-grid .reel{
+  height:140px !important;
+  min-height:0;
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 50% 18%,rgba(255,255,255,.28),transparent 35%),
+    linear-gradient(180deg,#19140b,#050505);
+  border:3px solid rgba(242,210,123,.44);
+  box-shadow:
+    inset 0 0 22px rgba(242,210,123,.14),
+    inset 0 -18px 28px rgba(0,0,0,.5),
+    0 9px 20px rgba(0,0,0,.45);
+}
+.reel img{
+  width:86%;
+  height:86%;
+  object-fit:contain;
+  display:block;
+  filter:drop-shadow(0 0 12px rgba(242,210,123,.45)) drop-shadow(0 8px 8px rgba(0,0,0,.7));
+}
+.reel.spinning img{
+  animation:reelImgBlur .10s linear infinite;
+}
+@keyframes reelImgBlur{
+  0%{transform:translateY(-22px) scale(.94);opacity:.35}
+  50%{transform:translateY(18px) scale(1.02);opacity:1}
+  100%{transform:translateY(-22px) scale(.94);opacity:.35}
+}
+.center-reel{
+  border-color:#f2d27b !important;
+  box-shadow:0 0 28px rgba(242,210,123,.42),inset 0 0 22px rgba(242,210,123,.2) !important;
+}
+.payline{
+  margin:18px 26px;
+}
+.result-line{
+  border:1px solid rgba(242,210,123,.20);
+  border-radius:16px;
+  background:rgba(0,0,0,.42);
+  padding:12px;
+}
+@media(max-width:720px){
+  .reel-window.reel-grid{
+    min-height:330px;
+    gap:7px !important;
+    padding:10px;
+  }
+  .reel-window.reel-grid .reel{
+    height:95px !important;
+  }
+}
