@@ -2,7 +2,7 @@
 'use strict';
 
 const games = [
-  {id:'chess',title:'Vault Chess',pill:'Strategy',tags:['Strategy','Fan Mode','AI'],href:'./games/chess/',bg:'./assets/preview_chess.svg',desc:'Luxury chess board with legal moves, CPU mode, timers, and fan challenge placeholder.',type:'strategy multiplayer',difficulty:'Medium',players:'1-2 Players'},
+  {id:'chess',title:'Vault Chess',pill:'Strategy',tags:['Strategy','Fan Mode','AI'],href:'./games/chess/',bg:'./assets/preview_chess.svg',desc:'Luxury chess board with legal moves, CPU mode, timers, and guarded fan-room routing.',type:'strategy multiplayer',difficulty:'Medium',players:'1-2 Players'},
   {id:'slots',title:'3D Slots',pill:'Casino',tags:['Casino','Rewards','Fast'],href:'./games/slot-machine-custom/',bg:'./assets/preview_slots.svg',desc:'Premium reel room with vault energy, jackpot glow, and reward-ready structure.',type:'casino',difficulty:'Easy',players:'Solo'},
   {id:'blackjack',title:'Blackjack',pill:'High Limit',tags:['Casino','Cards','Dealer'],href:'./games/blackjack/',bg:'./assets/preview_blackjack.svg',desc:'Black-and-gold card table for quick blackjack sessions.',type:'casino cards',difficulty:'Medium',players:'Solo'},
   {id:'poker',title:'Poker',pill:'Card Room',tags:['Casino','Cards','Fan Mode'],href:'./games/poker/',bg:'./assets/preview_poker.svg',desc:'Private table energy with future fan challenge room-code foundation.',type:'casino cards multiplayer',difficulty:'Medium',players:'Future Fan'},
@@ -10,54 +10,7 @@ const games = [
   {id:'pinochle',title:'Pinochle',pill:'Legacy Cards',tags:['Cards','Strategy','Classic'],href:'./games/pinochle/',bg:'./assets/preview_pinochle.svg',desc:'Old-school strategic card table with luxury vault styling.',type:'cards strategy multiplayer',difficulty:'Hard',players:'2-4 Future'},
   {id:'rummy',title:'Rummy',pill:'Run Builder',tags:['Cards','Strategy','Chill'],href:'./games/rummy/',bg:'./assets/preview_rummy.svg',desc:'Smooth card-meld game concept ready for full gameplay expansion.',type:'cards strategy',difficulty:'Medium',players:'1-4 Future'},
   {id:'dominoes',title:'Dominoes',pill:'Street Table',tags:['Strategy','Fan Mode','Classic'],href:'./games/dominoes/',bg:'./assets/preview_dominoes.svg',desc:'Black-and-gold domino table with future fan challenge mode.',type:'strategy multiplayer',difficulty:'Medium',players:'2-4 Future'},
-  {id:'heist',title:'Vault Heist',pill:'Surprise Room',tags:['Action','Vault','Rewards'],href:'./games/vault-heist/',bg:'./assets/preview_heist.svg',desc:'Cinematic vault runner concept for future rewards and unlock missions.',type:'strategy multiplayer',difficulty:'Hard',players:'Solo'},  {
-    id: 'vault-raid-707',
-    title: 'Vault Raid 707',
-    pill: 'Heist',
-    tags: ['Action', 'Fan Mode', 'Vault'],
-    href: './games/vault-raid-707/',
-    bg: './assets/preview_vault-raid-707.svg',
-    desc: 'Co-op vault heist starter game. Dodge lasers, grab loot, hack security, and escape before lockdown.',
-    type: 'strategy multiplayer action',
-    difficulty: 'Medium',
-    players: '1-4 Future'
-  },
-  {
-    id: 'capo-survival-lockdown',
-    title: 'Capo Survival: Lockdown',
-    pill: 'Survival',
-    tags: ['Action', 'Wave', 'Fan Mode'],
-    href: './games/capo-survival-lockdown/',
-    bg: './assets/preview_capo-survival-lockdown.svg',
-    desc: 'Survival bunker wave starter game. Defend the vault, collect supplies, and survive lockdown.',
-    type: 'strategy multiplayer action',
-    difficulty: 'Hard',
-    players: '1-4 Future'
-  },
-  {
-    id: '3d-casino-empire',
-    title: '3D Casino Empire',
-    pill: 'Empire',
-    tags: ['Casino', 'Tycoon', 'Rewards'],
-    href: './games/3d-casino-empire/',
-    bg: './assets/preview_3d-casino-empire.svg',
-    desc: 'Casino management starter game. Build tables, stack cash, upgrade rooms, and run the empire.',
-    type: 'casino multiplayer management',
-    difficulty: 'Medium',
-    players: '1 Player'
-  },
-  {
-    id: 'nightmare-vault',
-    title: 'Nightmare Vault',
-    pill: 'Horror',
-    tags: ['Horror', 'Vault', 'Fan Mode'],
-    href: './games/nightmare-vault/',
-    bg: './assets/preview_nightmare-vault.svg',
-    desc: 'Dark vault horror starter game. Restore power, find clues, avoid the entity, and escape.',
-    type: 'strategy multiplayer horror',
-    difficulty: 'Hard',
-    players: '1-2 Future'
-  },
+  {id:'heist',title:'Vault Heist',pill:'Surprise Room',tags:['Action','Vault','Rewards'],href:'./games/vault-heist/',bg:'./assets/preview_heist.svg',desc:'Playable vault runner with keyboard, mobile hold controls, and fan-room-safe sync hooks.',type:'action multiplayer',difficulty:'Hard',players:'1-2'},
 
   {id:'rewards',title:'Rewards',pill:'Vault Perks',tags:['Rewards','Member','Claim'],href:'./rewards/',bg:'./assets/preview_rewards.svg',desc:'Rewards wallet, prize codes, and claim path for the vault ecosystem.',type:'multiplayer',difficulty:'Member',players:'All'}
 ];
