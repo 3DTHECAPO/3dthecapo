@@ -58,6 +58,7 @@
     hitBtn.disabled = !live;
     standBtn.disabled = !live;
     doubleBtn.disabled = !live || player.length !== 2 || credits < currentBet;
+    playAgainBtn.disabled = live || credits < betAmount;
   }
 
   function setResult(text){
@@ -121,6 +122,7 @@
   hitBtn.onclick = hit;
   standBtn.onclick = stand;
   doubleBtn.onclick = doubleDown;
+  playAgainBtn.onclick = deal;
 
   render(true);
 })();

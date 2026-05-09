@@ -6,9 +6,8 @@
   let deck = [];
   let hand = [];
   const hands = document.querySelectorAll('.hand');
-  const buttons = document.querySelectorAll('button');
-  const dealBtn = buttons[0];
-  const autoBtn = buttons[1];
+  const dealBtn = document.getElementById('dealBtn');
+  const autoBtn = document.getElementById('autoBtn');
 
   function buildDeck(){
     deck = [];
@@ -54,7 +53,8 @@
   function autoPlay(){
     if(!hand.length) deal();
     hand.sort((a,b)=>a.s.localeCompare(b.s) || order[a.r] - order[b.r]);
-    stateText.textContent = 'MELDS ' + scoreRuns(hand);
+    const mode = window.Play3DModeBar ? window.Play3DModeBar.getMode() : 'cpu';
+    stateText.textContent = (mode === 'local' ? 'LOCAL MELDS ' : 'MELDS ') + scoreRuns(hand);
     render();
   }
 

@@ -1,0 +1,53 @@
+.play3d-mode-bar{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:0 0 16px;
+  padding:12px;
+  border:1px solid rgba(242,210,123,.24);
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(0,0,0,.42));
+  box-shadow:0 14px 34px rgba(0,0,0,.34);
+}
+.play3d-mode-bar button,
+.play3d-mode-bar a{
+  min-height:42px;
+  border:1px solid rgba(242,210,123,.34);
+  border-radius:999px;
+  padding:10px 14px;
+  color:#f8edc8;
+  background:linear-gradient(180deg,#201a0d,#090704);
+  text-decoration:none;
+  font:900 12px Oswald,Arial,sans-serif;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  cursor:pointer;
+}
+.play3d-mode-bar button.active,
+.play3d-mode-bar button:hover,
+.play3d-mode-bar a:hover{
+  color:#100c05;
+  background:linear-gradient(180deg,#f8df94,#caa24a 58%,#805c1a);
+}
+.play3d-mode-status{
+  flex:1 1 100%;
+  min-height:18px;
+  color:rgba(248,237,200,.72);
+  font:700 12px Oswald,Arial,sans-serif;
+  text-align:center;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+@media(max-width:720px){
+  .play3d-mode-bar{
+    display:grid;
+    grid-template-columns:1fr;
+    align-items:stretch;
+  }
+  .play3d-mode-bar button,
+  .play3d-mode-bar a{
+    width:100%;
+  }
+}

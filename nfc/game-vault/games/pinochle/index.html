@@ -1,15 +1,45 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PLAY 3D — Pinochle</title><link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./style.css"></head><body><div class="bg"></div><main class="app"><header class="top"><a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a><nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav></header><section class="hero"><div><div class="kicker">CARD TABLE</div><h1>Pinochle</h1><p>Playable vault game build with stable controls and responsive table layout.</p></div><div class="score"><span>Status</span><b id="mainScore">0</b><small id="stateText">READY</small></div></section><section class="table"><div class="casino-table"><div class="table-logo">PINOCHLE</div><div class="table-content"><div class="row"><button>Deal</button><button>Auto Play</button></div><h2>Table</h2><div class="hand"><div class="card">A<br>♠</div><div class="card red">K<br>♥</div><div class="card">Q<br>♣</div><div class="card red">J<br>♦</div></div><h2>Your Hand</h2><div class="hand"><div class="card">10<br>♠</div><div class="card red">9<br>♥</div><div class="card">A<br>♣</div><div class="card red">Q<br>♦</div></div></div></div></section></main><script src="./script.js"></script><script>/* CPU SAFE FAN LOADER */
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY 3D - Pinochle</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="../shared/mode-bar.css">
+</head>
+<body>
+<div class="bg"></div>
+<main class="app">
+  <header class="top">
+    <a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a>
+    <nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav>
+  </header>
+  <section class="hero">
+    <div><div class="kicker">CARD TABLE</div><h1>Pinochle</h1><p>Playable pinochle table with deal, meld scoring, and local/CPU-safe controls.</p></div>
+    <div class="score"><span>Status</span><b id="mainScore">0</b><small id="stateText">READY</small></div>
+  </section>
+  <section class="table">
+    <div class="casino-table">
+      <div class="table-logo">PINOCHLE</div>
+      <div class="table-content">
+        <div class="row"><button id="dealBtn">Deal</button><button id="autoBtn">Auto Play</button></div>
+        <h2>Table</h2><div class="hand"></div>
+        <h2>Your Hand</h2><div class="hand"></div>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="../shared/mode-bar.js"></script>
+<script src="./script.js"></script>
+<script>
 (function(){
   var p = new URLSearchParams(location.search);
   if(p.get('mode') !== 'fan' || !p.get('room')) return;
-
-  function load(src){
-    var s = document.createElement('script');
-    s.src = src;
-    document.body.appendChild(s);
-  }
-
+  function load(src){ var s = document.createElement('script'); s.src = src; document.body.appendChild(s); }
   load('../shared/supabase-game-bridge.js');
   load('../shared/multiplayer-room-ui.js');
 })();
-</script></body></html>
+</script>
+</body>
+</html>

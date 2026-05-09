@@ -1,15 +1,78 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PLAY 3D — 3D Slots</title><link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./style.css"></head><body><div class="bg"></div><main class="app"><header class="top"><a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a><nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav></header><section class="hero"><div><div class="kicker">SLOT CABINET</div><h1>3D Slots</h1><p>Playable vault game build with stable controls and responsive table layout.</p></div><div class="score"><span>Status</span><b id="mainScore">0</b><small id="stateText">READY</small></div></section><section class="table"><div class="casino-table"><div class="table-logo">777</div><div class="table-content slots"><div class="reels"><div id="r1">7</div><div id="r2">BAR</div><div id="r3">★</div></div><div class="row"><button id="spinBtn">Spin</button></div><p>Credits: <b id="credits">1000</b> | Bet: <b id="bet">25</b> | Jackpot: <b id="jackpot">5000</b></p></div></div></section></main><script src="../shared/game-bank.js"></script><script src="./script.js"></script><script>/* CPU SAFE FAN LOADER */
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY 3D - 3D Slots</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="../shared/mode-bar.css">
+</head>
+<body>
+<div class="bg"></div>
+<main class="app">
+<header class="top">
+  <a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a>
+  <nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="kicker">VAULT SLOT MACHINE</div>
+    <h1>3D Slots</h1>
+    <p>Real cabinet play with shared credits, jackpot payouts, and animated reels.</p>
+  </div>
+  <div class="score">
+    <span>Credits</span>
+    <b id="mainScore">0</b>
+    <small id="stateText">READY</small>
+  </div>
+</section>
+
+<section class="slot-floor">
+  <div class="slot-cabinet" aria-label="3D slot machine">
+    <div class="machine-top">
+      <span>PLAY 3D</span>
+      <strong>JACKPOT <b id="jackpot">5000</b></strong>
+    </div>
+
+    <div class="reel-window">
+      <div class="reel" id="r1"><span>7</span></div>
+      <div class="reel" id="r2"><span>BAR</span></div>
+      <div class="reel" id="r3"><span>GEM</span></div>
+    </div>
+
+    <div class="payline" aria-hidden="true"></div>
+
+    <div class="machine-panel">
+      <div class="meter"><span>Credits</span><b id="credits">1000</b></div>
+      <div class="meter"><span>Bet</span><b id="bet">25</b></div>
+      <div class="meter"><span>Last Win</span><b id="lastWin">0</b></div>
+    </div>
+
+    <div class="slot-controls">
+      <button id="betDownBtn" type="button">Bet -</button>
+      <button id="spinBtn" class="lever" type="button"><span>Pull Lever</span></button>
+      <button id="betUpBtn" type="button">Bet +</button>
+      <button id="playAgainBtn" type="button" hidden>Play Again</button>
+    </div>
+
+    <p class="result-line" id="resultLine">Match two symbols to win. Match all three for the jackpot.</p>
+  </div>
+</section>
+</main>
+
+<script src="../shared/mode-bar.js"></script>
+<script src="../shared/game-bank.js"></script>
+<script src="./script.js"></script>
+<script>
 (function(){
   var p = new URLSearchParams(location.search);
   if(p.get('mode') !== 'fan' || !p.get('room')) return;
-
-  function load(src){
-    var s = document.createElement('script');
-    s.src = src;
-    document.body.appendChild(s);
-  }
-
+  function load(src){ var s = document.createElement('script'); s.src = src; document.body.appendChild(s); }
   load('../shared/supabase-game-bridge.js');
   load('../shared/multiplayer-room-ui.js');
 })();
-</script></body></html>
+</script>
+</body>
+</html>

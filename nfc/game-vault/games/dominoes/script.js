@@ -6,6 +6,7 @@ let cpu=[];
 let chain=[];
 let scores={you:0,cpu:0};
 let turn='you';
+let mode=window.Play3DModeBar ? window.Play3DModeBar.getMode() : 'cpu';
 
 const chainEl=document.getElementById('chain');
 const handEl=document.getElementById('hand');
@@ -26,7 +27,7 @@ player=stock.splice(0,7);
 cpu=stock.splice(0,7);
 chain=[];
 turn='you';
-log('New game started.');
+log(mode==='local' ? 'Local 2 Player game started.' : 'New game started.');
 render();
 }
 
@@ -45,6 +46,10 @@ tile[1]===e[0]||
 tile[0]===e[1]||
 tile[1]===e[1]
 );
+}
+
+function activeHand(){
+return mode==='local' && turn==='cpu' ? cpu : player;
 }
 
 function place(arr,tile){
@@ -75,26 +80,39 @@ return true;
 
 function play(tile){
 
-if(turn!=='you') return;
+if(turn!=='you' && mode!=='local') return;
 
-if(!place(player,tile)){
+const currentHand=activeHand();
+if(!place(currentHand,tile)){
 log('Illegal tile.');
 return;
 }
 
-turn='cpu';
+const currentSide=turn;
+turn=currentSide==='you'?'cpu':'you';
 
-if(!player.length){
+if(!currentHand.length){
+if(currentSide==='you'){
 scores.you++;
 scoreText.textContent=scores.you+' - '+scores.cpu;
 turnText.textContent='YOU WIN';
 render();
 return;
 }
+scores.cpu++;
+scoreText.textContent=scores.you+' - '+scores.cpu;
+turnText.textContent=mode==='local'?'PLAYER 2 WINS':'CPU WINS';
+render();
+return;
+}
 
 render();
 
+if(mode==='local') {
+log(turn==='cpu' ? 'Player 2 turn.' : 'Player 1 turn.');
+} else {
 setTimeout(cpuTurn,700);
+}
 }
 
 function cpuTurn(){
@@ -126,19 +144,25 @@ render();
 }
 
 function drawTile(){
-if(turn!=='you') return;
+if(turn!=='you' && mode!=='local') return;
 
 if(stock.length){
-player.push(stock.pop());
-log('You drew.');
+activeHand().push(stock.pop());
+log(turn==='cpu' ? 'Player 2 drew.' : 'You drew.');
 render();
 }
 }
 
 function passTurn(){
-if(turn!=='you') return;
+if(turn!=='you' && mode!=='local') return;
+if(mode==='local'){
+turn=turn==='you'?'cpu':'you';
+log(turn==='cpu' ? 'Player 2 turn.' : 'Player 1 turn.');
+render();
+} else {
 turn='cpu';
 cpuTurn();
+}
 }
 
 function tileHTML(tile,index){
@@ -154,16 +178,17 @@ return `
 function render(){
 
 chainEl.innerHTML=chain.map(tileHTML).join('');
-handEl.innerHTML=player.map(tileHTML).join('');
+const hand=activeHand();
+handEl.innerHTML=hand.map(tileHTML).join('');
 
 document.querySelectorAll('#hand .tile').forEach(btn=>{
 btn.onclick=()=>{
-play(player[+btn.dataset.i]);
+play(hand[+btn.dataset.i]);
 };
 });
 
 scoreText.textContent=scores.you+' - '+scores.cpu;
-turnText.textContent=turn==='you'?'YOUR TURN':'CPU TURN';
+turnText.textContent=turn==='you'?'YOUR TURN':(mode==='local'?'PLAYER 2 TURN':'CPU TURN');
 }
 
 function log(msg){
@@ -175,6 +200,10 @@ document.getElementById('log').innerHTML;
 newBtn.onclick=newGame;
 drawBtn.onclick=drawTile;
 passBtn.onclick=passTurn;
+window.addEventListener('play3d:modechange', event=>{
+mode=event.detail.mode;
+newGame();
+});
 
 newGame();
 

@@ -69,6 +69,9 @@
     stateText.textContent = phase.toUpperCase();
     drawBtn.disabled = phase !== 'draw';
     dealBtn.disabled = phase === 'draw' || creditsVal < betVal;
+    playAgainBtn.disabled = phase === 'draw' || creditsVal < betVal;
+    betDown.disabled = phase === 'draw';
+    betUp.disabled = phase === 'draw';
     document.querySelectorAll('#hand .card').forEach(button=>{
       button.onclick = ()=>{
         const i = Number(button.dataset.i);
@@ -111,7 +114,13 @@
   }
 
   dealBtn.onclick = deal;
+  playAgainBtn.onclick = deal;
   drawBtn.onclick = draw;
+  betDown.onclick = ()=>{
+    if(phase === 'draw') return;
+    betVal = Math.max(25, betVal - 25);
+    render();
+  };
   betUp.onclick = ()=>{
     if(phase === 'draw') return;
     betVal = betVal >= 500 ? 25 : betVal + 25;
