@@ -1,1 +1,54 @@
-(()=>{let c=1000,b=25,s=['7','BAR','★','♛','💎','3D'];spinBtn.onclick=()=>{if(c<b)return;c-=b;let a=[r1,r2,r3].map(x=>{let v=s[Math.floor(Math.random()*s.length)];x.textContent=v;return v});if(a[0]===a[1]&&a[1]===a[2]){c+=b*20;stateText.textContent='JACKPOT'}else if(a[0]===a[1]||a[1]===a[2]||a[0]===a[2]){c+=b*3;stateText.textContent='WIN'}else stateText.textContent='SPIN';credits.textContent=c;mainScore.textContent=c};credits.textContent=c;mainScore.textContent=c})();
+(()=>{
+  'use strict';
+
+  const bank = window.Play3DGameBank;
+  let creditsVal = bank ? bank.getCredits() : 1000;
+  let betVal = 25;
+  const symbols = ['7','BAR','STAR','CROWN','GEM','3D'];
+
+  function syncBank(){
+    if(bank) bank.setCredits(creditsVal);
+  }
+
+  function render(){
+    credits.textContent = creditsVal;
+    bet.textContent = betVal;
+    mainScore.textContent = creditsVal;
+    if(jackpot) jackpot.textContent = bank ? bank.getJackpot() : 5000;
+    spinBtn.disabled = creditsVal < betVal;
+  }
+
+  spinBtn.onclick = ()=>{
+    if(creditsVal < betVal){
+      stateText.textContent = 'NO CREDITS';
+      render();
+      return;
+    }
+
+    creditsVal -= betVal;
+    if(bank) bank.addJackpot(Math.ceil(betVal * 0.2));
+
+    const result = [r1,r2,r3].map(el=>{
+      const value = symbols[Math.floor(Math.random() * symbols.length)];
+      el.textContent = value;
+      return value;
+    });
+
+    if(result[0] === result[1] && result[1] === result[2]){
+      const prize = bank ? bank.claimJackpot() : betVal * 20;
+      creditsVal += prize;
+      stateText.textContent = 'JACKPOT +' + prize;
+    }else if(result[0] === result[1] || result[1] === result[2] || result[0] === result[2]){
+      const prize = betVal * 3;
+      creditsVal += prize;
+      stateText.textContent = 'WIN +' + prize;
+    }else{
+      stateText.textContent = 'SPIN';
+    }
+
+    syncBank();
+    render();
+  };
+
+  render();
+})();
