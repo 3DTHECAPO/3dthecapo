@@ -40,6 +40,35 @@
   letter-spacing:.04em;
   text-transform:uppercase;
 }
+.play3d-points-panel{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:0 0 16px;
+  padding:12px 14px;
+  border:1px solid rgba(242,210,123,.22);
+  border-radius:16px;
+  background:rgba(0,0,0,.42);
+}
+.play3d-points-panel span,
+.play3d-points-panel small{
+  display:block;
+  color:rgba(248,237,200,.72);
+  font:800 11px Oswald,Arial,sans-serif;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.play3d-points-panel b{
+  display:block;
+  color:#f2d27b;
+  font:900 22px "Black Ops One",Oswald,Arial,sans-serif;
+}
+.play3d-points-panel button:disabled{
+  opacity:.58;
+  cursor:not-allowed;
+}
 @media(max-width:720px){
   .play3d-mode-bar{
     display:grid;
@@ -48,6 +77,10 @@
   }
   .play3d-mode-bar button,
   .play3d-mode-bar a{
+    width:100%;
+  }
+  .play3d-points-panel,
+  .play3d-points-panel button{
     width:100%;
   }
 }
