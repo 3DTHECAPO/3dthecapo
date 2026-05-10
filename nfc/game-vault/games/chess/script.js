@@ -1,184 +1,113 @@
 (()=>{
   'use strict';
 
-  const START = [
-    ['r','n','b','q','k','b','n','r'],
-    ['p','p','p','p','p','p','p','p'],
-    ['','','','','','','',''],
-    ['','','','','','','',''],
-    ['','','','','','','',''],
-    ['','','','','','','',''],
-    ['P','P','P','P','P','P','P','P'],
-    ['R','N','B','Q','K','B','N','R']
-  ];
-
-  let board = [];
-  let selected = null;
-  let whiteTurn = true;
-  let flipped = false;
-  let mode = window.Play3DModeBar ? window.Play3DModeBar.getMode() : 'cpu';
-
-  const PIECE_ASSETS = {
-    'K':'./assets/pieces/wK.svg','Q':'./assets/pieces/wQ.svg','R':'./assets/pieces/wR.svg','B':'./assets/pieces/wB.svg','N':'./assets/pieces/wN.svg','P':'./assets/pieces/wP.svg',
-    'k':'./assets/pieces/bK.svg','q':'./assets/pieces/bQ.svg','r':'./assets/pieces/bR.svg','b':'./assets/pieces/bB.svg','n':'./assets/pieces/bN.svg','p':'./assets/pieces/bP.svg'
+  const game = new window.Chess();
+  const files = ['a','b','c','d','e','f','g','h'];
+  const pieceGlyph = {
+    wp:'\u2659', wr:'\u2656', wn:'\u2658', wb:'\u2657', wq:'\u2655', wk:'\u2654',
+    bp:'\u265F', br:'\u265C', bn:'\u265E', bb:'\u265D', bq:'\u265B', bk:'\u265A'
   };
 
+  let selected = null;
+  let flipped = false;
+  let mode = window.Play3DModeBar ? window.Play3DModeBar.getMode() : 'cpu';
 
   const boardEl = document.getElementById('board');
   const turnText = document.getElementById('turnText');
   const stateText = document.getElementById('stateText');
 
-  function reset(){
-    board = START.map(row => row.slice());
-    selected = null;
-    whiteTurn = true;
-    render('READY');
+  function squareName(row, col){ return files[col] + (8 - row); }
+  function statusText(label){
+    if(game.isCheckmate()) return 'CHECKMATE';
+    if(game.isStalemate()) return 'STALEMATE';
+    if(game.isDraw()) return 'DRAW';
+    if(game.isCheck()) return 'CHECK';
+    return label || (mode === 'fan' ? 'FAN ROOM' : 'READY');
   }
-
-  function isWhite(piece){ return piece && piece === piece.toUpperCase(); }
-  function sameSide(a,b){ return a && b && isWhite(a) === isWhite(b); }
-  function inBounds(r,c){ return r >= 0 && r < 8 && c >= 0 && c < 8; }
-
-  function clearPath(from,to){
-    const dr = Math.sign(to.r - from.r);
-    const dc = Math.sign(to.c - from.c);
-    let r = from.r + dr;
-    let c = from.c + dc;
-    while(r !== to.r || c !== to.c){
-      if(board[r][c]) return false;
-      r += dr;
-      c += dc;
-    }
-    return true;
-  }
-
-  function legalMove(from,to){
-    if(!inBounds(to.r,to.c)) return false;
-    const piece = board[from.r][from.c];
-    const target = board[to.r][to.c];
-    if(!piece || sameSide(piece,target)) return false;
-
-    const dr = to.r - from.r;
-    const dc = to.c - from.c;
-    const adr = Math.abs(dr);
-    const adc = Math.abs(dc);
-    const lower = piece.toLowerCase();
-    const forward = isWhite(piece) ? -1 : 1;
-    const home = isWhite(piece) ? 6 : 1;
-
-    if(lower === 'p'){
-      if(dc === 0 && !target && dr === forward) return true;
-      if(dc === 0 && !target && from.r === home && dr === forward * 2 && !board[from.r + forward][from.c]) return true;
-      return adc === 1 && dr === forward && !!target;
-    }
-    if(lower === 'n') return (adr === 2 && adc === 1) || (adr === 1 && adc === 2);
-    if(lower === 'b') return adr === adc && clearPath(from,to);
-    if(lower === 'r') return (dr === 0 || dc === 0) && clearPath(from,to);
-    if(lower === 'q') return (adr === adc || dr === 0 || dc === 0) && clearPath(from,to);
-    if(lower === 'k') return adr <= 1 && adc <= 1;
-    return false;
-  }
-
-  function legalMovesFor(r,c){
-    const moves = [];
-    for(let tr = 0; tr < 8; tr++){
-      for(let tc = 0; tc < 8; tc++){
-        if(legalMove({r,c},{r:tr,c:tc})) moves.push({from:{r,c}, to:{r:tr,c:tc}});
-      }
-    }
-    return moves;
-  }
-
-  function allLegalMoves(forWhite){
-    const moves = [];
-    for(let r = 0; r < 8; r++){
-      for(let c = 0; c < 8; c++){
-        const piece = board[r][c];
-        if(piece && isWhite(piece) === forWhite) moves.push(...legalMovesFor(r,c));
-      }
-    }
-    return moves;
-  }
-
-  function makeMove(move, label){
-    const piece = board[move.from.r][move.from.c];
-    board[move.to.r][move.to.c] = piece;
-    board[move.from.r][move.from.c] = '';
-    whiteTurn = !whiteTurn;
-    selected = null;
-    render(label || 'MOVED');
-
-    if(mode === 'cpu' && !whiteTurn){
-      window.setTimeout(cpuMove, 420);
-    }
-  }
-
-  function cpuMove(){
-    if(mode !== 'cpu' || whiteTurn) return;
-    const moves = allLegalMoves(false);
-    if(!moves.length){ render('CPU STUCK'); return; }
-    const captures = moves.filter(m => board[m.to.r][m.to.c]);
-    const pool = captures.length ? captures : moves;
-    makeMove(pool[Math.floor(Math.random() * pool.length)], 'CPU MOVED');
-  }
-
-  function clickSquare(r,c){
-    const piece = board[r][c];
-    if(mode === 'fan'){
-      render('ROOM CODE READY');
-      return;
-    }
-    if(mode === 'cpu' && !whiteTurn) return;
-
-    if(selected){
-      const move = {from:selected, to:{r,c}};
-      if(legalMove(selected,{r,c})) makeMove(move, 'MOVED');
-      else { selected = null; render('ILLEGAL'); }
-      return;
-    }
-
-    if(!piece) return;
-    if(isWhite(piece) !== whiteTurn) return;
-    selected = {r,c};
-    render('SELECTED');
+  function legalTargets(square){
+    return game.moves({square, verbose:true}).map(move => move.to);
   }
 
   function render(label){
     boardEl.innerHTML = '';
+    const legal = selected ? legalTargets(selected) : [];
     let rows = [0,1,2,3,4,5,6,7];
     let cols = [0,1,2,3,4,5,6,7];
     if(flipped){ rows = rows.reverse(); cols = cols.reverse(); }
 
-    for(const r of rows){
-      for(const c of cols){
+    for(const row of rows){
+      for(const col of cols){
+        const square = squareName(row, col);
+        const piece = game.get(square);
         const sq = document.createElement('button');
-        sq.className = 'sq ' + (((r + c) % 2 === 0) ? 'light' : 'dark');
-        if(selected && selected.r === r && selected.c === c) sq.classList.add('selected');
-        const pieceCode = board[r][c] || '';
-        if(pieceCode){
-          const img = document.createElement('img');
-          img.className = 'chess-piece ' + (isWhite(pieceCode) ? 'piece-gold' : 'piece-black');
-          img.src = PIECE_ASSETS[pieceCode];
-          img.alt = isWhite(pieceCode) ? 'gold chess piece' : 'black chess piece';
-          img.draggable = false;
-          sq.appendChild(img);
-        }
-        sq.onclick = () => clickSquare(r,c);
+        sq.className = 'sq ' + (((row + col) % 2 === 0) ? 'light' : 'dark');
+        sq.dataset.square = square;
+        if(selected === square) sq.classList.add('selected');
+        if(legal.includes(square)) sq.classList.add('legal-target');
+        sq.textContent = piece ? pieceGlyph[piece.color + piece.type] : '';
+        sq.onclick = () => clickSquare(square);
         boardEl.appendChild(sq);
       }
     }
-    turnText.textContent = whiteTurn ? 'WHITE' : (mode === 'cpu' ? 'CPU' : 'BLACK');
-    stateText.textContent = label || (mode === 'fan' ? 'FAN ROOM' : mode.toUpperCase());
+    const turn = game.turn() === 'w' ? 'WHITE' : 'BLACK';
+    turnText.textContent = mode === 'cpu' && game.turn() === 'b' ? 'CPU' : turn;
+    stateText.textContent = statusText(label);
+  }
+
+  function movePiece(from, to){
+    const piece = game.get(from);
+    const promote = piece && piece.type === 'p' && ((piece.color === 'w' && to[1] === '8') || (piece.color === 'b' && to[1] === '1'));
+    const move = game.move({from, to, promotion: promote ? 'q' : undefined});
+    selected = null;
+    if(!move){ render('ILLEGAL'); return; }
+    render(move.san);
+    if(window.Play3DGameSync) window.Play3DGameSync.sendMove({game:'chess', san:move.san, fen:game.fen()});
+    if(window.Play3DPoints && game.isCheckmate()) window.Play3DPoints.award('chess', 1000, 'checkmate');
+    if(mode === 'cpu' && game.turn() === 'b' && !game.isGameOver()) window.setTimeout(cpuMove, 420);
+  }
+
+  function cpuMove(){
+    if(mode !== 'cpu' || game.turn() !== 'b' || game.isGameOver()) return;
+    const moves = game.moves({verbose:true});
+    if(!moves.length){ render(); return; }
+    const checks = moves.filter(move => move.san.includes('+') || move.san.includes('#'));
+    const captures = moves.filter(move => move.captured);
+    const pool = checks.length ? checks : captures.length ? captures : moves;
+    const picked = pool[Math.floor(Math.random() * pool.length)];
+    const move = game.move({from:picked.from, to:picked.to, promotion:picked.promotion || 'q'});
+    render(move ? move.san : 'CPU PASS');
+  }
+
+  function clickSquare(square){
+    if(mode === 'fan'){ render('ROOM CODE READY'); return; }
+    if(mode === 'cpu' && game.turn() === 'b') return;
+    const piece = game.get(square);
+    if(selected){
+      if(selected === square){ selected = null; render(); return; }
+      movePiece(selected, square);
+      return;
+    }
+    if(!piece || piece.color !== game.turn()) return;
+    selected = square;
+    render('SELECTED');
+  }
+
+  function reset(){
+    game.reset();
+    selected = null;
+    render('READY');
   }
 
   document.getElementById('resetBtn').onclick = reset;
-  document.getElementById('flipBtn').onclick = ()=>{
-    flipped = !flipped;
-    render('FLIPPED');
-  };
-  window.addEventListener('play3d:modechange', event=>{
-    mode = event.detail.mode;
-    reset();
+  document.getElementById('flipBtn').onclick = ()=>{ flipped = !flipped; render('FLIPPED'); };
+  window.addEventListener('play3d:modechange', event=>{ mode = event.detail.mode; reset(); });
+  window.addEventListener('load', ()=>{
+    if(window.Play3DGameSync){
+      window.Play3DGameSync.onMove(payload=>{
+        if(!payload || payload.game !== 'chess' || !payload.fen) return;
+        try{ game.load(payload.fen); selected = null; render('REMOTE MOVE'); }catch(e){}
+      });
+    }
   });
 
   reset();
