@@ -27,6 +27,7 @@
   function legalTargets(square){
     return game.moves({square, verbose:true}).map(move => move.to);
   }
+  function thinkDelay(){ return 400 + Math.floor(Math.random() * 1000); }
 
   function render(label){
     boardEl.innerHTML = '';
@@ -62,12 +63,16 @@
     if(!move){ render('ILLEGAL'); return; }
     render(move.san);
     if(window.Play3DGameSync) window.Play3DGameSync.sendMove({game:'chess', san:move.san, fen:game.fen()});
-    if(window.Play3DPoints && game.isCheckmate()) window.Play3DPoints.award('chess', 1000, 'checkmate');
-    if(mode === 'cpu' && game.turn() === 'b' && !game.isGameOver()) window.setTimeout(cpuMove, 420);
+    if(window.Play3DPoints && game.isCheckmate()) window.Play3DPoints.award('chess', 350, 'checkmate');
+    if(mode === 'cpu' && game.turn() === 'b' && !game.isGameOver()){
+      render('OPPONENT THINKING...');
+      window.setTimeout(cpuMove, thinkDelay());
+    }
   }
 
   function cpuMove(){
     if(mode !== 'cpu' || game.turn() !== 'b' || game.isGameOver()) return;
+    render('OPPONENT THINKING...');
     const moves = game.moves({verbose:true});
     if(!moves.length){ render(); return; }
     const checks = moves.filter(move => move.san.includes('+') || move.san.includes('#'));

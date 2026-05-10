@@ -5,6 +5,7 @@
   const ranks = ['9','J','Q','K','10','A'];
   const order = {A:6,'10':5,K:4,Q:3,J:2,'9':1};
   const values = {A:11,'10':10,K:4,Q:3,J:2,'9':0};
+  const suitIcon = {S:'\u2660', H:'\u2665', D:'\u2666', C:'\u2663'};
   const DECK_SIZE = 48;
 
   let hands = [];
@@ -16,6 +17,7 @@
   let trump = 'S';
   let teamMode = false;
   let meldTaken = false;
+  function thinkDelay(){ return 400 + Math.floor(Math.random() * 1000); }
 
   function buildDeck(){
     const deck = [];
@@ -51,7 +53,7 @@
     sortHands();
     assertInvariant();
     render('DEALT - TRUMP ' + trump);
-    if(current !== 0) setTimeout(cpuTurn, 500);
+    if(current !== 0) scheduleCpu();
   }
 
   function assertInvariant(){
@@ -65,11 +67,11 @@
 
   function cardHTML(card, index, enabled){
     const red = card.suit === 'H' || card.suit === 'D';
-    return '<button class="card ' + (red ? 'red ' : '') + (!enabled ? 'disabled' : '') + '" data-i="' + index + '">' + card.rank + '<br>' + card.suit + '</button>';
+    return '<button class="card ' + (red ? 'red ' : '') + (!enabled ? 'disabled' : '') + '" data-i="' + index + '"><span>' + card.rank + '</span><b>' + suitIcon[card.suit] + '</b><small>' + card.rank + '</small></button>';
   }
 
   function backs(count){
-    return Array.from({length:count}, () => '<div class="card back">3D</div>').join('');
+    return Array.from({length:count}, () => '<div class="card back">PLAY<br>3D</div>').join('');
   }
 
   function team(player){
@@ -115,11 +117,11 @@
     render('TRICK TO ' + seatName(winner));
     if(hands.every(hand => hand.length === 0)){
       score[team(winner)] += 10;
-      if(window.Play3DPoints && score[0] > score[1]) window.Play3DPoints.award('pinochle', 800, 'round_win');
+      if(window.Play3DPoints && score[0] > score[1]) window.Play3DPoints.award('pinochle', 250, 'round_win');
       render('ROUND OVER');
       return;
     }
-    if(current !== 0) setTimeout(cpuTurn, 650);
+    if(current !== 0) scheduleCpu();
   }
 
   function play(player, cardIndex){
@@ -138,8 +140,13 @@
       current = (current + 1) % players();
       assertInvariant();
       render('TRICK LIVE');
-      if(current !== 0) setTimeout(cpuTurn, 650);
+      if(current !== 0) scheduleCpu();
     }
+  }
+
+  function scheduleCpu(){
+    render('OPPONENT THINKING...');
+    setTimeout(cpuTurn, thinkDelay());
   }
 
   function cpuTurn(){
@@ -173,7 +180,7 @@
     const meld = meldScore(hands[0]);
     score[0] += meld;
     meldTaken = true;
-    if(window.Play3DPoints && meld > 0) window.Play3DPoints.award('pinochle', Math.min(800, meld), 'meld_score');
+    if(window.Play3DPoints && meld > 0) window.Play3DPoints.award('pinochle', Math.min(150, Math.floor(meld / 2)), 'meld_score');
     render('MELD ' + meld);
   }
 

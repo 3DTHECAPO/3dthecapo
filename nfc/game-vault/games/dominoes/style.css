@@ -273,6 +273,18 @@ left:50%;
 transform:translateX(-50%);
 }
 
+.left-seat{
+left:24px;
+top:50%;
+transform:translateY(-50%);
+}
+
+.right-seat{
+right:24px;
+top:50%;
+transform:translateY(-50%);
+}
+
 .chip-stack{
 position:absolute;
 right:70px;
