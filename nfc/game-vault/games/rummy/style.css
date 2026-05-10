@@ -29,3 +29,6 @@ ol{max-height:360px;overflow:auto;color:var(--muted)}
 .card.selected{outline:3px solid #f2d27b;transform:translateY(-6px)}
 .meld-set{display:flex;gap:6px;flex-wrap:wrap;padding:8px;border:1px solid rgba(242,210,123,.22);border-radius:14px;background:rgba(0,0,0,.28)}
 .count-card{min-width:120px;min-height:72px;border-radius:14px;border:2px solid rgba(242,210,123,.5);background:rgba(0,0,0,.46);display:grid;place-items:center;color:#f2d27b;font-weight:900;text-transform:uppercase;letter-spacing:.06em;text-align:center;padding:8px}
+.card span{align-self:start;justify-self:start;font-size:.72em;line-height:1}
+.card b{font-size:1.45em;line-height:1}
+.card small{align-self:end;justify-self:end;font-size:.62em;line-height:1}
