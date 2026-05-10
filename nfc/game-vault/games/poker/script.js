@@ -107,6 +107,7 @@
     const res = evaluate();
     const pay = res.pay * betVal;
     creditsVal += pay;
+    if(window.Play3DPoints && pay > 0) window.Play3DPoints.award('poker', Math.min(900, Math.max(75, pay)), res.name.toLowerCase().replaceAll(' ','_'));
     saveBank();
     rankName.textContent = res.name + ' +' + pay;
     phase = 'deal';
