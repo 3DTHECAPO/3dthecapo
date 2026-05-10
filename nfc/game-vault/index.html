@@ -51,7 +51,7 @@
     <section class="toolbar">
       <label class="search-wrap">
         <span>Search</span>
-        <input id="gameSearch" type="search" placeholder="Search games...">
+        <input id="gameSearch" type="search" aria-label="Search games">
       </label>
 
       <div class="filters" id="filters">
@@ -106,9 +106,6 @@
   <script src="../shared/platform.js"></script>
   <script src="../shared/access-bridge.js"></script>
   <script>
-    // Phase 1 Step 3 safe test:
-    // We load the access bridge, but we do NOT force redirect yet.
-    // This confirms Game Vault can read master/session state without breaking.
     if(window.Play3DAccess){
       window.Play3DAccess.requireAccess({ redirect:false });
     }
