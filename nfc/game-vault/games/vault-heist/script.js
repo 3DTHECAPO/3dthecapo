@@ -2,23 +2,57 @@
   'use strict';
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d');
+  const assetPaths = {
+    backdrop:'../../assets/original/bg-vault-door.jpg',
+    runner:'../../assets/original/hoodie.png',
+    barrier:'../../assets/original/chain.png',
+    vault:'../../assets/original/vault.png',
+    cash:'../../assets/original/cash.png'
+  };
+  const assets = {};
   let px = 50;
   let score = 0;
   let running = false;
+  let assetsReady = false;
+  let assetError = '';
+
+  function loadAssets(){
+    return Promise.all(Object.entries(assetPaths).map(([key, src]) => new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => { assets[key] = img; resolve(true); };
+      img.onerror = () => { assetError = src; resolve(false); };
+      img.src = src;
+    }))).then(results => {
+      assetsReady = results.every(Boolean);
+      if(!assetsReady) stateText.textContent = 'ASSET PATH ERROR';
+      draw();
+    });
+  }
 
   function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
 
+  function drawImage(img, x, y, w, h){
+    if(img) ctx.drawImage(img, x, y, w, h);
+  }
+
   function draw(){
-    ctx.fillStyle = '#050505';
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(!assetsReady){
+      ctx.fillStyle = '#050505';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = '#f2d27b';
+      ctx.font = '28px Oswald, Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(assetError ? 'ORIGINAL ASSET PATH ERROR' : 'LOADING ORIGINAL ASSETS', canvas.width / 2, canvas.height / 2);
+      return;
+    }
+    drawImage(assets.backdrop, 0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(0,0,0,.48)';
     ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = '#ff265c';
-    ctx.fillRect(430,40,16,340);
-    ctx.fillStyle = '#31d07b';
-    ctx.fillRect(820,165,48,90);
-    ctx.fillStyle = '#f2d27b';
-    ctx.beginPath();
-    ctx.arc(px,210,20,0,Math.PI*2);
-    ctx.fill();
+    drawImage(assets.barrier, 402, 26, 82, 355);
+    drawImage(assets.vault, 790, 130, 92, 124);
+    drawImage(assets.cash, 808, 250, 54, 44);
+    drawImage(assets.runner, px - 32, 168, 64, 84);
   }
 
   function publish(){
@@ -26,11 +60,13 @@
   }
 
   function move(dx, remote){
-    px = clamp(px + dx, 24, canvas.width - 24);
-    if(px > 800 && running){
+    if(!assetsReady) return;
+    px = clamp(px + dx, 32, canvas.width - 32);
+    if(px > 790 && running){
       score++;
       mainScore.textContent = score;
       stateText.textContent = 'CLEARED';
+      if(window.Play3DPoints) window.Play3DPoints.award('vault-heist', 300, 'vault_clear');
       running = false;
     }
     if(!remote) publish();
@@ -38,6 +74,11 @@
   }
 
   function start(){
+    if(!assetsReady){
+      stateText.textContent = 'ASSET PATH ERROR';
+      draw();
+      return;
+    }
     px = 50;
     score = 0;
     running = true;
@@ -72,11 +113,11 @@
     if(window.Play3DGameSync){
       window.Play3DGameSync.onMove(payload=>{
         if(!payload || payload.game !== 'vault-heist') return;
-        px = clamp(Number(payload.x) || px, 24, canvas.width - 24);
+        px = clamp(Number(payload.x) || px, 32, canvas.width - 32);
         move(0, true);
       });
     }
   });
 
-  draw();
+  loadAssets();
 })();
