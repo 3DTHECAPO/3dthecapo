@@ -25,6 +25,11 @@
     window.dispatchEvent(new CustomEvent('play3d:modechange', {detail:{mode:mode}}));
   }
 
+  window.Play3DModeBar = {
+    getMode:function(){ return window.Play3DGameMode || initialMode || 'cpu'; },
+    setMode:setMode
+  };
+
   function openFanRoom(){
     var next = new URL(location.href);
     next.searchParams.set('mode', 'fan');
@@ -40,7 +45,7 @@
     bar.setAttribute('aria-label', 'Game modes');
     bar.innerHTML =
       '<button type="button" data-p3d-mode="cpu">Play vs Computer</button>' +
-      '<button type="button" data-p3d-mode="local">Local 2 Player</button>' +
+      '<button type="button" data-p3d-mode="local">Local 2 / 4 Player</button>' +
       '<button type="button" data-p3d-mode="fan">Fan Challenge / Multiplayer</button>' +
       '<a href="../../index.html">Back to Game Vault</a>' +
       '<div class="play3d-mode-status"></div>';
@@ -52,7 +57,7 @@
       setMode('cpu', 'Play vs Computer active. CPU/bot flow will run when this game supports it.');
     });
     bar.querySelector('[data-p3d-mode="local"]').addEventListener('click', function(){
-      setMode('local', 'Local 2 Player active. Same-device turns are enabled where the rules support them.');
+      setMode('local', 'Local 2 / 4 Player active. Same-device turns are enabled where the rules support them.');
     });
     bar.querySelector('[data-p3d-mode="fan"]').addEventListener('click', openFanRoom);
 

@@ -35,7 +35,7 @@
   }
 
   function weightedSymbol(){
-    if(Math.random() < 0.055) return vaultPassSymbols[Math.floor(Math.random() * vaultPassSymbols.length)];
+    if(Math.random() < 0.018) return vaultPassSymbols[Math.floor(Math.random() * vaultPassSymbols.length)];
     return regularSymbols[Math.floor(Math.random() * regularSymbols.length)];
   }
 
@@ -124,7 +124,7 @@
       : win
         ? label + ' pays ' + win + ' credits.'
         : 'No win. Pull again.';
-    if(points && win > 0) points.award('slot-machine-custom', Math.min(1200, Math.max(100, Math.floor(win / 2))), label.toLowerCase().replaceAll(' ','_'));
+    if(points && win > 0) points.award('slot-machine-custom', Math.min(300, Math.max(25, Math.floor(win / 8))), label.toLowerCase().replaceAll(' ','_'));
     spinning = false;
     playAgainBtn.hidden = false;
     save();
@@ -142,7 +142,7 @@
     }
     spinning = true;
     creditsVal -= betVal;
-    if(bank) bank.addJackpot(Math.ceil(betVal * 0.2));
+    if(bank) bank.addJackpot(Math.ceil(betVal * 0.08));
     lastWin.textContent = '0';
     stateText.textContent = 'SPINNING';
     resultLine.textContent = 'Reels spinning...';
@@ -183,7 +183,7 @@
   claimVaultPassBtn.addEventListener('click', ()=>{
     const status = points ? points.getStatus() : {eligible:false, member:false};
     if(status.eligible) location.href = points.claimHref();
-    else resultLine.textContent = status.member ? 'Vault Pass saved. Reach 10,000 points to claim prizes.' : 'Vault Pass saved. Member access is required for prize claims.';
+    else resultLine.textContent = status.member ? 'Vault Pass saved. Reach 100,000 points to claim prizes.' : 'Vault Pass saved. Member access is required for prize claims.';
     vaultPassOverlay.hidden = true;
   });
 

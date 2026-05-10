@@ -3,7 +3,8 @@
 
   var POINTS_KEY = 'play3d_game_points_v1';
   var HISTORY_KEY = 'play3d_game_points_history_v1';
-  var THRESHOLD = 10000;
+  var THRESHOLD = 100000;
+  var AWARD_LOG_KEY = 'play3d_game_points_award_log_v1';
 
   function readJSON(key, fallback){
     try{
@@ -62,6 +63,15 @@
   function award(game, points, reason){
     points = Math.max(0, Math.floor(Number(points) || 0));
     if(!points) return getStatus();
+    var now = Date.now();
+    var awardLog = readJSON(AWARD_LOG_KEY, {});
+    var key = (game || 'game') + ':' + (reason || 'valid_win');
+    var recent = (awardLog[key] || []).filter(function(t){ return now - t < 10 * 60 * 1000; });
+    var factor = recent.length >= 6 ? 0.25 : recent.length >= 3 ? 0.5 : 1;
+    points = Math.max(1, Math.floor(points * factor));
+    recent.push(now);
+    awardLog[key] = recent.slice(-10);
+    writeJSON(AWARD_LOG_KEY, awardLog);
     var total = setPoints(getPoints() + points);
     var history = readJSON(HISTORY_KEY, []);
     history.push({
@@ -96,7 +106,7 @@
     var panel = document.createElement('section');
     panel.className = 'play3d-points-panel';
     panel.innerHTML =
-      '<div><span>Prize Points</span><b data-p3d-points>0 / 10000</b><small data-p3d-prize-status>Free play only.</small></div>' +
+      '<div><span>Prize Points</span><b data-p3d-points>0 / 100,000</b><small data-p3d-prize-status>Free play only.</small></div>' +
       '<button type="button" data-p3d-claim>Member Prize Claim</button>';
     var modeBar = document.querySelector('.play3d-mode-bar');
     if(modeBar && modeBar.nextSibling) main.insertBefore(panel, modeBar.nextSibling);
@@ -105,7 +115,7 @@
     panel.querySelector('[data-p3d-claim]').addEventListener('click', function(){
       var status = getStatus();
       if(status.eligible) location.href = claimHref();
-      else panel.querySelector('[data-p3d-prize-status]').textContent = status.member ? 'Keep playing to reach 10,000 points.' : 'Member access required for prize claims.';
+      else panel.querySelector('[data-p3d-prize-status]').textContent = status.member ? 'Keep playing to reach 100,000 points.' : 'Member access required for prize claims.';
     });
     updatePanel();
   }
@@ -125,7 +135,7 @@
     }
     if(claimBtn){
       claimBtn.disabled = !status.eligible;
-      claimBtn.textContent = status.eligible ? 'Claim Prize' : (status.member ? '10,000 Points Required' : 'Member Prize Play');
+      claimBtn.textContent = status.eligible ? 'Claim Prize' : (status.member ? '100,000 Points Required' : 'Member Prize Play');
     }
   }
 
