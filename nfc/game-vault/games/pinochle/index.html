@@ -16,21 +16,25 @@
     <nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav>
   </header>
   <section class="hero">
-    <div><div class="kicker">CARD TABLE</div><h1>Pinochle</h1><p>Playable pinochle table with deal, meld scoring, and local/CPU-safe controls.</p></div>
-    <div class="score"><span>Status</span><b id="mainScore">0</b><small id="stateText">READY</small></div>
+    <div><div class="kicker">CARD TABLE</div><h1>Pinochle</h1><p>48-card pinochle with melds, tricks, stock, and guarded team mode.</p></div>
+    <div class="score"><span>Score</span><b id="mainScore">0 - 0</b><small id="stateText">READY</small></div>
   </section>
   <section class="table">
     <div class="casino-table">
       <div class="table-logo">PINOCHLE</div>
       <div class="table-content">
-        <div class="row"><button id="dealBtn">Deal</button><button id="autoBtn">Auto Play</button></div>
-        <h2>Table</h2><div class="hand"></div>
-        <h2>Your Hand</h2><div class="hand"></div>
+        <div class="row"><button id="dealBtn">Deal</button><button id="meldBtn">Meld</button><button id="teamBtn">Team Mode</button></div>
+        <h2>Opponent</h2><div id="opponentHand" class="hand"></div>
+        <h2>Trick Pile</h2><div id="trickPile" class="hand"></div>
+        <h2>Meld Area</h2><div id="meldArea" class="hand"></div>
+        <h2>Stock</h2><div id="stockArea" class="hand"></div>
+        <h2>Your Hand</h2><div id="playerHand" class="hand"></div>
       </div>
     </div>
   </section>
 </main>
 <script src="../shared/mode-bar.js"></script>
+<script src="../shared/game-points.js"></script>
 <script src="./script.js"></script>
 <script>
 (function(){
