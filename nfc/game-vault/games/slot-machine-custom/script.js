@@ -2,22 +2,29 @@
   'use strict';
 
   const bank = window.Play3DGameBank;
-  const SYMBOLS = [
-    {id:'crown', label:'CROWN', img:'./assets/symbols/crown.svg', pay:18},
-    {id:'vault', label:'VAULT', img:'./assets/symbols/vault.svg', pay:16},
-    {id:'moneybag', label:'MONEY BAG', img:'./assets/symbols/moneybag.svg', pay:14},
-    {id:'diamond', label:'DIAMOND', img:'./assets/symbols/diamond.svg', pay:22},
-    {id:'mic', label:'MIC', img:'./assets/symbols/mic.svg', pay:10},
-    {id:'chain', label:'CHAIN', img:'./assets/symbols/chain.svg', pay:8},
-    {id:'chips', label:'CHIPS', img:'./assets/symbols/chips.svg', pay:12},
-    {id:'goldbars', label:'GOLD BARS', img:'./assets/symbols/goldbars.svg', pay:20},
-    {id:'play3d', label:'PLAY 3D', img:'./assets/symbols/play3d.svg', pay:30}
+  const points = window.Play3DPoints;
+  const regularSymbols = [
+    {id:'cash', src:'./assets/cash.png', pay:10},
+    {id:'chain', src:'./assets/chain.png', pay:12},
+    {id:'crown', src:'./assets/crown.png', pay:18},
+    {id:'hoodie', src:'./assets/hoodie.png', pay:14},
+    {id:'key', src:'./assets/key.png', pay:15},
+    {id:'lock', src:'./assets/lock.png', pay:15},
+    {id:'mic', src:'./assets/mic.png', pay:16},
+    {id:'speaker', src:'./assets/speaker.png', pay:13},
+    {id:'vault', src:'./assets/vault.png', pay:24}
+  ];
+  const vaultPassSymbols = [
+    {id:'vault-pass-100x3', src:'./assets/cover-100x3.png'},
+    {id:'vault-pass-grammy', src:'./assets/cover-fuck-a-grammy.png'},
+    {id:'vault-pass-resume', src:'./assets/cover-my-resume.png'},
+    {id:'vault-pass-cover3', src:'./assets/cover3.jpg'}
   ];
 
   let creditsVal = bank ? bank.getCredits() : 1000;
   let betVal = 25;
   let spinning = false;
-  const reels = [r1,r2,r3,r4,r5,r6,r7,r8,r9];
+  const cells = [];
 
   function save(){
     if(bank) bank.setCredits(creditsVal);
@@ -27,18 +34,26 @@
     return bank ? bank.getJackpot() : 5000;
   }
 
-  function randomSymbol(){
-    return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+  function weightedSymbol(){
+    if(Math.random() < 0.055) return vaultPassSymbols[Math.floor(Math.random() * vaultPassSymbols.length)];
+    return regularSymbols[Math.floor(Math.random() * regularSymbols.length)];
   }
 
-  function setReel(el, symbol){
-    const img = el.querySelector('img') || document.createElement('img');
-    img.alt = symbol.label;
-    img.src = symbol.img;
-    img.draggable = false;
-    if(!img.parentNode) el.appendChild(img);
-    el.dataset.symbol = symbol.id;
-    el.dataset.label = symbol.label;
+  function setCell(cell, symbol){
+    cell.dataset.symbol = symbol.id;
+    cell.dataset.vaultPass = String(symbol.id.indexOf('vault-pass') === 0);
+    cell.innerHTML = '<img src="' + symbol.src + '" alt="">';
+  }
+
+  function buildBoard(){
+    reelBoard.innerHTML = '';
+    for(let i = 0; i < 9; i++){
+      const cell = document.createElement('div');
+      cell.className = 'reel-cell';
+      setCell(cell, regularSymbols[i % regularSymbols.length]);
+      cells.push(cell);
+      reelBoard.appendChild(cell);
+    }
   }
 
   function render(){
@@ -52,42 +67,64 @@
     betUpBtn.disabled = spinning || betVal >= 250 || betVal + 25 > creditsVal;
   }
 
-  const PAYLINES = [
-    [0,1,2], [3,4,5], [6,7,8],
-    [0,4,8], [2,4,6]
-  ];
+  function lineScore(board){
+    const lines = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+    let total = 0;
+    let jackpotHit = false;
+    const pays = Object.fromEntries(regularSymbols.map(s => [s.id, s.pay]));
 
-  function score(result){
-    let best = {label:'NO WIN', amount:0};
-    for(const line of PAYLINES){
-      const combo = line.map(i => result[i]);
-      const same = combo.every(s => s.id === combo[0].id);
-      const pair = combo[0].id === combo[1].id || combo[1].id === combo[2].id || combo[0].id === combo[2].id;
-      if(same){
-        const mult = combo[0].pay * (line[1] === 4 ? 1.5 : 1);
-        const amount = Math.floor(betVal * mult);
-        if(amount > best.amount) best = {label:combo[0].label + ' LINE HIT', amount};
-      }else if(pair){
-        const amount = betVal * 2;
-        if(amount > best.amount) best = {label:'PAIR HIT', amount};
+    for(const line of lines){
+      const ids = line.map(i => board[i].id);
+      if(ids[0] === ids[1] && ids[1] === ids[2] && pays[ids[0]]){
+        total += betVal * pays[ids[0]];
+        if(ids[0] === 'vault') jackpotHit = true;
       }
     }
-
-    const allSame = result.every(s => s.id === result[0].id);
-    if(allSame){
-      return {label:'FULL SCREEN JACKPOT', amount:bank ? bank.claimJackpot() : betVal * 100};
-    }
-    return best;
+    return {total, jackpotHit};
   }
 
-  function finishSpin(result){
-    result.forEach((value, i)=>setReel(reels[i], value));
-    reels.forEach(r=>r.classList.remove('spinning'));
-    const win = score(result);
-    creditsVal += win.amount;
-    lastWin.textContent = win.amount;
-    stateText.textContent = win.label;
-    resultLine.textContent = win.amount ? win.label + ' pays ' + win.amount + ' credits.' : 'No win. Pull again.';
+  function vaultPassCount(board){
+    return board.filter(symbol => symbol.id.indexOf('vault-pass') === 0).length;
+  }
+
+  function showVaultPass(){
+    try{
+      localStorage.setItem('play3d_vault_pass_bonus_v1', JSON.stringify({at:new Date().toISOString(), source:'slot-machine-custom'}));
+    }catch(e){}
+    vaultPassOverlay.hidden = false;
+  }
+
+  function finishSpin(board){
+    board.forEach((symbol, i)=>setCell(cells[i], symbol));
+    cells.forEach(cell => cell.classList.remove('spinning'));
+    const passCount = vaultPassCount(board);
+    const scored = lineScore(board);
+    let win = scored.total;
+    let label = win ? 'ASSET LINE WIN' : 'NO WIN';
+
+    if(scored.jackpotHit && bank){
+      win += bank.claimJackpot();
+      label = 'VAULT JACKPOT';
+    }
+    if(passCount >= 3){
+      label = 'VAULT PASS';
+      win += betVal * 25;
+      showVaultPass();
+    }
+
+    creditsVal += win;
+    lastWin.textContent = win;
+    stateText.textContent = label;
+    resultLine.textContent = passCount >= 3
+      ? 'Vault Pass unlocked. Claim button is ready.'
+      : win
+        ? label + ' pays ' + win + ' credits.'
+        : 'No win. Pull again.';
+    if(points && win > 0) points.award('slot-machine-custom', Math.min(1200, Math.max(100, Math.floor(win / 2))), label.toLowerCase().replaceAll(' ','_'));
     spinning = false;
     playAgainBtn.hidden = false;
     save();
@@ -108,21 +145,21 @@
     if(bank) bank.addJackpot(Math.ceil(betVal * 0.2));
     lastWin.textContent = '0';
     stateText.textContent = 'SPINNING';
-    resultLine.textContent = 'Nine reel windows spinning...';
+    resultLine.textContent = 'Reels spinning...';
     playAgainBtn.hidden = true;
     spinBtn.classList.add('pulled');
-    reels.forEach(r=>r.classList.add('spinning'));
+    cells.forEach(cell => cell.classList.add('spinning'));
     save();
     render();
 
     let ticks = 0;
     const interval = setInterval(()=>{
-      reels.forEach(r=>setReel(r, randomSymbol()));
+      cells.forEach(cell => setCell(cell, weightedSymbol()));
       ticks++;
-      if(ticks >= 18){
+      if(ticks >= 15){
         clearInterval(interval);
         spinBtn.classList.remove('pulled');
-        finishSpin(reels.map(()=>randomSymbol()));
+        finishSpin(Array.from({length:9}, weightedSymbol));
       }
     }, 80);
   }
@@ -142,7 +179,14 @@
 
   spinBtn.addEventListener('click', spin);
   playAgainBtn.addEventListener('click', spin);
+  closeVaultPassBtn.addEventListener('click', ()=>{ vaultPassOverlay.hidden = true; });
+  claimVaultPassBtn.addEventListener('click', ()=>{
+    const status = points ? points.getStatus() : {eligible:false, member:false};
+    if(status.eligible) location.href = points.claimHref();
+    else resultLine.textContent = status.member ? 'Vault Pass saved. Reach 10,000 points to claim prizes.' : 'Vault Pass saved. Member access is required for prize claims.';
+    vaultPassOverlay.hidden = true;
+  });
 
-  reels.forEach(r=>setReel(r, randomSymbol()));
+  buildBoard();
   render();
 })();
