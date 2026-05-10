@@ -1,6 +1,4 @@
 (function(){
-  const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
-  const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
   const REWARD_EVENTS_TABLE = 'reward_events';
   const PASS_KEY = 'play3d_vault_pass_v1';
   const MEMBER_KEY = 'play3d_member_v1';
@@ -70,6 +68,8 @@
   }
 
   async function postRewardEvent(payload){
+    const cfg = window.PLAY3D_SECURE_CONFIG || {};
+    if(!cfg.supabaseUrl || !cfg.supabaseAnonKey) return false;
     const attempts = [
       payload,
       {
@@ -94,11 +94,11 @@
 
     for(const body of attempts){
       try{
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/${REWARD_EVENTS_TABLE}`,{
+        const res = await fetch(`${cfg.supabaseUrl}/rest/v1/${REWARD_EVENTS_TABLE}`,{
           method:'POST',
           headers:{
-            'apikey':SUPABASE_ANON,
-            'Authorization':`Bearer ${SUPABASE_ANON}`,
+            'apikey':cfg.supabaseAnonKey,
+            'Authorization':`Bearer ${cfg.supabaseAnonKey}`,
             'Content-Type':'application/json',
             'Prefer':'return=minimal'
           },

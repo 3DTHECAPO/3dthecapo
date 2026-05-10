@@ -134,9 +134,10 @@ function getRewardKey(item){
 
 function getSupabaseConfig(){
   const cfg = window.PLAY3D_SECURE_CONFIG || {};
+  if(!cfg.supabaseUrl || !cfg.supabaseAnonKey) return null;
   return {
-    url: cfg.supabaseUrl || 'https://fupoedrovfloudefyzna.supabase.co',
-    key: cfg.supabaseAnonKey || 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1'
+    url: cfg.supabaseUrl,
+    key: cfg.supabaseAnonKey
   };
 }
 
@@ -144,6 +145,7 @@ async function hasDuplicateClaim(rewardEventId){
   if(!rewardEventId) return false;
 
   const cfg = getSupabaseConfig();
+  if(!cfg) return false;
   const url = `${cfg.url}/rest/v1/${CLAIMS_TABLE}?reward_event_id=eq.${encodeURIComponent(rewardEventId)}&select=id&limit=1`;
   const res = await fetch(url,{
     headers:{
@@ -171,6 +173,7 @@ async function submitRewardClaim(item){
   }
 
   const cfg = getSupabaseConfig();
+  if(!cfg) return { ok:false, message:'Claim service unavailable. Member status remains local.' };
   const body = {
     email: identity.email,
     member_id: identity.member_id,
