@@ -94,12 +94,14 @@ turn=currentSide==='you'?'cpu':'you';
 if(!currentHand.length){
 if(currentSide==='you'){
 scores.you++;
+if(window.Play3DPoints) window.Play3DPoints.award('dominoes', 250, 'round_win');
 scoreText.textContent=scores.you+' - '+scores.cpu;
 turnText.textContent='YOU WIN';
 render();
 return;
 }
 scores.cpu++;
+if(mode==='local' && window.Play3DPoints) window.Play3DPoints.award('dominoes', 150, 'local_round_complete');
 scoreText.textContent=scores.you+' - '+scores.cpu;
 turnText.textContent=mode==='local'?'PLAYER 2 WINS':'CPU WINS';
 render();
