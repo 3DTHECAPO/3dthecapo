@@ -2,12 +2,16 @@
   'use strict';
 
   const tokenDefs = [
-    {id:'crown', name:'Gold Crown'},
-    {id:'mic', name:'Microphone'},
     {id:'lowrider', name:'Lowrider Car'},
+    {id:'crown', name:'Gold Crown'},
     {id:'moneybag', name:'Money Bag'},
+    {id:'mic', name:'Microphone'},
     {id:'key', name:'Vault Key'},
-    {id:'sneaker', name:'Sneaker'}
+    {id:'sneaker', name:'Sneaker'},
+    {id:'dicechain', name:'Dice Chain'},
+    {id:'bart', name:'BART Train'},
+    {id:'speaker', name:'Studio Speaker'},
+    {id:'goldbrick', name:'Gold Brick'}
   ];
   const colors = ['#d94b4b','#47a8ff','#47d98b','#b873ff'];
   const boardPattern = [
@@ -18,25 +22,31 @@
   ];
   const spaces = [
     corner('START','Collect $200 when passing'),
-    property('West Vallejo',60,8,'#7b4a24'), card('Hustle Cards','hustle'), property('Downtown',60,10,'#7b4a24'),
-    tax('Studio Fees',75), property('Sonoma Blvd',100,12,'#69a7ff'), property('Tennessee St',100,12,'#69a7ff'), card('Raid Cards','raid'), property('Springs Road',120,16,'#69a7ff'), utility('Merch Warehouse',150,20), corner('County Hold','Just visiting unless sent here'),
-    property('Mare Island',140,18,'#d65379'), property('North Vallejo',140,18,'#d65379'), property('Club Section',160,22,'#d65379'), card('Hustle Cards','hustle'), property('Car Lot',180,24,'#f09842'), property('Casino Room',180,24,'#f09842'), property('Vault Room',200,28,'#f09842'), tax('Legal Team',100), utility('Studio Lot',250,34), corner('Free Studio Session','Bonus session or card'),
-    property('Album Drop',220,32,'#e84242'), card('Raid Cards','raid'), property('Pop-Up Shop',220,32,'#e84242'), property('Chain Store',240,36,'#e84242'), property('Video Shoot',260,40,'#35b86f'), property('Block Party',260,40,'#35b86f'), card('Hustle Cards','hustle'), property('East Vallejo',280,44,'#35b86f'), property('South Vallejo',300,50,'#315ce8'), corner('Go To County','Report to County Hold'),
-    property('Boutique Booth',300,50,'#315ce8'), property('Food Truck Row',320,55,'#315ce8'), card('Raid Cards','raid'), tax('Street Tax',110), property('Radio Plug',350,60,'#8c4cf2'), property('VIP Lounge',360,65,'#8c4cf2'), card('Hustle Cards','hustle'), property('Empire Tower',400,80,'#d8b14b'), property('Cash Route',420,90,'#d8b14b')
+    property('West Vallejo Trap House',60,8,'#7b4a24','trap'), card('Hustle Cards','hustle'), property('Downtown Corner Store',60,10,'#7b4a24','store'),
+    tax('Studio Fees',75), station('BART Station - Downtown'), property('Sonoma Blvd Liquor Store',100,12,'#69a7ff','liquor'), card('Raid Cards','raid'), property('Tennessee St Barbershop',120,16,'#69a7ff','barber'), property('Springs Road Merch Warehouse',150,20,'#69a7ff','warehouse'), corner('County Hold','Pay $100 or roll doubles to leave'),
+    property('Mare Island Studio Lot',140,18,'#d65379','studio'), property('North Vallejo Club Section',140,18,'#d65379','club'), station('BART Station - Waterfront'), property('Vallejo Waterfront Car Lot',160,22,'#d65379','car'), card('Hustle Cards','hustle'), property('Casino Room',180,24,'#f09842','casino'), property('Vault Room',200,28,'#f09842','vault'), tax('Legal Team',100), property('Georgia Street Video Shoot',250,34,'#f09842','video'), corner('Free Studio Session','Random bonus or card'),
+    property('Album Drop',220,32,'#e84242','album'), card('Raid Cards','raid'), property('Pop-Up Shop',220,32,'#e84242','popup'), station('BART Station - Magazine'), property('Chain Store',240,36,'#e84242','chain'), property('Block Party',260,40,'#35b86f','party'), card('Hustle Cards','hustle'), property('East Vallejo',280,44,'#35b86f','map'), property('South Vallejo',300,50,'#315ce8','map'), corner('Go To County','Report to County Hold'),
+    property('Magazine Street',300,50,'#315ce8','map'), property('Broadway',320,55,'#315ce8','map'), card('Raid Cards','raid'), tax('Street Tax',110), property('Lemon Street',350,60,'#8c4cf2','map'), station('BART Station - North'), property('North Vallejo',360,65,'#8c4cf2','map'), card('Hustle Cards','hustle'), property('Empire Tower',400,80,'#d8b14b','tower')
   ];
   const hustleCards = [
-    {title:'Album Drop Hit', text:'Your single catches fire. Collect $120.', money:120},
-    {title:'Pop-Up Sold Out', text:'Merch line wraps the block. Collect $90.', money:90},
+    {title:'Merch Drop Sold Out', text:'Collect $250 from the bank.', money:250},
+    {title:'Studio Session Went Viral', text:'Collect $300.', money:300},
+    {title:'Feature Verse Paid', text:'Collect $200.', money:200},
+    {title:'Pop-Up Shop Hit', text:'Collect $150.', money:150},
+    {title:'Block Party Boosted Respect', text:'Collect $100 from each player.', collectPlayers:100},
+    {title:'BART Hustle Run', text:'Move to the nearest BART Station.', nearest:'bart'},
+    {title:'Album Drop Streaming Bonus', text:'Collect $400.', money:400},
     {title:'Studio Connect', text:'Upgrade one owned block for half price.', upgrade:true},
-    {title:'Fast Pass', text:'Move to START and collect $200.', move:0, collect:true},
-    {title:'Investor Call', text:'Collect $50 from the bank.', money:50}
+    {title:'Fast Pass', text:'Move to START and collect $200.', move:0, collect:true}
   ];
   const raidCards = [
-    {title:'Permit Trouble', text:'Pay $80 in city fees.', money:-80},
-    {title:'Gear Repair', text:'Studio gear breaks. Pay $60.', money:-60},
-    {title:'County Sweep', text:'Go directly to County Hold.', county:true},
-    {title:'Late Load-In', text:'Move back 3 spaces.', back:3},
-    {title:'Block Watch', text:'Pay $25 for extra security.', money:-25}
+    {title:'Police Sweep', text:'Pay $200.', money:-200},
+    {title:'Car Impounded', text:'Pay $150.', money:-150},
+    {title:'Studio Equipment Broke', text:'Pay $175.', money:-175},
+    {title:'Fake Friend Tax', text:'Pay $100.', money:-100},
+    {title:'Chain Snatched Scare', text:'Lose $125.', money:-125},
+    {title:'Go Directly To County Hold', text:'Do not pass START.', county:true},
+    {title:'Missed Rent Payment', text:'Pay bank $120.', money:-120}
   ];
 
   let state = null;
@@ -61,8 +71,8 @@
   const propertyCard = document.getElementById('propertyCard');
 
   function corner(name, desc){ return {type:'corner', name, desc}; }
-  function property(name, price, rent, color){ return {type:'property', name, price, rent, color, owner:null, upgrades:0}; }
-  function utility(name, price, rent){ return {type:'property', name, price, rent, color:'#f4c65a', owner:null, upgrades:0}; }
+  function property(name, price, rent, color, kind='business'){ return {type:'property', kind, name, price, rent, color, owner:null, upgrades:0}; }
+  function station(name){ return {type:'property', kind:'bart', name, price:200, rent:25, color:'#f4c65a', owner:null, upgrades:0}; }
   function card(name, deck){ return {type:'card', name, deck}; }
   function tax(name, amount){ return {type:'tax', name, amount}; }
   function money(n){ return '$' + n.toLocaleString(); }
@@ -91,6 +101,16 @@
     return `<span class="${className}"><svg viewBox="0 0 96 96" aria-hidden="true"><use href="./assets/tokens.svg#token-${token}"></use></svg></span>`;
   }
 
+  function artFor(space){
+    const key = space.type === 'corner' ? space.name.toLowerCase().replaceAll(' ','-') : (space.kind || space.deck || space.type);
+    return `<div class="space-art"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="./assets/board-art.svg#art-${key}"></use></svg></div>`;
+  }
+
+  function badgeFor(space){
+    if(!space.upgrades) return '';
+    return `<div class="badge-stack">${Array.from({length:space.upgrades},()=>'<span class="upgrade-badge"></span>').join('')}</div>`;
+  }
+
   function renderBoard(){
     boardEl.querySelectorAll('.space').forEach(node=>node.remove());
     spaces.forEach((space, index)=>{
@@ -101,7 +121,8 @@
       el.style.gridColumn = (col + 1);
       if(state && index === player().position) el.classList.add('current');
       const stripe = space.color ? `<div class="stripe" style="background:${space.color}"></div>` : '<div class="stripe"></div>';
-      el.innerHTML = `${stripe}<div class="space-name">${space.name}</div><div class="space-price">${space.price ? money(space.price) : (space.amount ? money(space.amount) : '')}</div><div class="tokens" data-tokens="${index}"></div>`;
+      el.classList.add('space-' + (space.kind || space.deck || space.type));
+      el.innerHTML = `${stripe}${artFor(space)}${badgeFor(space)}<div class="space-name">${space.name}</div><div class="space-price">${space.price ? money(space.price) : (space.amount ? money(space.amount) : '')}</div><div class="tokens" data-tokens="${index}"></div>`;
       boardEl.appendChild(el);
     });
     renderTokens();
@@ -184,10 +205,8 @@
     if(!state || state.awaitingAction || state.gameOver) return;
     const p = player();
     if(p.inCounty){
-      p.countyTurns += 1;
-      const fee = p.countyTurns >= 2 ? 50 : 0;
-      if(fee){ p.cash -= fee; p.inCounty = false; p.countyTurns = 0; log(`${p.name} paid ${money(fee)} to leave County Hold.`); }
-      else { log(`${p.name} waits in County Hold.`); endTurn(); return; }
+      showCountyChoice();
+      return;
     }
     renderDice(1,1,true);
     rollBtn.disabled = true;
@@ -199,6 +218,44 @@
     log(`${p.name} rolled ${a + b}.`);
     await movePlayer(a+b);
     resolveLanding();
+  }
+
+  async function rollFromCounty(){
+    hideModal();
+    state.awaitingAction = false;
+    const p = player();
+    renderDice(1,1,true);
+    rollBtn.disabled = true;
+    await wait(650);
+    const a = 1 + Math.floor(Math.random()*6);
+    const b = 1 + Math.floor(Math.random()*6);
+    state.dice = [a,b];
+    renderDice(a,b,false);
+    if(a === b){
+      p.inCounty = false;
+      p.countyTurns = 0;
+      log(`${p.name} rolled doubles and left County Hold.`);
+      await movePlayer(a+b);
+      resolveLanding();
+    }else{
+      p.countyTurns += 1;
+      log(`${p.name} did not roll doubles and remains in County Hold.`);
+      endTurn();
+    }
+  }
+
+  function showCountyChoice(){
+    const p = player();
+    state.awaitingAction = true;
+    showModal({
+      kicker:'County Hold',
+      title:'County Hold',
+      text:`${p.name} can pay $100 to leave now or roll doubles. Current cash: ${money(p.cash)}.`,
+      actions:[
+        {label:'Pay $100', primary:true, fn:()=>{ p.cash -= 100; cashFly(-100); p.inCounty=false; p.countyTurns=0; hideModal(); state.awaitingAction=false; log(`${p.name} paid $100 to leave County Hold.`); checkBankrupt(p); endTurn(); }},
+        {label:'Roll Doubles', fn:rollFromCounty}
+      ]
+    });
   }
 
   async function movePlayer(steps){
@@ -227,6 +284,7 @@
         const rent = rentFor(space);
         p.cash -= rent;
         owner.cash += rent;
+        cashFly(-rent);
         log(`${p.name} paid ${owner.name} ${money(rent)} rent for ${space.name}.`);
         checkBankrupt(p);
         endTurn();
@@ -235,6 +293,7 @@
     }
     if(space.type === 'tax'){
       p.cash -= space.amount;
+      cashFly(-space.amount);
       log(`${p.name} paid ${money(space.amount)} for ${space.name}.`);
       checkBankrupt(p);
       endTurn();
@@ -280,6 +339,7 @@
       p.cash -= space.price;
       space.owner = state.current;
       p.properties.push(index);
+      cashFly(-space.price);
       log(`${p.name} bought ${space.name} for ${money(space.price)}.`);
     }
     hideModal();
@@ -298,12 +358,19 @@
     else{
       p.cash -= cost;
       space.upgrades += 1;
+      cashFly(-cost);
       log(`${p.name} upgraded ${space.name} to level ${space.upgrades}.`);
     }
     renderPanels();
   }
 
-  function rentFor(space){ return space.rent + (space.upgrades * Math.ceil(space.rent * .65)); }
+  function rentFor(space){
+    if(space.kind === 'bart' && space.owner !== null){
+      const count = state.players[space.owner].properties.filter(i=>spaces[i].kind === 'bart').length;
+      return [0,25,50,100,200][count] || 25;
+    }
+    return space.rent + (space.upgrades * Math.ceil(space.rent * .65));
+  }
   function upgradeCost(space){ return Math.ceil(space.price * (.55 + space.upgrades * .25)); }
 
   function drawCard(deck){
@@ -321,8 +388,25 @@
 
   function applyCard(card){
     const p = player();
-    if(card.money) p.cash += card.money;
+    if(card.money){ p.cash += card.money; cashFly(card.money); }
+    if(card.collectPlayers){
+      state.players.forEach((other, idx)=>{
+        if(idx !== state.current && !other.bankrupt){
+          other.cash -= card.collectPlayers;
+          p.cash += card.collectPlayers;
+        }
+      });
+      cashFly(card.collectPlayers * (state.players.length - 1));
+    }
     if(card.county) sendToCounty(p);
+    if(card.nearest === 'bart'){
+      const old = p.position;
+      const stations = spaces.map((s,i)=>s.kind === 'bart' ? i : -1).filter(i=>i >= 0);
+      const next = stations.find(i=>i > old) ?? stations[0];
+      if(next < old) p.cash += 200;
+      p.position = next;
+      log(`${p.name} moved to ${spaces[next].name}.`);
+    }
     if(card.move !== undefined){
       if(card.collect && p.position !== 0) p.cash += 200;
       p.position = card.move;
@@ -369,6 +453,7 @@
     const alive = state.players.filter(p=>!p.bankrupt);
     if(alive.length === 1){
       state.gameOver = true;
+      confetti();
       showModal({
         kicker:'Winner',
         title:`${alive[0].name} owns the board`,
@@ -397,6 +482,19 @@
   }
   function hideModal(){ modal.classList.add('hidden'); }
   function wait(ms){ return new Promise(resolve=>setTimeout(resolve, ms)); }
+  function cashFly(amount){
+    const el = document.createElement('div');
+    el.className = 'cash-fly' + (amount < 0 ? ' negative' : '');
+    el.textContent = (amount < 0 ? '-' : '+') + money(Math.abs(amount));
+    document.body.appendChild(el);
+    window.setTimeout(()=>el.remove(), 950);
+  }
+  function confetti(){
+    const el = document.createElement('div');
+    el.className = 'confetti';
+    document.body.appendChild(el);
+    window.setTimeout(()=>el.remove(), 1700);
+  }
 
   function saveGame(){
     if(!state) return;
