@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>PLAY 3D — Hood Monopoly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="bg"></div>
+  <main class="app">
+    <header class="topbar">
+      <a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b><small>Game Vault</small></a>
+      <nav>
+        <a href="../../index.html">Back to Game Vault</a>
+        <button id="newGameBtn" type="button">New Game</button>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div>
+        <div class="kicker">HUSTLE • GRIND • DOMINATE</div>
+        <h1>Hood Monopoly</h1>
+        <p>Build your block, collect rent, dodge raids, and run the board.</p>
+      </div>
+      <div class="turn-card">
+        <span>Current Turn</span>
+        <b id="turnName">Player 1</b>
+        <small id="turnCash">$1500</small>
+      </div>
+    </section>
+
+    <section class="game-shell">
+      <aside class="panel left-panel">
+        <div class="panel-head"><span>Players</span><b id="roundText">Round 1</b></div>
+        <div id="players" class="players"></div>
+      </aside>
+
+      <section class="board-zone">
+        <div id="board" class="board" aria-label="Hood Monopoly board"></div>
+      </section>
+
+      <aside class="panel right-panel">
+        <div class="panel-head"><span>Controls</span><b id="statusText">Ready</b></div>
+        <div class="dice-box">
+          <div id="dice" class="dice">🎲</div>
+          <button id="rollBtn" class="gold-btn" type="button">Roll Dice</button>
+          <button id="buyBtn" class="ghost-btn" type="button" disabled>Buy Block</button>
+          <button id="endBtn" class="ghost-btn" type="button" disabled>End Turn</button>
+        </div>
+        <article class="card-info">
+          <span id="spaceType">Start</span>
+          <h2 id="spaceName">Start</h2>
+          <p id="spaceDesc">Roll to start the hustle.</p>
+          <div id="spaceMeta" class="space-meta"></div>
+        </article>
+        <div class="log-wrap">
+          <h3>Street Log</h3>
+          <div id="log" class="log"></div>
+        </div>
+      </aside>
+    </section>
+  </main>
+  <script src="./script.js"></script>
+</body>
+</html>
