@@ -8,35 +8,12 @@ const els = {
   total: document.getElementById('totalRewardsValue'),
   unclaimed: document.getElementById('unclaimedRewardsValue'),
   claimed: document.getElementById('claimedRewardsValue'),
-  rank: document.getElementById('rewardRank'),
-  points: document.getElementById('rewardPoints'),
-  tier: document.getElementById('rewardTier'),
-  milestoneFill: document.getElementById('rewardMilestoneFill'),
   walletList: document.getElementById('walletList'),
   template: document.getElementById('rewardCardTemplate'),
   exportBtn: document.getElementById('exportBtn'),
   clearClaimedBtn: document.getElementById('clearClaimedBtn'),
   filterBtns: Array.from(document.querySelectorAll('.filter-btn'))
 };
-
-function readJSON(key, fallback){
-  try{
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
-  }catch(e){
-    return fallback;
-  }
-}
-
-function renderProfileSummary(){
-  const profile = readJSON('play3d_player_profile_v1', {});
-  const points = Math.max(0, Number(localStorage.getItem('play3d_game_points_v1') || profile.totalPoints || 0));
-  const threshold = 100000;
-  if(els.rank) els.rank.textContent = profile.rank || 'BEGINNER';
-  if(els.points) els.points.textContent = points.toLocaleString() + ' / ' + threshold.toLocaleString();
-  if(els.tier) els.tier.textContent = profile.vaultTier || (localStorage.getItem(MEMBER_KEY) === '1' ? 'MEMBER' : 'FREE PLAY');
-  if(els.milestoneFill) els.milestoneFill.style.width = Math.min(100, points / threshold * 100) + '%';
-}
 
 function loadRewardState(){
   try{
@@ -232,7 +209,6 @@ function setClaimMessage(node, message){
 }
 
 function render(){
-  renderProfileSummary();
   const state = loadRewardState();
   const rewards = normalizeRewards(state);
   const filtered = getFilteredRewards(rewards);

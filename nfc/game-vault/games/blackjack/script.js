@@ -12,13 +12,13 @@
 
   const suits = ['S','H','D','C'];
   const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-  const suitIcon = {S:'\u2660', H:'\u2665', D:'\u2666', C:'\u2663'};
-  function thinkDelay(){ return 400 + Math.floor(Math.random() * 1000); }
 
   function makeDeck(){
     deck = [];
-    for(const s of suits){
-      for(const r of ranks) deck.push({r,s});
+    for(let d = 0; d < 4; d++){
+      for(const s of suits){
+        for(const r of ranks) deck.push({r,s});
+      }
     }
     deck.sort(()=>Math.random() - 0.5);
   }
@@ -36,9 +36,9 @@
   }
 
   function cardHTML(card, hidden){
-    if(hidden) return '<div class="card back">PLAY<br>3D</div>';
+    if(hidden) return '<div class="card back">3D</div>';
     const red = card.s === 'H' || card.s === 'D';
-    return '<div class="card ' + (red ? 'red' : '') + '"><span>' + card.r + '</span><b>' + suitIcon[card.s] + '</b><small>' + card.r + '</small></div>';
+    return '<div class="card ' + (red ? 'red' : '') + '">' + card.r + '<br>' + card.s + '</div>';
   }
 
   function saveBank(){
@@ -53,7 +53,7 @@
     creditsText.textContent = credits;
     document.getElementById('credits').textContent = credits;
     bet.textContent = betAmount;
-    if(stateText.textContent !== 'OPPONENT THINKING...') stateText.textContent = live ? 'LIVE' : 'READY';
+    stateText.textContent = live ? 'LIVE' : 'READY';
     dealBtn.disabled = live || credits < betAmount;
     hitBtn.disabled = !live;
     standBtn.disabled = !live;
@@ -68,7 +68,6 @@
 
   function finish(text, pay){
     credits += Math.max(0, pay || 0);
-    if(window.Play3DPoints && pay > currentBet) window.Play3DPoints.award('blackjack', Math.min(180, Math.floor(pay / 4)), 'blackjack_win');
     live = false;
     saveBank();
     setResult(text + (pay ? ' +' + pay : ''));
@@ -98,34 +97,14 @@
     else render(false);
   }
 
-  function settleDealer(){
+  function stand(){
+    if(!live) return;
+    while(value(dealer) < 17) dealer.push(deck.pop());
     const pv = value(player);
     const dv = value(dealer);
     if(dv > 21 || pv > dv) finish('You win', currentBet * 2);
     else if(pv === dv) finish('Push', currentBet);
     else finish('Dealer wins', 0);
-  }
-
-  function dealerStep(){
-    if(!live) return;
-    if(value(dealer) < 17){
-      stateText.textContent = 'OPPONENT THINKING...';
-      render(true);
-      window.setTimeout(()=>{
-        dealer.push(deck.pop());
-        render(true);
-        dealerStep();
-      }, thinkDelay());
-      return;
-    }
-    settleDealer();
-  }
-
-  function stand(){
-    if(!live) return;
-    stateText.textContent = 'OPPONENT THINKING...';
-    render(true);
-    window.setTimeout(dealerStep, thinkDelay());
   }
 
   function doubleDown(){

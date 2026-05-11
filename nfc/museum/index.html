@@ -29,7 +29,7 @@ body::before{
 
   <main class="museum-shell">
     <header class="museum-header">
-      <button class="museum-back" type="button" onclick="history.back()">← Back</button>
+      <button class="museum-back" type="button" onclick="if(history.length > 1){ history.back(); } else { location.href='/nfc/index.html'; }">Back</button>
       <div>
         <div class="museum-kicker">3D THE CAPO</div>
         <h1>Vault Museum</h1>
@@ -41,7 +41,7 @@ body::before{
       <div class="hero-copy">
         <div class="museum-kicker">Private Archive</div>
         <h2>Exhibits From The Capo Vault</h2>
-        <p>Music, visuals, merch concepts, and hidden-room placeholders arranged like a luxury archive for the next phase of the vault.</p>
+        <p>Music, visuals, merch concepts, and hidden-room exhibits arranged like a luxury archive for the next phase of the vault.</p>
       </div>
       <div class="hero-mark" aria-hidden="true">3D</div>
     </section>
@@ -88,7 +88,7 @@ body::before{
         <div class="modal-type" id="modalType"></div>
         <h2 id="modalTitle"></h2>
         <p id="modalText"></p>
-        <div class="audio-placeholder">Audio Placeholder</div>
+        <div class="audio-placeholder">Audio Preview</div>
       </div>
     </div>
   </div>
