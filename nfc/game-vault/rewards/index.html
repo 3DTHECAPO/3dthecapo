@@ -18,13 +18,28 @@
 <body>
   <main class="app">
     <header class="topbar">
-      <button class="back" type="button" onclick="history.back()">? Back</button>
+      <button class="back" type="button" onclick="history.back()">Back</button>
       <div class="headcopy">
         <div class="kicker">3D THE CAPO</div>
         <div class="title">Rewards</div>
       </div>
     </header><nav class="vault-main-nav"><a href="../../index.html">Vault</a><a href="../../scan.html">Scan</a><a href="../index.html">Game</a><a href="./index.html">Rewards</a></nav>
     
+    <section class="panel rewards-hero-panel">
+      <div>
+        <span class="label">Member Prize Progress</span>
+        <div class="reward-hero-title">Vault Rewards</div>
+        <p class="note">Track eligible reward drops, vault points, and member claim status.</p>
+      </div>
+      <div class="profile-strip">
+        <div><span class="label">Rank</span><b id="rewardRank">BEGINNER</b></div>
+        <div><span class="label">Points</span><b id="rewardPoints">0 / 100,000</b></div>
+        <div><span class="label">Tier</span><b id="rewardTier">FREE PLAY</b></div>
+      </div>
+      <div class="milestone-track" aria-label="100,000 point milestone">
+        <div class="milestone-fill" id="rewardMilestoneFill"></div>
+      </div>
+    </section>
 
     <section class="panel summary-panel">
       <div class="summary-grid">
@@ -85,4 +100,3 @@
   <script src="./script.js"></script>
 </body>
 </html>
-
