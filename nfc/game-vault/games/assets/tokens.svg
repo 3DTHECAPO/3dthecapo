@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <defs>
+    <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fff6c8"/><stop offset=".45" stop-color="#f4c65a"/><stop offset="1" stop-color="#80510f"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f8f8f8"/><stop offset=".5" stop-color="#8d9399"/><stop offset="1" stop-color="#24272c"/>
+    </linearGradient>
+    <radialGradient id="base" cx=".45" cy=".25" r=".8">
+      <stop offset="0" stop-color="#fff2bd"/><stop offset=".55" stop-color="#d49d34"/><stop offset="1" stop-color="#442904"/>
+    </radialGradient>
+    <filter id="shine"><feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000" flood-opacity=".55"/></filter>
+  </defs>
+  <symbol id="token-crown" viewBox="0 0 96 96">
+    <ellipse cx="48" cy="78" rx="31" ry="10" fill="#120b03" opacity=".55"/>
+    <path filter="url(#shine)" d="M20 66h56l-5 12H25z" fill="url(#base)"/>
+    <path filter="url(#shine)" d="M22 62 18 26l18 20 12-26 12 26 18-20-4 36z" fill="url(#gold)" stroke="#fff1a8" stroke-width="2"/>
+    <circle cx="18" cy="26" r="5" fill="#fff2bd"/><circle cx="48" cy="20" r="5" fill="#fff2bd"/><circle cx="78" cy="26" r="5" fill="#fff2bd"/>
+  </symbol>
+  <symbol id="token-mic" viewBox="0 0 96 96">
+    <ellipse cx="50" cy="82" rx="28" ry="9" fill="#120b03" opacity=".55"/>
+    <rect x="44" y="46" width="10" height="30" rx="5" fill="url(#gold)" filter="url(#shine)"/>
+    <rect x="28" y="74" width="42" height="8" rx="4" fill="url(#base)"/>
+    <rect x="34" y="12" width="30" height="44" rx="15" fill="url(#steel)" stroke="#f4c65a" stroke-width="3" filter="url(#shine)"/>
+    <path d="M38 23h22M38 32h22M38 41h22" stroke="#141414" stroke-width="3" opacity=".8"/>
+  </symbol>
+  <symbol id="token-lowrider" viewBox="0 0 96 96">
+    <ellipse cx="49" cy="76" rx="34" ry="9" fill="#120b03" opacity=".55"/>
+    <path d="M15 56c5-14 12-18 25-18h16c9 0 17 4 25 15l4 13H13z" fill="url(#gold)" stroke="#fff1a8" stroke-width="2" filter="url(#shine)"/>
+    <path d="M38 39h19l10 12H30z" fill="#171717" opacity=".9"/>
+    <circle cx="30" cy="66" r="9" fill="#111"/><circle cx="69" cy="66" r="9" fill="#111"/>
+    <circle cx="30" cy="66" r="4" fill="#f4c65a"/><circle cx="69" cy="66" r="4" fill="#f4c65a"/>
+  </symbol>
+  <symbol id="token-moneybag" viewBox="0 0 96 96">
+    <ellipse cx="48" cy="80" rx="29" ry="10" fill="#120b03" opacity=".55"/>
+    <path d="M36 24c-8 8-19 24-19 39 0 16 14 23 31 23s31-7 31-23c0-15-11-31-19-39z" fill="url(#gold)" stroke="#fff1a8" stroke-width="2" filter="url(#shine)"/>
+    <path d="M35 20h27l-7 10H42z" fill="#5a3505"/>
+    <path d="M48 43v25M39 50c0-6 18-7 18 0 0 8-18 3-18 11 0 7 18 7 18 0" fill="none" stroke="#171009" stroke-width="5" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="token-key" viewBox="0 0 96 96">
+    <ellipse cx="49" cy="77" rx="31" ry="9" fill="#120b03" opacity=".55"/>
+    <circle cx="31" cy="43" r="17" fill="none" stroke="url(#gold)" stroke-width="10" filter="url(#shine)"/>
+    <path d="M45 43h35v10h-9v9h-9v-9H45z" fill="url(#gold)" stroke="#fff1a8" stroke-width="2" filter="url(#shine)"/>
+  </symbol>
+  <symbol id="token-sneaker" viewBox="0 0 96 96">
+    <ellipse cx="51" cy="78" rx="34" ry="9" fill="#120b03" opacity=".55"/>
+    <path d="M18 58c17-2 25-15 31-26 8 6 12 15 20 18 7 3 13 5 15 14 2 8-5 12-17 12H25c-10 0-13-7-7-18z" fill="url(#gold)" stroke="#fff1a8" stroke-width="2" filter="url(#shine)"/>
+    <path d="M25 62h54M43 45l9 8M51 39l10 9" stroke="#111" stroke-width="4" stroke-linecap="round"/>
+    <path d="M24 69h50" stroke="#1b1b1b" stroke-width="5" stroke-linecap="round"/>
+  </symbol>
+</svg>
