@@ -16,12 +16,16 @@
     <nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav>
   </header>
   <section class="hero">
-    <div><div class="kicker">CARD TABLE</div><h1>Pinochle</h1><p>48-card pinochle with melds, tricks, stock, and guarded team mode.</p></div>
+    <div><div class="kicker">CARD TABLE</div><h1>Pinochle</h1><p>48-card pinochle with melds, tricks, stock play, and team table mode.</p></div>
     <div class="score"><span>Score</span><b id="mainScore">0 - 0</b><small id="stateText">READY</small></div>
   </section>
   <section class="table">
     <div class="casino-table">
       <div class="table-logo">PINOCHLE</div>
+      <div class="seat top-seat" id="seat1"></div>
+      <div class="seat left-seat" id="seat2"></div>
+      <div class="seat right-seat" id="seat3"></div>
+      <div class="seat bottom-seat" id="seat0"></div>
       <div class="table-content">
         <div class="row"><button id="dealBtn">Deal</button><button id="meldBtn">Meld</button><button id="teamBtn">Team Mode</button></div>
         <h2>Opponent</h2><div id="opponentHand" class="hand"></div>

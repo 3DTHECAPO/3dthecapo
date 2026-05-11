@@ -153,6 +153,34 @@ gap:10px;
 flex-wrap:wrap;
 }
 
+.playerCountBtn.active{
+background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#805c1a);
+color:#100c05;
+}
+
+.arm-chooser{
+display:flex;
+gap:8px;
+align-items:center;
+flex-wrap:wrap;
+width:100%;
+border:1px solid rgba(242,210,123,.24);
+border-radius:16px;
+padding:10px;
+background:rgba(0,0,0,.32);
+}
+
+.arm-chooser span{
+color:var(--gold2);
+font-weight:900;
+text-transform:uppercase;
+letter-spacing:.08em;
+}
+
+.arm-chooser[hidden]{
+display:none;
+}
+
 .casino-table{
 position:relative;
 min-height:560px;
@@ -212,6 +240,27 @@ flex-wrap:wrap;
 justify-content:center;
 }
 
+.spinner-board{
+display:grid;
+grid-template-rows:auto auto auto;
+gap:8px;
+align-items:center;
+justify-items:center;
+}
+
+.line-row,
+.branch-line{
+display:flex;
+gap:10px;
+align-items:center;
+justify-content:center;
+flex-wrap:wrap;
+}
+
+.branch-line{
+min-height:54px;
+}
+
 .hand{
 display:flex;
 gap:10px;
@@ -240,11 +289,48 @@ transition:transform .15s ease;
 transform:translateY(-6px);
 }
 
+.tile.spinner{
+width:52px;
+height:92px;
+grid-template-columns:1fr;
+grid-template-rows:1fr 1px 1fr;
+transform:rotate(90deg);
+box-shadow:0 0 0 4px rgba(242,210,123,.22),0 0 26px rgba(242,210,123,.45),0 12px 20px rgba(0,0,0,.4);
+}
+
+.tile.branch{
+width:52px;
+height:92px;
+grid-template-columns:1fr;
+grid-template-rows:1fr 1px 1fr;
+}
+
+.tile.disabled{
+opacity:.45;
+filter:grayscale(.45);
+}
+
+.tile-back{
+width:22px;
+height:34px;
+border-radius:6px;
+border:1px solid rgba(242,210,123,.55);
+background:linear-gradient(135deg,rgba(20,14,7,.9),rgba(0,0,0,.9));
+box-shadow:0 4px 10px rgba(0,0,0,.34);
+display:inline-block;
+}
+
 .tile i{
 display:block;
 width:1px;
 height:70%;
 background:#111;
+}
+
+.tile.spinner i,
+.tile.branch i{
+width:70%;
+height:1px;
 }
 
 .seat{
@@ -259,6 +345,25 @@ border:1px solid rgba(242,210,123,.25);
 font-weight:900;
 letter-spacing:.08em;
 box-shadow:0 12px 28px rgba(0,0,0,.35);
+}
+
+.seat b,
+.seat small{
+display:block;
+text-align:center;
+}
+
+.seat small{
+color:#cfc6b5;
+font-size:11px;
+}
+
+.seat-backs{
+display:flex;
+gap:3px;
+max-width:150px;
+overflow:hidden;
+justify-content:center;
 }
 
 .top-seat{

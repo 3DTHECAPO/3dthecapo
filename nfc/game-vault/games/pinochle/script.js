@@ -160,18 +160,35 @@
 
   function meldScore(hand){
     let total = 0;
+    const counts = {};
+    hand.forEach(card => {
+      const key = card.rank + card.suit;
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    const count = (rank, suit) => counts[rank + suit] || 0;
     for(const suit of suits){
-      const has = rank => hand.some(card => card.rank === rank && card.suit === suit);
-      if(['A','10','K','Q','J'].every(has)) total += suit === trump ? 150 : 0;
-      if(has('K') && has('Q')) total += suit === trump ? 40 : 20;
-      if(has('9')) total += suit === trump ? 10 : 0;
+      const runCopies = Math.min(count('A', suit), count('10', suit), count('K', suit), count('Q', suit), count('J', suit));
+      if(suit === trump){
+        if(runCopies >= 2) total += 1500;
+        else if(runCopies === 1) total += 150;
+      }
+      const marriages = Math.min(count('K', suit), count('Q', suit));
+      total += marriages * (suit === trump ? 40 : 20);
+      total += count('9', suit) * (suit === trump ? 10 : 0);
     }
-    const around = rank => suits.every(suit => hand.some(card => card.rank === rank && card.suit === suit));
-    if(around('A')) total += 100;
-    if(around('K')) total += 80;
-    if(around('Q')) total += 60;
-    if(around('J')) total += 40;
-    if(hand.some(c => c.rank === 'Q' && c.suit === 'S') && hand.some(c => c.rank === 'J' && c.suit === 'D')) total += 40;
+    const aroundCopies = rank => Math.min(...suits.map(suit => count(rank, suit)));
+    const aroundScore = (rank, single, double) => {
+      const copies = aroundCopies(rank);
+      if(copies >= 2) total += double;
+      else if(copies === 1) total += single;
+    };
+    aroundScore('A', 100, 1000);
+    aroundScore('K', 80, 800);
+    aroundScore('Q', 60, 600);
+    aroundScore('J', 40, 400);
+    const pinochles = Math.min(count('Q', 'S'), count('J', 'D'));
+    if(pinochles >= 2) total += 300;
+    else if(pinochles === 1) total += 40;
     return total;
   }
 
@@ -188,16 +205,30 @@
     const opponentCount = teamMode ? (hands[1] || []).length + (hands[2] || []).length + (hands[3] || []).length : (hands[1] || []).length;
     opponentHand.innerHTML = backs(opponentCount);
     trickPile.innerHTML = trick.map(play => '<div><small>' + seatName(play.player) + '</small>' + cardHTML(play.card, 0, false) + '</div>').join('');
-    meldArea.innerHTML = '<div class="count-card">Trump ' + trump + '</div><div class="count-card">Meld ' + (meldTaken ? 'Taken' : meldScore(hands[0])) + '</div><div class="count-card">' + (teamMode ? '4 Player Team Foundation' : '2 Player') + '</div>';
+    meldArea.innerHTML = '<div class="count-card">Trump ' + trump + '</div><div class="count-card">Meld ' + (meldTaken ? 'Taken' : meldScore(hands[0])) + '</div><div class="count-card">' + (teamMode ? '4 Player Teams' : '2 Player Stock') + '</div>';
     stockArea.innerHTML = stock.length ? backs(Math.min(8, stock.length)) + '<div class="count-card">Stock ' + stock.length + '</div>' : '<div class="count-card">No Stock</div>';
     playerHand.innerHTML = (hands[0] || []).map((card, index) => cardHTML(card, index, current === 0 && legalCards(0).some(item => item.id === card.id))).join('');
     playerHand.querySelectorAll('.card').forEach(button => button.onclick = () => play(0, Number(button.dataset.i)));
     mainScore.textContent = score[0] + ' - ' + score[1];
     stateText.textContent = label || (current === 0 ? 'YOUR TURN' : seatName(current) + ' TURN');
+    renderSeats();
   }
 
   function seatName(player){
-    return ['YOU','CPU','PARTNER','CPU 2'][player] || 'CPU';
+    return ['YOU','CPU 1','PARTNER','CPU 2'][player] || 'CPU';
+  }
+
+  function renderSeats(){
+    [0,1,2,3].forEach(player => {
+      const el = document.getElementById('seat' + player);
+      if(!el) return;
+      if(player >= players()){
+        el.hidden = true;
+        return;
+      }
+      el.hidden = false;
+      el.innerHTML = '<b>' + seatName(player) + '</b><small>' + ((hands[player] || []).length) + ' cards</small>' + (player === 0 ? '' : '<div class="seat-cards">' + backs(Math.min(6, (hands[player] || []).length)) + '</div>');
+    });
   }
 
   dealBtn.onclick = deal;

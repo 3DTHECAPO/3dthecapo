@@ -16,8 +16,9 @@ Fully implemented:
 - 4-player/team foundation: 12 cards to each of four seats.
 - Visible player hand, opponent card backs, stock, trick pile, meld area, trump, and score.
 - CPU plays legal follow-suit turns.
-- Meld scoring foundation for runs, marriages, dix, arounds, and pinochle.
+- Meld scoring for trump runs, marriages, dix, pinochle, arounds, and double meld counts where the 48-card hand contains both copies.
 
 Guarded / not fully implemented:
 - Full 4-player bidding/contract enforcement is not complete.
 - Full two-player stock/meld timing variations are simplified.
+- 4-player/team mode is a guarded trick-and-meld foundation with four seats and CPU fill, not a full partnership bidding engine.
