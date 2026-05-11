@@ -3,15 +3,13 @@
 
   const tokenDefs = [
     {id:'lowrider', name:'Lowrider Car'},
+    {id:'bart', name:'BART Train'},
+    {id:'trap', name:'Trap House'},
     {id:'crown', name:'Gold Crown'},
     {id:'moneybag', name:'Money Bag'},
     {id:'mic', name:'Microphone'},
     {id:'key', name:'Vault Key'},
-    {id:'sneaker', name:'Sneaker'},
-    {id:'dicechain', name:'Dice Chain'},
-    {id:'bart', name:'BART Train'},
-    {id:'speaker', name:'Studio Speaker'},
-    {id:'goldbrick', name:'Gold Brick'}
+    {id:'sneaker', name:'Sneaker'}
   ];
   const colors = ['#d94b4b','#47a8ff','#47d98b','#b873ff'];
   const boardPattern = [
@@ -137,6 +135,7 @@
         slot.insertAdjacentHTML('beforeend', tokenSvg(p.token));
         const token = slot.lastElementChild;
         token.style.setProperty('--player-color', colors[idx]);
+        if(idx === state.current) token.classList.add('active-token');
       }
     });
   }
