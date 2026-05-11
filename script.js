@@ -282,22 +282,42 @@ document.addEventListener("DOMContentLoaded", function(){
   const handle = document.getElementById("p3dIpodHandle");
   const audio = document.getElementById("p3dIpodAudio");
 
-  if(!player || !handle || !audio) return;
+  if(!player || !audio) return;
 
-  const tracks = [
-    { title:"100x3", artist:"3D THE CAPO", src:"./music/100x3.mp3", cover:"./assets/player-placeholder.jpg" },
-    { title:"Fuck A Grammy", artist:"3D THE CAPO", src:"./music/fuck-a-grammy.mp3", cover:"./assets/player-placeholder.jpg" },
-    { title:"True Story", artist:"3D THE CAPO", src:"./music/true-story.mp3", cover:"./assets/player-placeholder.jpg" }
+  const fallbackTracks = [
+    {
+      title:"100x3",
+      artist:"3D THE CAPO",
+      sources:["./music/100x3.mp3","./music/100x3.wav","./music/100x3.MP3","./music/100x3.WAV"],
+      cover:"./player-placeholder.jpg"
+    },
+    {
+      title:"Fuck A Grammy",
+      artist:"3D THE CAPO",
+      sources:["./music/fuck-a-grammy.mp3","./music/fuck-a-grammy.wav","./music/fuck-a-grammy.MP3","./music/fuck-a-grammy.WAV"],
+      cover:"./player-placeholder.jpg"
+    },
+    {
+      title:"True Story",
+      artist:"3D THE CAPO",
+      sources:["./music/true-story.mp3","./music/true-story.wav","./music/true-story.MP3","./music/true-story.WAV"],
+      cover:"./player-placeholder.jpg"
+    }
   ];
 
+  let tracks = fallbackTracks.slice();
   let index = 0;
+  let sourceIndex = 0;
+  let skippedTrackCount = 0;
+  let warnedMissingAudio = false;
 
   const minBtn = document.getElementById("p3dIpodMin");
   const cover = document.getElementById("p3dIpodCover");
   const title = document.getElementById("p3dIpodTitle");
   const artist = document.getElementById("p3dIpodArtist");
   const progress = document.getElementById("p3dIpodProgress");
-  const current = document.getElementById("p3dIpodCurrent");
+  const progressFill = document.getElementById("p3dIpodProgressFill");
+  const current = document.getElementById("p3dIpodCurrent") || document.getElementById("p3dIpodTime");
   const duration = document.getElementById("p3dIpodDuration");
   const prev = document.getElementById("p3dIpodPrev");
   const next = document.getElementById("p3dIpodNext");
@@ -311,64 +331,203 @@ document.addEventListener("DOMContentLoaded", function(){
     return m + ":" + s;
   }
 
+  function mimeForSource(src){
+    const clean = String(src || '').split('?')[0].split('#')[0].toLowerCase();
+    if(clean.endsWith('.mp3')) return 'audio/mpeg';
+    if(clean.endsWith('.wav')) return 'audio/wav';
+    return '';
+  }
+
+  function isSafeAudioPath(src){
+    const clean = String(src || '').trim();
+    const lower = clean.toLowerCase();
+    if(!clean) return false;
+    if(lower.startsWith('javascript:') || lower.startsWith('data:')) return false;
+    if(lower.startsWith('http://') || lower.startsWith('https://') || lower.startsWith('//')) return false;
+    if(clean.includes('\\')) return false;
+    if(!(clean.startsWith('./') || clean.startsWith('/'))) return false;
+    return /\.(mp3|wav)([?#].*)?$/i.test(clean);
+  }
+
+  function normalizeTrack(entry){
+    if(!entry || typeof entry !== 'object') return null;
+    const rawSources = Array.isArray(entry.sources) ? entry.sources : [entry.src];
+    const sources = rawSources
+      .map(src => String(src || '').trim())
+      .filter(isSafeAudioPath);
+
+    if(!sources.length) return null;
+
+    return {
+      title: String(entry.title || 'PLAY 3D Track').trim(),
+      artist: String(entry.artist || '3D THE CAPO').trim(),
+      sources,
+      cover: String(entry.cover || './player-placeholder.jpg').trim() || './player-placeholder.jpg'
+    };
+  }
+
+  async function loadMusicLibrary(){
+    try{
+      const res = await fetch('./music-library.json', { cache:'no-store' });
+      if(!res.ok) throw new Error('music-library.json unavailable');
+      const data = await res.json();
+      if(!Array.isArray(data)) throw new Error('music-library.json must be an array');
+      const libraryTracks = data.map(normalizeTrack).filter(Boolean);
+      if(libraryTracks.length){
+        tracks = libraryTracks;
+      }
+    }catch(err){
+      tracks = fallbackTracks.slice();
+      console.warn('Music library fallback active:', err.message || err);
+    }
+  }
+
+  function playableSources(track){
+    return (track.sources || [])
+      .filter(Boolean)
+      .filter(isSafeAudioPath)
+      .filter(src => audio.canPlayType(mimeForSource(src)) !== '');
+  }
+
+  function setPlayIcon(label){
+    const icon = label === 'Pause' ? 'Pause' : 'Play';
+    if(center) center.textContent = icon;
+    if(playPause) playPause.textContent = icon;
+  }
+
+  function warnMissingAudio(){
+    if(warnedMissingAudio) return;
+    warnedMissingAudio = true;
+    console.warn('No playable PLAY 3D music files are available. Check music-library.json paths and file types.');
+    if(title) title.textContent = 'Select Track';
+  }
+
+  function setTrackMeta(track){
+    if(cover) cover.src = track.cover || './player-placeholder.jpg';
+    if(title) title.textContent = track.title || 'Select Track';
+    if(artist) artist.textContent = track.artist || '3D THE CAPO';
+    if(progress) progress.value = 0;
+    if(progressFill) progressFill.style.width = '0%';
+    if(current) current.textContent = '0:00';
+    if(duration) duration.textContent = '0:00';
+    setPlayIcon('Play');
+  }
+
+  function setAudioSource(track, startAt){
+    const sources = playableSources(track);
+    if(startAt >= sources.length){
+      audio.removeAttribute('src');
+      return false;
+    }
+    sourceIndex = startAt;
+    audio.src = sources[sourceIndex];
+    return true;
+  }
+
+  function skipToNextTrack(){
+    skippedTrackCount += 1;
+    if(!tracks.length || skippedTrackCount >= tracks.length){
+      setPlayIcon('Play');
+      warnMissingAudio();
+      return;
+    }
+
+    index = (index + 1) % tracks.length;
+    sourceIndex = 0;
+    const track = tracks[index];
+    setTrackMeta(track);
+
+    if(setAudioSource(track, 0)){
+      tryPlayCurrentSource();
+    }else{
+      skipToNextTrack();
+    }
+  }
+
+  function tryPlayCurrentSource(){
+    return audio.play().then(function(){
+      skippedTrackCount = 0;
+      setPlayIcon('Pause');
+      return true;
+    }).catch(function(){
+      const track = tracks[index];
+      if(setAudioSource(track, sourceIndex + 1)){
+        return tryPlayCurrentSource();
+      }
+      skipToNextTrack();
+      return false;
+    });
+  }
+
   function loadTrack(i, autoplay){
+    if(!tracks.length){
+      warnMissingAudio();
+      return;
+    }
+
+    skippedTrackCount = 0;
     index = (i + tracks.length) % tracks.length;
+    sourceIndex = 0;
+    warnedMissingAudio = false;
     const track = tracks[index];
 
-    audio.src = track.src;
-    if(cover) cover.src = track.cover || "./assets/player-placeholder.jpg";
-    if(title) title.textContent = track.title;
-    if(artist) artist.textContent = track.artist;
-    if(center) center.textContent = "▶";
+    setTrackMeta(track);
+    if(!setAudioSource(track, 0)){
+      if(autoplay) skipToNextTrack();
+      return;
+    }
 
     if(autoplay){
-      audio.play().then(function(){
-        if(center) center.textContent = "⏸";
-      }).catch(function(){
-        alert("Audio file missing. Check your /music paths.");
-      });
+      tryPlayCurrentSource();
     }
   }
 
   function togglePlay(){
     if(audio.paused){
-      audio.play().then(function(){
-        if(center) center.textContent = "⏸";
-      }).catch(function(){
-        alert("Audio file missing. Check your /music paths.");
-      });
+      tryPlayCurrentSource();
     }else{
       audio.pause();
-      if(center) center.textContent = "▶";
+      setPlayIcon('Play');
     }
   }
 
-  if(center) center.addEventListener("click", togglePlay);
-  if(playPause) playPause.addEventListener("click", togglePlay);
-  if(prev) prev.addEventListener("click", function(){ loadTrack(index - 1, true); });
-  if(next) next.addEventListener("click", function(){ loadTrack(index + 1, true); });
+  if(center) center.addEventListener('click', togglePlay);
+  if(playPause) playPause.addEventListener('click', togglePlay);
+  if(prev) prev.addEventListener('click', function(){ loadTrack(index - 1, true); });
+  if(next) next.addEventListener('click', function(){ loadTrack(index + 1, true); });
 
-  audio.addEventListener("timeupdate", function(){
+  audio.addEventListener('error', function(){
+    const track = tracks[index];
+    if(track && setAudioSource(track, sourceIndex + 1)){
+      tryPlayCurrentSource();
+    }else{
+      skipToNextTrack();
+    }
+  });
+
+  audio.addEventListener('timeupdate', function(){
     if(audio.duration){
-      if(progress) progress.value = (audio.currentTime / audio.duration) * 100;
+      const pct = (audio.currentTime / audio.duration) * 100;
+      if(progress) progress.value = pct;
+      if(progressFill) progressFill.style.width = pct + '%';
       if(current) current.textContent = fmt(audio.currentTime);
       if(duration) duration.textContent = fmt(audio.duration);
     }
   });
 
   if(progress){
-    progress.addEventListener("input", function(){
+    progress.addEventListener('input', function(){
       if(audio.duration) audio.currentTime = (progress.value / 100) * audio.duration;
     });
   }
 
-  audio.addEventListener("ended", function(){ loadTrack(index + 1, true); });
+  audio.addEventListener('ended', function(){ loadTrack(index + 1, true); });
 
   if(minBtn){
-    minBtn.addEventListener("click", function(e){
+    minBtn.addEventListener('click', function(e){
       e.stopPropagation();
-      player.classList.toggle("minimized");
-      minBtn.textContent = player.classList.contains("minimized") ? "+" : "—";
+      player.classList.toggle('minimized');
+      minBtn.textContent = player.classList.contains('minimized') ? '+' : '-';
     });
   }
 
@@ -384,7 +543,7 @@ document.addEventListener("DOMContentLoaded", function(){
   let currentTranslateX = 0;
   let currentTranslateY = 0;
 
-  player.addEventListener("dragstart", function(e){
+  player.addEventListener('dragstart', function(e){
     e.preventDefault();
   });
 
@@ -417,104 +576,70 @@ document.addEventListener("DOMContentLoaded", function(){
 
     currentTranslateX = dragStartTranslateX + deltaX;
     currentTranslateY = dragStartTranslateY + deltaY;
-    player.style.transform = "translate3d(" + currentTranslateX + "px, " + currentTranslateY + "px, 0)";
+    player.style.transform = 'translate3d(' + currentTranslateX + 'px, ' + currentTranslateY + 'px, 0)';
   }
 
   function isDragControl(target){
-    return target && target.closest && target.closest("button,input");
+    return target && target.closest && target.closest('button,input');
   }
 
   function stopDrag(){
     dragging = false;
-    handle.classList.remove("dragging");
+    if(handle) handle.classList.remove('dragging');
   }
 
-  if(window.PointerEvent){
-    handle.addEventListener("pointerdown", function(e){
+  if(handle && window.PointerEvent){
+    handle.addEventListener('pointerdown', function(e){
       if(isDragControl(e.target)) return;
       e.preventDefault();
       startDrag(e.clientX, e.clientY);
-      handle.classList.add("dragging");
+      handle.classList.add('dragging');
       try{ handle.setPointerCapture(e.pointerId); }catch(err){}
     });
 
-    document.addEventListener("pointermove", function(e){
+    document.addEventListener('pointermove', function(e){
       if(!dragging) return;
       e.preventDefault();
       moveDrag(e.clientX, e.clientY);
     }, { passive:false });
 
-    document.addEventListener("pointerup", stopDrag);
-    document.addEventListener("pointercancel", stopDrag);
-  }else{
-    handle.addEventListener("mousedown", function(e){
+    document.addEventListener('pointerup', stopDrag);
+    document.addEventListener('pointercancel', stopDrag);
+  }else if(handle){
+    handle.addEventListener('mousedown', function(e){
       if(isDragControl(e.target)) return;
       e.preventDefault();
       startDrag(e.clientX, e.clientY);
-      handle.classList.add("dragging");
+      handle.classList.add('dragging');
     });
 
-    document.addEventListener("mousemove", function(e){
+    document.addEventListener('mousemove', function(e){
       moveDrag(e.clientX, e.clientY);
     });
 
-    document.addEventListener("mouseup", stopDrag);
+    document.addEventListener('mouseup', stopDrag);
 
-    handle.addEventListener("touchstart", function(e){
+    handle.addEventListener('touchstart', function(e){
       if(isDragControl(e.target)) return;
       if(!e.touches || !e.touches.length) return;
       e.preventDefault();
       const t = e.touches[0];
       startDrag(t.clientX, t.clientY);
-      handle.classList.add("dragging");
+      handle.classList.add('dragging');
     }, { passive:false });
 
-    document.addEventListener("touchmove", function(e){
+    document.addEventListener('touchmove', function(e){
       if(!dragging || !e.touches || !e.touches.length) return;
       e.preventDefault();
       const t = e.touches[0];
       moveDrag(t.clientX, t.clientY);
     }, { passive:false });
 
-    document.addEventListener("touchend", stopDrag);
-    document.addEventListener("touchcancel", stopDrag);
+    document.addEventListener('touchend', stopDrag);
+    document.addEventListener('touchcancel', stopDrag);
   }
 
-  loadTrack(0, false);
-});
-document.addEventListener("DOMContentLoaded", ()=>{
-
-const p = document.getElementById("ipodPlayer");
-const h = document.getElementById("ipodHandle");
-const audio = document.getElementById("ipodAudio");
-
-if(!p || !h) return;
-
-let dragging = false, ox = 0, oy = 0;
-
-h.onmousedown = e=>{
-  dragging = true;
-  ox = e.clientX - p.offsetLeft;
-  oy = e.clientY - p.offsetTop;
-};
-
-document.onmousemove = e=>{
-  if(!dragging) return;
-  p.style.left = (e.clientX - ox) + "px";
-  p.style.top = (e.clientY - oy) + "px";
-  p.style.bottom = "auto";
-};
-
-document.onmouseup = ()=> dragging = false;
-
-// basic audio test
-document.getElementById("ipodCenter").onclick = ()=>{
-  if(audio.paused){
-    audio.src = "./music/100x3.mp3";
-    audio.play();
-  } else {
-    audio.pause();
-  }
-};
-
+  loadMusicLibrary().then(function(){
+    loadTrack(0, false);
+  });
 });

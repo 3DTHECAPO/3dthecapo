@@ -2,16 +2,15 @@
 'use strict';
 
 const games = [
-  {id:'chess',title:'Vault Chess',pill:'Strategy',tags:['Strategy','Fan Mode','AI'],href:'./games/chess/',bg:'./assets/preview_chess.svg',desc:'Luxury chess board with legal moves, CPU mode, timers, and guarded fan-room routing.',type:'strategy multiplayer',difficulty:'Medium',players:'1-2 Players'},
+  {id:'chess',title:'Vault Chess',pill:'Strategy',tags:['Strategy','Fan Challenge','AI'],href:'./games/chess/',bg:'./assets/preview_chess.svg',desc:'Luxury chess board with legal moves, CPU mode, timers, and guarded fan-room routing.',type:'strategy multiplayer',difficulty:'Medium',players:'1-2 Players'},
   {id:'slots',title:'3D Slots',pill:'Casino',tags:['Casino','Rewards','Fast'],href:'./games/slot-machine-custom/',bg:'./assets/preview_slots.svg',desc:'Premium reel room with vault energy, jackpot glow, and reward-ready structure.',type:'casino',difficulty:'Easy',players:'Solo'},
   {id:'blackjack',title:'Blackjack',pill:'High Limit',tags:['Casino','Cards','Dealer'],href:'./games/blackjack/',bg:'./assets/preview_blackjack.svg',desc:'Black-and-gold card table for quick blackjack sessions.',type:'casino cards',difficulty:'Medium',players:'Solo'},
-  {id:'poker',title:'Poker',pill:'Card Room',tags:['Casino','Cards','Fan Mode'],href:'./games/poker/',bg:'./assets/preview_poker.svg',desc:'Private table energy with draw poker, room codes, and member prize points.',type:'casino cards multiplayer',difficulty:'Medium',players:'Solo / Fan'},
-  {id:'spades',title:'Spades',pill:'Team Table',tags:['Cards','Fan Mode','Teams'],href:'./games/spades/',bg:'./assets/preview_spades.svg',desc:'Classic team card room with CPU fill, local turns, and room-code guard.',type:'cards strategy multiplayer',difficulty:'Medium',players:'2-4'},
-  {id:'pinochle',title:'Pinochle',pill:'Legacy Cards',tags:['Cards','Strategy','Classic'],href:'./games/pinochle/',bg:'./assets/preview_pinochle.svg',desc:'Old-school strategic card table with mode-aware playable foundation.',type:'cards strategy multiplayer',difficulty:'Hard',players:'2'},
+  {id:'poker',title:'Poker',pill:'Card Room',tags:['Casino','Cards','Fan Challenge'],href:'./games/poker/',bg:'./assets/preview_poker.svg',desc:'Private table energy with draw poker, room codes, and member prize points.',type:'casino cards multiplayer',difficulty:'Medium',players:'Solo / Fan'},
+  {id:'spades',title:'Spades',pill:'Team Table',tags:['Cards','Fan Challenge','Teams'],href:'./games/spades/',bg:'./assets/preview_spades.svg',desc:'Classic team card room with CPU fill, local turns, and room-code guard.',type:'cards strategy multiplayer',difficulty:'Medium',players:'2-4'},
+  {id:'pinochle',title:'Pinochle',pill:'Legacy Cards',tags:['Cards','Strategy','Classic'],href:'./games/pinochle/',bg:'./assets/preview_pinochle.svg',desc:'Old-school strategic card table with 2-player and team-table modes.',type:'cards strategy multiplayer',difficulty:'Hard',players:'2'},
   {id:'rummy',title:'Rummy',pill:'Run Builder',tags:['Cards','Strategy','Chill'],href:'./games/rummy/',bg:'./assets/preview_rummy.svg',desc:'Card-meld table with run scoring, local points, and member prize progress.',type:'cards strategy',difficulty:'Medium',players:'1-2'},
-  {id:'dominoes',title:'Dominoes',pill:'Street Table',tags:['Strategy','Fan Mode','Classic'],href:'./games/dominoes/',bg:'./assets/preview_dominoes.svg',desc:'Black-and-gold domino table with CPU, local, and fan challenge modes.',type:'strategy multiplayer',difficulty:'Medium',players:'2'},
+  {id:'dominoes',title:'Dominoes',pill:'Street Table',tags:['Strategy','Fan Challenge','Classic'],href:'./games/dominoes/',bg:'./assets/preview_dominoes.svg',desc:'Black-and-gold domino table with CPU, local, and fan challenge modes.',type:'strategy multiplayer',difficulty:'Medium',players:'2'},
   {id:'heist',title:'Vault Heist',pill:'Surprise Room',tags:['Action','Vault','Rewards'],href:'./games/vault-heist/',bg:'./assets/preview_heist.svg',desc:'Playable vault runner with keyboard, mobile hold controls, and fan-room-safe sync hooks.',type:'action multiplayer',difficulty:'Hard',players:'1-2'},
-  {id:'hood-monopoly',title:'Hood Monopoly',pill:'Empire Board',tags:['Strategy','Multiplayer','Hustle'],href:'./games/hood-monopoly/',bg:'./assets/preview_hood_monopoly.svg',desc:'Build the block, buy businesses, dodge raids, ride BART, and dominate the city.',type:'strategy multiplayer',difficulty:'Medium',players:'2-4 Players'},
 
   {id:'rewards',title:'Rewards',pill:'Vault Perks',tags:['Rewards','Member','Claim'],href:'./rewards/',bg:'./assets/preview_rewards.svg',desc:'Rewards wallet, prize codes, and claim path for the vault ecosystem.',type:'multiplayer',difficulty:'Member',players:'All'}
 ];
@@ -25,7 +24,7 @@ function fanRoomQuery(){
 }
 
 function launchHref(game){
-  if(!game || game.id === 'rewards') return game ? game.href : '#';
+  if(!game || game.id === 'rewards') return game ? game.href : './index.html';
   return game.href.split('?')[0] + fanRoomQuery();
 }
 

@@ -20,7 +20,7 @@
   <div>
     <div class="kicker">VAULT SLOT MACHINE</div>
     <h1>3D Slots</h1>
-    <p>Asset reels, shared credits, jackpot payouts, and Vault Pass bonus play.</p>
+    <p>Real cabinet play with shared credits, jackpot payouts, and animated reels.</p>
   </div>
   <div class="score">
     <span>Credits</span>
@@ -36,7 +36,12 @@
       <strong>JACKPOT <b id="jackpot">5000</b></strong>
     </div>
 
-    <div class="reel-window" id="reelBoard" aria-label="slot reels"></div>
+    <div class="reel-window">
+      <div class="reel" id="r1"><span>7</span></div>
+      <div class="reel" id="r2"><span>BAR</span></div>
+      <div class="reel" id="r3"><span>GEM</span></div>
+    </div>
+
     <div class="payline" aria-hidden="true"></div>
 
     <div class="machine-panel">
@@ -52,26 +57,13 @@
       <button id="playAgainBtn" type="button" hidden>Play Again</button>
     </div>
 
-    <p class="result-line" id="resultLine">Land matching assets for credits. Three Vault Pass covers unlock a claim.</p>
-  </div>
-</section>
-
-<section class="vault-pass-overlay" id="vaultPassOverlay" hidden>
-  <div class="vault-pass-card">
-    <div class="kicker">VAULT PASS</div>
-    <h2>Vault Pass Unlocked</h2>
-    <p>Three rare album-cover symbols landed on the board.</p>
-    <div class="row">
-      <button id="claimVaultPassBtn" type="button">Claim Vault Pass</button>
-      <button id="closeVaultPassBtn" type="button">Keep Playing</button>
-    </div>
+    <p class="result-line" id="resultLine">Match two symbols to win. Match all three for the jackpot.</p>
   </div>
 </section>
 </main>
 
 <script src="../shared/mode-bar.js"></script>
 <script src="../shared/game-bank.js"></script>
-<script src="../shared/game-points.js"></script>
 <script src="./script.js"></script>
 <script>
 (function(){

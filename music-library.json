@@ -1,0 +1,20 @@
+[
+  {
+    "title": "100x3",
+    "artist": "3D THE CAPO",
+    "src": "./music/100x3.wav",
+    "cover": "./player-placeholder.jpg"
+  },
+  {
+    "title": "Vault Exclusive",
+    "artist": "3D THE CAPO",
+    "src": "./nfc/music/vault-exclusive.mp3",
+    "cover": "./player-placeholder.jpg"
+  },
+  {
+    "title": "Game Room Loop",
+    "artist": "3D THE CAPO",
+    "src": "./nfc/game-vault/music/game-loop.wav",
+    "cover": "./player-placeholder.jpg"
+  }
+]

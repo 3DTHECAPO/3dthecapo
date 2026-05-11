@@ -4,7 +4,6 @@
   const suits = ['S','H','D','C'];
   const ranks = ['A','K','Q','J','10','9','8','7','6','5','4','3','2'];
   const order = {'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'J':11,'Q':12,'K':13,'A':14};
-  const suitIcon = {S:'\u2660', H:'\u2665', D:'\u2666', C:'\u2663'};
   const bank = window.Play3DGameBank;
   let deck = [];
   let hand = [];
@@ -55,7 +54,7 @@
   function card(c,i){
     const red = c.s === 'H' || c.s === 'D';
     const held = hold.includes(i);
-    return '<button class="card ' + (red ? 'red ' : '') + (held ? 'hold' : '') + '" data-i="' + i + '"><span>' + c.r + '</span><b>' + suitIcon[c.s] + '</b><small>' + (held ? 'HOLD' : c.r) + '</small></button>';
+    return '<button class="card ' + (red ? 'red ' : '') + (held ? 'hold' : '') + '" data-i="' + i + '">' + c.r + '<br>' + c.s + '<small>' + (held ? 'HOLD' : '') + '</small></button>';
   }
 
   function saveBank(){
@@ -108,7 +107,6 @@
     const res = evaluate();
     const pay = res.pay * betVal;
     creditsVal += pay;
-    if(window.Play3DPoints && pay > 0) window.Play3DPoints.award('poker', Math.min(250, Math.max(25, Math.floor(pay / 3))), res.name.toLowerCase().replaceAll(' ','_'));
     saveBank();
     rankName.textContent = res.name + ' +' + pay;
     phase = 'deal';
