@@ -39,6 +39,7 @@ API:
   if(mode !== 'fan' || !room){
     window.PLAY3D_ROOM = null;
     window.PLAY3D_SYNC = inactive;
+    window.Play3DGameSync = inactive;
     return;
   }
 
@@ -175,6 +176,7 @@ API:
     onGameEvent,
     ensureChannel
   };
+  window.Play3DGameSync = window.PLAY3D_SYNC;
 
   ensureChannel();
 })();
