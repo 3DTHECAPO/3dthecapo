@@ -1,6 +1,14 @@
 (()=>{
   'use strict';
 
+  if(!window.Chess){
+    const board = document.getElementById('board');
+    const state = document.getElementById('stateText');
+    if(board) board.textContent = 'Chess engine failed to load.';
+    if(state) state.textContent = 'ENGINE ERROR';
+    return;
+  }
+
   const game = new window.Chess();
   const files = ['a','b','c','d','e','f','g','h'];
   const pieceGlyph = {
@@ -28,6 +36,7 @@
     return game.moves({square, verbose:true}).map(move => move.to);
   }
   function thinkDelay(){ return 400 + Math.floor(Math.random() * 1000); }
+  function syncBridge(){ return window.Play3DGameSync || window.PLAY3D_SYNC || null; }
 
   function render(label){
     boardEl.innerHTML = '';
@@ -62,7 +71,8 @@
     selected = null;
     if(!move){ render('ILLEGAL'); return; }
     render(move.san);
-    if(window.Play3DGameSync) window.Play3DGameSync.sendMove({game:'chess', san:move.san, fen:game.fen()});
+    const sync = syncBridge();
+    if(sync && typeof sync.sendMove === 'function') sync.sendMove({game:'chess', san:move.san, fen:game.fen()});
     if(window.Play3DPoints && game.isCheckmate()) window.Play3DPoints.award('chess', 350, 'checkmate');
     if(mode === 'cpu' && game.turn() === 'b' && !game.isGameOver()){
       render('OPPONENT THINKING...');
@@ -84,7 +94,6 @@
   }
 
   function clickSquare(square){
-    if(mode === 'fan'){ render('ROOM CODE READY'); return; }
     if(mode === 'cpu' && game.turn() === 'b') return;
     const piece = game.get(square);
     if(selected){
@@ -107,8 +116,10 @@
   document.getElementById('flipBtn').onclick = ()=>{ flipped = !flipped; render('FLIPPED'); };
   window.addEventListener('play3d:modechange', event=>{ mode = event.detail.mode; reset(); });
   window.addEventListener('load', ()=>{
-    if(window.Play3DGameSync){
-      window.Play3DGameSync.onMove(payload=>{
+    const sync = syncBridge();
+    if(sync && typeof sync.onMove === 'function'){
+      sync.onMove(message=>{
+        const payload = message && message.payload ? message.payload : message;
         if(!payload || payload.game !== 'chess' || !payload.fen) return;
         try{ game.load(payload.fen); selected = null; render('REMOTE MOVE'); }catch(e){}
       });

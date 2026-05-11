@@ -229,7 +229,8 @@ outline-offset:-4px;
 z-index:2;
 }
 
-.sq.legal::after{
+.sq.legal::after,
+.sq.legal-target::after{
 content:"";
 width:22%;
 height:22%;
