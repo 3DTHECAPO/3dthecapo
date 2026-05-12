@@ -1,95 +1,227 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PLAY 3D - Hood Monopoly</title>
-<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>PLAY 3D · Hood Monopoly · V-Town Edition</title>
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-<main class="hm-shell">
-  <header class="hm-top">
-    <a class="hm-brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a>
-    <nav>
-      <a href="../../index.html">Game Vault</a>
-      <button id="saveBtn" type="button">Save</button>
-      <button id="loadBtn" type="button">Load</button>
-      <button id="resetBtn" type="button">Reset</button>
-    </nav>
-  </header>
+  <div class="grain"></div>
 
-  <section id="setupPanel" class="setup-panel">
-    <div class="setup-copy">
-      <p class="eyebrow">Street Empire Board Game</p>
-      <h1>Hood Monopoly</h1>
-      <p>Build a Vallejo-inspired business empire, buy blocks, collect rent, dodge County Hold, and run the table.</p>
+  <!-- LOADING SCREEN -->
+  <section id="screen-loading" class="screen active" data-testid="loading-screen">
+    <div class="loading-bg"></div>
+    <div class="loading-content">
+      <p class="eyebrow gold">PLAY 3D · GAME VAULT</p>
+      <h1 class="display gold-grad">HOOD MONOPOLY</h1>
+      <p class="eyebrow muted">V-TOWN · VALLEJO, CA · CINEMATIC EDITION</p>
+      <div class="bar"><div id="loading-bar-fill"></div></div>
+      <div class="bar-meta">
+        <span id="loading-phase" class="eyebrow muted">CROSSING THE CARQUINEZ · TUNING V-TOWN</span>
+        <span id="loading-progress" class="eyebrow gold">0%</span>
+      </div>
     </div>
-    <div class="setup-card">
-      <label>Players
-        <select id="playerCount">
-          <option value="2">2 Players</option>
-          <option value="3">3 Players</option>
-          <option value="4">4 Players</option>
-        </select>
-      </label>
-      <div id="playerSetup" class="player-setup"></div>
-      <button id="startGameBtn" class="gold-btn" type="button">Start Game</button>
-    </div>
+    <div class="sweep"></div>
   </section>
 
-  <section id="gamePanel" class="game-panel hidden">
-    <section class="board-stage" aria-label="Hood Monopoly board">
-      <div id="board" class="board">
-        <div class="center-emblem">
-          <div class="logo-mark">PLAY 3D</div>
-          <h2>HOOD MONOPOLY</h2>
-          <p>Street Empire Edition</p>
-          <div class="dice-tray">
-            <button id="rollBtn" class="roll-btn" type="button">Roll Dice</button>
-            <div class="dice-wrap">
-              <div id="dieOne" class="die" aria-label="die one"></div>
-              <div id="dieTwo" class="die" aria-label="die two"></div>
+  <!-- MAIN MENU -->
+  <section id="screen-menu" class="screen" data-testid="main-menu">
+    <div class="menu-bg"></div>
+    <div class="menu-grid">
+      <div class="menu-left">
+        <p class="eyebrow gold">PLAY 3D · GAME VAULT · SUPERIOR</p>
+        <h1 class="display xl"><span class="white">HOOD</span><br/><span class="gold-grad">MONOPOLY.</span></h1>
+        <p class="eyebrow muted" style="margin-top:.6rem;letter-spacing:.3em">V-TOWN · VALLEJO, CA</p>
+        <p class="lede">A cinematic, GTA-grade take on Monopoly set in Vallejo. Run the ferry to Mare Island, stack paper from Sonoma Blvd to Georgia Street, lock down the Empress Theatre, and watch the V-Town empire glow gold under the Carquinez lights.</p>
+        <div class="cta-row">
+          <button class="btn-gold" id="btn-new-game" data-testid="menu-new-game-btn">New Game</button>
+          <button class="btn-ghost-gold hidden" id="btn-continue" data-testid="menu-continue-btn">Continue Save</button>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><span class="eyebrow muted">MODE</span><span class="display sm">SOLO · LOCAL</span></div>
+          <div class="stat"><span class="eyebrow muted">AI</span><span class="display sm">3 LEVELS</span></div>
+          <div class="stat"><span class="eyebrow muted">TILES</span><span class="display sm">40</span></div>
+          <div class="stat"><span class="eyebrow muted">VAULT</span><span class="display sm">LIVE</span></div>
+        </div>
+      </div>
+      <div class="menu-right glass-gold marquee">
+        <p class="eyebrow gold">SCENE · VALLEJO, CA</p>
+        <h3 class="display md">Built for the V-Town streets.<br/>Polished for the vault.</h3>
+        <p class="muted small">Mare Island to Downtown Vallejo. Sonoma Blvd to Tennessee Street. Eight V-Town groups, ferries, bridges and lowriders — wrapped in cinematic motion.</p>
+        <div class="chip-row">
+          <span class="chip">Mare Island</span><span class="chip">Sonoma Blvd</span>
+          <span class="chip">Empress Theatre</span><span class="chip">Georgia Street</span>
+          <span class="chip">Carquinez Bridge</span>
+        </div>
+      </div>
+    </div>
+    <span class="footer eyebrow muted">© PLAY 3D · V-TOWN CINEMATIC EDITION</span>
+  </section>
+
+  <!-- LOBBY -->
+  <section id="screen-lobby" class="screen" data-testid="lobby">
+    <div class="menu-bg"></div>
+    <div class="lobby-panel glass-gold marquee">
+      <div class="lobby-head">
+        <div>
+          <p class="eyebrow gold">PLAY 3D · LOBBY</p>
+          <h2 class="display lg">Set The Block</h2>
+        </div>
+        <button class="btn-ghost-gold sm" id="btn-lobby-back" data-testid="lobby-back-btn">← Back</button>
+      </div>
+      <div class="lobby-cols">
+        <div class="lobby-col">
+          <p class="eyebrow muted">MODE</p>
+          <div class="mode-row">
+            <button class="mode-btn active" data-mode="solo" data-testid="mode-solo-btn">
+              <span class="display sm">SOLO</span><span class="muted xs">You vs the city</span>
+            </button>
+            <button class="mode-btn" data-mode="local" data-testid="mode-local-btn">
+              <span class="display sm">LOCAL</span><span class="muted xs">Hot seat 2–4</span>
+            </button>
+          </div>
+          <div id="solo-controls">
+            <p class="eyebrow muted">CPU OPPONENTS</p>
+            <div class="num-row" id="ai-count-row">
+              <button class="num-btn" data-n="1" data-testid="ai-count-1">1</button>
+              <button class="num-btn active" data-n="2" data-testid="ai-count-2">2</button>
+              <button class="num-btn" data-n="3" data-testid="ai-count-3">3</button>
+            </div>
+          </div>
+          <div id="local-controls" class="hidden">
+            <p class="eyebrow muted">HUMAN PLAYERS</p>
+            <div class="num-row" id="human-count-row">
+              <button class="num-btn active" data-n="2" data-testid="human-count-2">2</button>
+              <button class="num-btn" data-n="3" data-testid="human-count-3">3</button>
+              <button class="num-btn" data-n="4" data-testid="human-count-4">4</button>
+            </div>
+          </div>
+          <div id="difficulty-row-wrap">
+            <p class="eyebrow muted">AI DIFFICULTY</p>
+            <div class="diff-row" id="difficulty-row">
+              <button class="diff-btn" data-diff="easy" data-testid="difficulty-easy"><span class="display sm">EASY</span><span class="muted xs">Loose with the dollar</span></button>
+              <button class="diff-btn active" data-diff="medium" data-testid="difficulty-medium"><span class="display sm">MEDIUM</span><span class="muted xs">Street smarts</span></button>
+              <button class="diff-btn" data-diff="aggressive" data-testid="difficulty-aggressive"><span class="display sm">AGGRO</span><span class="muted xs">Buys everything</span></button>
             </div>
           </div>
         </div>
+        <div class="lobby-col">
+          <p class="eyebrow muted">PLAYERS &amp; TOKENS</p>
+          <div id="players-list" class="players-list" data-testid="players-list"></div>
+        </div>
       </div>
-    </section>
-
-    <aside class="side-panel">
-      <div class="turn-card">
-        <span>Current Turn</span>
-        <h2 id="turnName">Player 1</h2>
-        <p id="turnStatus">Roll to start your run.</p>
+      <div class="lobby-foot">
+        <button class="btn-gold" id="btn-lobby-start" data-testid="lobby-start-btn">Enter The Vault →</button>
       </div>
-      <div id="playerStats" class="player-stats"></div>
-      <div class="property-panel">
-        <h3>Owned Blocks</h3>
-        <div id="ownedList" class="owned-list"></div>
-      </div>
-      <div class="log-panel">
-        <h3>Game Log</h3>
-        <div id="gameLog" class="game-log"></div>
-      </div>
-    </aside>
+    </div>
   </section>
-</main>
 
-<div id="modal" class="modal hidden" role="dialog" aria-modal="true">
-  <div class="modal-card">
-    <button id="modalClose" class="modal-close" type="button">Close</button>
-    <p id="modalKicker" class="eyebrow">Action</p>
-    <h2 id="modalTitle">Title</h2>
-    <p id="modalText">Text</p>
-    <div id="propertyCard" class="property-card hidden"></div>
-    <div id="modalActions" class="modal-actions"></div>
-  </div>
-</div>
+  <!-- GAME -->
+  <section id="screen-game" class="screen" data-testid="game-screen">
+    <div class="game-topbar">
+      <div class="topbar-left">
+        <button class="btn-ghost-gold sm" id="btn-quit" data-testid="quit-btn">⌂ Vault Menu</button>
+        <span class="eyebrow muted hide-sm">PLAY 3D · HOOD MONOPOLY · V-TOWN EDITION</span>
+      </div>
+      <div class="topbar-right" id="audio-controller" data-testid="audio-controller">
+        <button class="audio-btn" id="btn-music" data-testid="audio-music-btn" title="Ambient music">♪</button>
+        <button class="audio-btn" id="btn-mute"  data-testid="audio-mute-btn"  title="Mute SFX">🔊</button>
+      </div>
+    </div>
 
-<template id="tokenTemplate">
-  <svg viewBox="0 0 96 96" aria-hidden="true"><use></use></svg>
-</template>
+    <div class="game-layout">
+      <aside class="game-left">
+        <div id="player-hud" class="hud-list" data-testid="player-hud"></div>
+        <div class="glass event-log" data-testid="event-log">
+          <p class="eyebrow muted">FEED</p>
+          <div id="event-log-list"></div>
+        </div>
+      </aside>
 
-<script src="./script.js"></script>
+      <main class="game-center">
+        <div id="game-board" class="board-grid" data-testid="game-board"></div>
+      </main>
+
+      <aside class="game-right">
+        <div class="glass-gold marquee turn-card">
+          <p class="eyebrow gold">CURRENT TURN</p>
+          <div class="turn-name display md" id="turn-name">—</div>
+          <div class="turn-meta muted xs" id="turn-meta">—</div>
+          <div class="dice-tray">
+            <div class="dice-row">
+              <div class="dice" id="die-0">1</div>
+              <div class="dice" id="die-1">1</div>
+            </div>
+            <button class="btn-gold full" id="btn-roll" data-testid="roll-dice-btn">Roll Dice</button>
+          </div>
+          <button class="btn-ghost-gold full hidden" id="btn-end-turn" data-testid="end-turn-btn">End Turn →</button>
+        </div>
+        <div class="glass phase-card">
+          <p class="eyebrow muted">PHASE</p>
+          <div class="phase-val gold" id="phase-val">AWAITING ROLL</div>
+          <div class="eyebrow muted" id="dice-meta">DICE · 1 + 1 = 2</div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- MODAL: Property -->
+    <div id="modal-property" class="modal hidden" data-testid="property-modal">
+      <div class="modal-content glass-gold marquee">
+        <p class="eyebrow gold">UNCLAIMED · AVAILABLE</p>
+        <h3 class="display lg" id="prop-name">—</h3>
+        <div class="group-tag hidden" id="prop-group"></div>
+        <div class="prop-stats" id="prop-stats"></div>
+        <div class="modal-actions">
+          <button class="btn-gold" id="btn-buy" data-testid="buy-property-btn">Buy</button>
+          <button class="btn-ghost-gold" id="btn-pass" data-testid="pass-property-btn">Pass</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: Card -->
+    <div id="modal-card" class="modal hidden" data-testid="card-modal">
+      <div class="card-3d">
+        <div class="card-3d-inner" id="card-inner">
+          <div class="card-face card-back" id="card-back">
+            <p class="eyebrow muted">PLAY 3D</p>
+            <span class="card-q">?</span>
+            <p class="display sm" id="card-back-label">HOOD CARD</p>
+          </div>
+          <div class="card-face card-front" id="card-front">
+            <p class="eyebrow" id="card-front-label">HOOD CARD</p>
+            <p class="display md" id="card-text" data-testid="card-text">—</p>
+            <button class="btn-gold full" id="btn-card-continue" data-testid="card-continue-btn">Take The Hit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: End -->
+    <div id="modal-end" class="modal hidden" data-testid="endgame-modal">
+      <div class="modal-content glass-gold marquee end-content">
+        <p class="eyebrow gold">VAULT CLOSED</p>
+        <h2 class="display xl gold-grad">EMPIRE LOCKED</h2>
+        <div class="end-winner" id="end-winner-token"></div>
+        <p class="display md" id="end-winner-name">—</p>
+        <p class="eyebrow muted" id="end-winner-sub">—</p>
+        <div id="end-ranking" class="end-ranking"></div>
+        <div class="modal-actions">
+          <button class="btn-gold" id="btn-restart" data-testid="endgame-restart-btn">Run It Back</button>
+          <button class="btn-ghost-gold" id="btn-menu" data-testid="endgame-menu-btn">Main Menu</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENGINE & DATA (load order matters) -->
+  <script src="./players/tokens.js"></script>
+  <script src="./cards/cards.js"></script>
+  <script src="./engine/audio.js"></script>
+  <script src="./engine/persistence.js"></script>
+  <script src="./engine/board.js"></script>
+  <script src="./engine/aiPlayer.js"></script>
+  <script src="./engine/gameEngine.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
