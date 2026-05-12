@@ -1,0 +1,16 @@
+Hood Monopoly Isometric Board Upgrade
+
+What this adds:
+- Angled Monopoly GO / tabletop style board camera using CSS perspective.
+- Monopoly-style side text orientation:
+  bottom upright, left rotated, top inverted, right rotated, corners larger.
+- Property color strip hooks by board index.
+- Fallback old-school style token icons if no token pieces exist.
+- Token hop animation helper.
+- Dice rolling animation helper.
+- Board View toggle in bottom-right to switch flat/angled for debugging.
+
+Install:
+Replace the full nfc/game-vault/games/hood-monopoly/ folder with this hood-monopoly folder.
+
+No Supabase, NFC unlock, analytics, or live-send code touched.

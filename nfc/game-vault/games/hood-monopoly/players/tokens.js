@@ -1,16 +1,14 @@
-/* PLAY 3D · Hood Monopoly · Bay Car Culture Tokens */
+/* PLAY 3D · Hood Monopoly · V-Town Edition — Vallejo Tokens */
 window.HM = window.HM || {};
-
 HM.TOKENS = [
-  { id:'mustang', label:'Old-School Mustang', color:'#F2D492', svg:'M3 14.5l1.2-3.4c.4-1.1 1.4-1.8 2.6-1.8h8.1c1.1 0 2.1.6 2.7 1.5l2.4 3.7v2.4h-2.1a2.3 2.3 0 0 1-4.6 0H8.9a2.3 2.3 0 0 1-4.6 0H3v-2.4Zm4.1-2.9-.7 2h10.9l-1.2-1.8c-.2-.3-.6-.5-1-.5H7.1Zm-.5 4.7a1 1 0 1 0 2 0 1 1 0 0 0-2 0Zm9.2 0a1 1 0 1 0 2 0 1 1 0 0 0-2 0Z' },
-  { id:'iroc', label:'IROC-Z', color:'#FF1493', svg:'M2.8 14.8l1.5-4.1 4.4-1.2h6.1l4.2 2.1 2.2 3.2v2.1h-2a2.2 2.2 0 0 1-4.4 0H9.2a2.2 2.2 0 0 1-4.4 0h-2v-2.1Zm3.5-2.7-.7 1.9h11.7l-2.7-1.9H6.3Zm-.1 4.7a1 1 0 1 0 2 0 1 1 0 0 0-2 0Zm9.5 0a1 1 0 1 0 2 0 1 1 0 0 0-2 0Z' },
-  { id:'cutlass', label:'Cutlass', color:'#7FFFD4', svg:'M3 15l1.1-3.6c.3-1 1.3-1.7 2.4-1.7h10.1c1 0 1.9.6 2.4 1.5l2 3.8v1.8h-1.7a2.4 2.4 0 0 1-4.8 0H9.5a2.4 2.4 0 0 1-4.8 0H3V15Zm3.3-3-.6 1.7h11.9l-1-1.7H6.3Zm-.2 4.7a1 1 0 1 0 2 0 1 1 0 0 0-2 0Zm10 0a1 1 0 1 0 2 0 1 1 0 0 0-2 0Z' },
-  { id:'foxbody', label:'5.0 Foxbody', color:'#FFD700', svg:'M2.7 14.7l1.7-3.8c.4-.9 1.2-1.4 2.2-1.4h7.5c1.2 0 2.3.5 3.1 1.4l3.1 3.8v2.1h-2.1a2.2 2.2 0 0 1-4.4 0H9.1a2.2 2.2 0 0 1-4.4 0h-2v-2.1Zm4-3-.8 1.9h10.6l-1.5-1.5c-.2-.2-.5-.4-.9-.4H6.7Zm-.4 4.8a1 1 0 1 0 2 0 1 1 0 0 0-2 0Zm9.3 0a1 1 0 1 0 2 0 1 1 0 0 0-2 0Z' },
-  { id:'grandnational', label:'Grand National', color:'#111111', svg:'M3 14.8l1.2-3.3c.4-1 1.3-1.7 2.4-1.7h10.2c1 0 1.9.6 2.3 1.5l1.9 3.5v2.1h-2a2.3 2.3 0 0 1-4.6 0H9.6a2.3 2.3 0 0 1-4.6 0H3v-2.1Zm3.5-3-.7 1.8h11.8l-.9-1.8H6.5Zm-.2 4.8a1 1 0 1 0 2 0 1 1 0 0 0-2 0Zm9.6 0a1 1 0 1 0 2 0 1 1 0 0 0-2 0Z' },
-  { id:'boxchevy', label:'Box Chevy', color:'#7FB8FF', svg:'M3 14.9l1-3.6c.3-1 1.2-1.8 2.3-1.8h11c1 0 1.9.7 2.2 1.7l1.5 3.7V17h-2a2.2 2.2 0 0 1-4.4 0H9.4A2.2 2.2 0 0 1 5 17H3v-2.1Zm3.2-3.1-.5 1.9h12.2l-.7-1.9h-11Zm.1 4.9a1 1 0 1 0 2 0 1 1 0 0 0-2 0Zm9.5 0a1 1 0 1 0 2 0 1 1 0 0 0-2 0Z' },
-  { id:'montecarlo', label:'Monte Carlo', color:'#D4AF37', svg:'M2.8 14.8l1.4-3.5c.4-1 1.4-1.6 2.5-1.6h8.8c1.2 0 2.2.7 2.8 1.7l1.9 3.4v2h-1.9a2.2 2.2 0 0 1-4.4 0H9.2a2.2 2.2 0 0 1-4.4 0h-2v-2Zm3.8-2.9-.7 1.8h11.5l-1-1.8H6.6Zm-.3 4.8a1 1 0 1 0 2 0 1 1 0 0 0-2 0Zm9.4 0a1 1 0 1 0 2 0 1 1 0 0 0-2 0Z' },
-  { id:'cadillac', label:'Old-School Cadillac', color:'#9CE6FF', svg:'M2.7 15l1.3-3.8c.4-1 1.3-1.7 2.4-1.7h11.1c1 0 1.8.6 2.2 1.5l1.6 4v2h-2a2.3 2.3 0 0 1-4.6 0H9.3a2.3 2.3 0 0 1-4.6 0h-2V15Zm3.5-3.2-.7 1.9h12.3l-.8-1.9H6.2Zm.1 4.9a1 1 0 1 0 2 0 1 1 0 0 0-2 0Zm9.7 0a1 1 0 1 0 2 0 1 1 0 0 0-2 0Z' }
+  { id:'lowrider', label:'Lowrider',       color:'#7FFFD4', svg:'M3 12l2-4h14l2 4v3h-2a2 2 0 1 1-4 0H9a2 2 0 1 1-4 0H3v-3Zm4 2.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm10 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z' },
+  { id:'mic',      label:'Studio Mic',     color:'#FF1493', svg:'M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Zm-5 9a5 5 0 0 0 10 0h2a7 7 0 0 1-6 6.92V22h-2v-3.08A7 7 0 0 1 5 12h2Z' },
+  { id:'crown',    label:'V-Town Crown',   color:'#F2D492', svg:'M3 17l1.6-8 3.4 3 4-6 4 6 3.4-3L21 17H3Zm0 2h18v2H3v-2Z' },
+  { id:'ferry',    label:'Vallejo Ferry',  color:'#7FB8FF', svg:'M3 18a3 3 0 0 1 3-1.5c2 0 3 2 6 2s4-2 6-2a3 3 0 0 1 3 1.5v2a3 3 0 0 1-3 1.5c-2 0-3-2-6-2s-4 2-6 2A3 3 0 0 1 3 20v-2Zm1-3 8-9 8 9-2 .8-6-6.6-6 6.6L4 15Zm6-4h4v2h-4v-2Z' },
+  { id:'bridge',   label:'Carquinez Bridge',color:'#FFD27A', svg:'M3 15c3 0 4-3 4-7h2c0 5 1 8 8 8v2c-3 0-5-1-6-2v6h-2v-6c-1 1-3 2-6 2v-3Zm12 0c3 0 4-2 4-7h2c0 5 1 8 0 8v-1Zm-12 6v-1h18v1H3Z' },
+  { id:'chain',    label:'Gold Chain',     color:'#FFD700', svg:'M5 12a3 3 0 0 1 3-3h2v2H8a1 1 0 0 0 0 2h2v2H8a3 3 0 0 1-3-3Zm9-3h2a3 3 0 1 1 0 6h-2v-2h2a1 1 0 1 0 0-2h-2V9Zm-3 2h2v2h-2v-2Z' },
+  { id:'vault',    label:'Vault Key',      color:'#D4AF37', svg:'M8 7a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm-1 4a1 1 0 1 0 2 0 1 1 0 0 0-2 0Zm5 0h9v2h-2v2h-2v-2h-2v3h-2v-3h-1v-2Z' },
+  { id:'anchor',   label:'Mare Island Anchor',color:'#9CE6FF', svg:'M12 2a3 3 0 0 1 1 5.83V10h3v2h-3v6.92A6 6 0 0 0 18 13h-2v-2h4v2a8 8 0 0 1-8 8 8 8 0 0 1-8-8v-2h4v2H6a6 6 0 0 0 5 5.92V12H8v-2h3V7.83A3 3 0 0 1 12 2Zm0 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z' },
 ];
-
 HM.tokenById = (id) => HM.TOKENS.find(t => t.id === id) || HM.TOKENS[0];
-HM.tokenSvg = (token, size = 18) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="#080808" stroke="rgba(255,255,255,.28)" stroke-width=".35" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="${token.svg}"/><path d="M5 12h13" opacity=".18"/></svg>`;
+HM.tokenSvg = (token, size = 14) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="#0a0a0a" xmlns="http://www.w3.org/2000/svg"><path d="${token.svg}"/></svg>`;

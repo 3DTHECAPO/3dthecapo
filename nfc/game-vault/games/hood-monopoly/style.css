@@ -249,45 +249,468 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 ::-webkit-scrollbar-thumb{background:#2a2418;border-radius:6px}
 ::-webkit-scrollbar-thumb:hover{background:var(--gold-dark)}
 
-/* ===== BOARD READABILITY + REAL MONOPOLY-STYLE EDGE ORIENTATION PATCH =====
-   Reference behavior: classic boards use 40 edge spaces, bigger corners, and rotated side text.
-*/
-.board-grid{
-  width:min(96vh,96vw,1240px) !important;
-  height:min(96vh,96vw,1240px) !important;
-  grid-template-columns:1.58fr repeat(9,1fr) 1.58fr !important;
-  grid-template-rows:1.58fr repeat(9,1fr) 1.58fr !important;
-  gap:3px !important;
-  padding:8px !important;
+
+/* =========================================================
+   PLAY 3D HOOD MONOPOLY — ISOMETRIC TABLETOP BOARD PASS
+   Goal: Monopoly GO / real tabletop angle with corrected text.
+   ========================================================= */
+
+:root{
+  --hm-gold:#d7b35e;
+  --hm-gold-soft:#fff1b2;
+  --hm-black:#050608;
+  --hm-panel:rgba(9,12,18,.92);
+  --hm-line:rgba(216,181,91,.34);
+  --hm-green:#4fd184;
+  --hm-red:#ff4b4b;
+  --hm-blue:#55a9ff;
+  --hm-tile:#151b24;
+  --hm-tile2:#202a36;
 }
-.tile{overflow:visible !important;padding:0 !important;isolation:isolate}
-.tile::after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
-.tile-content{position:absolute;inset:23% 6% 7%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.12rem;text-align:center;z-index:2;min-width:0;transform-origin:center}
-.tile.side-bottom .tile-content{inset:24% 5% 6%}
-.tile.side-top .tile-content{inset:6% 5% 24%;transform:rotate(180deg)}
-.tile.side-left .tile-content{inset:5% 24% 5% 6%;transform:rotate(90deg);width:130%;height:62%;left:-15%;top:19%}
-.tile.side-right .tile-content{inset:5% 6% 5% 24%;transform:rotate(-90deg);width:130%;height:62%;left:-15%;top:19%}
-.tile-name{display:block;width:100%;max-width:100%;font-size:clamp(.38rem,.64vw,.72rem) !important;line-height:1.02 !important;letter-spacing:.025em !important;white-space:normal !important;overflow:visible !important;text-overflow:unset !important;word-break:normal !important;overflow-wrap:break-word !important;text-wrap:balance;padding:0 .05rem !important;text-shadow:0 1px 2px #000,0 0 8px rgba(0,0,0,.9)}
-.tile-district{display:block;max-width:100%;font-family:'JetBrains Mono',monospace;font-size:clamp(.30rem,.45vw,.48rem);color:rgba(255,255,255,.46);text-transform:uppercase;letter-spacing:.13em;white-space:normal;line-height:1}
-.tile-price{display:block;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:clamp(.35rem,.52vw,.6rem) !important;line-height:1 !important;color:rgba(212,175,55,.92) !important;margin-top:.06rem !important}
-.tile-sub{font-size:clamp(.32rem,.48vw,.55rem) !important;line-height:1 !important;white-space:normal !important;letter-spacing:.14em !important}
-.tile-sub.gold{color:var(--gold) !important}.tile-sub.magenta,.tile-price.danger,.tile-sub.danger{color:var(--neon-magenta) !important}.tile-sub.cyan{color:var(--neon-cyan) !important}.tile-sub.softgold{color:#F2D492 !important}
-.tile-icon{font-family:'Unbounded',sans-serif;font-weight:900;font-size:clamp(.75rem,1.1vw,1.2rem);line-height:1}
-.corner-art{position:absolute;inset:7%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;text-align:center;z-index:2}
-.tile-corner{font-size:clamp(.82rem,1.35vw,1.38rem) !important;line-height:.9 !important;text-wrap:balance;white-space:normal;max-width:95%}
-.tile-band{z-index:1}.tile-band.top{height:23% !important}.tile-band.bottom{height:23% !important}.tile-band.left{width:23% !important}.tile-band.right{width:23% !important}
-.tile-hop-focus{border-color:rgba(242,212,146,.85) !important;box-shadow:0 0 22px rgba(242,212,146,.55),inset 0 0 18px rgba(212,175,55,.18) !important}
-.tile-token{width:26px !important;height:26px !important;border-radius:9px !important;border:2px solid rgba(0,0,0,.9) !important;box-shadow:0 4px 10px rgba(0,0,0,.65),0 0 14px currentColor,inset 0 1px 0 rgba(255,255,255,.28) !important;transform:translateZ(0)}
-.tile-token svg{width:19px !important;height:19px !important;filter:drop-shadow(0 1px 1px rgba(255,255,255,.24))}
-.tile-tokens{align-items:flex-end !important;justify-content:center !important;padding:3px !important;gap:2px !important;z-index:5}
-.moving-token{position:absolute;z-index:80;width:34px;height:34px;margin-left:-17px;margin-top:-17px;border-radius:12px;border:2px solid rgba(0,0,0,.95);display:grid;place-items:center;pointer-events:none;box-shadow:0 9px 24px rgba(0,0,0,.72),0 0 26px currentColor,inset 0 1px 0 rgba(255,255,255,.3);transition:left .13s ease,top .13s ease}
-.moving-token.hop{animation:handHop .16s cubic-bezier(.2,1.4,.35,1)}
-@keyframes handHop{0%{transform:translateY(0) scale(1) rotate(-2deg)}45%{transform:translateY(-18px) scale(1.13) rotate(3deg)}100%{transform:translateY(0) scale(1) rotate(0deg)}}
-@media(max-width:820px){
-  .board-grid{width:min(98vw,98vh) !important;height:min(98vw,98vh) !important;gap:2px !important;padding:5px !important}
-  .tile-name{font-size:clamp(.30rem,1.15vw,.56rem) !important}
-  .tile-district{display:none}
-  .tile-price{font-size:clamp(.29rem,.9vw,.5rem) !important}
-  .tile-token{width:21px !important;height:21px !important;border-radius:8px !important}
-  .tile-token svg{width:15px !important;height:15px !important}
+
+html, body{
+  min-height:100%;
+  background:
+    radial-gradient(circle at 50% 14%, rgba(216,181,91,.18), transparent 30%),
+    radial-gradient(circle at 10% 80%, rgba(80,150,255,.12), transparent 32%),
+    linear-gradient(135deg,#030407 0%,#101722 48%,#050608 100%) !important;
+}
+
+body{
+  overflow-x:hidden;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:-20%;
+  z-index:0;
+  pointer-events:none;
+  background:
+    linear-gradient(rgba(216,181,91,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(216,181,91,.035) 1px, transparent 1px);
+  background-size:48px 48px;
+  transform:rotateX(62deg) rotateZ(-38deg) scale(1.4);
+  opacity:.55;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at center, transparent 35%, rgba(0,0,0,.72) 100%),
+    linear-gradient(to bottom, rgba(255,255,255,.03), transparent 22%, rgba(0,0,0,.25));
+}
+
+/* Universal game wrapper lift */
+main, .app, .game, .game-shell, .container, #app{
+  position:relative;
+  z-index:2;
+}
+
+/* Perspective stage. It wraps any common board class/id automatically. */
+.board-stage,
+.table-stage,
+.game-stage,
+.board-wrap,
+.board-wrapper,
+.board-container,
+.monopoly-stage,
+#boardStage{
+  position:relative;
+  z-index:3;
+  width:min(1180px,96vw);
+  margin:22px auto 42px;
+  min-height:clamp(560px,78vw,980px);
+  display:grid;
+  place-items:center;
+  perspective:1600px;
+  perspective-origin:50% 30%;
+  overflow:visible !important;
+}
+
+/* If no explicit stage exists, make parent of board behave like one. */
+.board,
+.game-board,
+.monopoly-board,
+#board,
+#gameBoard{
+  position:relative;
+  z-index:4;
+  width:min(920px,86vw) !important;
+  aspect-ratio:1/1 !important;
+  max-height:86vh;
+  transform:
+    rotateX(58deg)
+    rotateZ(0deg)
+    translateY(-7%);
+  transform-style:preserve-3d;
+  transform-origin:center center;
+  border-radius:18px !important;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(106,143,112,.20), rgba(17,24,31,.85) 46%, rgba(4,6,9,.96) 100%),
+    linear-gradient(135deg, rgba(19,27,34,.96), rgba(8,10,14,.98)) !important;
+  border:2px solid rgba(216,181,91,.46) !important;
+  box-shadow:
+    0 60px 110px rgba(0,0,0,.80),
+    0 18px 35px rgba(0,0,0,.65),
+    0 0 75px rgba(216,181,91,.19) !important;
+  overflow:visible !important;
+}
+
+/* Board underside / table shadow */
+.board::after,
+.game-board::after,
+.monopoly-board::after,
+#board::after,
+#gameBoard::after{
+  content:"";
+  position:absolute;
+  inset:8px;
+  z-index:-1;
+  border-radius:24px;
+  background:rgba(0,0,0,.55);
+  transform:translateZ(-28px) translateY(42px) scale(1.02);
+  filter:blur(18px);
+}
+
+/* Board center panel */
+.board-center,
+.center-board,
+.center-panel,
+#boardCenter{
+  position:absolute !important;
+  inset:17% !important;
+  display:grid !important;
+  place-items:center !important;
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(216,181,91,.15), transparent 48%),
+    linear-gradient(135deg, rgba(12,18,24,.50), rgba(6,8,11,.72)) !important;
+  border:1px solid rgba(216,181,91,.24);
+  box-shadow:inset 0 0 40px rgba(0,0,0,.35);
+  transform:translateZ(4px);
+}
+
+.board-center::before,
+.center-board::before,
+.center-panel::before,
+#boardCenter::before{
+  content:"PLAY 3D\A BAY AREA EMPIRE";
+  white-space:pre;
+  text-align:center;
+  color:rgba(255,235,157,.22);
+  font-weight:900;
+  letter-spacing:.08em;
+  font-size:clamp(20px,4vw,58px);
+  line-height:1.05;
+  text-shadow:0 0 22px rgba(216,181,91,.22);
+}
+
+/* Common spaces / cells */
+.space,
+.tile,
+.property,
+.board-space,
+.board-tile,
+.cell,
+.square{
+  position:relative !important;
+  overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:3px !important;
+  padding:5px !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.075), rgba(0,0,0,.18)),
+    var(--hm-tile) !important;
+  border:1px solid rgba(216,181,91,.30) !important;
+  color:#f5edce !important;
+  text-align:center !important;
+  text-shadow:0 1px 2px rgba(0,0,0,.85);
+  transform-style:preserve-3d;
+  backface-visibility:visible;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035);
+}
+
+/* tile top shine */
+.space::before,
+.tile::before,
+.property::before,
+.board-space::before,
+.board-tile::before,
+.cell::before,
+.square::before{
+  content:"";
+  position:absolute;
+  left:0; right:0; top:0;
+  height:18%;
+  background:linear-gradient(90deg, rgba(216,181,91,.65), rgba(255,242,178,.20));
+  opacity:.45;
+  pointer-events:none;
+}
+
+.space:hover,
+.tile:hover,
+.property:hover,
+.board-space:hover,
+.board-tile:hover,
+.cell:hover,
+.square:hover{
+  z-index:40 !important;
+  filter:brightness(1.12);
+  border-color:rgba(255,230,137,.85) !important;
+  box-shadow:
+    0 0 22px rgba(216,181,91,.35),
+    inset 0 0 20px rgba(216,181,91,.10) !important;
+}
+
+/* Typography inside tiles: no random cutoffs */
+.space *,
+.tile *,
+.property *,
+.board-space *,
+.board-tile *,
+.cell *,
+.square *{
+  max-width:100% !important;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:unset !important;
+  word-break:normal !important;
+  overflow-wrap:break-word !important;
+  line-height:1.02 !important;
+  text-align:center !important;
+}
+
+.space .name,
+.tile .name,
+.property .name,
+.board-space .name,
+.board-tile .name,
+.cell .name,
+.square .name,
+.space h3,
+.tile h3,
+.property h3,
+.board-space h3,
+.board-tile h3,
+.cell h3,
+.square h3{
+  font-size:clamp(7px, .83vw, 13px) !important;
+  font-weight:900 !important;
+  letter-spacing:.015em !important;
+  text-transform:uppercase !important;
+}
+
+.space .price,
+.tile .price,
+.property .price,
+.board-space .price,
+.board-tile .price,
+.cell .price,
+.square .price{
+  font-size:clamp(6px, .68vw, 10px) !important;
+  color:var(--hm-gold-soft) !important;
+  font-weight:800 !important;
+}
+
+/* Monopoly-style orientation hooks.
+   JS will add hm-bottom/hm-left/hm-top/hm-right/hm-corner to cells. */
+.hm-bottom .hm-space-inner{ transform:rotate(0deg); }
+.hm-left .hm-space-inner{ transform:rotate(90deg); }
+.hm-top .hm-space-inner{ transform:rotate(180deg); }
+.hm-right .hm-space-inner{ transform:rotate(-90deg); }
+.hm-corner .hm-space-inner{ transform:rotate(0deg); }
+
+.hm-space-inner{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  padding:3px;
+  transform-origin:center;
+}
+
+.hm-corner{
+  font-size:clamp(12px,1.5vw,22px) !important;
+  font-weight:900;
+}
+
+.hm-corner .hm-space-inner{
+  font-size:1.16em;
+  letter-spacing:.04em;
+}
+
+.hm-color-strip{
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:16%;
+  background:linear-gradient(90deg,var(--hm-gold),rgba(255,255,255,.25));
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
+  z-index:1;
+}
+
+.hm-left .hm-color-strip,
+.hm-right .hm-color-strip{
+  height:100%;
+  width:14%;
+}
+
+.hm-top .hm-color-strip{
+  top:auto;
+  bottom:0;
+}
+
+.hm-space-title{
+  position:relative;
+  z-index:2;
+  display:block;
+  max-width:100%;
+  padding:0 2px;
+}
+
+.hm-space-price{
+  position:relative;
+  z-index:2;
+  display:block;
+  color:var(--hm-gold-soft);
+  font-size:.78em;
+  font-weight:800;
+}
+
+/* Physical token styling */
+.token,
+.player-token,
+.piece,
+.player-piece,
+.car-token,
+[data-token],
+.hm-token{
+  position:absolute;
+  z-index:80 !important;
+  width:clamp(22px,3.2vw,46px);
+  height:clamp(22px,3.2vw,46px);
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.18), rgba(0,0,0,.35)),
+    linear-gradient(135deg,#1b2430,#090b0f);
+  border:1px solid rgba(216,181,91,.62);
+  color:#ffe99b;
+  font-size:clamp(14px,2vw,28px);
+  filter:
+    drop-shadow(0 13px 9px rgba(0,0,0,.62))
+    drop-shadow(0 0 13px rgba(216,181,91,.42));
+  transform:translateZ(48px) rotateX(-58deg) !important;
+  transition:left .24s cubic-bezier(.25,1.3,.45,1), top .24s cubic-bezier(.25,1.3,.45,1), transform .24s ease;
+}
+
+.hm-token::after,
+.token::after,
+.player-token::after,
+.piece::after,
+.player-piece::after,
+.car-token::after{
+  content:"";
+  position:absolute;
+  inset:auto 12% -7px 12%;
+  height:8px;
+  border-radius:50%;
+  background:rgba(0,0,0,.55);
+  filter:blur(5px);
+  z-index:-1;
+}
+
+.hm-token-hop,
+.p3d-hop{
+  animation:hmTokenHop .34s cubic-bezier(.25,1.5,.45,1) both !important;
+}
+
+@keyframes hmTokenHop{
+  0%{ transform:translateZ(48px) rotateX(-58deg) translateY(0) scale(1) !important; }
+  48%{ transform:translateZ(70px) rotateX(-58deg) translateY(-20px) scale(1.08) !important; }
+  100%{ transform:translateZ(48px) rotateX(-58deg) translateY(0) scale(1) !important; }
+}
+
+/* Dice should look like tabletop dice */
+.dice,
+.die,
+#dice,
+.dice-display,
+.roll-result{
+  transform-style:preserve-3d;
+  border-radius:14px !important;
+  box-shadow:
+    0 18px 20px rgba(0,0,0,.35),
+    0 0 18px rgba(216,181,91,.24) !important;
+}
+
+.rolling,
+.dice.rolling,
+.die.rolling,
+#dice.rolling{
+  animation:hmDiceRoll .62s ease-in-out infinite;
+}
+
+@keyframes hmDiceRoll{
+  0%,100%{transform:rotate(0deg) scale(1)}
+  18%{transform:rotate(-14deg) scale(1.08)}
+  42%{transform:rotate(18deg) scale(.96)}
+  70%{transform:rotate(-8deg) scale(1.04)}
+}
+
+/* If board is too tall on phones, flatten a little */
+@media(max-width:760px){
+  .board,
+  .game-board,
+  .monopoly-board,
+  #board,
+  #gameBoard{
+    width:94vw !important;
+    transform:rotateX(50deg) translateY(-4%);
+  }
+
+  .board-stage,
+  .table-stage,
+  .game-stage,
+  .board-wrap,
+  .board-wrapper,
+  .board-container,
+  .monopoly-stage,
+  #boardStage{
+    min-height:clamp(500px,105vw,720px);
+  }
+
+  .space .name,
+  .tile .name,
+  .property .name,
+  .board-space .name,
+  .board-tile .name,
+  .cell .name,
+  .square .name,
+  .hm-space-title{
+    font-size:clamp(6px,1.65vw,10px) !important;
+  }
+}
+
+/* emergency reset class for debugging */
+.hm-flat-view .board,
+.hm-flat-view .game-board,
+.hm-flat-view .monopoly-board,
+.hm-flat-view #board,
+.hm-flat-view #gameBoard{
+  transform:none !important;
 }
