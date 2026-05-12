@@ -2,6 +2,7 @@
 'use strict';
 
 const games = [
+  {id:'hood-monopoly',title:'PLAY 3D: Vallejo Hood Monopoly',pill:'Street Empire',tags:['Strategy','Bay Area','Empire'],href:'./games/hood-monopoly/',bg:'./games/hood-monopoly/assets/skyline.svg',desc:'Cinematic Vallejo street empire board game with old-school Bay cars, property takeovers, and PLAY 3D energy.',type:'strategy multiplayer',difficulty:'Medium',players:'2-4 Players'},
   {id:'chess',title:'Vault Chess',pill:'Strategy',tags:['Strategy','Fan Challenge','AI'],href:'./games/chess/',bg:'./assets/preview_chess.svg',desc:'Luxury chess board with legal moves, CPU mode, timers, and guarded fan-room routing.',type:'strategy multiplayer',difficulty:'Medium',players:'1-2 Players'},
   {id:'slots',title:'3D Slots',pill:'Casino',tags:['Casino','Rewards','Fast'],href:'./games/slot-machine-custom/',bg:'./assets/preview_slots.svg',desc:'Premium reel room with vault energy, jackpot glow, and reward-ready structure.',type:'casino',difficulty:'Easy',players:'Solo'},
   {id:'blackjack',title:'Blackjack',pill:'High Limit',tags:['Casino','Cards','Dealer'],href:'./games/blackjack/',bg:'./assets/preview_blackjack.svg',desc:'Black-and-gold card table for quick blackjack sessions.',type:'casino cards',difficulty:'Medium',players:'Solo'},
