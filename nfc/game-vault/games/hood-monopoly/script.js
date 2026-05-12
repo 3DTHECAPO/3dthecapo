@@ -124,7 +124,7 @@
       const { row, col } = HM.tileGridPosition(idx);
       const side = HM.tileSide(idx);
       const tileEl = document.createElement('div');
-      tileEl.className = 'tile'; tileEl.dataset.testid = `tile-${idx}`; tileEl.dataset.idx = idx;
+      tileEl.className = `tile side-${side} type-${tile.type}`; tileEl.dataset.testid = `tile-${idx}`; tileEl.dataset.idx = idx;
       tileEl.style.gridRow = row; tileEl.style.gridColumn = col;
       tileEl.innerHTML = tileInner(tile, side, idx);
       board.appendChild(tileEl);
@@ -132,21 +132,70 @@
   }
 
   function tileInner(tile, side, idx){
+    const safe = (value) => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const price = (value) => value ? `<span class="tile-price">$${value}</span>` : '';
+    const sideLabel = `data-side="${side}"`;
+
     if (tile.type === 'corner'){
-      const cls = tile.name === 'GO' ? 'go' : tile.name === 'Jail' ? 'jail' : tile.name === 'Go To Jail' ? 'gotojail' : 'parking';
-      return `<span class="tile-sub" style="color:inherit;opacity:.6">${tile.sub}</span><span class="tile-corner ${cls}">${tile.name}</span>`;
+      const nameKey = tile.name.toLowerCase().replace(/\s+/g,'-');
+      const cls = tile.name === 'GO' ? 'go' : tile.name === 'Brig' ? 'jail' : tile.name === 'Sent To The Brig' ? 'gotojail' : 'parking';
+      return `
+        <div class="corner-art corner-${nameKey}">
+          <span class="tile-sub">${safe(tile.sub || '')}</span>
+          <span class="tile-corner ${cls}">${safe(tile.name)}</span>
+        </div>`;
     }
-    if (tile.type === 'tax')        return `<span class="tile-sub" style="color:#FF1493">PAY</span><span class="tile-name">${tile.name}</span><span class="tile-price" style="color:#FF1493">−$${tile.amount}</span>`;
-    if (tile.type === 'hood-card')  return `<span class="tile-sub" style="color:#D4AF37">DRAW</span><span class="tile-name">HOOD CARD</span>`;
-    if (tile.type === 'street-card')return `<span class="tile-sub" style="color:#FF1493">DRAW</span><span class="tile-name">STREET CARD</span>`;
-    if (tile.type === 'transit')    return `<span class="tile-sub" style="color:#7FFFD4">TRANSIT</span><span class="tile-name">${tile.name}</span><span class="tile-price">$${tile.price}</span>`;
-    if (tile.type === 'utility')    return `<span class="tile-sub" style="color:#F2D492">UTILITY</span><span class="tile-name">${tile.name}</span><span class="tile-price">$${tile.price}</span>`;
-    // property
+
+    if (tile.type === 'tax'){
+      return `<div class="tile-content" ${sideLabel}>
+        <span class="tile-sub danger">PAY</span>
+        <span class="tile-name">${safe(tile.name)}</span>
+        <span class="tile-price danger">−$${tile.amount}</span>
+      </div>`;
+    }
+
+    if (tile.type === 'hood-card'){
+      return `<div class="tile-content card-space" ${sideLabel}>
+        <span class="tile-icon">?</span>
+        <span class="tile-sub gold">DRAW</span>
+        <span class="tile-name">HOOD CARD</span>
+      </div>`;
+    }
+
+    if (tile.type === 'street-card'){
+      return `<div class="tile-content card-space street" ${sideLabel}>
+        <span class="tile-icon">?</span>
+        <span class="tile-sub magenta">DRAW</span>
+        <span class="tile-name">STREET CARD</span>
+      </div>`;
+    }
+
+    if (tile.type === 'transit'){
+      return `<div class="tile-content transit-space" ${sideLabel}>
+        <span class="tile-icon">◆</span>
+        <span class="tile-sub cyan">TRANSIT</span>
+        <span class="tile-name">${safe(tile.name)}</span>
+        ${price(tile.price)}
+      </div>`;
+    }
+
+    if (tile.type === 'utility'){
+      return `<div class="tile-content utility-space" ${sideLabel}>
+        <span class="tile-icon">⚡</span>
+        <span class="tile-sub softgold">UTILITY</span>
+        <span class="tile-name">${safe(tile.name)}</span>
+        ${price(tile.price)}
+      </div>`;
+    }
+
     const g = HM.GROUPS[tile.group];
     const bandPos = side === 'top' ? 'bottom' : side === 'left' ? 'right' : side === 'right' ? 'left' : 'top';
     return `<span class="tile-band ${bandPos}" style="background:${g.color}"></span>
-      <span class="tile-name" style="margin-top:${(bandPos==='top'||bandPos==='bottom')?'18%':'0'}">${tile.name}</span>
-      <span class="tile-price">$${tile.price}</span>`;
+      <div class="tile-content property-space" ${sideLabel}>
+        <span class="tile-district">${safe(g.name)}</span>
+        <span class="tile-name">${safe(tile.name)}</span>
+        <span class="tile-price">$${tile.price}</span>
+      </div>`;
   }
 
   function renderAll(){
@@ -293,6 +342,67 @@
     }
   }
 
+  // --- Cinematic token hop movement ---
+  function tileCenter(index){
+    const tile = document.querySelector(`.tile[data-idx="${index}"]`);
+    const board = document.getElementById('game-board');
+    if(!tile || !board) return null;
+    const t = tile.getBoundingClientRect();
+    const b = board.getBoundingClientRect();
+    return { x: t.left - b.left + t.width / 2, y: t.top - b.top + t.height / 2 };
+  }
+
+  function animateTokenHop(player, steps, done){
+    const board = document.getElementById('game-board');
+    if(!board || !player || !steps || steps < 1){
+      done();
+      return;
+    }
+
+    const token = HM.tokenById(player.tokenId);
+    const jumper = document.createElement('div');
+    jumper.className = 'moving-token';
+    jumper.style.color = token.color;
+    jumper.style.background = token.color;
+    jumper.innerHTML = HM.tokenSvg(token, 26);
+    board.appendChild(jumper);
+
+    const start = player.position;
+    const path = [];
+    for(let s = 0; s <= steps; s++){
+      path.push((start + s) % HM.TOTAL_TILES);
+    }
+
+    let i = 0;
+    function step(){
+      const pos = tileCenter(path[i]);
+      if(pos){
+        jumper.style.left = `${pos.x}px`;
+        jumper.style.top = `${pos.y}px`;
+        jumper.classList.remove('hop');
+        void jumper.offsetWidth;
+        jumper.classList.add('hop');
+        const tile = document.querySelector(`.tile[data-idx="${path[i]}"]`);
+        if(tile){
+          tile.classList.add('tile-hop-focus');
+          setTimeout(()=>tile.classList.remove('tile-hop-focus'), 210);
+        }
+      }
+
+      i++;
+      if(i < path.length){
+        setTimeout(step, 165);
+      }else{
+        setTimeout(()=>{
+          jumper.remove();
+          done();
+        }, 170);
+      }
+    }
+
+    step();
+  }
+
   // --- Dice / actions ---
   function doRoll(){
     if (rolling) return; rolling = true;
@@ -304,9 +414,15 @@
       $('#die-0').textContent = state.dice[0]; $('#die-1').textContent = state.dice[1];
       if (++n > 6){
         clearInterval(tick);
-        const dice = HM.rollDice(); rolling = false;
+        const dice = HM.rollDice();
         $('#die-0').classList.remove('rolling'); $('#die-1').classList.remove('rolling');
-        state = HM.applyRoll(state, dice); renderAll(); maybeAITurn();
+        const movingPlayer = HM.currentPlayer(state);
+        animateTokenHop(movingPlayer, dice[0] + dice[1], () => {
+          state = HM.applyRoll(state, dice);
+          rolling = false;
+          renderAll();
+          maybeAITurn();
+        });
       }
     }, 90);
   }
