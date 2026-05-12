@@ -25,6 +25,37 @@
 .room-master .btn{
   width:100%;
 }
+
+/* ===== PLAY 3D GAME TITLE OVERFLOW FIX ===== */
+.game-card-title,
+.game-title,
+.vault-game-title,
+.card-title,
+.game-name,
+.game-label,
+h3,
+h4{
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.18 !important;
+}
+
+.game-card,
+.vault-card,
+.game-tile,
+.arcade-card{
+  overflow: visible !important;
+  min-height: 320px !important;
+}
+
+.game-card .btn,
+.vault-card .btn{
+  margin-top: 8px !important;
+}
+
 </style>
 
 </head><body>
