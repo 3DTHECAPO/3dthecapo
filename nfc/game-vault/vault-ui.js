@@ -60,7 +60,7 @@ function card(game){
       <div class="card-body">
         <div class="tags">${game.tags.slice(0,3).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
         <div class="kicker">${game.pill}</div>
-        <h3>${game.title}</h3>
+        <h3 class="game-title"><span class="game-title-text">${game.title}</span></h3>
         <p>${game.desc}</p>
         <div class="meta">
           <span>${game.players}</span>
@@ -130,6 +130,54 @@ function loadLast(){
     continueBtn.href = launchHref(g);
   }catch(e){}
 }
+
+
+/* ===== HOOD MONOPOLY TITLE FIX ===== */
+(function(){
+  const style = document.createElement('style');
+  style.textContent = `
+    .game-title,
+    .game-card h3{
+      width:100%;
+      max-width:100%;
+      overflow:visible !important;
+      white-space:normal !important;
+      text-overflow:unset !important;
+      line-height:1.15 !important;
+      word-break:break-word !important;
+      overflow-wrap:anywhere !important;
+      font-size:clamp(18px,1.5vw,28px);
+      margin-bottom:10px;
+    }
+
+    .game-title-text{
+      display:block;
+      width:100%;
+      white-space:normal !important;
+      overflow:visible !important;
+      text-overflow:unset !important;
+      word-break:break-word !important;
+      overflow-wrap:anywhere !important;
+    }
+
+    .game-card{
+      overflow:visible !important;
+      min-height:unset !important;
+    }
+
+    .card-body{
+      overflow:visible !important;
+    }
+
+    .game-card[data-game="hood-monopoly"] .game-title,
+    .game-card[data-game="hood-monopoly"] h3{
+      font-size:clamp(20px,1.8vw,32px);
+      line-height:1.12 !important;
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
 
 loadLast();
 render();
