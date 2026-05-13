@@ -222,22 +222,7 @@ async function init(){
 
   try{
 
-    const res = await fetch("https://fupoedrovfloudefyzna.supabase.co/functions/v1/manual-vault-validate", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ code })
-});
-
-const data = await res.json();
-
-if (!res.ok || !data.success) {
-  showLocked(data.error || "Invalid code");
-  return;
-}
-
-const record = data.record;
+    const record = await getCode(code);
 
     if(!record){
       showLocked('Invalid code');
