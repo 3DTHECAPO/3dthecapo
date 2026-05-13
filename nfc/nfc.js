@@ -138,87 +138,6 @@ async function getCode(code){
   return data.length ? data[0] : null;
 }
 
-
-/* ===== VAULT CODE USE LOG + PASS RESTORE =====
-   Restores the missing browser pass/session and best-effort Supabase status logging.
-   Does not block unlock if logging is denied by RLS/network.
-*/
-function getVaultPassExpiry(record){
-  if(record && record.expires_at){
-    return record.expires_at;
-  }
-
-  const duration = String((record && (record.duration || record.duration_label)) || '').toLowerCase();
-  const now = Date.now();
-
-  const durationMap = {
-    '1h': 1000 * 60 * 60,
-    '6h': 1000 * 60 * 60 * 6,
-    '12h': 1000 * 60 * 60 * 12,
-    '1d': 1000 * 60 * 60 * 24,
-    '3d': 1000 * 60 * 60 * 24 * 3,
-    '7d': 1000 * 60 * 60 * 24 * 7,
-    '30d': 1000 * 60 * 60 * 24 * 30
-  };
-
-  if(durationMap[duration]){
-    return new Date(now + durationMap[duration]).toISOString();
-  }
-
-  return new Date(now + (1000 * 60 * 60 * 12)).toISOString();
-}
-
-function saveVaultPass(record, tier){
-  try{
-    const pass = {
-      active: true,
-      code: record.code || code,
-      tier: tier || record.code_type || 'entry',
-      code_type: record.code_type || tier || 'entry',
-      route: record.route || '',
-      duration: record.duration || '',
-      starts_at: record.starts_at || new Date().toISOString(),
-      expires_at: getVaultPassExpiry(record),
-      source: 'vault-code',
-      saved_at: new Date().toISOString()
-    };
-
-    localStorage.setItem('play3d_vault_pass_v1', JSON.stringify(pass));
-    localStorage.setItem('gv_pass_tier', String(pass.tier || '').toUpperCase());
-    localStorage.setItem('gv_pass_route', String(pass.route || ''));
-    localStorage.setItem('gv_pass_expiry', String(pass.expires_at || ''));
-  }catch(e){
-    console.warn('Vault pass save failed:', e);
-  }
-}
-
-async function logVaultCodeUse(record){
-  try{
-    if(!record || !record.id) return;
-
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?id=eq.${record.id}`, {
-      method: 'PATCH',
-      headers:{
-        'apikey': SUPABASE_ANON,
-        'Authorization': `Bearer ${SUPABASE_ANON}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({
-        used: true,
-        used_at: new Date().toISOString()
-      })
-    });
-
-    if(!res.ok){
-      const text = await res.text().catch(()=>'');
-      console.warn('Vault code usage log failed:', res.status, text);
-    }
-  }catch(err){
-    console.warn('Vault code usage log error:', err);
-  }
-}
-
 function playAccessSequence(){
 
   const seq = document.getElementById('vaultSequence');
@@ -325,9 +244,6 @@ async function init(){
       code === 'CAPO-MASTER-999'
         ? 'master'
         : String(record.code_type || 'entry').toLowerCase();
-
-    saveVaultPass(record, tier);
-    logVaultCodeUse(record);
 
     playAccessSequence();
 
