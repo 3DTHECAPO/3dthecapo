@@ -1,6 +1,23 @@
-# Dominoes Rules Used
+PLAY 3D DOMINOES FULL REBUILD
 
-- Source consulted: standard double-six draw dominoes rules.
-- Variant verified: double-six draw dominoes with 2-player CPU mode and 4-seat local/fan table structure.
-- Fully implemented/verified in this pass: double-six set, 2-4 player deal, legal end matching, draw/pass flow, CPU seat fill, turn rotation, first-double spinner, spinner top/bottom branch play, reset/play again flow, point award hook, mode bar, and guarded Fan Challenge room UI.
-- Guarded: full block scoring variants and live remote tile authority.
+Implemented:
+- 2-player and 4-player table modes.
+- CPU fill for non-local mode.
+- Full double-six domino set.
+- 7 tiles dealt to every player.
+- First played double becomes spinner.
+- Spinner opens left, right, top, and bottom branches.
+- All doubles render sideways.
+- Legal move validation against open ends.
+- Draw/pass logic.
+- Blocked-game detection.
+- Lowest pip count wins blocked hands.
+- Responsive black/gold table layout.
+- Existing shared mode bar and Supabase game bridge script refs preserved.
+
+Not touched:
+- Rewards
+- NFC/vault access
+- Generator
+- Analytics
+- Other games
