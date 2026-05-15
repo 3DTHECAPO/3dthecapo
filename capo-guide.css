@@ -1,0 +1,119 @@
+.capo-guide-root {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 9999;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #f7ead4;
+}
+
+.capo-guide-button {
+  width: 58px;
+  height: 58px;
+  border: 1px solid rgba(233, 187, 89, .8);
+  border-radius: 50%;
+  background: #0b0907;
+  color: #f4c66f;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, .45);
+  cursor: pointer;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.capo-guide-panel {
+  position: absolute;
+  right: 0;
+  bottom: 72px;
+  width: min(340px, calc(100vw - 28px));
+  max-height: min(620px, calc(100vh - 110px));
+  overflow: auto;
+  border: 1px solid rgba(233, 187, 89, .34);
+  border-radius: 10px;
+  background: #0f0c09;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .58);
+}
+
+.capo-guide-panel[hidden] {
+  display: none;
+}
+
+.capo-guide-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border-bottom: 1px solid rgba(233, 187, 89, .22);
+}
+
+.capo-guide-title {
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.capo-guide-close {
+  border: 0;
+  background: transparent;
+  color: #f7ead4;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.capo-guide-body {
+  padding: 14px;
+}
+
+.capo-guide-status,
+.capo-guide-drop,
+.capo-guide-answer {
+  padding: 10px;
+  border: 1px solid rgba(233, 187, 89, .22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .04);
+  margin-bottom: 10px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.capo-guide-grid {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.capo-guide-option,
+.capo-guide-link {
+  min-height: 38px;
+  border: 1px solid rgba(233, 187, 89, .3);
+  border-radius: 7px;
+  background: #17120d;
+  color: #f7ead4;
+  text-align: left;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.capo-guide-option:hover,
+.capo-guide-link:hover {
+  border-color: rgba(244, 198, 111, .85);
+}
+
+.capo-guide-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+@media (max-width: 520px) {
+  .capo-guide-root {
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .capo-guide-links {
+    grid-template-columns: 1fr;
+  }
+}
