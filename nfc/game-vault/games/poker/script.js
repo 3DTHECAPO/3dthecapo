@@ -13,6 +13,11 @@
   let phase = 'deal';
   const handEl = document.getElementById('hand');
 
+
+  function suitSymbol(s){
+    return ({S:'♠',H:'♥',D:'♦',C:'♣'})[s] || s;
+  }
+
   function mk(){
     deck = [];
     for(const s of suits){
@@ -54,7 +59,7 @@
   function card(c,i){
     const red = c.s === 'H' || c.s === 'D';
     const held = hold.includes(i);
-    return '<button class="card ' + (red ? 'red ' : '') + (held ? 'hold' : '') + '" data-i="' + i + '">' + c.r + '<br>' + c.s + '<small>' + (held ? 'HOLD' : '') + '</small></button>';
+    return '<button class="card ' + (red ? 'red ' : '') + (held ? 'hold' : '') + '" data-i="' + i + '"><span class="rank">' + c.r + '</span><span class="suit">' + suitSymbol(c.s) + '</span><small class="mini">' + (held ? 'HOLD' : '') + '</small></button>';
   }
 
   function saveBank(){

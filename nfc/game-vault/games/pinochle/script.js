@@ -9,14 +9,20 @@
   const dealBtn = document.getElementById('dealBtn');
   const autoBtn = document.getElementById('autoBtn');
 
+
+  function suitSymbol(s){
+    return ({S:'♠',H:'♥',D:'♦',C:'♣'})[s] || s;
+  }
+
   function buildDeck(){
     deck = [];
     for(let copy=0; copy<2; copy++) for(const s of suits) for(const r of ranks) deck.push({r,s});
     deck.sort(()=>Math.random() - 0.5);
   }
 
-  function card(c){
-    return '<button class="card ' + ((c.s === 'H' || c.s === 'D') ? 'red' : '') + '">' + c.r + '<br>' + c.s + '</button>';
+  function card(c, back){
+    if(back) return '<button class="card back" aria-label="Card back"></button>';
+    return '<button class="card ' + ((c.s === 'H' || c.s === 'D') ? 'red' : '') + '"><span class="rank">' + c.r + '</span><span class="suit">' + suitSymbol(c.s) + '</span></button>';
   }
 
   function has(rank,suit){
@@ -38,7 +44,7 @@
   }
 
   function render(){
-    if(hands[0]) hands[0].innerHTML = table.map(card).join('');
+    if(hands[0]) hands[0].innerHTML = table.map(c=>card(c,true)).join('');
     if(hands[1]) hands[1].innerHTML = hand.map(card).join('');
     mainScore.textContent = meldScore();
   }
