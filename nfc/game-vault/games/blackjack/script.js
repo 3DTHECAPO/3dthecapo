@@ -13,6 +13,11 @@
   const suits = ['S','H','D','C'];
   const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 
+
+  function suitSymbol(s){
+    return ({S:'♠',H:'♥',D:'♦',C:'♣'})[s] || s;
+  }
+
   function makeDeck(){
     deck = [];
     for(let d = 0; d < 4; d++){
@@ -36,9 +41,9 @@
   }
 
   function cardHTML(card, hidden){
-    if(hidden) return '<div class="card back">3D</div>';
+    if(hidden) return '<div class="card back" aria-label="Hidden card"></div>';
     const red = card.s === 'H' || card.s === 'D';
-    return '<div class="card ' + (red ? 'red' : '') + '">' + card.r + '<br>' + card.s + '</div>';
+    return '<div class="card ' + (red ? 'red' : '') + '"><span class="rank">' + card.r + '</span><span class="suit">' + suitSymbol(card.s) + '</span></div>';
   }
 
   function saveBank(){

@@ -403,3 +403,52 @@ grid-template-columns:1fr;
 .card b{font-size:1.45em;line-height:1}
 .card small{align-self:end;justify-self:end;font-size:.62em;line-height:1}
 .card.back{background:linear-gradient(135deg,rgba(22,16,10,.72),rgba(5,5,5,.88)),url("../shared/assets/bg-vault-door.jpg") center/cover;color:#f2d27b;border-color:#caa24a;text-shadow:0 2px 10px rgba(0,0,0,.85)}
+
+
+/* PLAY 3D card render repair */
+.card{
+  position:relative;
+  display:inline-flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:space-between;
+  min-width:58px;
+  min-height:82px;
+  padding:7px 8px;
+  border-radius:10px;
+  border:1px solid rgba(242,210,123,.45);
+  background:linear-gradient(180deg,#fff8df,#d8b55d 48%,#8b641e);
+  color:#080603;
+  box-shadow:0 10px 24px rgba(0,0,0,.5), inset 0 0 0 2px rgba(255,255,255,.18);
+  font-family:Oswald,Arial,sans-serif;
+  font-weight:900;
+  text-align:left;
+  line-height:1;
+  cursor:pointer;
+  user-select:none;
+}
+.card.red{ color:#8b0000; }
+.card.disabled{ opacity:.45; cursor:not-allowed; filter:grayscale(.4); }
+.card.hold{ outline:3px solid #f2d27b; transform:translateY(-7px); }
+.card .rank{font-size:22px;line-height:1}
+.card .suit{font-size:26px;line-height:1}
+.card .mini{font-size:10px;letter-spacing:1px;color:rgba(0,0,0,.55)}
+.card.back{
+  background-image:var(--p3d-card-back, url("../shared/assets/card-back-vault.png"));
+  background-size:cover;
+  background-position:center;
+  color:transparent !important;
+  overflow:hidden;
+}
+.card.back::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  box-shadow:inset 0 0 0 2px rgba(242,210,123,.55), inset 0 0 34px rgba(0,0,0,.75);
+  pointer-events:none;
+}
+.played-card .card{cursor:default}
+
+
+:root{--p3d-card-back:url('./assets/card-back.png');}
