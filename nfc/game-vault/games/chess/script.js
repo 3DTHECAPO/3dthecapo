@@ -148,7 +148,7 @@
         const sq = document.createElement('button');
         sq.className = 'sq ' + (((r + c) % 2 === 0) ? 'light' : 'dark');
         if(selected && selected.r === r && selected.c === c) sq.classList.add('selected');
-        sq.textContent = board[r][c] || '';
+        sq.textContent = board[r][c] ? PIECES[board[r][c]] : '';
         sq.onclick = () => clickSquare(r,c);
         boardEl.appendChild(sq);
       }

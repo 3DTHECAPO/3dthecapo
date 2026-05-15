@@ -460,3 +460,22 @@ height:56px;
 font-size:12px;
 }
 }
+
+/* PLAY 3D domino spinner repair */
+.chain{display:flex;justify-content:center;align-items:center;min-height:260px;overflow:auto;padding:20px}
+.spinner-branches{display:flex;flex-direction:column;align-items:center;gap:12px}
+.main-chain{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.domino,.domino-btn .domino{
+  width:46px;height:88px;border-radius:10px;border:2px solid rgba(242,210,123,.75);
+  background:linear-gradient(180deg,#151515,#020202);
+  color:#f2d27b;display:inline-flex;flex-direction:column;align-items:center;justify-content:space-around;
+  box-shadow:0 10px 20px rgba(0,0,0,.55), inset 0 0 20px rgba(202,162,74,.13);
+  font-weight:900;letter-spacing:1px;
+}
+.domino i{width:80%;height:1px;background:rgba(242,210,123,.6)}
+.domino.double,.domino.sideways{transform:rotate(90deg);margin:18px 24px}
+.spinner-tile{outline:3px solid #f2d27b;box-shadow:0 0 30px rgba(242,210,123,.55),inset 0 0 20px rgba(202,162,74,.22)}
+.domino-btn{background:transparent;border:0;color:#f2d27b;display:inline-flex;flex-direction:column;align-items:center;gap:6px;margin:6px;cursor:pointer}
+.domino-btn.disabled{opacity:.35;cursor:not-allowed}
+.domino-btn small{font-size:10px;color:#caa24a}
+.branch{opacity:.96}
