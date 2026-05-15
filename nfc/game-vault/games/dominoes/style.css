@@ -212,3 +212,271 @@ button:disabled{opacity:.35;cursor:not-allowed;filter:grayscale(.55)}
   text-shadow:0 1px 8px rgba(0,0,0,.8);
 }
 
+
+
+/* PLAY 3D DOMINO NO-OVERLAP LAYOUT FIX
+   Do not use transform rotation for domino layout.
+   Transforms visually rotate but do not reserve physical space, which caused overlap.
+*/
+.table-center{
+  display:grid !important;
+  grid-template-rows:minmax(118px,auto) minmax(130px,auto) minmax(118px,auto) !important;
+  place-items:center !important;
+  gap:18px !important;
+  overflow:auto !important;
+  padding:24px !important;
+}
+.main-line-wrap{
+  display:grid !important;
+  grid-template-columns:minmax(120px,auto) 110px minmax(120px,auto) !important;
+  align-items:center !important;
+  justify-items:center !important;
+  gap:18px !important;
+  min-width:max-content !important;
+}
+.branch{
+  gap:10px !important;
+  overflow:visible !important;
+}
+.branch-left,
+.branch-right{
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-height:112px !important;
+}
+.branch-top,
+.branch-bottom{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-width:112px !important;
+}
+.spinner-slot{
+  width:110px !important;
+  min-height:112px !important;
+  display:grid !important;
+  place-items:center !important;
+}
+
+/* Default domino = horizontal tile for left/right chain */
+.domino{
+  width:92px !important;
+  height:48px !important;
+  min-width:92px !important;
+  min-height:48px !important;
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:space-around !important;
+  margin:0 !important;
+  transform:none !important;
+  flex:0 0 auto !important;
+}
+.domino .half{
+  width:43% !important;
+  height:100% !important;
+  display:grid !important;
+  grid-template-columns:repeat(3,1fr) !important;
+  grid-template-rows:repeat(3,1fr) !important;
+  padding:5px !important;
+}
+.domino .divider{
+  width:2px !important;
+  height:82% !important;
+}
+
+/* Vertical branch normal tiles stack vertically */
+.branch-top .domino,
+.branch-bottom .domino{
+  width:48px !important;
+  height:92px !important;
+  min-width:48px !important;
+  min-height:92px !important;
+  flex-direction:column !important;
+}
+.branch-top .domino .half,
+.branch-bottom .domino .half,
+.spinner-slot .domino .half{
+  width:100% !important;
+  height:43% !important;
+}
+.branch-top .domino .divider,
+.branch-bottom .domino .divider,
+.spinner-slot .domino .divider{
+  width:82% !important;
+  height:2px !important;
+}
+
+/* Doubles are perpendicular WITHOUT transform */
+.branch-left .domino.double,
+.branch-right .domino.double,
+.spinner-slot .domino{
+  width:48px !important;
+  height:92px !important;
+  min-width:48px !important;
+  min-height:92px !important;
+  flex-direction:column !important;
+}
+.branch-left .domino.double .half,
+.branch-right .domino.double .half{
+  width:100% !important;
+  height:43% !important;
+}
+.branch-left .domino.double .divider,
+.branch-right .domino.double .divider{
+  width:82% !important;
+  height:2px !important;
+}
+
+/* On vertical branches, doubles lay sideways/perpendicular */
+.branch-top .domino.double,
+.branch-bottom .domino.double{
+  width:92px !important;
+  height:48px !important;
+  min-width:92px !important;
+  min-height:48px !important;
+  flex-direction:row !important;
+}
+.branch-top .domino.double .half,
+.branch-bottom .domino.double .half{
+  width:43% !important;
+  height:100% !important;
+}
+.branch-top .domino.double .divider,
+.branch-bottom .domino.double .divider{
+  width:2px !important;
+  height:82% !important;
+}
+
+.domino.top,
+.domino.bottom,
+.domino.left,
+.domino.right,
+.domino.double,
+.domino.sideways{
+  transform:none !important;
+}
+
+.hand .domino,
+.domino-btn .domino{
+  width:48px !important;
+  height:92px !important;
+  min-width:48px !important;
+  min-height:92px !important;
+  flex-direction:column !important;
+}
+.hand .domino .half,
+.domino-btn .domino .half{
+  width:100% !important;
+  height:43% !important;
+}
+.hand .domino .divider,
+.domino-btn .domino .divider{
+  width:82% !important;
+  height:2px !important;
+}
+
+@media(max-width:780px){
+  .table-center{
+    padding:16px !important;
+    gap:14px !important;
+  }
+  .main-line-wrap{
+    gap:12px !important;
+  }
+  .domino{
+    width:78px !important;
+    height:42px !important;
+    min-width:78px !important;
+    min-height:42px !important;
+  }
+  .branch-top .domino,
+  .branch-bottom .domino,
+  .branch-left .domino.double,
+  .branch-right .domino.double,
+  .spinner-slot .domino,
+  .hand .domino,
+  .domino-btn .domino{
+    width:42px !important;
+    height:78px !important;
+    min-width:42px !important;
+    min-height:78px !important;
+  }
+  .branch-top .domino.double,
+  .branch-bottom .domino.double{
+    width:78px !important;
+    height:42px !important;
+    min-width:78px !important;
+    min-height:42px !important;
+  }
+}
+
+
+
+/* PLAY 3D DOMINO TOUCHING SPINNER FIX
+   Branches must physically touch the spinner/endpoint.
+   Matching half must face the spinner/branch connection.
+*/
+.table-center{
+  gap:0 !important;
+  padding:18px !important;
+}
+.main-line-wrap{
+  grid-template-columns:auto 56px auto !important;
+  gap:0 !important;
+}
+.branch{
+  gap:0 !important;
+}
+.branch-left,
+.branch-right{
+  min-height:96px !important;
+}
+.branch-top,
+.branch-bottom{
+  min-width:96px !important;
+}
+.spinner-slot{
+  width:56px !important;
+  min-width:56px !important;
+  min-height:96px !important;
+}
+
+/* Left/right tiles touch side-to-side */
+.branch-left .domino,
+.branch-right .domino{
+  margin-left:-1px !important;
+  margin-right:-1px !important;
+}
+
+/* Top/bottom tiles touch end-to-end */
+.branch-top .domino,
+.branch-bottom .domino{
+  margin-top:-1px !important;
+  margin-bottom:-1px !important;
+}
+
+/* Spinner itself should sit flush between branches */
+.spinner-slot .domino{
+  margin:0 !important;
+}
+
+/* Stop hand dominoes from inheriting table touching behavior */
+.hand .domino,
+.domino-btn .domino{
+  margin:0 !important;
+}
+
+/* Connection orientation:
+   left branch rendered OUTSIDE -> SPINNER, so matching connection is right half.
+   right branch rendered SPINNER -> OUTSIDE, so matching connection is left half.
+   top branch rendered OUTSIDE -> SPINNER, so matching connection is bottom half.
+   bottom branch rendered SPINNER -> OUTSIDE, so matching connection is top half.
+*/
+.domino .half.connect{
+  box-shadow:inset 0 0 0 2px rgba(242,210,123,.85),0 0 12px rgba(242,210,123,.25);
+}
+

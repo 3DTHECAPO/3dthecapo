@@ -28,3 +28,10 @@ Applied:
 
 Only games/dominoes/ changed.
 Supabase bridge / NFC / rewards untouched.
+
+
+LAYOUT CLARIFICATION:
+- The reference images are layout references only.
+- The matching side of a played domino must physically touch the spinner/branch endpoint.
+- If spinner is 6-6 and a 6-4 is played, the 6 side touches the spinner and the 4 becomes the new open end.
+- This applies independently to left, right, top, and bottom spinner branches.

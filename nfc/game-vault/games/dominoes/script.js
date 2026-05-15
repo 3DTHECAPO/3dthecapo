@@ -506,11 +506,15 @@ function dominoHTML(tile, options={}){
   const a = options.displayA ?? tile.a ?? tile.connection;
   const b = options.displayB ?? tile.b ?? tile.outer;
   const double = options.double ?? tile.double ?? (a === b);
+  const connect = options.connect || null;
   const cls = ['domino', double ? 'double' : '', options.spinner ? 'spinner' : '', options.side || ''].join(' ');
+  const firstConnect = connect === 'first' ? ' connect' : '';
+  const secondConnect = connect === 'second' ? ' connect' : '';
+
   return `<div class="${cls}" title="${a}-${b}">
-    <span class="half">${pips(a)}</span>
+    <span class="half${firstConnect}">${pips(a)}</span>
     <span class="divider"></span>
-    <span class="half">${pips(b)}</span>
+    <span class="half${secondConnect}">${pips(b)}</span>
   </div>`;
 }
 
@@ -518,10 +522,29 @@ function renderBranch(node, side){
   if(!node) return;
   const branch = board.branches[side] || [];
   const list = side === 'left' || side === 'top' ? [...branch].reverse() : branch;
-  node.innerHTML = list.map(p=>{
+
+  node.innerHTML = list.map((p, idx)=>{
+    const isConnectionEnd =
+      (side === 'left' || side === 'top')
+        ? idx === list.length - 1
+        : idx === 0;
+
     const displayA = (side === 'left' || side === 'top') ? p.outer : p.connection;
     const displayB = (side === 'left' || side === 'top') ? p.connection : p.outer;
-    return dominoHTML(p.tile, {double:p.double, side, displayA, displayB});
+
+    // left/top: connection is second half, closest to spinner/previous branch
+    // right/bottom: connection is first half, closest to spinner/previous branch
+    const connect = isConnectionEnd
+      ? ((side === 'left' || side === 'top') ? 'second' : 'first')
+      : null;
+
+    return dominoHTML(p.tile, {
+      double:p.double,
+      side,
+      displayA,
+      displayB,
+      connect
+    });
   }).join('');
 }
 
