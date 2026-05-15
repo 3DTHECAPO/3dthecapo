@@ -27,6 +27,9 @@ const els = {
   stockCount: document.getElementById('stockCount'),
   handTitle: document.getElementById('handTitle'),
   handHint: document.getElementById('handHint'),
+  drawBtn: document.getElementById('drawBtn'),
+  passBtn: document.getElementById('passBtn'),
+  autoBtn: document.getElementById('autoBtn'),
   twoPlayerBtn: document.getElementById('twoPlayerBtn'),
   fourPlayerBtn: document.getElementById('fourPlayerBtn')
 };
@@ -231,6 +234,7 @@ function legalMovesFor(playerIndex){
 
 function cpuTurn(){
   if(!isCpuTurn()) return;
+  addLog(names[current] + ' is thinking...');
   const moves = legalMovesFor(current);
   if(moves.length){
     moves.sort((a,b)=>{
@@ -425,9 +429,9 @@ function render(label){
   const totals = hands.map((h,i)=>names[i] + ': ' + pipTotal(h));
   els.scoreText.textContent = totals.join(' | ');
 
-  els.drawBtn.disabled = handEnded || !stock.length || (current !== 0 && mode !== 'local');
-  els.passBtn.disabled = handEnded || (current !== 0 && mode !== 'local');
-  els.autoBtn.disabled = handEnded || (current !== 0 && mode !== 'local');
+  if(els.drawBtn) els.drawBtn.disabled = handEnded || !stock.length || (current !== 0 && mode !== 'local');
+  if(els.passBtn) els.passBtn.disabled = handEnded || (current !== 0 && mode !== 'local');
+  if(els.autoBtn) els.autoBtn.disabled = handEnded || (current !== 0 && mode !== 'local');
 
   if(els.log) els.log.innerHTML = logLines.map(x=>'<li>'+x+'</li>').join('');
 }

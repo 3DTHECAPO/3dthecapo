@@ -1,0 +1,16 @@
+PLAY 3D DOMINOES CPU FIX 2 SELF-CHECK
+
+PASS - drawBtn ref exists
+PASS - passBtn ref exists
+PASS - autoBtn ref exists
+PASS - isCpuTurn ignores local
+PASS - nextTurn schedules cpu
+PASS - cpuTurn logs thinking
+PASS - button disable is null safe
+
+Root fix:
+- Added missing drawBtn/passBtn/autoBtn references to the els object.
+- Made button disabling null-safe.
+- Added CPU thinking log so you can see CPU turn firing.
+
+Only Dominoes files included.
