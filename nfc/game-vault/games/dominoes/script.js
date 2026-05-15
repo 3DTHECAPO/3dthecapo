@@ -215,7 +215,8 @@ function nextTurn(){
 
 function isCpuTurn(){
   if(handEnded) return false;
-  if(mode === 'local') return false;
+  // CPU fill should play every non-YOU seat by default.
+  // Fan mode stays reserved for real room/multiplayer sync.
   if(mode === 'fan') return false;
   return current !== 0;
 }
