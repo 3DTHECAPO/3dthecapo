@@ -1,23 +1,30 @@
-PLAY 3D DOMINOES FULL REBUILD
+PLAY 3D DOMINOES — LOCKED RULES APPLIED
 
-Implemented:
-- 2-player and 4-player table modes.
-- CPU fill for non-local mode.
-- Full double-six domino set.
-- 7 tiles dealt to every player.
-- First played double becomes spinner.
-- Spinner opens left, right, top, and bottom branches.
-- All doubles render sideways.
-- Legal move validation against open ends.
-- Draw/pass logic.
-- Blocked-game detection.
-- Lowest pip count wins blocked hands.
-- Responsive black/gold table layout.
-- Existing shared mode bar and Supabase game bridge script refs preserved.
+RULES APPLIED:
+- Double-six set (28 tiles)
+- 2–4 players
+- 7 tiles each
+- Remaining tiles become boneyard
+- Highest double starts automatically
+- If no doubles exist, highest pip tile starts
+- CPU auto-opens when CPU owns opening tile
+- Clockwise turns
+- Draw UNTIL playable
+- Pass only when boneyard empty and no legal move
+- First double acts as spinner
+- Spinner branches track independent open values
+- Tiles must match EXACT branch connection value
+- All doubles rotate sideways
+- Blocked game only occurs when:
+  - boneyard empty
+  - nobody can move
+- Winner scores opponents pip totals
+- First to 100 wins
 
-Not touched:
-- Rewards
-- NFC/vault access
-- Generator
-- Analytics
-- Other games
+TECHNICAL:
+- Separate spinner branch open tracking
+- No trick/beating logic
+- Domino match validation only
+- Multiplayer hooks preserved
+- Supabase bridge untouched
+- NFC/rewards untouched

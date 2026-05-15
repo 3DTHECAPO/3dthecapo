@@ -1,0 +1,22 @@
+PLAY 3D DOMINOES RULES APPLIED
+
+Applied from user's rules:
+- Standard double-six set = 28 dominoes.
+- 2 to 4 players.
+- 7 tiles each.
+- Remaining tiles become boneyard.
+- Highest double starts.
+- If no double appears in dealt hands, highest pip tile starts.
+- CPU can start automatically.
+- Clockwise turns.
+- Player must match an open end.
+- If blocked, draw until playable.
+- If boneyard empty and blocked, pass.
+- First double is spinner and opens four branches.
+- All doubles rotate sideways.
+- Player goes out = round ends.
+- Going out scores opponents' remaining pips.
+- Blocked round = lowest pip count wins and scores opponents' pips.
+- First to 100 points wins game.
+
+Only games/dominoes/script.js changed in this patch.
