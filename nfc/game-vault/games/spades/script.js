@@ -14,6 +14,11 @@
   let spadesBroken = false;
   let mode = window.Play3DModeBar ? window.Play3DModeBar.getMode() : 'cpu';
 
+
+  function suitSymbol(s){
+    return ({S:'♠',H:'♥',D:'♦',C:'♣'})[s] || s;
+  }
+
   function buildDeck(){
     const deck = [];
     for(const s of suits) for(const r of ranks) deck.push({r,s,id:r + s + Math.random()});
@@ -109,7 +114,7 @@
 
   function cardHTML(card,index,disabled){
     const red = card.s === 'H' || card.s === 'D';
-    return '<button class="card ' + (red ? 'red ' : '') + (disabled ? 'disabled' : '') + '" data-i="' + index + '">' + card.r + '<br>' + card.s + '</button>';
+    return '<button class="card ' + (red ? 'red ' : '') + (disabled ? 'disabled' : '') + '" data-i="' + index + '"><span class="rank">' + card.r + '</span><span class="suit">' + suitSymbol(card.s) + '</span></button>';
   }
 
   function renderHand(){
@@ -125,7 +130,7 @@
   function renderTrick(){
     document.getElementById('trickArea').innerHTML = trick.map(item=>{
       const red = item.card.s === 'H' || item.card.s === 'D';
-      return '<div class="played-card"><span>' + seatName(item.seat) + '</span><div class="card ' + (red ? 'red' : '') + '">' + item.card.r + '<br>' + item.card.s + '</div></div>';
+      return '<div class="played-card"><span>' + seatName(item.seat) + '</span><div class="card ' + (red ? 'red' : '') + '"><span class="rank">' + item.card.r + '</span><span class="suit">' + suitSymbol(item.card.s) + '</span></div></div>';
     }).join('');
   }
 

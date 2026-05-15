@@ -52,3 +52,20 @@ p{color:var(--muted);line-height:1.45}
   .slot-controls{grid-template-columns:1fr}
   .lever:after{display:none}
 }
+
+/* PLAY 3D 3x3 slot window repair */
+.reel-window.reel-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(72px,1fr));
+  gap:10px;
+  align-items:center;
+  justify-items:center;
+}
+.reel-window.reel-grid .reel{
+  width:100%;
+  min-height:82px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.payline{display:none!important}
