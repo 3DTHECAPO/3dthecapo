@@ -2,23 +2,23 @@
 'use strict';
 
 /*
-PLAY 3D DOMINOES — DRAW/SPINNER RULES APPLIED
+PLAY 3D DOMINOES — REAL SPINNER / ALL-FIVES LAYOUT
 
-Rules applied:
+Rules applied from references:
 - Double-six set = 28 tiles.
-- 2–4 players, 7 tiles each.
-- Highest double starts the round.
-- If CPU owns highest double, CPU auto-plays it.
-- If no double exists in dealt hands, highest pip tile starts.
-- Clockwise turns.
-- If blocked, player draws until playable or boneyard empty.
-- If boneyard empty and still blocked, player passes.
-- First double played is the spinner and opens 4 sides.
-- All doubles render sideways.
-- Round ends when player goes out.
-- Round also ends on block when no player can move and boneyard empty.
+- 2–4 players.
+- 7 tiles each.
+- Highest double starts automatically.
+- First double is the spinner.
+- Spinner has four REAL branch endpoints: left, right, top, bottom.
+- A tile must match the exact branch connection value.
+- After a tile is played on a branch, that branch's open value becomes the outside end of that tile.
+- Do NOT allow random side/top placement unless it matches that branch's current open value.
+- Draw until playable; pass only if boneyard is empty.
+- Doubles are displayed perpendicular/sideways.
+- Round ends when a player goes out or the game is blocked.
 - Winner scores opponents' remaining pips.
-- First to 100 wins game.
+- First player to 100 wins.
 */
 
 const MAX_PIP = 6;
@@ -65,12 +65,7 @@ function buildSet(){
   const tiles = [];
   for(let a=0; a<=MAX_PIP; a++){
     for(let b=a; b<=MAX_PIP; b++){
-      tiles.push({
-        a,
-        b,
-        id:a + '-' + b + '-' + makeId(),
-        double:a === b
-      });
+      tiles.push({a,b,id:a+'-'+b+'-'+makeId(),double:a===b});
     }
   }
   return shuffle(tiles);
@@ -84,18 +79,17 @@ function shuffle(arr){
   return arr;
 }
 
+function setNames(){
+  names = playerCount === 4 ? ['YOU','LEFT','PARTNER','RIGHT'] : ['YOU','CPU'];
+}
+
 function setPlayerCount(count){
   playerCount = count;
   if(els.twoPlayerBtn) els.twoPlayerBtn.classList.toggle('active', count === 2);
   if(els.fourPlayerBtn) els.fourPlayerBtn.classList.toggle('active', count === 4);
   scores = Array.from({length:playerCount},()=>0);
+  gameEnded = false;
   newRound(true);
-}
-
-function setNames(){
-  names = playerCount === 4
-    ? ['YOU','LEFT','PARTNER','RIGHT']
-    : ['YOU','CPU'];
 }
 
 function newGame(){
@@ -104,25 +98,40 @@ function newGame(){
   newRound(true);
 }
 
-function newRound(resetLog){
+function newRound(clearLog){
   setNames();
   stock = buildSet();
   hands = Array.from({length:playerCount},()=>stock.splice(0,7));
-  board = { spinner:null, left:[], right:[], top:[], bottom:[] };
+  board = {
+    spinner:null,
+    branches:{
+      left:[],
+      right:[],
+      top:[],
+      bottom:[]
+    },
+    open:{
+      left:null,
+      right:null,
+      top:null,
+      bottom:null
+    }
+  };
+  current = 0;
   handEnded = false;
-  if(resetLog) logLines = [];
-
-  addLog('Round started. Each player drew 7 tiles.');
-  openWithHighestTile();
+  if(clearLog) logLines = [];
+  addLog('Round started. 7 tiles each. Boneyard: '+stock.length+'.');
+  openHighestDoubleOrTile();
 }
 
 function tileTotal(tile){
   return tile.a + tile.b;
 }
 
-function findHighestStarter(){
+function findStarter(){
   let best = null;
 
+  // Real dominoes start with highest double.
   hands.forEach((hand, playerIndex)=>{
     hand.forEach((tile, handIndex)=>{
       if(!tile.double) return;
@@ -133,12 +142,12 @@ function findHighestStarter(){
     });
   });
 
+  // Fallback if no double is in dealt hands.
   if(best) return best;
 
   hands.forEach((hand, playerIndex)=>{
     hand.forEach((tile, handIndex)=>{
-      const high = Math.max(tile.a, tile.b);
-      const score = high * 10 + tileTotal(tile);
+      const score = Math.max(tile.a,tile.b) * 10 + tileTotal(tile);
       if(!best || score > best.score){
         best = {playerIndex, handIndex, tile, score};
       }
@@ -148,32 +157,26 @@ function findHighestStarter(){
   return best;
 }
 
-function openWithHighestTile(){
-  const starter = findHighestStarter();
-
+function openHighestDoubleOrTile(){
+  const starter = findStarter();
   if(!starter){
-    addLog('No starter found. Restarting round.');
+    addLog('No starter found.');
     render('ERROR');
     return;
   }
 
   current = starter.playerIndex;
-
-  // Opening tile is forced by rule. CPU and player do not have to click it.
   const tile = hands[current].splice(starter.handIndex, 1)[0];
-  const placed = {
-    tile: cloneTile(tile),
-    left: tile.a,
-    right: tile.b,
-    open: null,
-    double: tile.double,
-    side: 'start',
-    isSpinner: tile.double
-  };
 
-  board.spinner = placed;
+  board.spinner = clone(tile);
+  board.open.left = tile.a;
+  board.open.right = tile.b;
+  board.open.top = tile.double ? tile.a : null;
+  board.open.bottom = tile.double ? tile.a : null;
 
-  addLog(names[current] + ' opened with ' + tileName(tile) + (tile.double ? ' — highest double spinner.' : ' — highest tile, no doubles dealt.'));
+  addLog(names[current]+' opens with '+tileName(tile)+(tile.double ? ' as the spinner.' : '.'));
+
+  logOpenEnds();
 
   if(!hands[current].length){
     endRound(current, 'went out on the opener');
@@ -182,10 +185,10 @@ function openWithHighestTile(){
 
   current = nextIndex(current);
   render(tile.double ? 'SPINNER LIVE' : 'OPEN');
-  scheduleCpuIfNeeded();
+  checkBlockedOrCpu();
 }
 
-function cloneTile(tile){
+function clone(tile){
   return {a:tile.a,b:tile.b,id:tile.id,double:tile.a===tile.b};
 }
 
@@ -193,68 +196,38 @@ function nextIndex(i){
   return (i + 1) % playerCount;
 }
 
-function getOpenEnds(){
-  if(!board || !board.spinner) return [];
+function openBranches(){
+  if(!board.spinner) return [];
 
-  const ends = [];
-
-  const leftEnd = board.left.length
-    ? board.left[board.left.length - 1].open
-    : board.spinner.left;
-
-  const rightEnd = board.right.length
-    ? board.right[board.right.length - 1].open
-    : board.spinner.right;
-
-  ends.push({side:'left', value:leftEnd});
-  ends.push({side:'right', value:rightEnd});
-
-  if(board.spinner.double){
-    const spin = board.spinner.left;
-    const topEnd = board.top.length ? board.top[board.top.length - 1].open : spin;
-    const bottomEnd = board.bottom.length ? board.bottom[board.bottom.length - 1].open : spin;
-
-    ends.push({side:'top', value:topEnd});
-    ends.push({side:'bottom', value:bottomEnd});
-  }
-
-  return ends;
+  return ['left','right','top','bottom']
+    .filter(side => board.open[side] !== null && board.open[side] !== undefined)
+    .map(side => ({side, value:board.open[side]}));
 }
 
 function sidesFor(tile){
-  if(!board.spinner) return [];
-  return getOpenEnds()
+  return openBranches()
     .filter(end => tile.a === end.value || tile.b === end.value)
     .map(end => end.side);
 }
 
 function orientForSide(tile, side){
-  const end = getOpenEnds().find(e=>e.side === side);
-  if(!end) return null;
+  const match = board.open[side];
+  if(match === null || match === undefined) return null;
+  if(tile.a !== match && tile.b !== match) return null;
 
-  const match = end.value;
-  let inner;
-  let open;
+  const outer = tile.a === match ? tile.b : tile.a;
 
-  if(tile.a === match){
-    inner = tile.a;
-    open = tile.b;
-  }else if(tile.b === match){
-    inner = tile.b;
-    open = tile.a;
-  }else{
-    return null;
-  }
-
-  if(side === 'left'){
-    return {tile:cloneTile(tile), left:open, right:inner, open, double:tile.double, side};
-  }
-
-  if(side === 'right'){
-    return {tile:cloneTile(tile), left:inner, right:open, open, double:tile.double, side};
-  }
-
-  return {tile:cloneTile(tile), left:inner, right:open, open, double:tile.double, side};
+  // connection = side touching existing branch/spinner
+  // outer = new open end after placement
+  return {
+    tile: clone(tile),
+    connection: match,
+    outer,
+    a: tile.a,
+    b: tile.b,
+    double: tile.double,
+    side
+  };
 }
 
 function legalMovesFor(playerIndex){
@@ -275,7 +248,7 @@ function playTile(playerIndex, handIndex, requestedSide){
   if(handEnded || gameEnded) return;
 
   if(playerIndex !== current){
-    addLog('Wrong turn. It is ' + names[current] + "'s turn.");
+    addLog('Wrong turn. It is '+names[current]+"'s turn.");
     render();
     return;
   }
@@ -285,23 +258,32 @@ function playTile(playerIndex, handIndex, requestedSide){
 
   const legalSides = sidesFor(tile);
   if(!legalSides.length){
-    addLog(tileName(tile) + ' does not fit.');
+    addLog(tileName(tile)+' does not match any open branch end.');
     render();
     return;
   }
 
   const side = legalSides.includes(requestedSide) ? requestedSide : legalSides[0];
-  const placed = orientForSide(tile, side);
-  if(!placed){
-    addLog(tileName(tile) + ' could not be placed.');
+  const placement = orientForSide(tile, side);
+
+  if(!placement){
+    addLog(tileName(tile)+' cannot connect to '+side.toUpperCase()+'.');
     render();
     return;
   }
 
   hands[playerIndex].splice(handIndex, 1);
-  board[side].push(placed);
+  board.branches[side].push(placement);
+  board.open[side] = placement.outer;
 
-  addLog(names[playerIndex] + ' played ' + tileName(tile) + ' on ' + side.toUpperCase() + (tile.double ? ' — double sideways.' : '.'));
+  addLog(
+    names[playerIndex]+' played '+tileName(tile)+
+    ' on '+side.toUpperCase()+
+    ' matching '+placement.connection+
+    '. New '+side.toUpperCase()+' open end: '+placement.outer+'.'
+  );
+
+  logOpenEnds();
 
   if(!hands[playerIndex].length){
     endRound(playerIndex, 'went out');
@@ -313,27 +295,37 @@ function playTile(playerIndex, handIndex, requestedSide){
   checkBlockedOrCpu();
 }
 
+function openEndSummary(){
+  return openBranches().map(end=>end.side.toUpperCase()+':'+end.value).join(' | ');
+}
+
+function logOpenEnds(){
+  const summary = openEndSummary();
+  if(summary){
+    addLog('Open ends: '+summary+'.');
+  }
+}
+
 function drawUntilPlayableOrPass(playerIndex){
-  if(handEnded || gameEnded) return;
+  if(handEnded || gameEnded) return false;
 
   let drawn = 0;
+
   while(stock.length && legalMovesFor(playerIndex).length === 0){
     hands[playerIndex].push(stock.pop());
     drawn++;
   }
 
   if(drawn){
-    addLog(names[playerIndex] + ' drew ' + drawn + ' tile' + (drawn === 1 ? '' : 's') + '.');
+    addLog(names[playerIndex]+' drew '+drawn+' tile'+(drawn===1?'':'s')+'.');
   }
 
-  const moves = legalMovesFor(playerIndex);
-
-  if(moves.length){
+  if(legalMovesFor(playerIndex).length){
     render();
     return true;
   }
 
-  addLog(names[playerIndex] + ' passed. Boneyard empty or no playable tile.');
+  addLog(names[playerIndex]+' passes. No move and boneyard empty.');
   current = nextIndex(current);
   render();
   checkBlockedOrCpu();
@@ -341,39 +333,28 @@ function drawUntilPlayableOrPass(playerIndex){
 }
 
 function humanDraw(){
-  if(handEnded || gameEnded) return;
   if(!currentCanAct()){
-    addLog('Wait for ' + names[current] + '.');
+    addLog('Wait for '+names[current]+'.');
     return;
   }
-
-  const playable = drawUntilPlayableOrPass(current);
-  if(playable){
-    addLog(names[current] + ' can now play.');
-    render();
-  }
+  drawUntilPlayableOrPass(current);
 }
 
 function humanPass(){
-  if(handEnded || gameEnded) return;
   if(!currentCanAct()){
-    addLog('Wait for ' + names[current] + '.');
+    addLog('Wait for '+names[current]+'.');
     return;
   }
-
   if(legalMovesFor(current).length){
-    addLog('You have a playable tile. You cannot pass.');
-    render();
+    addLog('You have a legal move. You cannot pass.');
     return;
   }
-
   if(stock.length){
     addLog('You must draw until playable before passing.');
     humanDraw();
     return;
   }
-
-  addLog(names[current] + ' passed.');
+  addLog(names[current]+' passes.');
   current = nextIndex(current);
   render();
   checkBlockedOrCpu();
@@ -381,80 +362,36 @@ function humanPass(){
 
 function autoPlayCurrent(){
   if(handEnded || gameEnded) return;
-
   const moves = legalMovesFor(current);
   if(moves.length){
     const best = chooseBestMove(moves);
     playTile(current, best.handIndex, best.side);
-    return;
-  }
-
-  drawUntilPlayableOrPass(current);
-
-  if(currentCanAct()){
-    const afterDraw = legalMovesFor(current);
-    if(afterDraw.length){
-      const best = chooseBestMove(afterDraw);
-      playTile(current, best.handIndex, best.side);
-    }
+  }else{
+    drawUntilPlayableOrPass(current);
   }
 }
 
 function chooseBestMove(moves){
   return [...moves].sort((a,b)=>{
-    const aScore = (a.tile.double ? 40 : 0) + tileTotal(a.tile) + ((a.side === 'top' || a.side === 'bottom') ? 12 : 0);
-    const bScore = (b.tile.double ? 40 : 0) + tileTotal(b.tile) + ((b.side === 'top' || b.side === 'bottom') ? 12 : 0);
+    const aScore = projectedScore(a) + (a.tile.double ? 6 : 0) + tileTotal(a.tile);
+    const bScore = projectedScore(b) + (b.tile.double ? 6 : 0) + tileTotal(b.tile);
     return bScore - aScore;
   })[0];
 }
 
+function projectedScore(move){
+  const old = board.open[move.side];
+  const outer = move.tile.a === old ? move.tile.b : move.tile.a;
+  const total = openBranches().reduce((sum,end)=>{
+    return sum + (end.side === move.side ? outer : end.value);
+  },0);
+  return total % 5 === 0 ? total : 0;
+}
+
 function isCpuTurn(){
   if(handEnded || gameEnded) return false;
-  if(mode === 'fan') return false;
-  if(mode === 'local') return false;
+  if(mode === 'fan' || mode === 'local') return false;
   return current !== 0;
-}
-
-function scheduleCpuIfNeeded(){
-  if(isCpuTurn()){
-    window.setTimeout(cpuTurn, 650);
-  }
-}
-
-function cpuTurn(){
-  if(!isCpuTurn()) return;
-
-  addLog(names[current] + ' is thinking...');
-
-  const moves = legalMovesFor(current);
-  if(moves.length){
-    const best = chooseBestMove(moves);
-    window.setTimeout(()=>playTile(current, best.handIndex, best.side), 350);
-    return;
-  }
-
-  let drawn = 0;
-  while(stock.length && legalMovesFor(current).length === 0){
-    hands[current].push(stock.pop());
-    drawn++;
-  }
-
-  if(drawn){
-    addLog(names[current] + ' drew ' + drawn + ' tile' + (drawn === 1 ? '' : 's') + '.');
-  }
-
-  const afterDraw = legalMovesFor(current);
-  if(afterDraw.length){
-    const best = chooseBestMove(afterDraw);
-    render();
-    window.setTimeout(()=>playTile(current, best.handIndex, best.side), 450);
-    return;
-  }
-
-  addLog(names[current] + ' passed.');
-  current = nextIndex(current);
-  render();
-  checkBlockedOrCpu();
 }
 
 function checkBlockedOrCpu(){
@@ -465,57 +402,88 @@ function checkBlockedOrCpu(){
     return;
   }
 
-  scheduleCpuIfNeeded();
+  if(isCpuTurn()){
+    setTimeout(cpuTurn, 650);
+  }
+}
+
+function cpuTurn(){
+  if(!isCpuTurn()) return;
+
+  addLog(names[current]+' is thinking...');
+  const moves = legalMovesFor(current);
+
+  if(moves.length){
+    const best = chooseBestMove(moves);
+    setTimeout(()=>playTile(current, best.handIndex, best.side), 350);
+    return;
+  }
+
+  let drawn = 0;
+  while(stock.length && legalMovesFor(current).length === 0){
+    hands[current].push(stock.pop());
+    drawn++;
+  }
+
+  if(drawn){
+    addLog(names[current]+' drew '+drawn+' tile'+(drawn===1?'':'s')+'.');
+  }
+
+  const after = legalMovesFor(current);
+  if(after.length){
+    const best = chooseBestMove(after);
+    render();
+    setTimeout(()=>playTile(current, best.handIndex, best.side), 450);
+    return;
+  }
+
+  addLog(names[current]+' passes. No move and boneyard empty.');
+  current = nextIndex(current);
+  render();
+  checkBlockedOrCpu();
 }
 
 function pipTotal(hand){
   return hand.reduce((sum,t)=>sum + t.a + t.b, 0);
 }
 
-function opponentsPips(winner){
-  return hands.reduce((sum, hand, i)=> i === winner ? sum : sum + pipTotal(hand), 0);
+function opponentPips(winner){
+  return hands.reduce((sum,hand,i)=> i === winner ? sum : sum + pipTotal(hand), 0);
 }
 
 function endRound(winner, reason){
   handEnded = true;
-  const gained = opponentsPips(winner);
-  scores[winner] += gained;
-  addLog(names[winner] + ' ' + reason + ' and scores ' + gained + ' pips.');
+  const pts = opponentPips(winner);
+  scores[winner] += pts;
+  addLog(names[winner]+' '+reason+' and scores opponents pips: '+pts+'.');
 
   if(scores[winner] >= WIN_SCORE){
     gameEnded = true;
-    addLog(names[winner] + ' wins the game at ' + scores[winner] + ' points.');
-    render('GAME OVER');
-    return;
+    addLog(names[winner]+' wins the game at '+scores[winner]+' points.');
   }
 
-  render('ROUND OVER');
+  render(gameEnded ? 'GAME OVER' : 'ROUND OVER');
 }
 
 function endBlockedRound(){
   handEnded = true;
-
   const totals = hands.map(pipTotal);
-  const lowest = Math.min(...totals);
-  const winner = totals.indexOf(lowest);
-  const gained = opponentsPips(winner);
-
-  scores[winner] += gained;
-
-  addLog('Blocked round. ' + names[winner] + ' has lowest count (' + lowest + ') and scores ' + gained + '.');
+  const low = Math.min(...totals);
+  const winner = totals.indexOf(low);
+  const pts = opponentPips(winner);
+  scores[winner] += pts;
+  addLog('Blocked round. '+names[winner]+' has lowest pips ('+low+') and scores '+pts+'.');
 
   if(scores[winner] >= WIN_SCORE){
     gameEnded = true;
-    addLog(names[winner] + ' wins the game at ' + scores[winner] + ' points.');
-    render('GAME OVER');
-    return;
+    addLog(names[winner]+' wins the game at '+scores[winner]+' points.');
   }
 
-  render('BLOCKED');
+  render(gameEnded ? 'GAME OVER' : 'BLOCKED');
 }
 
 function tileName(tile){
-  return tile.a + '-' + tile.b;
+  return tile.a+'-'+tile.b;
 }
 
 function pips(n){
@@ -534,17 +502,11 @@ function pips(n){
   }).join('');
 }
 
-function dominoHTML(values, options={}){
-  const a = values.left ?? values.a;
-  const b = values.right ?? values.b;
-  const double = options.double ?? values.double ?? (a === b);
-
-  const cls = [
-    'domino',
-    double ? 'double' : '',
-    options.spinner ? 'spinner' : ''
-  ].join(' ');
-
+function dominoHTML(tile, options={}){
+  const a = options.displayA ?? tile.a ?? tile.connection;
+  const b = options.displayB ?? tile.b ?? tile.outer;
+  const double = options.double ?? tile.double ?? (a === b);
+  const cls = ['domino', double ? 'double' : '', options.spinner ? 'spinner' : '', options.side || ''].join(' ');
   return `<div class="${cls}" title="${a}-${b}">
     <span class="half">${pips(a)}</span>
     <span class="divider"></span>
@@ -552,52 +514,56 @@ function dominoHTML(values, options={}){
   </div>`;
 }
 
-function renderBranch(node, items, reverse=false){
+function renderBranch(node, side){
   if(!node) return;
-  const list = reverse ? [...items].reverse() : items;
-  node.innerHTML = list.map(item=>dominoHTML(item,{double:item.double})).join('');
+  const branch = board.branches[side] || [];
+  const list = side === 'left' || side === 'top' ? [...branch].reverse() : branch;
+  node.innerHTML = list.map(p=>{
+    const displayA = (side === 'left' || side === 'top') ? p.outer : p.connection;
+    const displayB = (side === 'left' || side === 'top') ? p.connection : p.outer;
+    return dominoHTML(p.tile, {double:p.double, side, displayA, displayB});
+  }).join('');
 }
 
 function renderBoard(){
-  renderBranch(els.leftLine, board.left, true);
-  renderBranch(els.rightLine, board.right, false);
-  renderBranch(els.spinnerTop, board.top, true);
-  renderBranch(els.spinnerBottom, board.bottom, false);
+  renderBranch(els.leftLine,'left');
+  renderBranch(els.rightLine,'right');
+  renderBranch(els.spinnerTop,'top');
+  renderBranch(els.spinnerBottom,'bottom');
 
   if(els.spinnerSlot){
     els.spinnerSlot.innerHTML = board.spinner
-      ? dominoHTML(board.spinner,{double:board.spinner.double, spinner:board.spinner.isSpinner})
+      ? dominoHTML(board.spinner,{double:board.spinner.double,spinner:board.spinner.double,side:'spinner'})
       : '<div class="empty-slot">FIRST TILE</div>';
   }
 }
 
 function renderHand(){
-  const active = hands[current] || [];
+  const hand = hands[current] || [];
   const canAct = currentCanAct();
 
-  if(els.handTitle) els.handTitle.textContent = names[current] + "'S HAND";
+  if(els.handTitle) els.handTitle.textContent = names[current]+"'S HAND";
   if(els.handHint){
     els.handHint.textContent = canAct
-      ? 'Playable tiles are highlighted. Draw until playable if blocked.'
+      ? 'Playable tiles show exact branch matches. Normal scoring happens when someone goes out or the round blocks.'
       : 'CPU is playing...';
   }
 
   if(!els.hand) return;
 
-  els.hand.innerHTML = active.map((tile,i)=>{
+  els.hand.innerHTML = hand.map((tile,i)=>{
     const sides = sidesFor(tile);
     const legal = sides.length > 0;
-
-    return `<button class="domino-btn ${legal ? 'selected' : ''}" data-i="${i}" ${canAct ? '' : 'disabled'}>
+    return `<button class="domino-btn ${legal?'selected':''}" data-i="${i}" ${canAct?'':'disabled'}>
       ${dominoHTML(tile,{double:tile.double})}
-      <small>${legal ? sides.join(' / ').toUpperCase() : 'NO FIT'}</small>
+      <small>${legal ? sides.map(s=>s.toUpperCase()+':'+board.open[s]).join(' / ') : 'NO FIT'}</small>
     </button>`;
   }).join('');
 
   els.hand.querySelectorAll('[data-i]').forEach(btn=>{
     btn.onclick = () => {
       const i = Number(btn.dataset.i);
-      const tile = active[i];
+      const tile = hand[i];
       const sides = sidesFor(tile);
       playTile(current, i, sides[0]);
     };
@@ -618,7 +584,7 @@ function renderSeats(){
     }
     const idx = seatMap[id];
     el.style.display = '';
-    el.textContent = names[idx] + ' (' + (hands[idx] ? hands[idx].length : 0) + ')';
+    el.textContent = names[idx]+' ('+(hands[idx] ? hands[idx].length : 0)+')';
     el.classList.toggle('active', idx === current && !handEnded && !gameEnded);
   });
 }
@@ -633,7 +599,7 @@ function render(label){
   if(els.stateText){
     els.stateText.textContent =
       label ||
-      (gameEnded ? 'GAME OVER' : handEnded ? 'ROUND OVER' : board.spinner && board.spinner.isSpinner ? 'SPINNER LIVE' : 'LIVE');
+      (gameEnded ? 'GAME OVER' : handEnded ? 'ROUND OVER' : board.spinner && board.spinner.double ? 'SPINNER LIVE' : 'LIVE');
   }
 
   if(els.stockCount) els.stockCount.textContent = stock.length;
@@ -653,7 +619,7 @@ function render(label){
 
 function addLog(msg){
   logLines.unshift(msg);
-  logLines = logLines.slice(0,16);
+  logLines = logLines.slice(0,18);
   if(els.log) els.log.innerHTML = logLines.map(x=>'<li>'+x+'</li>').join('');
 }
 
@@ -670,7 +636,6 @@ window.addEventListener('play3d:modechange', event=>{
   newRound(true);
 });
 
-// Start the game.
 scores = Array.from({length:playerCount},()=>0);
 newRound(true);
 })();

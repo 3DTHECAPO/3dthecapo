@@ -1,30 +1,30 @@
-PLAY 3D DOMINOES — LOCKED RULES APPLIED
+PLAY 3D DOMINOES — REAL SPINNER LAYOUT + NORMAL DRAW/BLOCK RULES
 
-RULES APPLIED:
-- Double-six set (28 tiles)
-- 2–4 players
-- 7 tiles each
-- Remaining tiles become boneyard
-- Highest double starts automatically
-- If no doubles exist, highest pip tile starts
-- CPU auto-opens when CPU owns opening tile
-- Clockwise turns
-- Draw UNTIL playable
-- Pass only when boneyard empty and no legal move
-- First double acts as spinner
-- Spinner branches track independent open values
-- Tiles must match EXACT branch connection value
-- All doubles rotate sideways
-- Blocked game only occurs when:
-  - boneyard empty
-  - nobody can move
-- Winner scores opponents pip totals
-- First to 100 wins
+Applied:
+- Standard double-six set = 28 tiles.
+- 2–4 players.
+- 7 tiles each.
+- Remaining tiles become boneyard.
+- Highest double starts automatically.
+- If no double exists in dealt hands, highest pip tile starts.
+- CPU can start automatically.
+- Clockwise turns.
+- Draw until playable.
+- Pass only when boneyard is empty and no legal move.
+- First double acts as spinner.
+- Spinner branches track independent open values:
+  - left
+  - right
+  - top
+  - bottom
+- Tiles must match the exact branch connection value.
+- References were used for layout only, not All-Fives scoring.
+- No BC / Muggins / All-Fives scoring.
+- All doubles render sideways/perpendicular.
+- Round ends when a player goes out.
+- Round also ends on block when boneyard is empty and nobody can move.
+- Winner scores opponents' remaining pips.
+- First player to 100 wins.
 
-TECHNICAL:
-- Separate spinner branch open tracking
-- No trick/beating logic
-- Domino match validation only
-- Multiplayer hooks preserved
-- Supabase bridge untouched
-- NFC/rewards untouched
+Only games/dominoes/ changed.
+Supabase bridge / NFC / rewards untouched.
