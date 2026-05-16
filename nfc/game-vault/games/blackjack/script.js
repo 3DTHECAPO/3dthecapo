@@ -9,6 +9,7 @@
   let betAmount = 50;
   let currentBet = 50;
   let live = false;
+  let dealerTurn = false;
   const playerHandEl = document.getElementById('playerHand');
   const dealerHandEl = document.getElementById('dealerHand');
   const playerTotalEl = document.getElementById('playerTotal');
@@ -67,11 +68,11 @@
     creditsTextEl.textContent = credits;
     creditsEl.textContent = credits;
     betEl.textContent = betAmount;
-    if(stateTextEl.textContent !== 'OPPONENT THINKING...') stateTextEl.textContent = live ? 'LIVE' : 'READY';
+    if(stateTextEl.textContent !== 'OPPONENT THINKING...') stateTextEl.textContent = live ? (dealerTurn ? 'DEALER TURN' : 'LIVE') : 'READY';
     dealBtnEl.disabled = live || credits < betAmount;
-    hitBtnEl.disabled = !live;
-    standBtnEl.disabled = !live;
-    doubleBtnEl.disabled = !live || player.length !== 2 || credits < currentBet;
+    hitBtnEl.disabled = !live || dealerTurn;
+    standBtnEl.disabled = !live || dealerTurn;
+    doubleBtnEl.disabled = !live || dealerTurn || player.length !== 2 || credits < currentBet;
     playAgainBtnEl.disabled = live || credits < betAmount;
   }
 
@@ -84,6 +85,7 @@
     credits += Math.max(0, pay || 0);
     if(window.Play3DPoints && pay > currentBet) window.Play3DPoints.award('blackjack', Math.min(180, Math.floor(pay / 4)), 'blackjack_win');
     live = false;
+    dealerTurn = false;
     saveBank();
     setResult(text + (pay ? ' +' + pay : ''));
     render(true);
@@ -99,9 +101,14 @@
     player = [deck.pop(), deck.pop()];
     dealer = [deck.pop(), deck.pop()];
     live = true;
+    dealerTurn = false;
     saveBank();
     setResult('Hand started');
-    if(value(player) === 21) finish('Blackjack', Math.floor(currentBet * 2.5));
+    const playerBlackjack = value(player) === 21;
+    const dealerBlackjack = value(dealer) === 21;
+    if(playerBlackjack && dealerBlackjack) finish('Push', currentBet);
+    else if(playerBlackjack) finish('Blackjack', Math.floor(currentBet * 2.5));
+    else if(dealerBlackjack) finish('Dealer blackjack', 0);
     else render(false);
   }
 
@@ -136,14 +143,15 @@
   }
 
   function stand(){
-    if(!live) return;
+    if(!live || dealerTurn) return;
+    dealerTurn = true;
     stateTextEl.textContent = 'OPPONENT THINKING...';
     render(true);
     window.setTimeout(dealerStep, thinkDelay());
   }
 
   function doubleDown(){
-    if(!live || player.length !== 2) return;
+    if(!live || dealerTurn || player.length !== 2) return;
     if(credits < currentBet){ setResult('Not enough credits'); render(false); return; }
     credits -= currentBet;
     currentBet *= 2;
