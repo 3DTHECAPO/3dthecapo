@@ -75,7 +75,7 @@ function refreshOpenEnds(){
   const value=state.board.spinnerTile[0];
   ['left','right','top','bottom'].forEach(side=>{
     const arm=state.board.spinnerArms[side];
-    ends.push({arm:side,value:arm.length?arm[arm.length-1][1]:value});
+    ends.push({arm:side,value:arm.length?outerValue(arm[arm.length-1],side):value});
   });
   state.board.openEnds=ends;
   return ends;
@@ -87,7 +87,16 @@ function legalArms(tile){
 }
 function legal(tile){return legalArms(tile).length>0}
 function canPlay(playerIndex){return (state.hands[playerIndex]||[]).some(legal)}
-function orientFromEndpoint(tile,match){return tile[0]===match?[tile[0],tile[1]]:[tile[1],tile[0]]}
+function splitByMatch(tile,match){
+  return tile[0]===match?{match:tile[0],outside:tile[1]}:{match:tile[1],outside:tile[0]};
+}
+function outerValue(tile,arm){
+  return arm==='top'||arm==='left'?tile[0]:tile[1];
+}
+function orientForArm(tile,match,arm){
+  const parts=splitByMatch(tile,match);
+  return arm==='top'||arm==='left'?[parts.outside,parts.match]:[parts.match,parts.outside];
+}
 function handPips(playerIndex){return (state.hands[playerIndex]||[]).reduce((sum,tile)=>sum+tile[0]+tile[1],0)}
 function remainingOpponentPips(winner){
   return state.hands.reduce((sum,hand,playerIndex)=>playerIndex===winner?sum:sum+hand.reduce((pipTotal,tile)=>pipTotal+tile[0]+tile[1],0),0);
@@ -97,7 +106,7 @@ function placeOnArm(tile,arm){
   if(arm==='open'||!state.board.spinnerTile)return false;
   const end=refreshOpenEnds().find(item=>item.arm===arm);
   if(!end||(tile[0]!==end.value&&tile[1]!==end.value))return false;
-  state.board.spinnerArms[arm].push(orientFromEndpoint(tile,end.value));
+  state.board.spinnerArms[arm].push(orientForArm(tile,end.value,arm));
   refreshOpenEnds();
   return true;
 }
