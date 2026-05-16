@@ -1,6 +1,26 @@
 (()=>{
 'use strict';
 
+/*
+PLAY 3D DOMINOES — REAL SPINNER / ALL-FIVES LAYOUT
+
+Rules applied from references:
+- Double-six set = 28 tiles.
+- 2–4 players.
+- 7 tiles each.
+- Highest double starts automatically.
+- First double is the spinner.
+- Spinner has four REAL branch endpoints: left, right, top, bottom.
+- A tile must match the exact branch connection value.
+- After a tile is played on a branch, that branch's open value becomes the outside end of that tile.
+- Do NOT allow random side/top placement unless it matches that branch's current open value.
+- Draw until playable; pass only if boneyard is empty.
+- Doubles are displayed perpendicular/sideways.
+- Round ends when a player goes out or the game is blocked.
+- Winner scores opponents' remaining pips.
+- First player to 100 wins.
+*/
+
 const MAX_PIP = 6;
 const WIN_SCORE = 100;
 
@@ -19,8 +39,8 @@ let gameEnded = false;
 const els = {
   leftLine: document.getElementById('leftLine'),
   rightLine: document.getElementById('rightLine'),
-  topLine: document.getElementById('topLine'),
-  bottomLine: document.getElementById('bottomLine'),
+  spinnerTop: document.getElementById('spinnerTop'),
+  spinnerBottom: document.getElementById('spinnerBottom'),
   spinnerSlot: document.getElementById('spinnerSlot'),
   hand: document.getElementById('hand'),
   log: document.getElementById('log'),
@@ -37,11 +57,9 @@ const els = {
   fourPlayerBtn: document.getElementById('fourPlayerBtn')
 };
 
-function makeId(){ return Math.random().toString(36).slice(2) + Date.now().toString(36); }
-function clone(tile){ return {a:tile.a,b:tile.b,id:tile.id,double:tile.a===tile.b}; }
-function tileName(tile){ return tile.a + '-' + tile.b; }
-function tileTotal(tile){ return tile.a + tile.b; }
-function nextIndex(i){ return (i + 1) % playerCount; }
+function makeId(){
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
 
 function buildSet(){
   const tiles = [];
@@ -84,14 +102,21 @@ function newRound(clearLog){
   setNames();
   stock = buildSet();
   hands = Array.from({length:playerCount},()=>stock.splice(0,7));
-
   board = {
     spinner:null,
-    spinnerIsFirstDouble:false,
-    branches:{left:[],right:[],top:[],bottom:[]},
-    open:{left:null,right:null,top:null,bottom:null}
+    branches:{
+      left:[],
+      right:[],
+      top:[],
+      bottom:[]
+    },
+    open:{
+      left:null,
+      right:null,
+      top:null,
+      bottom:null
+    }
   };
-
   current = 0;
   handEnded = false;
   if(clearLog) logLines = [];
@@ -99,9 +124,14 @@ function newRound(clearLog){
   openHighestDoubleOrTile();
 }
 
+function tileTotal(tile){
+  return tile.a + tile.b;
+}
+
 function findStarter(){
   let best = null;
 
+  // Real dominoes start with highest double.
   hands.forEach((hand, playerIndex)=>{
     hand.forEach((tile, handIndex)=>{
       if(!tile.double) return;
@@ -112,6 +142,7 @@ function findStarter(){
     });
   });
 
+  // Fallback if no double is in dealt hands.
   if(best) return best;
 
   hands.forEach((hand, playerIndex)=>{
@@ -138,16 +169,14 @@ function openHighestDoubleOrTile(){
   const tile = hands[current].splice(starter.handIndex, 1)[0];
 
   board.spinner = clone(tile);
-  board.spinnerIsFirstDouble = tile.double;
-
-  // If starter is a double, it is the ONLY 4-way spinner.
-  // If no double exists, only left/right are open.
   board.open.left = tile.a;
   board.open.right = tile.b;
   board.open.top = tile.double ? tile.a : null;
   board.open.bottom = tile.double ? tile.a : null;
 
-  addLog(names[current]+' opens with '+tileName(tile)+(tile.double ? ' as the ONLY spinner.' : '.'));
+  addLog(names[current]+' opens with '+tileName(tile)+(tile.double ? ' as the spinner.' : '.'));
+
+  logOpenEnds();
 
   if(!hands[current].length){
     endRound(current, 'went out on the opener');
@@ -159,13 +188,19 @@ function openHighestDoubleOrTile(){
   checkBlockedOrCpu();
 }
 
-function branchIsOpen(side){
-  return board.open[side] !== null && board.open[side] !== undefined;
+function clone(tile){
+  return {a:tile.a,b:tile.b,id:tile.id,double:tile.a===tile.b};
+}
+
+function nextIndex(i){
+  return (i + 1) % playerCount;
 }
 
 function openBranches(){
+  if(!board.spinner) return [];
+
   return ['left','right','top','bottom']
-    .filter(branchIsOpen)
+    .filter(side => board.open[side] !== null && board.open[side] !== undefined)
     .map(side => ({side, value:board.open[side]}));
 }
 
@@ -175,19 +210,23 @@ function sidesFor(tile){
     .map(end => end.side);
 }
 
-function makePlacement(tile, side){
-  const connectValue = board.open[side];
-  if(connectValue === null || connectValue === undefined) return null;
-  if(tile.a !== connectValue && tile.b !== connectValue) return null;
+function orientForSide(tile, side){
+  const match = board.open[side];
+  if(match === null || match === undefined) return null;
+  if(tile.a !== match && tile.b !== match) return null;
 
-  const outsideValue = tile.a === connectValue ? tile.b : tile.a;
+  const outer = tile.a === match ? tile.b : tile.a;
 
+  // connection = side touching existing branch/spinner
+  // outer = new open end after placement
   return {
     tile: clone(tile),
-    side,
-    connectValue,
-    outsideValue,
-    isDouble: tile.double
+    connection: match,
+    outer,
+    a: tile.a,
+    b: tile.b,
+    double: tile.double,
+    side
   };
 }
 
@@ -225,7 +264,7 @@ function playTile(playerIndex, handIndex, requestedSide){
   }
 
   const side = legalSides.includes(requestedSide) ? requestedSide : legalSides[0];
-  const placement = makePlacement(tile, side);
+  const placement = orientForSide(tile, side);
 
   if(!placement){
     addLog(tileName(tile)+' cannot connect to '+side.toUpperCase()+'.');
@@ -234,14 +273,17 @@ function playTile(playerIndex, handIndex, requestedSide){
   }
 
   hands[playerIndex].splice(handIndex, 1);
-
   board.branches[side].push(placement);
-  board.open[side] = placement.outsideValue;
+  board.open[side] = placement.outer;
 
   addLog(
-    names[playerIndex]+' played '+tileName(tile)+' on '+side.toUpperCase()+
-    ': '+placement.connectValue+' touches, '+placement.outsideValue+' is now open.'
+    names[playerIndex]+' played '+tileName(tile)+
+    ' on '+side.toUpperCase()+
+    ' matching '+placement.connection+
+    '. New '+side.toUpperCase()+' open end: '+placement.outer+'.'
   );
+
+  logOpenEnds();
 
   if(!hands[playerIndex].length){
     endRound(playerIndex, 'went out');
@@ -253,10 +295,22 @@ function playTile(playerIndex, handIndex, requestedSide){
   checkBlockedOrCpu();
 }
 
+function openEndSummary(){
+  return openBranches().map(end=>end.side.toUpperCase()+':'+end.value).join(' | ');
+}
+
+function logOpenEnds(){
+  const summary = openEndSummary();
+  if(summary){
+    addLog('Open ends: '+summary+'.');
+  }
+}
+
 function drawUntilPlayableOrPass(playerIndex){
   if(handEnded || gameEnded) return false;
 
   let drawn = 0;
+
   while(stock.length && legalMovesFor(playerIndex).length === 0){
     hands[playerIndex].push(stock.pop());
     drawn++;
@@ -279,25 +333,27 @@ function drawUntilPlayableOrPass(playerIndex){
 }
 
 function humanDraw(){
-  if(!currentCanAct()){ addLog('Wait for '+names[current]+'.'); return; }
+  if(!currentCanAct()){
+    addLog('Wait for '+names[current]+'.');
+    return;
+  }
   drawUntilPlayableOrPass(current);
 }
 
 function humanPass(){
-  if(!currentCanAct()){ addLog('Wait for '+names[current]+'.'); return; }
-
-  if(legalMovesFor(current).length){
-    addLog('You have a legal move. You cannot pass.');
-    render();
+  if(!currentCanAct()){
+    addLog('Wait for '+names[current]+'.');
     return;
   }
-
+  if(legalMovesFor(current).length){
+    addLog('You have a legal move. You cannot pass.');
+    return;
+  }
   if(stock.length){
     addLog('You must draw until playable before passing.');
     humanDraw();
     return;
   }
-
   addLog(names[current]+' passes.');
   current = nextIndex(current);
   render();
@@ -317,10 +373,19 @@ function autoPlayCurrent(){
 
 function chooseBestMove(moves){
   return [...moves].sort((a,b)=>{
-    const aScore = (a.tile.double ? 20 : 0) + tileTotal(a.tile);
-    const bScore = (b.tile.double ? 20 : 0) + tileTotal(b.tile);
+    const aScore = projectedScore(a) + (a.tile.double ? 6 : 0) + tileTotal(a.tile);
+    const bScore = projectedScore(b) + (b.tile.double ? 6 : 0) + tileTotal(b.tile);
     return bScore - aScore;
   })[0];
+}
+
+function projectedScore(move){
+  const old = board.open[move.side];
+  const outer = move.tile.a === old ? move.tile.b : move.tile.a;
+  const total = openBranches().reduce((sum,end)=>{
+    return sum + (end.side === move.side ? outer : end.value);
+  },0);
+  return total % 5 === 0 ? total : 0;
 }
 
 function isCpuTurn(){
@@ -407,7 +472,6 @@ function endBlockedRound(){
   const winner = totals.indexOf(low);
   const pts = opponentPips(winner);
   scores[winner] += pts;
-
   addLog('Blocked round. '+names[winner]+' has lowest pips ('+low+') and scores '+pts+'.');
 
   if(scores[winner] >= WIN_SCORE){
@@ -416,6 +480,10 @@ function endBlockedRound(){
   }
 
   render(gameEnded ? 'GAME OVER' : 'BLOCKED');
+}
+
+function tileName(tile){
+  return tile.a+'-'+tile.b;
 }
 
 function pips(n){
@@ -429,71 +497,66 @@ function pips(n){
     6:[1,3,4,6,7,9]
   }[Number(n)] || [];
 
-  return Array.from({length:9},(_,i)=> spots.includes(i+1) ? '<i class="pip"></i>' : '<i></i>').join('');
+  return Array.from({length:9},(_,i)=>{
+    return spots.includes(i+1) ? '<i class="pip"></i>' : '<i></i>';
+  }).join('');
 }
 
-/*
-direction controls actual physical render:
-- horizontal: halves side-by-side
-- vertical: halves top-bottom
-- connectIndex marks the side touching spinner/branch endpoint
-*/
-function dominoMarkup(a,b,direction,opts={}){
-  const connectIndex = opts.connectIndex || null;
-  const cls = ['domino', direction, opts.spinner ? 'spinner' : '', opts.double ? 'double' : ''].join(' ');
-  const first = connectIndex === 'first' ? ' connect' : '';
-  const second = connectIndex === 'second' ? ' connect' : '';
+function dominoHTML(tile, options={}){
+  const a = options.displayA ?? tile.a ?? tile.connection;
+  const b = options.displayB ?? tile.b ?? tile.outer;
+  const double = options.double ?? tile.double ?? (a === b);
+  const connect = options.connect || null;
+  const cls = ['domino', double ? 'double' : '', options.spinner ? 'spinner' : '', options.side || ''].join(' ');
+  const firstConnect = connect === 'first' ? ' connect' : '';
+  const secondConnect = connect === 'second' ? ' connect' : '';
+
   return `<div class="${cls}" title="${a}-${b}">
-    <span class="half${first}">${pips(a)}</span>
+    <span class="half${firstConnect}">${pips(a)}</span>
     <span class="divider"></span>
-    <span class="half${second}">${pips(b)}</span>
+    <span class="half${secondConnect}">${pips(b)}</span>
   </div>`;
-}
-
-function placedMarkup(p, side, position){
-  /*
-  For any placement:
-  - connectValue MUST be the half touching existing endpoint.
-  - outsideValue MUST be the new open end.
-
-  Horizontal branches:
-  left branch DOM order is outside -> spinner, so connection is second half.
-  right branch DOM order is spinner -> outside, so connection is first half.
-
-  Vertical branches:
-  top branch DOM order is outside -> spinner, so connection is second half.
-  bottom branch DOM order is spinner -> outside, so connection is first half.
-  */
-
-  const isLeftOrTop = side === 'left' || side === 'top';
-  const directionNormal = (side === 'left' || side === 'right') ? 'horizontal' : 'vertical';
-  const directionDouble = directionNormal === 'horizontal' ? 'vertical' : 'horizontal';
-  const direction = p.isDouble ? directionDouble : directionNormal;
-
-  const a = isLeftOrTop ? p.outsideValue : p.connectValue;
-  const b = isLeftOrTop ? p.connectValue : p.outsideValue;
-  const connectIndex = isLeftOrTop ? 'second' : 'first';
-
-  return dominoMarkup(a,b,direction,{double:p.isDouble,connectIndex});
 }
 
 function renderBranch(node, side){
   if(!node) return;
   const branch = board.branches[side] || [];
-  const list = (side === 'left' || side === 'top') ? [...branch].reverse() : branch;
-  node.innerHTML = list.map(p=>placedMarkup(p, side)).join('');
+  const list = side === 'left' || side === 'top' ? [...branch].reverse() : branch;
+
+  node.innerHTML = list.map((p, idx)=>{
+    const isConnectionEnd =
+      (side === 'left' || side === 'top')
+        ? idx === list.length - 1
+        : idx === 0;
+
+    const displayA = (side === 'left' || side === 'top') ? p.outer : p.connection;
+    const displayB = (side === 'left' || side === 'top') ? p.connection : p.outer;
+
+    // left/top: connection is second half, closest to spinner/previous branch
+    // right/bottom: connection is first half, closest to spinner/previous branch
+    const connect = isConnectionEnd
+      ? ((side === 'left' || side === 'top') ? 'second' : 'first')
+      : null;
+
+    return dominoHTML(p.tile, {
+      double:p.double,
+      side,
+      displayA,
+      displayB,
+      connect
+    });
+  }).join('');
 }
 
 function renderBoard(){
   renderBranch(els.leftLine,'left');
   renderBranch(els.rightLine,'right');
-  renderBranch(els.topLine,'top');
-  renderBranch(els.bottomLine,'bottom');
+  renderBranch(els.spinnerTop,'top');
+  renderBranch(els.spinnerBottom,'bottom');
 
   if(els.spinnerSlot){
-    const s = board.spinner;
-    els.spinnerSlot.innerHTML = s
-      ? dominoMarkup(s.a,s.b,'vertical',{spinner:board.spinnerIsFirstDouble,double:s.double})
+    els.spinnerSlot.innerHTML = board.spinner
+      ? dominoHTML(board.spinner,{double:board.spinner.double,spinner:board.spinner.double,side:'spinner'})
       : '<div class="empty-slot">FIRST TILE</div>';
   }
 }
@@ -505,7 +568,7 @@ function renderHand(){
   if(els.handTitle) els.handTitle.textContent = names[current]+"'S HAND";
   if(els.handHint){
     els.handHint.textContent = canAct
-      ? 'Matching number side must touch the branch. Only first double is spinner.'
+      ? 'Playable tiles show exact branch matches. Normal scoring happens when someone goes out or the round blocks.'
       : 'CPU is playing...';
   }
 
@@ -515,7 +578,7 @@ function renderHand(){
     const sides = sidesFor(tile);
     const legal = sides.length > 0;
     return `<button class="domino-btn ${legal?'selected':''}" data-i="${i}" ${canAct?'':'disabled'}>
-      ${dominoMarkup(tile.a,tile.b,'vertical',{double:tile.double})}
+      ${dominoHTML(tile,{double:tile.double})}
       <small>${legal ? sides.map(s=>s.toUpperCase()+':'+board.open[s]).join(' / ') : 'NO FIT'}</small>
     </button>`;
   }).join('');
@@ -549,10 +612,6 @@ function renderSeats(){
   });
 }
 
-function openSummary(){
-  return openBranches().map(b=>b.side.toUpperCase()+':'+b.value).join(' | ');
-}
-
 function render(label){
   renderBoard();
   renderHand();
@@ -563,16 +622,17 @@ function render(label){
   if(els.stateText){
     els.stateText.textContent =
       label ||
-      (gameEnded ? 'GAME OVER' : handEnded ? 'ROUND OVER' : board.spinnerIsFirstDouble ? 'SPINNER LIVE' : 'LIVE');
+      (gameEnded ? 'GAME OVER' : handEnded ? 'ROUND OVER' : board.spinner && board.spinner.double ? 'SPINNER LIVE' : 'LIVE');
   }
 
   if(els.stockCount) els.stockCount.textContent = stock.length;
 
   if(els.scoreText){
-    els.scoreText.textContent = names.map((n,i)=> n + ': ' + (scores[i] || 0) + ' pts / ' + pipTotal(hands[i] || []) + ' pips').join(' | ') + ' || OPEN: ' + openSummary();
+    els.scoreText.textContent = names.map((n,i)=> n + ': ' + (scores[i] || 0) + ' pts / ' + pipTotal(hands[i] || []) + ' pips').join(' | ');
   }
 
   const humanTurn = currentCanAct();
+
   if(els.drawBtn) els.drawBtn.disabled = handEnded || gameEnded || !humanTurn;
   if(els.passBtn) els.passBtn.disabled = handEnded || gameEnded || !humanTurn;
   if(els.autoBtn) els.autoBtn.disabled = handEnded || gameEnded || !humanTurn;

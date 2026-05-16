@@ -22,9 +22,9 @@
 
   <section class="hero">
     <div>
-      <div class="kicker">DRAW DOMINOES • TRUE SPINNER LAYOUT</div>
+      <div class="kicker">REAL SPINNER DOMINOES</div>
       <h1>Dominoes</h1>
-      <p>Highest double starts. Only the first double is the spinner. Matching side touches the branch. Doubles lay perpendicular without becoming new spinners.</p>
+      <p>2–4 player black-and-gold domino table with real spinner behavior, sideways doubles, draw/pass turns, CPU fill, and fan-room safe hooks.</p>
     </div>
     <div class="status">
       <span>TURN</span>
@@ -41,7 +41,7 @@
         <button id="fourPlayerBtn" type="button">4 Players</button>
       </div>
     </div>
-    <div class="score-strip" id="scoreText">YOU: 0</div>
+    <div class="score-strip" id="scoreText">YOU: 0 | CPU: 0</div>
   </section>
 
   <section class="domino-table" aria-label="PLAY 3D domino table">
@@ -50,18 +50,16 @@
     <div class="seat seat-north" id="seatNorth">CPU</div>
     <div class="seat seat-west" id="seatWest">LEFT</div>
     <div class="seat seat-east" id="seatEast">RIGHT</div>
-    <div class="seat seat-south active" id="seatSouth">YOU</div>
+    <div class="seat seat-south" id="seatSouth">YOU</div>
 
     <div class="table-center">
-      <div id="topLine" class="branch branch-top"></div>
-
-      <div class="cross-row">
+      <div id="spinnerTop" class="branch branch-top"></div>
+      <div class="main-line-wrap">
         <div id="leftLine" class="branch branch-left"></div>
         <div id="spinnerSlot" class="spinner-slot"></div>
         <div id="rightLine" class="branch branch-right"></div>
       </div>
-
-      <div id="bottomLine" class="branch branch-bottom"></div>
+      <div id="spinnerBottom" class="branch branch-bottom"></div>
     </div>
 
     <div class="boneyard">
@@ -80,7 +78,7 @@
   <section class="panel hand-panel">
     <div class="panel-head">
       <h2 id="handTitle">Your Hand</h2>
-      <p id="handHint">Playable tiles show the exact branch they connect to.</p>
+      <p id="handHint">Play a highlighted tile or draw if blocked.</p>
     </div>
     <div id="hand" class="hand"></div>
   </section>
@@ -95,5 +93,13 @@
 <script src="../shared/shared.js"></script>
 <script src="../shared/supabase-game-bridge.js"></script>
 <script src="./script.js"></script>
+<script>
+(function(){
+  var p = new URLSearchParams(location.search);
+  if(p.get('mode') === 'fan' && p.get('room') && window.PLAY3D_SYNC){
+    window.PLAY3D_SYNC.sendGameEvent('dominoes_loaded', {game:'dominoes'});
+  }
+})();
+</script>
 </body>
 </html>
