@@ -3,8 +3,8 @@
 
   const suits=['S','H','D','C'];
   const ranks=['J','Q','K','10','A'];
-  const order={A:5,'10':4,K:3,Q:2,J:1,'9':0};
-  const values={A:11,'10':10,K:4,Q:0,J:0,'9':0};
+  const order={A:5,'10':4,K:3,Q:2,J:1};
+  const values={A:1,'10':1,K:1,Q:0,J:0};
   const suitIcon={S:'\u2660',H:'\u2665',D:'\u2666',C:'\u2663'};
   const dom={
     dealBtn:document.getElementById('dealBtn'),
@@ -67,7 +67,7 @@
     state.melds=[0,0];
     state.trick=[];
     state.phase='bidding';
-    state.bidAmount=20;
+    state.bidAmount=50;
     state.highestBid=0;
     state.highestBidder=null;
     state.activeBidders=[0,1,2,3];
@@ -125,7 +125,7 @@
     setTimeout(()=>{
       const hand=state.hands[state.currentPlayerIndex];
       const canNameTrump=suits.some(suit=>hasMarriage(hand,suit));
-      const shouldBid=canNameTrump&&state.highestBid<40&&Math.random()>.28;
+      const shouldBid=canNameTrump&&state.highestBid<70&&Math.random()>.28;
       if(shouldBid)bid(state.currentPlayerIndex); else pass(state.currentPlayerIndex);
     },thinkDelay());
   }
@@ -248,7 +248,7 @@
     state.lastWinner=winner;
     assertInvariant();
     if(state.hands.every(hand=>hand.length===0)){
-      state.handPoints[teamIndex(winner)]+=10;
+      state.handPoints[teamIndex(winner)]+=2;
       finishHand('HAND COMPLETE');
       return;
     }
@@ -260,8 +260,12 @@
     if(state.handPoints[bidTeam]<state.highestBid)state.handPoints[bidTeam]=-state.highestBid;
     state.totalScores[0]+=state.handPoints[0];
     state.totalScores[1]+=state.handPoints[1];
-    state.phase=state.totalScores.some(score=>score>=500)?'game-over':'hand-over';
-    render(state.phase==='game-over'?'GAME OVER':'HAND OVER');
+    const bothAtTarget=state.totalScores[0]>=500&&state.totalScores[1]>=500;
+    const oneAtTarget=state.totalScores.some(score=>score>=500);
+    const tiedAtTarget=bothAtTarget&&state.totalScores[0]===state.totalScores[1];
+    state.phase=oneAtTarget&&!tiedAtTarget?'game-over':'hand-over';
+    const winnerLabel=state.totalScores[0]>state.totalScores[1]?'YOUR TEAM WINS':'THEIR TEAM WINS';
+    render(state.phase==='game-over'?winnerLabel:'HAND OVER');
     if(state.phase==='game-over'&&window.Play3DPoints&&state.totalScores[0]>state.totalScores[1])window.Play3DPoints.award('pinochle',250,'game_win');
     if(state.phase==='hand-over')setTimeout(startHand,1200);
   }
