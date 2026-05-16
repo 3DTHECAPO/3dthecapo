@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PLAY 3D - Vault Chess</title>
+<title>PLAY 3D — Chess Fixed Board</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="../shared/mode-bar.css">
 </head>
@@ -21,9 +21,9 @@
 
   <section class="hero">
     <div>
-      <div class="kicker">LEGAL CHESS ROOM</div>
+      <div class="kicker">FIXED FULL-SQUARE BOARD</div>
       <h1>Vault Chess</h1>
-      <p>Play legal turns, flip the board, and reset the match from the vault table.</p>
+      <p>All 64 squares stay full size before and after every move.</p>
     </div>
     <div class="score">
       <span>Turn</span>
@@ -46,7 +46,8 @@
   </section>
 </main>
 
-<script src="../shared/mode-bar.js"></script><script src="./script.js"></script><script>/* CPU SAFE FAN LOADER */
+<script src="../shared/mode-bar.js"></script>
+<script src="../shared/game-points.js"></script><script src="../shared/chess-engine.js"></script><script src="./script.js"></script><script>/* CPU SAFE FAN LOADER */
 (function(){
   var p = new URLSearchParams(location.search);
   if(p.get('mode') !== 'fan' || !p.get('room')) return;
