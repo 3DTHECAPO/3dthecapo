@@ -25,11 +25,14 @@ p{color:var(--muted);line-height:1.45}
 .machine-top span{font-family:"Black Ops One";font-size:24px;color:var(--gold2)}
 .machine-top strong{font-family:"Black Ops One";color:#fff;text-shadow:0 0 16px rgba(242,210,123,.45)}
 .machine-top b{color:var(--gold2)}
-.reel-window{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:18px;border-radius:26px;background:linear-gradient(180deg,#050505,#130f0b);border:5px solid #caa24a;box-shadow:inset 0 0 40px rgba(0,0,0,.9),0 18px 36px rgba(0,0,0,.5);overflow:hidden}
-.reel{height:174px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(180deg,#fff5ce,#cdb26a 52%,#7b5514);border:4px solid #171006;color:#160b05;box-shadow:inset 0 12px 20px rgba(255,255,255,.28),inset 0 -18px 30px rgba(0,0,0,.28)}
-.reel span{font-family:"Black Ops One";font-size:clamp(28px,7vw,58px);text-align:center;line-height:1;color:#230f08;text-shadow:0 2px 0 rgba(255,255,255,.36)}
-.reel.spinning span{animation:reelBlur .12s linear infinite}
-@keyframes reelBlur{0%{transform:translateY(-18px);opacity:.35}50%{transform:translateY(18px);opacity:1}100%{transform:translateY(-18px);opacity:.35}}
+.reel-window{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px;border-radius:26px;background:linear-gradient(180deg,#050505,#130f0b);border:5px solid #caa24a;box-shadow:inset 0 0 40px rgba(0,0,0,.9),0 18px 36px rgba(0,0,0,.5);overflow:hidden}
+.reel-cell{aspect-ratio:1;border-radius:16px;display:grid;place-items:center;background:linear-gradient(180deg,#fff5ce,#cdb26a 52%,#7b5514);border:3px solid #171006;box-shadow:inset 0 12px 20px rgba(255,255,255,.28),inset 0 -18px 30px rgba(0,0,0,.28);overflow:hidden}
+.reel-cell img{display:block;width:82%;height:82%;object-fit:contain;filter:drop-shadow(0 10px 10px rgba(0,0,0,.42))}
+.reel-cell[data-vault-pass="true"]{background:linear-gradient(180deg,#12090e,#020202);border-color:#f2d27b}
+.reel-cell[data-vault-pass="true"] img{width:100%;height:100%;object-fit:cover}
+.reel-cell.asset-missing{font-weight:900;text-transform:uppercase;text-align:center;padding:10px;color:#120d07}
+.reel-cell.spinning img{animation:reelBlur .12s linear infinite}
+@keyframes reelBlur{0%{transform:translateY(-18px) scale(.96);opacity:.35}50%{transform:translateY(18px) scale(1.04);opacity:1}100%{transform:translateY(-18px) scale(.96);opacity:.35}}
 .payline{height:4px;margin:16px 20px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);box-shadow:0 0 18px rgba(242,210,123,.8)}
 .machine-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
 .meter{border:1px solid rgba(242,210,123,.22);border-radius:16px;padding:12px;background:#080604;text-align:center}
@@ -42,30 +45,17 @@ p{color:var(--muted);line-height:1.45}
 .lever.pulled:after{transform:translateY(22px)}
 #playAgainBtn{grid-column:1 / -1}
 .result-line{margin:14px 4px 0;text-align:center;color:#f7df9a;font-weight:800}
+.vault-pass-overlay{position:fixed;inset:0;z-index:10;display:grid;place-items:center;padding:22px;background:rgba(0,0,0,.72);backdrop-filter:blur(10px)}
+.vault-pass-overlay[hidden]{display:none}
+.vault-pass-card{width:min(520px,94vw);border:1px solid rgba(242,210,123,.42);border-radius:24px;background:linear-gradient(180deg,#1b1308,#050403);box-shadow:0 32px 90px rgba(0,0,0,.72);padding:24px;text-align:center}
+.vault-pass-card h2{font-family:"Black Ops One";font-size:38px;color:var(--gold2);margin:8px 0}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 @media(max-width:720px){
   .hero{grid-template-columns:1fr}.score{text-align:left}
   .slot-floor{padding:12px}.slot-cabinet{padding:14px;border-width:7px;border-radius:26px}
   .machine-top{grid-template-columns:1fr;text-align:center}
-  .reel-window{gap:8px;padding:10px;border-width:4px}
-  .reel{height:118px}
+  .reel-window{gap:7px;padding:9px;border-width:4px}
   .machine-panel{grid-template-columns:1fr}
   .slot-controls{grid-template-columns:1fr}
   .lever:after{display:none}
 }
-
-/* PLAY 3D 3x3 slot window repair */
-.reel-window.reel-grid{
-  display:grid!important;
-  grid-template-columns:repeat(3,minmax(72px,1fr));
-  gap:10px;
-  align-items:center;
-  justify-items:center;
-}
-.reel-window.reel-grid .reel{
-  width:100%;
-  min-height:82px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.payline{display:none!important}

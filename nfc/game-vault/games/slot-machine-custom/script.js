@@ -12,7 +12,8 @@
     {id:'lock', src:'./assets/lock.png', pay:15},
     {id:'mic', src:'./assets/mic.png', pay:16},
     {id:'speaker', src:'./assets/speaker.png', pay:13},
-    {id:'vault', src:'./assets/vault.png', pay:24}
+    {id:'vault', src:'./assets/vault.png', pay:24},
+    {id:'play-3d', src:'./assets/play-3d-logo.svg', pay:20}
   ];
   const vaultPassSymbols = [
     {id:'vault-pass-100x3', src:'./assets/cover-100x3.png'},
@@ -57,11 +58,18 @@
   function setCell(cell, symbol){
     cell.dataset.symbol = symbol.id;
     cell.dataset.vaultPass = String(symbol.id.indexOf('vault-pass') === 0);
-    cell.innerHTML = '<img src="' + symbol.src + '" alt="">';
+    cell.innerHTML = '<img src="' + symbol.src + '" alt="' + symbol.id + '">';
+    const image = cell.querySelector('img');
+    image.onerror = ()=>{
+      console.error('Missing slot asset:', symbol.src);
+      cell.classList.add('asset-missing');
+      cell.textContent = symbol.id;
+    };
   }
 
   function buildBoard(){
     reelBoardEl.innerHTML = '';
+    cells.length = 0;
     for(let i = 0; i < 9; i++){
       const cell = document.createElement('div');
       cell.className = 'reel-cell';
