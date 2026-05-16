@@ -19,6 +19,11 @@ let mode=window.Play3DModeBar?window.Play3DModeBar.getMode():'cpu';
 const chainEl=document.getElementById('chain');
 const handEl=document.getElementById('hand');
 const armChooser=document.getElementById('armChooser');
+const newBtnEl=document.getElementById('newBtn');
+const drawBtnEl=document.getElementById('drawBtn');
+const passBtnEl=document.getElementById('passBtn');
+const scoreTextEl=document.getElementById('scoreText');
+const turnTextEl=document.getElementById('turnText');
 const SCORE_TARGET=150;
 
 function thinkDelay(){return 400+Math.floor(Math.random()*1000)}
@@ -148,11 +153,11 @@ function advance(){state.currentPlayerIndex=(state.currentPlayerIndex+1)%state.p
 function endHand(label,winner){
   if(winner===0&&window.Play3DPoints)window.Play3DPoints.award('dominoes',125,'round_win');
   const targetReached=state.scores.some(score=>score>=SCORE_TARGET);
-  turnText.textContent=targetReached?seatName(state.scores.indexOf(Math.max(...state.scores)))+' WINS TO '+SCORE_TARGET:label;
+  turnTextEl.textContent=targetReached?seatName(state.scores.indexOf(Math.max(...state.scores)))+' WINS TO '+SCORE_TARGET:label;
   render();
 }
 function finish(winner){endHand(seatName(winner)+' WINS HAND',winner)}
-function scheduleCpu(){turnText.textContent='OPPONENT THINKING...';setTimeout(cpuTurn,thinkDelay())}
+function scheduleCpu(){turnTextEl.textContent='OPPONENT THINKING...';setTimeout(cpuTurn,thinkDelay())}
 function cpuTurn(){
   const player=state.currentPlayerIndex;
   if(player===0||activeLocal())return;
@@ -199,8 +204,8 @@ function render(){
   const hand=state.hands[visible]||[];
   handEl.innerHTML=hand.map((tile,i)=>tileHTML(tile,i,legal(tile)?'':'disabled')).join('');
   document.querySelectorAll('#hand .tile').forEach(btn=>btn.onclick=()=>requestArm(hand[+btn.dataset.i]));
-  scoreText.textContent=state.scores.slice(0,state.players).map((score,i)=>seatName(i)+': '+score).join(' / ');
-  if(turnText.textContent!=='OPPONENT THINKING...')turnText.textContent=seatName(state.currentPlayerIndex)+' TURN';
+  scoreTextEl.textContent=state.scores.slice(0,state.players).map((score,i)=>seatName(i)+': '+score).join(' / ');
+  if(turnTextEl.textContent!=='OPPONENT THINKING...')turnTextEl.textContent=seatName(state.currentPlayerIndex)+' TURN';
   [['.bottom-seat',0],['.top-seat',1],['.left-seat',2],['.right-seat',3]].forEach(([sel,i])=>{
     const el=document.querySelector(sel);if(!el)return;
     el.innerHTML=i<state.players?'<b>'+seatName(i)+'</b><small>'+((state.hands[i]||[]).length)+' tiles</small><div class="seat-backs">'+backs(Math.min(7,(state.hands[i]||[]).length))+'</div>':'';
@@ -209,7 +214,7 @@ function render(){
 }
 function log(msg){document.getElementById('log').innerHTML='<li>'+msg+'</li>'+document.getElementById('log').innerHTML}
 armChooser.addEventListener('click',e=>{const btn=e.target.closest('[data-arm]');if(btn&&state.pending)playTile(state.pending.tile,btn.dataset.arm)});
-newBtn.onclick=()=>newGame(state.players);drawBtn.onclick=drawTile;passBtn.onclick=passTurn;
+newBtnEl.onclick=()=>newGame(state.players);drawBtnEl.onclick=drawTile;passBtnEl.onclick=passTurn;
 document.querySelectorAll('.playerCountBtn').forEach(btn=>btn.onclick=()=>newGame(Number(btn.dataset.count)));
 window.addEventListener('play3d:modechange',event=>{mode=event.detail.mode;newGame(mode==='cpu'?2:4)});
 newGame(2);
