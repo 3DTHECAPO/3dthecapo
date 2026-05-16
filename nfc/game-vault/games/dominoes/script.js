@@ -9,6 +9,8 @@ const state={
   stock:[],
   passes:0,
   pending:null,
+  handOver:false,
+  lastHandLabel:'',
   board:{
     spinnerTile:null,
     spinnerArms:{left:[],right:[],top:[],bottom:[]},
@@ -62,6 +64,7 @@ function newGame(players){
   }while(!findHighestDouble());
   state.scores=Array.from({length:state.players},(_,i)=>state.scores[i]||0);
   state.currentPlayerIndex=0;state.passes=0;state.pending=null;
+  state.handOver=false;state.lastHandLabel='';
   armChooser.hidden=true;armChooser.innerHTML='';
   log(state.players+' player dominoes started.');
   startWithHighestDouble();
@@ -148,9 +151,11 @@ function endHand(label,winner){
     state.scores[winner]+=points;
     log(seatName(winner)+' scored '+points+' from opponents\' remaining pips.');
   }
+  state.handOver=true;
   if(winner===0&&window.Play3DPoints)window.Play3DPoints.award('dominoes',125,'round_win');
   const targetReached=state.scores.some(score=>score>=SCORE_TARGET);
-  turnTextEl.textContent=targetReached?seatName(state.scores.indexOf(Math.max(...state.scores)))+' WINS TO '+SCORE_TARGET:label;
+  state.lastHandLabel=targetReached?seatName(state.scores.indexOf(Math.max(...state.scores)))+' WINS TO '+SCORE_TARGET:label;
+  turnTextEl.textContent=state.lastHandLabel;
   render();
 }
 function finish(winner){endHand(seatName(winner)+' WINS HAND',winner)}
@@ -212,7 +217,8 @@ function render(){
   handEl.innerHTML=hand.map((tile,i)=>tileHTML(tile,i,legal(tile)?'':'disabled')).join('');
   document.querySelectorAll('#hand .tile').forEach(btn=>btn.onclick=()=>requestArm(hand[+btn.dataset.i]));
   scoreTextEl.textContent=state.scores.slice(0,state.players).map((score,i)=>seatName(i)+': '+score).join(' / ');
-  if(turnTextEl.textContent!=='OPPONENT THINKING...')turnTextEl.textContent=seatName(state.currentPlayerIndex)+' TURN';
+  if(state.handOver)turnTextEl.textContent=state.lastHandLabel;
+  else if(turnTextEl.textContent!=='OPPONENT THINKING...')turnTextEl.textContent=seatName(state.currentPlayerIndex)+' TURN';
   [['.bottom-seat',0],['.top-seat',1],['.left-seat',2],['.right-seat',3]].forEach(([sel,i])=>{
     const el=document.querySelector(sel);if(!el)return;
     el.innerHTML=i<state.players?'<b>'+seatName(i)+'</b><small>'+((state.hands[i]||[]).length)+' tiles</small><div class="seat-backs">'+backs(Math.min(7,(state.hands[i]||[]).length))+'</div>':'';

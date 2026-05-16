@@ -183,12 +183,12 @@ display:none;
 
 .casino-table{
 position:relative;
-min-height:560px;
+min-height:720px;
 border-radius:50px;
 border:12px solid #caa24a;
 background:
 radial-gradient(circle at center,#1f5d2e 0%,#0d2d16 60%,#06120a 100%);
-overflow:hidden;
+overflow:visible;
 box-shadow:
 0 0 0 8px #3b2a0c,
 0 30px 100px rgba(0,0,0,.7),
@@ -219,10 +219,10 @@ pointer-events:none;
 .table-center{
 position:absolute;
 left:50%;
-top:50%;
+top:54%;
 transform:translate(-50%,-50%);
 width:min(900px,88%);
-min-height:360px;
+min-height:520px;
 padding:20px;
 border-radius:30px;
 border:2px solid rgba(242,210,123,.25);
@@ -230,7 +230,7 @@ background:rgba(0,0,0,.22);
 display:flex;
 align-items:center;
 justify-content:center;
-overflow:visible;
+overflow:auto;
 }
 
 .chain{
@@ -246,7 +246,7 @@ grid-template-rows:minmax(0,1fr) auto minmax(0,1fr);
 gap:12px;
 align-items:center;
 justify-items:center;
-min-height:320px;
+min-height:480px;
 width:100%;
 }
 
@@ -263,7 +263,7 @@ display:flex;
 gap:4px;
 align-items:center;
 justify-content:flex-end;
-min-height:118px;
+min-height:164px;
 flex-direction:column-reverse;
 }
 
@@ -487,19 +487,19 @@ width:100%;
 }
 
 .casino-table{
-min-height:460px;
+min-height:620px;
 border-width:8px;
 border-radius:30px;
 }
 
 .table-center{
 width:92%;
-min-height:280px;
+min-height:430px;
 padding:14px;
 }
 
 .spinner-board{
-min-height:240px;
+min-height:390px;
 }
 
 .tile{
