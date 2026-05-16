@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PLAY 3D - Poker</title>
+<title>PLAY 3D - Video Poker</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
 <link rel="stylesheet" href="../shared/mode-bar.css">
@@ -16,7 +16,7 @@
     <nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav>
   </header>
   <section class="hero">
-    <div><div class="kicker">CARD TABLE</div><h1>Poker</h1><p>Playable video poker with hold, draw, shared credits, and responsive table layout.</p></div>
+    <div><div class="kicker">CARD TABLE</div><h1>Video Poker</h1><p>Playable video poker with hold, draw, shared credits, and responsive table layout.</p></div>
     <div class="score"><span>Status</span><b id="mainScore">0</b><small id="stateText">READY</small></div>
   </section>
   <section class="table">
@@ -33,11 +33,16 @@
         <div id="hand" class="hand"></div>
         <p>Credits: <b id="credits">1000</b> | Bet: <b id="bet">25</b> | Hand: <b id="rankName">Ready</b></p>
         <p>Click cards to hold, then Draw.</p>
+        <section class="paytable-panel">
+          <h2>Jacks-or-Better Paytable</h2>
+          <div id="paytable" class="paytable"></div>
+        </section>
       </div>
     </div>
   </section>
 </main>
 <script src="../shared/game-bank.js"></script>
+<script src="../shared/game-points.js"></script>
 <script src="../shared/mode-bar.js"></script>
 <script src="./script.js"></script>
 <script>

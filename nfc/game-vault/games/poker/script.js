@@ -23,6 +23,18 @@
   const betDownEl = document.getElementById('betDown');
   const betUpEl = document.getElementById('betUp');
   const rankNameEl = document.getElementById('rankName');
+  const paytableEl = document.getElementById('paytable');
+  const payouts = [
+    {name:'Royal Flush', pay:250},
+    {name:'Straight Flush', pay:50},
+    {name:'Four Of A Kind', pay:25},
+    {name:'Full House', pay:9},
+    {name:'Flush', pay:6},
+    {name:'Straight', pay:4},
+    {name:'Three Of A Kind', pay:3},
+    {name:'Two Pair', pay:2},
+    {name:'Jacks Or Better', pay:1}
+  ];
 
   function mk(){
     deck = [];
@@ -72,6 +84,10 @@
     if(bank) bank.setCredits(creditsVal);
   }
 
+  function renderPaytable(){
+    paytableEl.innerHTML = payouts.map(row=>'<div><span>'+row.name+'</span><b>'+row.pay+'x</b></div>').join('');
+  }
+
   function render(){
     handEl.innerHTML = hand.map(card).join('');
     creditsEl.textContent = creditsVal;
@@ -82,7 +98,7 @@
     dealBtnEl.disabled = phase === 'draw' || creditsVal < betVal;
     playAgainBtnEl.disabled = phase === 'draw' || creditsVal < betVal;
     betDownEl.disabled = phase === 'draw';
-    betUpEl.disabled = phase === 'draw';
+    betUpEl.disabled = phase === 'draw' || betVal >= creditsVal;
     document.querySelectorAll('#hand .card').forEach(button=>{
       button.onclick = ()=>{
         const i = Number(button.dataset.i);
@@ -120,7 +136,7 @@
     creditsVal += pay;
     if(window.Play3DPoints && pay > 0) window.Play3DPoints.award('poker', Math.min(250, Math.max(25, Math.floor(pay / 3))), res.name.toLowerCase().replaceAll(' ','_'));
     saveBank();
-    rankNameEl.textContent = res.name + ' +' + pay;
+    rankNameEl.textContent = res.pay ? res.name + ' +' + pay : 'No Win +0';
     phase = 'deal';
     render();
   }
@@ -135,9 +151,10 @@
   };
   betUpEl.onclick = ()=>{
     if(phase === 'draw') return;
-    betVal = betVal >= 500 ? 25 : betVal + 25;
+    betVal = Math.min(500, betVal + 25, Math.max(25, creditsVal));
     render();
   };
 
+  renderPaytable();
   render();
 })();
