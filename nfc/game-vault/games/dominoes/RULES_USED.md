@@ -2,7 +2,8 @@
 
 - Variant: basic draw/block dominoes with a double-six set.
 - All player counts draw 7 tiles each; all remaining tiles form the boneyard.
-- Highest double starts. If no dealt hand contains a double, the hand is reshuffled and redealt.
+- The opening hand starts with the highest double. If no dealt hand contains a double, that opening hand is reshuffled and redealt.
+- After a player dominoes, that round winner starts the next hand with any tile they choose.
 - Players match open ends, play one tile per turn, and in draw mode pull from the boneyard until they can play. If the boneyard is empty and they still cannot play, they pass.
 - Doubles are displayed perpendicular to the chain. The existing first-spinner branch layout remains supported, but later doubles do not create new branches.
 - A round ends when a player empties their hand or the game blocks.
