@@ -40,35 +40,26 @@ function findHighestDouble(){
   state.hands.forEach((hand,playerIndex)=>hand.forEach(tile=>{
     if(isDouble(tile)&&(!best||doubleValue(tile)>doubleValue(best.tile)))best={playerIndex,tile};
   }));
-  if(best)return best;
-  const stockIndex=state.stock.reduce((bestIndex,tile,index)=>{
-    return doubleValue(tile)>doubleValue(state.stock[bestIndex]||[-1,-2])?index:bestIndex;
-  },-1);
-  if(stockIndex>=0){
-    const tile=state.stock.splice(stockIndex,1)[0];
-    const displaced=state.hands[0].pop();
-    state.hands[0].push(tile);
-    state.stock.push(displaced);
-    return {playerIndex:0,tile};
-  }
-  return null;
+  return best;
 }
 function startWithHighestDouble(){
   const starter=findHighestDouble();
-  if(!starter)return;
+  if(!starter)return false;
   state.board.spinnerTile=starter.tile;
   removeTile(state.hands[starter.playerIndex],starter.tile);
   refreshOpenEnds();
-  scoreOpenEnds(starter.playerIndex);
   state.currentPlayerIndex=(starter.playerIndex+1)%state.players;
   log(seatName(starter.playerIndex)+' opened with '+starter.tile[0]+'-'+starter.tile[1]+'.');
+  return true;
 }
 
 function newGame(players){
   mode=window.Play3DModeBar?window.Play3DModeBar.getMode():mode;
   state.players=Math.max(2,Math.min(4,Number(players)||state.players||2));
-  buildStock();resetBoard();
-  state.hands=Array.from({length:state.players},()=>state.stock.splice(0,handSize()));
+  do{
+    buildStock();resetBoard();
+    state.hands=Array.from({length:state.players},()=>state.stock.splice(0,handSize()));
+  }while(!findHighestDouble());
   state.scores=Array.from({length:state.players},(_,i)=>state.scores[i]||0);
   state.currentPlayerIndex=0;state.passes=0;state.pending=null;
   armChooser.hidden=true;armChooser.innerHTML='';
@@ -97,16 +88,9 @@ function legalArms(tile){
 function legal(tile){return legalArms(tile).length>0}
 function canPlay(playerIndex){return (state.hands[playerIndex]||[]).some(legal)}
 function orientFromEndpoint(tile,match){return tile[0]===match?[tile[0],tile[1]]:[tile[1],tile[0]]}
-function openEndPointCount(){return refreshOpenEnds().reduce((sum,end)=>sum+end.value,0)}
-function canScoreCount(playerIndex,count){
-  return count>0&&count%5===0&&(count>=10||state.scores[playerIndex]>=10);
-}
-function scoreOpenEnds(playerIndex){
-  const count=openEndPointCount();
-  if(!canScoreCount(playerIndex,count))return 0;
-  state.scores[playerIndex]+=count;
-  log(seatName(playerIndex)+' scored '+count+' from the point count.');
-  return count;
+function handPips(playerIndex){return (state.hands[playerIndex]||[]).reduce((sum,tile)=>sum+tile[0]+tile[1],0)}
+function remainingOpponentPips(winner){
+  return state.hands.reduce((sum,hand,playerIndex)=>playerIndex===winner?sum:sum+hand.reduce((pipTotal,tile)=>pipTotal+tile[0]+tile[1],0),0);
 }
 
 function placeOnArm(tile,arm){
@@ -122,7 +106,6 @@ function removeTile(hand,tile){const index=hand.indexOf(tile);if(index>=0)hand.s
 function commitPlay(playerIndex,tile,arm){
   if(!placeOnArm(tile,arm))return false;
   removeTile(state.hands[playerIndex],tile);
-  scoreOpenEnds(playerIndex);
   state.passes=0;state.pending=null;armChooser.hidden=true;armChooser.innerHTML='';
   return true;
 }
@@ -151,12 +134,23 @@ function chooseCpuMove(hand){
 }
 function advance(){state.currentPlayerIndex=(state.currentPlayerIndex+1)%state.players;render();if(state.currentPlayerIndex!==0&&!activeLocal())scheduleCpu()}
 function endHand(label,winner){
+  if(winner!==null&&winner!==undefined){
+    const points=remainingOpponentPips(winner);
+    state.scores[winner]+=points;
+    log(seatName(winner)+' scored '+points+' from opponents\' remaining pips.');
+  }
   if(winner===0&&window.Play3DPoints)window.Play3DPoints.award('dominoes',125,'round_win');
   const targetReached=state.scores.some(score=>score>=SCORE_TARGET);
   turnTextEl.textContent=targetReached?seatName(state.scores.indexOf(Math.max(...state.scores)))+' WINS TO '+SCORE_TARGET:label;
   render();
 }
 function finish(winner){endHand(seatName(winner)+' WINS HAND',winner)}
+function blockedWinner(){
+  const pipTotals=state.hands.map((_,playerIndex)=>handPips(playerIndex));
+  const lowest=Math.min(...pipTotals);
+  const leaders=pipTotals.map((pips,playerIndex)=>({pips,playerIndex})).filter(item=>item.pips===lowest);
+  return leaders.length===1?leaders[0].playerIndex:null;
+}
 function scheduleCpu(){turnTextEl.textContent='OPPONENT THINKING...';setTimeout(cpuTurn,thinkDelay())}
 function cpuTurn(){
   const player=state.currentPlayerIndex;
@@ -171,7 +165,11 @@ function cpuTurn(){
   if(move){commitPlay(player,move.tile,move.arm);log(seatName(player)+' played on '+move.arm+'.')}
   else{state.passes++;log(seatName(player)+' passed.')}
   if(!hand.length){finish(player);return}
-  if(state.passes>=state.players){endHand('BLOCKED HAND');return}
+  if(state.passes>=state.players){
+    const winner=blockedWinner();
+    endHand(winner===null?'BLOCKED HAND - TIE':'BLOCKED HAND - '+seatName(winner)+' WINS',winner);
+    return;
+  }
   advance();
 }
 function drawUntilPlayable(player){
@@ -190,7 +188,7 @@ function drawTile(){
   else log('Boneyard empty.');
   render();
 }
-function passTurn(){const player=state.currentPlayerIndex;if(player!==0&&!activeLocal())return;if(canPlay(player)){log('Play a legal tile if you can.');return}state.passes++;if(state.passes>=state.players){endHand('BLOCKED HAND');return}advance()}
+function passTurn(){const player=state.currentPlayerIndex;if(player!==0&&!activeLocal())return;if(canPlay(player)){log('Play a legal tile if you can.');return}state.passes++;if(state.passes>=state.players){const winner=blockedWinner();endHand(winner===null?'BLOCKED HAND - TIE':'BLOCKED HAND - '+seatName(winner)+' WINS',winner);return}advance()}
 function tileHTML(tile,index,cls){return `<button class="tile ${cls||''}" data-i="${index}"><span>${tile[0]}</span><i></i><span>${tile[1]}</span></button>`}
 function backs(count){return Array.from({length:count},()=>'<span class="tile-back"></span>').join('')}
 function renderBoard(){
