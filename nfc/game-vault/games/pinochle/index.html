@@ -34,12 +34,22 @@
           <button data-trump="D">Diamonds</button>
           <button data-trump="C">Clubs</button>
         </div>
-        <h2>Opponent</h2><div id="opponentHand" class="hand"></div>
-        <h2>Trick Pile</h2><div id="trickPile" class="hand"></div>
-        <h2>Meld Area</h2><div id="meldArea" class="hand"></div>
-        <h2>Your Hand</h2><div id="playerHand" class="hand"></div>
+        <div class="table-zones">
+          <section class="table-zone">
+            <h2>Trick Pile</h2>
+            <div id="trickPile" class="hand trick-hand"></div>
+          </section>
+          <section class="table-zone">
+            <h2>Meld Area</h2>
+            <div id="meldArea" class="hand meld-hand"></div>
+          </section>
+        </div>
       </div>
     </div>
+    <section class="player-panel">
+      <h2>Your Hand</h2>
+      <div id="playerHand" class="hand player-hand"></div>
+    </section>
   </section>
 </main>
 <script src="../shared/mode-bar.js"></script>

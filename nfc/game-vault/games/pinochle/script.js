@@ -14,7 +14,6 @@
     trumpRow:document.getElementById('trumpRow'),
     mainScore:document.getElementById('mainScore'),
     stateText:document.getElementById('stateText'),
-    opponentHand:document.getElementById('opponentHand'),
     trickPile:document.getElementById('trickPile'),
     meldArea:document.getElementById('meldArea'),
     playerHand:document.getElementById('playerHand')
@@ -282,7 +281,6 @@
     });
   }
   function render(label){
-    dom.opponentHand.innerHTML=backs((state.hands[1]||[]).length+(state.hands[2]||[]).length+(state.hands[3]||[]).length);
     dom.trickPile.innerHTML=state.trick.map(play=>'<div><small>'+seatName(play.player)+'</small>'+cardHTML(play.card,0,false)+'</div>').join('');
     dom.meldArea.innerHTML='<div class="count-card">Bid '+(state.highestBid||'-')+'</div><div class="count-card">Trump '+(state.trump?suitIcon[state.trump]:'-')+'</div><div class="count-card">Your Team Meld '+state.melds[0]+'</div><div class="count-card">Their Team Meld '+state.melds[1]+'</div>';
     dom.playerHand.innerHTML=(state.hands[0]||[]).map((card,index)=>cardHTML(card,index,state.phase==='play'&&state.currentPlayerIndex===0&&legalCards(0).some(item=>item.id===card.id))).join('');
