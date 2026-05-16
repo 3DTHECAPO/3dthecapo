@@ -9,21 +9,30 @@
   let betAmount = 50;
   let currentBet = 50;
   let live = false;
+  const playerHandEl = document.getElementById('playerHand');
+  const dealerHandEl = document.getElementById('dealerHand');
+  const playerTotalEl = document.getElementById('playerTotal');
+  const dealerTotalEl = document.getElementById('dealerTotal');
+  const creditsTextEl = document.getElementById('creditsText');
+  const creditsEl = document.getElementById('credits');
+  const betEl = document.getElementById('bet');
+  const stateTextEl = document.getElementById('stateText');
+  const dealBtnEl = document.getElementById('dealBtn');
+  const hitBtnEl = document.getElementById('hitBtn');
+  const standBtnEl = document.getElementById('standBtn');
+  const doubleBtnEl = document.getElementById('doubleBtn');
+  const playAgainBtnEl = document.getElementById('playAgainBtn');
+  const resultEl = document.getElementById('result');
 
   const suits = ['S','H','D','C'];
   const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-
-
-  function suitSymbol(s){
-    return ({S:'♠',H:'♥',D:'♦',C:'♣'})[s] || s;
-  }
+  const suitIcon = {S:'\u2660', H:'\u2665', D:'\u2666', C:'\u2663'};
+  function thinkDelay(){ return 400 + Math.floor(Math.random() * 1000); }
 
   function makeDeck(){
     deck = [];
-    for(let d = 0; d < 4; d++){
-      for(const s of suits){
-        for(const r of ranks) deck.push({r,s});
-      }
+    for(const s of suits){
+      for(const r of ranks) deck.push({r,s});
     }
     deck.sort(()=>Math.random() - 0.5);
   }
@@ -41,9 +50,9 @@
   }
 
   function cardHTML(card, hidden){
-    if(hidden) return '<div class="card back" aria-label="Hidden card"></div>';
+    if(hidden) return '<div class="card back">PLAY<br>3D</div>';
     const red = card.s === 'H' || card.s === 'D';
-    return '<div class="card ' + (red ? 'red' : '') + '"><span class="rank">' + card.r + '</span><span class="suit">' + suitSymbol(card.s) + '</span></div>';
+    return '<div class="card ' + (red ? 'red' : '') + '"><span>' + card.r + '</span><b>' + suitIcon[card.s] + '</b><small>' + card.r + '</small></div>';
   }
 
   function saveBank(){
@@ -51,28 +60,29 @@
   }
 
   function render(showDealer){
-    playerHand.innerHTML = player.map(c=>cardHTML(c,false)).join('');
-    dealerHand.innerHTML = dealer.map((c,i)=>!showDealer && live && i === 1 ? cardHTML(c,true) : cardHTML(c,false)).join('');
-    playerTotal.textContent = 'Total: ' + value(player);
-    dealerTotal.textContent = showDealer || !live ? 'Total: ' + value(dealer) : 'Total: ?';
-    creditsText.textContent = credits;
-    document.getElementById('credits').textContent = credits;
-    bet.textContent = betAmount;
-    stateText.textContent = live ? 'LIVE' : 'READY';
-    dealBtn.disabled = live || credits < betAmount;
-    hitBtn.disabled = !live;
-    standBtn.disabled = !live;
-    doubleBtn.disabled = !live || player.length !== 2 || credits < currentBet;
-    playAgainBtn.disabled = live || credits < betAmount;
+    playerHandEl.innerHTML = player.map(c=>cardHTML(c,false)).join('');
+    dealerHandEl.innerHTML = dealer.map((c,i)=>!showDealer && live && i === 1 ? cardHTML(c,true) : cardHTML(c,false)).join('');
+    playerTotalEl.textContent = 'Total: ' + value(player);
+    dealerTotalEl.textContent = showDealer || !live ? 'Total: ' + value(dealer) : 'Total: ?';
+    creditsTextEl.textContent = credits;
+    creditsEl.textContent = credits;
+    betEl.textContent = betAmount;
+    if(stateTextEl.textContent !== 'OPPONENT THINKING...') stateTextEl.textContent = live ? 'LIVE' : 'READY';
+    dealBtnEl.disabled = live || credits < betAmount;
+    hitBtnEl.disabled = !live;
+    standBtnEl.disabled = !live;
+    doubleBtnEl.disabled = !live || player.length !== 2 || credits < currentBet;
+    playAgainBtnEl.disabled = live || credits < betAmount;
   }
 
   function setResult(text){
-    result.textContent = text;
-    stateText.textContent = text.toUpperCase();
+    resultEl.textContent = text;
+    stateTextEl.textContent = text.toUpperCase();
   }
 
   function finish(text, pay){
     credits += Math.max(0, pay || 0);
+    if(window.Play3DPoints && pay > currentBet) window.Play3DPoints.award('blackjack', Math.min(180, Math.floor(pay / 4)), 'blackjack_win');
     live = false;
     saveBank();
     setResult(text + (pay ? ' +' + pay : ''));
@@ -102,14 +112,34 @@
     else render(false);
   }
 
-  function stand(){
-    if(!live) return;
-    while(value(dealer) < 17) dealer.push(deck.pop());
+  function settleDealer(){
     const pv = value(player);
     const dv = value(dealer);
     if(dv > 21 || pv > dv) finish('You win', currentBet * 2);
     else if(pv === dv) finish('Push', currentBet);
     else finish('Dealer wins', 0);
+  }
+
+  function dealerStep(){
+    if(!live) return;
+    if(value(dealer) < 17){
+      stateTextEl.textContent = 'OPPONENT THINKING...';
+      render(true);
+      window.setTimeout(()=>{
+        dealer.push(deck.pop());
+        render(true);
+        dealerStep();
+      }, thinkDelay());
+      return;
+    }
+    settleDealer();
+  }
+
+  function stand(){
+    if(!live) return;
+    stateTextEl.textContent = 'OPPONENT THINKING...';
+    render(true);
+    window.setTimeout(dealerStep, thinkDelay());
   }
 
   function doubleDown(){
@@ -123,11 +153,11 @@
     else stand();
   }
 
-  dealBtn.onclick = deal;
-  hitBtn.onclick = hit;
-  standBtn.onclick = stand;
-  doubleBtn.onclick = doubleDown;
-  playAgainBtn.onclick = deal;
+  dealBtnEl.onclick = deal;
+  hitBtnEl.onclick = hit;
+  standBtnEl.onclick = stand;
+  doubleBtnEl.onclick = doubleDown;
+  playAgainBtnEl.onclick = deal;
 
   render(true);
 })();
