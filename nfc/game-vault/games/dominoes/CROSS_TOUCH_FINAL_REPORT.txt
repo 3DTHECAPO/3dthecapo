@@ -1,9 +1,0 @@
-PLAY 3D DOMINOES CROSS TOUCH FINAL
-
-Changed:
-- CSS only.
-- Branches pulled flush against the first spinner.
-- Dominoes touch in a connected cross.
-- Rules/script unchanged from true-touch logic.
-
-Only games/dominoes/ included.
