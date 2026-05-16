@@ -4,6 +4,7 @@
   const suits = ['S','H','D','C'];
   const ranks = ['A','K','Q','J','10','9','8','7','6','5','4','3','2'];
   const order = {'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'J':11,'Q':12,'K':13,'A':14};
+  const suitIcon = {S:'\u2660', H:'\u2665', D:'\u2666', C:'\u2663'};
   const bank = window.Play3DGameBank;
   let deck = [];
   let hand = [];
@@ -12,11 +13,16 @@
   let betVal = 25;
   let phase = 'deal';
   const handEl = document.getElementById('hand');
-
-
-  function suitSymbol(s){
-    return ({S:'♠',H:'♥',D:'♦',C:'♣'})[s] || s;
-  }
+  const creditsEl = document.getElementById('credits');
+  const betEl = document.getElementById('bet');
+  const mainScoreEl = document.getElementById('mainScore');
+  const stateTextEl = document.getElementById('stateText');
+  const drawBtnEl = document.getElementById('drawBtn');
+  const dealBtnEl = document.getElementById('dealBtn');
+  const playAgainBtnEl = document.getElementById('playAgainBtn');
+  const betDownEl = document.getElementById('betDown');
+  const betUpEl = document.getElementById('betUp');
+  const rankNameEl = document.getElementById('rankName');
 
   function mk(){
     deck = [];
@@ -59,7 +65,7 @@
   function card(c,i){
     const red = c.s === 'H' || c.s === 'D';
     const held = hold.includes(i);
-    return '<button class="card ' + (red ? 'red ' : '') + (held ? 'hold' : '') + '" data-i="' + i + '"><span class="rank">' + c.r + '</span><span class="suit">' + suitSymbol(c.s) + '</span><small class="mini">' + (held ? 'HOLD' : '') + '</small></button>';
+    return '<button class="card ' + (red ? 'red ' : '') + (held ? 'hold' : '') + '" data-i="' + i + '"><span>' + c.r + '</span><b>' + suitIcon[c.s] + '</b><small>' + (held ? 'HOLD' : c.r) + '</small></button>';
   }
 
   function saveBank(){
@@ -68,15 +74,15 @@
 
   function render(){
     handEl.innerHTML = hand.map(card).join('');
-    credits.textContent = creditsVal;
-    bet.textContent = betVal;
-    mainScore.textContent = creditsVal;
-    stateText.textContent = phase.toUpperCase();
-    drawBtn.disabled = phase !== 'draw';
-    dealBtn.disabled = phase === 'draw' || creditsVal < betVal;
-    playAgainBtn.disabled = phase === 'draw' || creditsVal < betVal;
-    betDown.disabled = phase === 'draw';
-    betUp.disabled = phase === 'draw';
+    creditsEl.textContent = creditsVal;
+    betEl.textContent = betVal;
+    mainScoreEl.textContent = creditsVal;
+    stateTextEl.textContent = phase.toUpperCase();
+    drawBtnEl.disabled = phase !== 'draw';
+    dealBtnEl.disabled = phase === 'draw' || creditsVal < betVal;
+    playAgainBtnEl.disabled = phase === 'draw' || creditsVal < betVal;
+    betDownEl.disabled = phase === 'draw';
+    betUpEl.disabled = phase === 'draw';
     document.querySelectorAll('#hand .card').forEach(button=>{
       button.onclick = ()=>{
         const i = Number(button.dataset.i);
@@ -91,8 +97,8 @@
     if(phase === 'draw') return;
     creditsVal = bank ? bank.getCredits() : creditsVal;
     if(creditsVal < betVal){
-      rankName.textContent = 'NOT ENOUGH CREDITS';
-      stateText.textContent = 'NO CREDITS';
+      rankNameEl.textContent = 'NOT ENOUGH CREDITS';
+      stateTextEl.textContent = 'NO CREDITS';
       render();
       return;
     }
@@ -102,7 +108,7 @@
     hand = deck.splice(0,5);
     hold = [];
     phase = 'draw';
-    rankName.textContent = 'Pick Holds';
+    rankNameEl.textContent = 'Pick Holds';
     render();
   }
 
@@ -112,21 +118,22 @@
     const res = evaluate();
     const pay = res.pay * betVal;
     creditsVal += pay;
+    if(window.Play3DPoints && pay > 0) window.Play3DPoints.award('poker', Math.min(250, Math.max(25, Math.floor(pay / 3))), res.name.toLowerCase().replaceAll(' ','_'));
     saveBank();
-    rankName.textContent = res.name + ' +' + pay;
+    rankNameEl.textContent = res.name + ' +' + pay;
     phase = 'deal';
     render();
   }
 
-  dealBtn.onclick = deal;
-  playAgainBtn.onclick = deal;
-  drawBtn.onclick = draw;
-  betDown.onclick = ()=>{
+  dealBtnEl.onclick = deal;
+  playAgainBtnEl.onclick = deal;
+  drawBtnEl.onclick = draw;
+  betDownEl.onclick = ()=>{
     if(phase === 'draw') return;
     betVal = Math.max(25, betVal - 25);
     render();
   };
-  betUp.onclick = ()=>{
+  betUpEl.onclick = ()=>{
     if(phase === 'draw') return;
     betVal = betVal >= 500 ? 25 : betVal + 25;
     render();
