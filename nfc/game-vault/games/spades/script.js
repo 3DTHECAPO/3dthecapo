@@ -179,6 +179,7 @@
   }
 
   function activeSeat(){ return mode === 'local' ? state.turn : 'south'; }
+  function activeBidSeat(){ return mode === 'local' ? state.turn : 'south'; }
 
   function cardHTML(card,index,disabled){
     const red = card.s === 'H' || card.s === 'D';
@@ -217,7 +218,7 @@
     renderSeats();
     scoreText.textContent = state.score.NS + ' - ' + state.score.EW;
     const label = state.phase === 'bid'
-      ? (state.turn === 'south' ? 'YOUR BID' : seatName(state.turn).toUpperCase() + ' BID')
+      ? (mode === 'local' ? seatName(state.turn).toUpperCase() + ' BID' : (state.turn === 'south' ? 'YOUR BID' : seatName(state.turn).toUpperCase() + ' BID'))
       : state.phase === 'over'
         ? 'HAND OVER'
         : (mode === 'local' ? seatName(state.turn).toUpperCase() + ' TURN' : (state.turn === 'south' ? 'YOUR TURN' : seatName(state.turn).toUpperCase() + ' TURN'));
@@ -229,14 +230,17 @@
 
   document.getElementById('newBtn').onclick = deal;
   document.getElementById('autoBtn').onclick = ()=>{
-    if(state.phase === 'bid') placeBid('south', estimateBid('south'));
+    if(state.phase === 'bid'){
+      const seat = activeBidSeat();
+      placeBid(seat, estimateBid(seat));
+    }
     else {
       const seat = activeSeat();
       const card = legalCards(seat)[0];
       if(card) play(seat, card);
     }
   };
-  document.querySelectorAll('.bidBtn').forEach(btn => btn.onclick = () => placeBid('south', btn.dataset.bid));
+  document.querySelectorAll('.bidBtn').forEach(btn => btn.onclick = () => placeBid(activeBidSeat(), btn.dataset.bid));
   window.addEventListener('play3d:modechange', event=>{ mode = event.detail.mode; deal(); });
   deal();
 })();
