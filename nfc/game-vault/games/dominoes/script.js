@@ -24,7 +24,7 @@ const SCORE_TARGET=150;
 function thinkDelay(){return 400+Math.floor(Math.random()*1000)}
 function seatName(i){return ['Player 1','Player 2','Player 3','Player 4'][i]||'Player'}
 function isDouble(tile){return tile[0]===tile[1]}
-function handSize(){return state.players===2?7:5}
+function handSize(){return 7}
 function activeLocal(){return mode==='local'||mode==='fan'}
 function resetBoard(){state.board={spinnerTile:null,spinnerArms:{left:[],right:[],top:[],bottom:[]},openEnds:[]}}
 function buildStock(){state.stock=[];for(let a=0;a<=6;a++)for(let b=a;b<=6;b++)state.stock.push([a,b]);state.stock.sort(()=>Math.random()-.5)}
@@ -36,10 +36,14 @@ function findHighestDouble(){
     if(isDouble(tile)&&(!best||doubleValue(tile)>doubleValue(best.tile)))best={playerIndex,tile};
   }));
   if(best)return best;
-  const stockIndex=state.stock.reduce((bestIndex,tile,index)=>doubleValue(tile)>doubleValue(state.stock[bestIndex]||[-1,-2])?index:bestIndex,-1);
+  const stockIndex=state.stock.reduce((bestIndex,tile,index)=>{
+    return doubleValue(tile)>doubleValue(state.stock[bestIndex]||[-1,-2])?index:bestIndex;
+  },-1);
   if(stockIndex>=0){
     const tile=state.stock.splice(stockIndex,1)[0];
+    const displaced=state.hands[0].pop();
     state.hands[0].push(tile);
+    state.stock.push(displaced);
     return {playerIndex:0,tile};
   }
   return null;
@@ -153,15 +157,34 @@ function cpuTurn(){
   const player=state.currentPlayerIndex;
   if(player===0||activeLocal())return;
   const hand=state.hands[player];
-  const move=chooseCpuMove(hand);
+  let move=chooseCpuMove(hand);
+  while(!move&&state.stock.length){
+    hand.push(state.stock.pop());
+    log(seatName(player)+' drew.');
+    move=chooseCpuMove(hand);
+  }
   if(move){commitPlay(player,move.tile,move.arm);log(seatName(player)+' played on '+move.arm+'.')}
-  else if(state.stock.length){hand.push(state.stock.pop());log(seatName(player)+' drew.');if(chooseCpuMove(hand))return scheduleCpu()}
   else{state.passes++;log(seatName(player)+' passed.')}
   if(!hand.length){finish(player);return}
   if(state.passes>=state.players){endHand('BLOCKED HAND');return}
   advance();
 }
-function drawTile(){const player=state.currentPlayerIndex;if(player!==0&&!activeLocal())return;if(state.stock.length){state.hands[player].push(state.stock.pop());log(seatName(player)+' drew.');render()}}
+function drawUntilPlayable(player){
+  let drew=false;
+  while(!canPlay(player)&&state.stock.length){
+    state.hands[player].push(state.stock.pop());
+    drew=true;
+  }
+  return drew;
+}
+function drawTile(){
+  const player=state.currentPlayerIndex;
+  if(player!==0&&!activeLocal())return;
+  if(canPlay(player)){log('Play a legal tile if you can.');return}
+  if(drawUntilPlayable(player))log(seatName(player)+' drew from the boneyard.');
+  else log('Boneyard empty.');
+  render();
+}
 function passTurn(){const player=state.currentPlayerIndex;if(player!==0&&!activeLocal())return;if(canPlay(player)){log('Play a legal tile if you can.');return}state.passes++;if(state.passes>=state.players){endHand('BLOCKED HAND');return}advance()}
 function tileHTML(tile,index,cls){return `<button class="tile ${cls||''}" data-i="${index}"><span>${tile[0]}</span><i></i><span>${tile[1]}</span></button>`}
 function backs(count){return Array.from({length:count},()=>'<span class="tile-back"></span>').join('')}
