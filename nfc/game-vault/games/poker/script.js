@@ -7,11 +7,16 @@
   const suitIcon = {S:'\u2660', H:'\u2665', D:'\u2666', C:'\u2663'};
   const bank = window.Play3DGameBank;
   let deck = [];
+  let cpuDeck = [];
   let hand = [];
   let hold = [];
   let creditsVal = bank ? bank.getCredits() : 1000;
   let betVal = 25;
   let phase = 'deal';
+  let mode = window.Play3DModeBar ? window.Play3DModeBar.getMode() : 'cpu';
+  let cpuCreditsVal = 1000;
+  let cpuHand = [];
+  let cpuResult = {name:'Ready', pay:0};
   const handEl = document.getElementById('hand');
   const creditsEl = document.getElementById('credits');
   const betEl = document.getElementById('bet');
@@ -24,6 +29,11 @@
   const betUpEl = document.getElementById('betUp');
   const rankNameEl = document.getElementById('rankName');
   const paytableEl = document.getElementById('paytable');
+  const cpuPanelEl = document.getElementById('cpuPanel');
+  const cpuCreditsEl = document.getElementById('cpuCredits');
+  const cpuCardsEl = document.getElementById('cpuCards');
+  const cpuStatusEl = document.getElementById('cpuStatus');
+  const cpuResultEl = document.getElementById('cpuResult');
   const payouts = [
     {name:'Royal Flush', pay:250},
     {name:'Straight Flush', pay:50},
@@ -44,6 +54,14 @@
     deck.sort(()=>Math.random() - 0.5);
   }
 
+  function mkCpu(){
+    cpuDeck = [];
+    for(const s of suits){
+      for(const r of ranks) cpuDeck.push({r,s});
+    }
+    cpuDeck.sort(()=>Math.random() - 0.5);
+  }
+
   function straight(vals){
     const v = [...new Set(vals)].sort((a,b)=>a-b);
     if(v.length !== 5) return false;
@@ -51,14 +69,14 @@
     return v[4] - v[0] === 4;
   }
 
-  function evaluate(){
+  function evaluate(cards){
     const counts = {};
-    hand.forEach(c=>counts[c.r] = (counts[c.r] || 0) + 1);
+    cards.forEach(c=>counts[c.r] = (counts[c.r] || 0) + 1);
     const groups = Object.values(counts).sort((a,b)=>b-a).join(',');
-    const nums = hand.map(c=>order[c.r]);
-    const flush = hand.length === 5 && hand.every(c=>c.s === hand[0].s);
+    const nums = cards.map(c=>order[c.r]);
+    const flush = cards.length === 5 && cards.every(c=>c.s === cards[0].s);
     const st = straight(nums);
-    const high = new Set(hand.map(c=>c.r));
+    const high = new Set(cards.map(c=>c.r));
     if(flush && st && ['10','J','Q','K','A'].every(x=>high.has(x))) return {name:'Royal Flush',pay:250};
     if(flush && st) return {name:'Straight Flush',pay:50};
     if(groups === '4,1') return {name:'Four Of A Kind',pay:25};
@@ -99,6 +117,7 @@
     playAgainBtnEl.disabled = phase === 'draw' || creditsVal < betVal;
     betDownEl.disabled = phase === 'draw';
     betUpEl.disabled = phase === 'draw' || betVal >= creditsVal;
+    renderCpu();
     document.querySelectorAll('#hand .card').forEach(button=>{
       button.onclick = ()=>{
         const i = Number(button.dataset.i);
@@ -107,6 +126,49 @@
         render();
       };
     });
+  }
+
+  function cpuBacks(count){
+    return Array.from({length:count},()=>'<div class="card back"></div>').join('');
+  }
+
+  function cpuFace(card){
+    const red = card.s === 'H' || card.s === 'D';
+    return '<div class="card mini '+(red?'red':'')+'"><span>'+card.r+'</span><b>'+suitIcon[card.s]+'</b><small>'+card.r+'</small></div>';
+  }
+
+  function renderCpu(){
+    const solo = mode !== 'fan';
+    cpuPanelEl.hidden = !solo;
+    if(!solo) return;
+    cpuCreditsEl.textContent = cpuCreditsVal;
+    cpuCardsEl.innerHTML = cpuHand.length ? cpuHand.map(cpuFace).join('') : cpuBacks(5);
+    cpuResultEl.textContent = cpuResult.name;
+  }
+
+  function setCpuStatus(text){ if(mode !== 'fan') cpuStatusEl.textContent = text; }
+
+  function pulseTable(cls){
+    document.querySelector('.casino-table').classList.add(cls);
+    window.setTimeout(()=>document.querySelector('.casino-table').classList.remove(cls), 650);
+  }
+
+  function simulateCpuRound(){
+    if(mode === 'fan') return;
+    cpuCreditsVal = Math.max(0, cpuCreditsVal - betVal);
+    cpuHand = [];
+    cpuResult = {name:'Thinking', pay:0};
+    setCpuStatus('Shuffling and drawing...');
+    renderCpu();
+    window.setTimeout(()=>{
+      mkCpu();
+      cpuHand = cpuDeck.splice(0,5);
+      cpuResult = evaluate(cpuHand);
+      const cpuPay = cpuResult.pay * betVal;
+      cpuCreditsVal += cpuPay;
+      setCpuStatus(cpuPay ? 'Computer wins '+cpuPay+'.' : 'Computer misses.');
+      renderCpu();
+    }, 500);
   }
 
   function deal(){
@@ -126,12 +188,14 @@
     phase = 'draw';
     rankNameEl.textContent = 'Pick Holds';
     render();
+    pulseTable('dealing');
+    simulateCpuRound();
   }
 
   function draw(){
     if(phase !== 'draw') return;
     hand = hand.map((c,i)=>hold.includes(i) ? c : deck.pop());
-    const res = evaluate();
+    const res = evaluate(hand);
     const pay = res.pay * betVal;
     creditsVal += pay;
     if(window.Play3DPoints && pay > 0) window.Play3DPoints.award('poker', Math.min(250, Math.max(25, Math.floor(pay / 3))), res.name.toLowerCase().replaceAll(' ','_'));
@@ -139,6 +203,7 @@
     rankNameEl.textContent = res.pay ? res.name + ' +' + pay : 'No Win +0';
     phase = 'deal';
     render();
+    pulseTable(pay ? 'player-win' : 'player-loss');
   }
 
   dealBtnEl.onclick = deal;
@@ -154,6 +219,14 @@
     betVal = Math.min(500, betVal + 25, Math.max(25, creditsVal));
     render();
   };
+  window.addEventListener('play3d:modechange', event=>{
+    mode = event.detail.mode;
+    if(mode === 'fan'){
+      cpuHand = [];
+      cpuResult = {name:'Hidden', pay:0};
+    }
+    render();
+  });
 
   renderPaytable();
   render();

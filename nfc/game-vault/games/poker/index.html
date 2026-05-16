@@ -23,6 +23,15 @@
     <div class="casino-table">
       <div class="table-logo">POKER</div>
       <div class="table-content">
+        <aside id="cpuPanel" class="cpu-panel">
+          <div class="cpu-head">
+            <span>Computer Opponent</span>
+            <b id="cpuCredits">1000</b>
+          </div>
+          <div id="cpuCards" class="cpu-cards"></div>
+          <p id="cpuStatus">Waiting for the next hand.</p>
+          <strong id="cpuResult">Ready</strong>
+        </aside>
         <div class="row">
           <button id="dealBtn">Deal</button>
           <button id="drawBtn">Draw</button>
@@ -30,7 +39,7 @@
           <button id="betUp">Bet +</button>
           <button id="playAgainBtn">Play Again</button>
         </div>
-        <div id="hand" class="hand"></div>
+        <div id="hand" class="hand player-hand"></div>
         <p>Credits: <b id="credits">1000</b> | Bet: <b id="bet">25</b> | Hand: <b id="rankName">Ready</b></p>
         <p>Click cards to hold, then Draw.</p>
         <section class="paytable-panel">
