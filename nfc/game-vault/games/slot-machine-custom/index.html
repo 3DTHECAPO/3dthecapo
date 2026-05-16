@@ -36,13 +36,32 @@
       <strong>JACKPOT <b id="jackpot">5000</b></strong>
     </div>
 
-    <div class="reel-window" id="reelBoard" aria-label="slot reels"></div>
-    <div class="payline" aria-hidden="true"></div>
+    <div class="payline-shell">
+      <div class="line-markers left" id="leftLineMarkers" aria-hidden="true"></div>
+      <div class="reel-wrap">
+        <div class="reel-window" id="reelBoard" aria-label="slot reels"></div>
+        <svg class="payline-overlay" viewBox="0 0 300 300" aria-hidden="true">
+          <line data-line-id="1" x1="10" y1="50" x2="290" y2="50"></line>
+          <line data-line-id="2" x1="10" y1="150" x2="290" y2="150"></line>
+          <line data-line-id="3" x1="10" y1="250" x2="290" y2="250"></line>
+          <line data-line-id="4" x1="18" y1="18" x2="282" y2="282"></line>
+          <line data-line-id="5" x1="18" y1="282" x2="282" y2="18"></line>
+          <line data-line-id="6" x1="50" y1="10" x2="50" y2="290"></line>
+          <line data-line-id="7" x1="150" y1="10" x2="150" y2="290"></line>
+          <line data-line-id="8" x1="250" y1="10" x2="250" y2="290"></line>
+        </svg>
+      </div>
+      <div class="line-markers right" id="rightLineMarkers" aria-hidden="true"></div>
+    </div>
 
     <div class="machine-panel">
       <div class="meter"><span>Credits</span><b id="credits">1000</b></div>
       <div class="meter"><span>Bet</span><b id="bet">25</b></div>
       <div class="meter"><span>Last Win</span><b id="lastWin">0</b></div>
+    </div>
+    <div class="line-win-panel">
+      <div><span>Line Win</span><b id="lineWin">0</b></div>
+      <div><span>Winning Lines</span><b id="winningLines">None</b></div>
     </div>
 
     <div class="slot-controls">
@@ -54,6 +73,15 @@
 
     <p class="result-line" id="resultLine">Land matching assets for credits. Three Vault Pass covers unlock a claim.</p>
   </div>
+</section>
+
+<section class="paytable-panel">
+  <div>
+    <div class="kicker">LOCKED PAYTABLE</div>
+    <h2>Paytable</h2>
+  </div>
+  <div id="paytable" class="paytable-grid"></div>
+  <p id="wildNote" class="wild-note"></p>
 </section>
 
 <section class="vault-pass-overlay" id="vaultPassOverlay" hidden>
