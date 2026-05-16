@@ -27,7 +27,6 @@ p{color:var(--muted);line-height:1.45}.score{min-width:190px;border:1px solid rg
 .cpu-head{display:flex;justify-content:space-between;gap:12px;align-items:center;text-transform:uppercase;font-weight:900;color:var(--gold2)}
 .cpu-cards{display:flex;gap:6px;min-height:72px;align-items:center}
 .cpu-cards .card.back{width:44px;height:64px}
-.cpu-cards .card.mini{width:44px;height:64px;font-size:14px;cursor:default}
 .cpu-panel p{margin:0}
 .cpu-panel strong{color:var(--gold2);font-family:"Black Ops One";text-transform:uppercase}
 .player-hand .card{animation:dealIn .35s ease both}

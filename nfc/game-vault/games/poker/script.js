@@ -14,8 +14,6 @@
   let betVal = 25;
   let phase = 'deal';
   let mode = window.Play3DModeBar ? window.Play3DModeBar.getMode() : 'cpu';
-  let cpuCreditsVal = 1000;
-  let cpuHand = [];
   let cpuResult = {name:'Ready', pay:0};
   const handEl = document.getElementById('hand');
   const creditsEl = document.getElementById('credits');
@@ -132,17 +130,12 @@
     return Array.from({length:count},()=>'<div class="card back"></div>').join('');
   }
 
-  function cpuFace(card){
-    const red = card.s === 'H' || card.s === 'D';
-    return '<div class="card mini '+(red?'red':'')+'"><span>'+card.r+'</span><b>'+suitIcon[card.s]+'</b><small>'+card.r+'</small></div>';
-  }
-
   function renderCpu(){
     const solo = mode !== 'fan';
     cpuPanelEl.hidden = !solo;
     if(!solo) return;
-    cpuCreditsEl.textContent = cpuCreditsVal;
-    cpuCardsEl.innerHTML = cpuHand.length ? cpuHand.map(cpuFace).join('') : cpuBacks(5);
+    cpuCreditsEl.textContent = 'House Bank';
+    cpuCardsEl.innerHTML = cpuBacks(5);
     cpuResultEl.textContent = cpuResult.name;
   }
 
@@ -155,20 +148,9 @@
 
   function simulateCpuRound(){
     if(mode === 'fan') return;
-    cpuCreditsVal = Math.max(0, cpuCreditsVal - betVal);
-    cpuHand = [];
-    cpuResult = {name:'Thinking', pay:0};
-    setCpuStatus('Shuffling and drawing...');
+    cpuResult = {name:'Watching', pay:0};
+    setCpuStatus('House watches draw.');
     renderCpu();
-    window.setTimeout(()=>{
-      mkCpu();
-      cpuHand = cpuDeck.splice(0,5);
-      cpuResult = evaluate(cpuHand);
-      const cpuPay = cpuResult.pay * betVal;
-      cpuCreditsVal += cpuPay;
-      setCpuStatus(cpuPay ? 'Computer wins '+cpuPay+'.' : 'Computer misses.');
-      renderCpu();
-    }, 500);
   }
 
   function deal(){
@@ -201,6 +183,10 @@
     if(window.Play3DPoints && pay > 0) window.Play3DPoints.award('poker', Math.min(250, Math.max(25, Math.floor(pay / 3))), res.name.toLowerCase().replaceAll(' ','_'));
     saveBank();
     rankNameEl.textContent = res.pay ? res.name + ' +' + pay : 'No Win +0';
+    if(mode !== 'fan'){
+      cpuResult = {name:pay ? 'Paid' : 'Collected', pay};
+      setCpuStatus(pay ? 'Dealer pays win.' : 'No win — house collects.');
+    }
     phase = 'deal';
     render();
     pulseTable(pay ? 'player-win' : 'player-loss');
@@ -222,7 +208,6 @@
   window.addEventListener('play3d:modechange', event=>{
     mode = event.detail.mode;
     if(mode === 'fan'){
-      cpuHand = [];
       cpuResult = {name:'Hidden', pay:0};
     }
     render();
