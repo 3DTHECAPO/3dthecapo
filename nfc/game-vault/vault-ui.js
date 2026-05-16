@@ -2,18 +2,14 @@
 'use strict';
 
 const games = [
-  {id:'hood-monopoly',title:'PLAY 3D: Vallejo Hood Monopoly',pill:'Street Empire',tags:['Strategy','Bay Area','Empire'],href:'./games/hood-monopoly/',bg:'./games/hood-monopoly/assets/skyline.svg',desc:'Cinematic Vallejo street empire board game with old-school Bay cars, property takeovers, and PLAY 3D energy.',type:'strategy multiplayer',difficulty:'Medium',players:'2-4 Players'},
-  {id:'chess',title:'Vault Chess',pill:'Strategy',tags:['Strategy','Fan Challenge','AI'],href:'./games/chess/',bg:'./assets/preview_chess.svg',desc:'Luxury chess board with legal moves, CPU mode, timers, and guarded fan-room routing.',type:'strategy multiplayer',difficulty:'Medium',players:'1-2 Players'},
+  {id:'chess',title:'Vault Chess',pill:'Strategy',tags:['Strategy','Fan Mode','AI'],href:'./games/chess/',bg:'./assets/preview_chess.svg',desc:'Luxury chess board with legal moves, CPU mode, timers, and guarded fan-room routing.',type:'strategy multiplayer',difficulty:'Medium',players:'1-2 Players'},
   {id:'slots',title:'3D Slots',pill:'Casino',tags:['Casino','Rewards','Fast'],href:'./games/slot-machine-custom/',bg:'./assets/preview_slots.svg',desc:'Premium reel room with vault energy, jackpot glow, and reward-ready structure.',type:'casino',difficulty:'Easy',players:'Solo'},
   {id:'blackjack',title:'Blackjack',pill:'High Limit',tags:['Casino','Cards','Dealer'],href:'./games/blackjack/',bg:'./assets/preview_blackjack.svg',desc:'Black-and-gold card table for quick blackjack sessions.',type:'casino cards',difficulty:'Medium',players:'Solo'},
-  {id:'poker',title:'Poker',pill:'Card Room',tags:['Casino','Cards','Fan Challenge'],href:'./games/poker/',bg:'./assets/preview_poker.svg',desc:'Private table energy with draw poker, room codes, and member prize points.',type:'casino cards multiplayer',difficulty:'Medium',players:'Solo / Fan'},
-  {id:'spades',title:'Spades',pill:'Team Table',tags:['Cards','Fan Challenge','Teams'],href:'./games/spades/',bg:'./assets/preview_spades.svg',desc:'Classic team card room with CPU fill, local turns, and room-code guard.',type:'cards strategy multiplayer',difficulty:'Medium',players:'2-4'},
-  {id:'pinochle',title:'Pinochle',pill:'Legacy Cards',tags:['Cards','Strategy','Classic'],href:'./games/pinochle/',bg:'./assets/preview_pinochle.svg',desc:'Old-school strategic card table with 2-player and team-table modes.',type:'cards strategy multiplayer',difficulty:'Hard',players:'2'},
+  {id:'poker',title:'Poker',pill:'Card Room',tags:['Casino','Cards','Fan Mode'],href:'./games/poker/',bg:'./assets/preview_poker.svg',desc:'Private table energy with draw poker, room codes, and member prize points.',type:'casino cards multiplayer',difficulty:'Medium',players:'Solo / Fan'},
+  {id:'spades',title:'Spades',pill:'Team Table',tags:['Cards','Fan Mode','Teams'],href:'./games/spades/',bg:'./assets/preview_spades.svg',desc:'Classic team card room with CPU fill, local turns, and room-code guard.',type:'cards strategy multiplayer',difficulty:'Medium',players:'2-4'},
+  {id:'pinochle',title:'Pinochle',pill:'Legacy Cards',tags:['Cards','Strategy','Classic'],href:'./games/pinochle/',bg:'./assets/preview_pinochle.svg',desc:'Old-school strategic card table with mode-aware playable foundation.',type:'cards strategy multiplayer',difficulty:'Hard',players:'2'},
   {id:'rummy',title:'Rummy',pill:'Run Builder',tags:['Cards','Strategy','Chill'],href:'./games/rummy/',bg:'./assets/preview_rummy.svg',desc:'Card-meld table with run scoring, local points, and member prize progress.',type:'cards strategy',difficulty:'Medium',players:'1-2'},
-  {id:'dominoes',title:'Dominoes',pill:'Street Table',tags:['Strategy','Fan Challenge','Classic'],href:'./games/dominoes/',bg:'./assets/preview_dominoes.svg',desc:'Black-and-gold domino table with CPU, local, and fan challenge modes.',type:'strategy multiplayer',difficulty:'Medium',players:'2'},
-  {id:'heist',title:'Vault Heist',pill:'Surprise Room',tags:['Action','Vault','Rewards'],href:'./games/vault-heist/',bg:'./assets/preview_heist.svg',desc:'Playable vault runner with keyboard, mobile hold controls, and fan-room-safe sync hooks.',type:'action multiplayer',difficulty:'Hard',players:'1-2'},
-
-  {id:'rewards',title:'Rewards',pill:'Vault Perks',tags:['Rewards','Member','Claim'],href:'./rewards/',bg:'./assets/preview_rewards.svg',desc:'Rewards wallet, prize codes, and claim path for the vault ecosystem.',type:'multiplayer',difficulty:'Member',players:'All'}
+  {id:'dominoes',title:'Dominoes',pill:'Street Table',tags:['Strategy','Fan Mode','Classic'],href:'./games/dominoes/',bg:'./assets/preview_dominoes.svg',desc:'Black-and-gold domino table with CPU, local, and fan challenge modes.',type:'strategy multiplayer',difficulty:'Medium',players:'2'}
 ];
 
 const hubParams = new URLSearchParams(window.location.search);
@@ -25,7 +21,7 @@ function fanRoomQuery(){
 }
 
 function launchHref(game){
-  if(!game || game.id === 'rewards') return game ? game.href : './index.html';
+  if(!game) return '#';
   return game.href.split('?')[0] + fanRoomQuery();
 }
 
@@ -60,7 +56,7 @@ function card(game){
       <div class="card-body">
         <div class="tags">${game.tags.slice(0,3).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
         <div class="kicker">${game.pill}</div>
-        <h3 class="game-title"><span class="game-title-text">${game.title}</span></h3>
+        <h3>${game.title}</h3>
         <p>${game.desc}</p>
         <div class="meta">
           <span>${game.players}</span>
@@ -130,54 +126,6 @@ function loadLast(){
     continueBtn.href = launchHref(g);
   }catch(e){}
 }
-
-
-/* ===== HOOD MONOPOLY TITLE FIX ===== */
-(function(){
-  const style = document.createElement('style');
-  style.textContent = `
-    .game-title,
-    .game-card h3{
-      width:100%;
-      max-width:100%;
-      overflow:visible !important;
-      white-space:normal !important;
-      text-overflow:unset !important;
-      line-height:1.15 !important;
-      word-break:break-word !important;
-      overflow-wrap:anywhere !important;
-      font-size:clamp(18px,1.5vw,28px);
-      margin-bottom:10px;
-    }
-
-    .game-title-text{
-      display:block;
-      width:100%;
-      white-space:normal !important;
-      overflow:visible !important;
-      text-overflow:unset !important;
-      word-break:break-word !important;
-      overflow-wrap:anywhere !important;
-    }
-
-    .game-card{
-      overflow:visible !important;
-      min-height:unset !important;
-    }
-
-    .card-body{
-      overflow:visible !important;
-    }
-
-    .game-card[data-game="hood-monopoly"] .game-title,
-    .game-card[data-game="hood-monopoly"] h3{
-      font-size:clamp(20px,1.8vw,32px);
-      line-height:1.12 !important;
-    }
-  `;
-  document.head.appendChild(style);
-})();
-
 
 loadLast();
 render();
