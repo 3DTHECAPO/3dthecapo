@@ -5,24 +5,19 @@
   --cream:#f4f1ea;
   --muted:rgba(244,241,234,.68);
   --line:rgba(242,210,123,.35);
-  --felt:#08170f;
-  --black:#050505;
+  --felt:#07160d;
 }
 body{
   margin:0;
   min-height:100vh;
   color:var(--cream);
-  background:
-    radial-gradient(circle at top,rgba(242,210,123,.16),transparent 36%),
-    linear-gradient(180deg,#070707,#000);
+  background:radial-gradient(circle at top,rgba(242,210,123,.16),transparent 36%),linear-gradient(180deg,#070707,#000);
   font-family:Oswald,Arial,sans-serif;
   overflow-x:hidden;
 }
 .bg{
   position:fixed;inset:0;z-index:-1;
-  background:
-    linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.9)),
-    url("./assets/bg.svg") center/cover no-repeat;
+  background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.9)),url("./assets/bg.svg") center/cover no-repeat;
   opacity:.5;
 }
 .app{width:min(1180px,96vw);margin:0 auto;padding:16px 0 40px}
@@ -32,10 +27,7 @@ body{
   background:linear-gradient(180deg,rgba(16,16,16,.96),rgba(0,0,0,.78));
   box-shadow:0 22px 70px rgba(0,0,0,.72);
 }
-.top{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 14px;margin-bottom:14px;
-}
+.top{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:14px}
 .brand{display:flex;align-items:center;gap:10px;color:var(--cream);text-decoration:none}
 .brand span{
   display:grid;place-items:center;width:42px;height:42px;border-radius:50%;
@@ -49,10 +41,7 @@ nav a{color:var(--cream);text-decoration:none;border:1px solid var(--line);paddi
 .kicker,.label{color:var(--gold2);text-transform:uppercase;letter-spacing:2px;font-weight:900;font-size:12px}
 h1{font-family:"Black Ops One";font-size:clamp(38px,7vw,76px);line-height:.95;margin:8px 0;color:var(--gold2);text-shadow:0 0 24px rgba(242,210,123,.28)}
 p{color:var(--muted);font-size:18px;margin:0}
-.status{min-width:170px;text-align:right}
-.status span,.score-strip{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-size:12px}
-.status b{display:block;color:var(--gold2);font-size:30px;line-height:1}
-.status small{color:var(--gold);font-weight:900}
+.status{min-width:170px;text-align:right}.status span,.score-strip{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-size:12px}.status b{display:block;color:var(--gold2);font-size:30px;line-height:1}.status small{color:var(--gold);font-weight:900}
 .mode-panel{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;margin-bottom:14px}
 .segmented{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 button{
@@ -66,417 +55,203 @@ button{
   letter-spacing:1px;
   cursor:pointer;
 }
-button.active,button:hover{
-  background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#7c581a);
-  color:#100c05;
-}
+button.active,button:hover{background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#7c581a);color:#100c05}
 button:disabled{opacity:.35;cursor:not-allowed;filter:grayscale(.55)}
+
 .domino-table{
   position:relative;
-  min-height:520px;
-  padding:26px;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at center,rgba(242,210,123,.12),transparent 48%),
-    radial-gradient(ellipse at center,#12351f 0%,#07160d 48%,#020202 100%);
+  min-height:620px;
+  padding:24px;
+  overflow:auto;
+  background:radial-gradient(circle at center,rgba(242,210,123,.12),transparent 48%),radial-gradient(ellipse at center,#12351f 0%,#07160d 48%,#020202 100%);
 }
 .table-logo{
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   font-family:"Black Ops One";font-size:clamp(42px,9vw,110px);
-  color:rgba(242,210,123,.06);white-space:nowrap;pointer-events:none;
+  color:rgba(242,210,123,.05);white-space:nowrap;pointer-events:none;
 }
 .seat{
-  position:absolute;
-  border:1px solid var(--line);
-  background:rgba(0,0,0,.62);
-  color:var(--gold2);
-  font-weight:900;
-  letter-spacing:1px;
-  border-radius:999px;
-  padding:9px 14px;
-  text-transform:uppercase;
-  box-shadow:0 10px 25px rgba(0,0,0,.45);
+  position:absolute;border:1px solid var(--line);background:rgba(0,0,0,.62);color:var(--gold2);
+  font-weight:900;letter-spacing:1px;border-radius:999px;padding:9px 14px;text-transform:uppercase;
+  box-shadow:0 10px 25px rgba(0,0,0,.45);z-index:3;
 }
 .seat.active{box-shadow:0 0 25px rgba(242,210,123,.55);background:rgba(80,55,12,.88)}
 .seat-north{top:18px;left:50%;transform:translateX(-50%)}
 .seat-south{bottom:18px;left:50%;transform:translateX(-50%)}
 .seat-west{left:18px;top:50%;transform:translateY(-50%)}
 .seat-east{right:18px;top:50%;transform:translateY(-50%)}
+
 .table-center{
-  position:absolute;inset:82px 70px;
+  position:absolute;
+  inset:82px 76px 96px 76px;
   display:grid;
-  grid-template-rows:minmax(92px,1fr) auto minmax(92px,1fr);
-  place-items:center;
-  gap:8px;
+  grid-template-rows:auto auto auto;
+  justify-items:center;
+  align-content:center;
   overflow:auto;
-  padding:10px;
+  padding:24px;
 }
-.main-line-wrap{display:flex;align-items:center;justify-content:center;gap:12px;min-width:max-content}
-.branch{display:flex;gap:8px;align-items:center;justify-content:center;min-height:96px;min-width:80px}
-.branch-left,.branch-right{flex-wrap:nowrap}
+.cross-row{
+  display:grid;
+  grid-template-columns:auto var(--vW) auto;
+  align-items:center;
+  justify-items:center;
+  gap:0;
+  min-width:max-content;
+}
+.branch{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  overflow:visible;
+  min-width:var(--hW);
+  min-height:var(--vH);
+}
+.branch-left,.branch-right{flex-direction:row}
 .branch-top,.branch-bottom{flex-direction:column}
-.spinner-slot{min-width:110px;display:grid;place-items:center}
-.boneyard{
-  position:absolute;right:22px;bottom:22px;
-  display:grid;place-items:center;
-  min-width:86px;height:86px;border-radius:18px;
-  border:1px solid var(--line);
-  background:rgba(0,0,0,.72);
+.spinner-slot{
+  width:var(--vW);
+  height:var(--vH);
+  display:grid;
+  place-items:center;
+  z-index:2;
 }
-.boneyard span{font-size:11px;text-transform:uppercase;color:var(--muted)}
-.boneyard b{font-size:30px;color:var(--gold2)}
+.boneyard{
+  position:absolute;right:22px;bottom:22px;display:grid;place-items:center;
+  min-width:86px;height:86px;border-radius:18px;border:1px solid var(--line);background:rgba(0,0,0,.72);z-index:4;
+}
+.boneyard span{font-size:11px;text-transform:uppercase;color:var(--muted)}.boneyard b{font-size:30px;color:var(--gold2)}
+
+:root{
+  --hW:92px;
+  --hH:48px;
+  --vW:48px;
+  --vH:92px;
+}
+
+/* True domino dimensions. No transform rotation anywhere. */
 .domino{
-  --w:48px;--h:92px;
-  width:var(--w);height:var(--h);
-  display:flex;flex-direction:column;justify-content:space-around;align-items:center;
   border:2px solid rgba(242,210,123,.78);
   border-radius:12px;
   background:linear-gradient(180deg,#171717,#020202);
-  box-shadow:0 14px 26px rgba(0,0,0,.62), inset 0 0 22px rgba(202,162,74,.12);
   color:var(--gold2);
+  box-shadow:0 14px 26px rgba(0,0,0,.62), inset 0 0 22px rgba(202,162,74,.12);
   font-weight:900;
   flex:0 0 auto;
+  margin:0;
+  transform:none!important;
 }
-.domino.double{
-  transform:rotate(90deg);
-  margin:24px 18px;
-}
-.domino.spinner{
-  outline:3px solid var(--gold2);
-  box-shadow:0 0 30px rgba(242,210,123,.68),0 14px 26px rgba(0,0,0,.62), inset 0 0 24px rgba(242,210,123,.22);
-}
-.domino .half{
-  width:100%;height:43%;
-  display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
-  padding:6px;
-}
-.domino .divider{width:82%;height:2px;background:rgba(242,210,123,.55)}
-.pip{width:7px;height:7px;border-radius:50%;background:var(--gold2);box-shadow:0 0 8px rgba(242,210,123,.55);align-self:center;justify-self:center}
-.hand-panel{margin-top:14px;padding:18px}
-.panel-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
-.panel h2{margin:0;color:var(--gold2);font-family:"Black Ops One";letter-spacing:1px}
-.hand{display:flex;gap:10px;align-items:center;overflow-x:auto;padding:18px 4px 26px}
-.domino-btn{
-  border:0;background:transparent;padding:6px;border-radius:16px;
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-}
-.domino-btn:hover,.domino-btn.selected{background:rgba(242,210,123,.12)}
-.domino-btn small{color:var(--gold);font-size:10px;letter-spacing:1px;max-width:90px}
-.domino-btn .domino{transition:transform .12s ease}
-.domino-btn:hover .domino{transform:translateY(-8px)}
-.controls{display:flex;gap:10px;flex-wrap:wrap;padding:14px;margin-top:14px}
-.log-panel{padding:16px;margin-top:14px}
-#log{margin:10px 0 0;padding-left:20px;color:var(--muted)}
-#log li{margin:4px 0}
-@media(max-width:780px){
-  .hero,.mode-panel{display:block}
-  .status{text-align:left;margin-top:12px}
-  .domino-table{min-height:500px;padding:14px}
-  .table-center{inset:74px 12px 92px}
-  .seat-west,.seat-east{display:none}
-  .domino{--w:42px;--h:82px}
-  .main-line-wrap{gap:6px}
-  nav a{font-size:13px}
-}
-
-
-/* PLAY 3D real spinner / branch endpoint layout repair */
-.branch-top,.branch-bottom{
-  min-width:110px;
-  min-height:120px;
-  flex-direction:column;
-}
-.branch-left,.branch-right{
-  min-width:120px;
-  min-height:100px;
+.domino.horizontal{
+  width:var(--hW);
+  height:var(--hH);
+  min-width:var(--hW);
+  min-height:var(--hH);
+  display:flex;
   flex-direction:row;
 }
-.domino.top:not(.double),
-.domino.bottom:not(.double){
-  transform:rotate(0deg);
+.domino.vertical{
+  width:var(--vW);
+  height:var(--vH);
+  min-width:var(--vW);
+  min-height:var(--vH);
+  display:flex;
+  flex-direction:column;
 }
-.domino.left:not(.double),
-.domino.right:not(.double){
-  transform:rotate(90deg);
-  margin:24px 18px;
+.domino .half{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr);
+  place-items:center;
+  padding:5px;
 }
-.domino.double{
-  outline:1px solid rgba(242,210,123,.35);
-}
+.domino.horizontal .half{width:43%;height:100%}
+.domino.vertical .half{width:100%;height:43%}
+.domino.horizontal .divider{width:2px;height:82%;align-self:center;background:rgba(242,210,123,.55)}
+.domino.vertical .divider{width:82%;height:2px;align-self:center;background:rgba(242,210,123,.55)}
+.pip{width:7px;height:7px;border-radius:50%;background:var(--gold2);box-shadow:0 0 8px rgba(242,210,123,.55);align-self:center;justify-self:center}
 .domino.spinner{
   outline:3px solid var(--gold2);
   box-shadow:0 0 32px rgba(242,210,123,.72),0 14px 26px rgba(0,0,0,.62), inset 0 0 24px rgba(242,210,123,.22);
 }
-.domino-btn small{
-  color:var(--gold2);
-  text-shadow:0 1px 8px rgba(0,0,0,.8);
+.domino .half.connect{
+  box-shadow:inset 0 0 0 2px rgba(242,210,123,.9),0 0 12px rgba(242,210,123,.3);
 }
 
-
-
-/* PLAY 3D DOMINO NO-OVERLAP LAYOUT FIX
-   Do not use transform rotation for domino layout.
-   Transforms visually rotate but do not reserve physical space, which caused overlap.
-*/
-.table-center{
-  display:grid !important;
-  grid-template-rows:minmax(118px,auto) minmax(130px,auto) minmax(118px,auto) !important;
-  place-items:center !important;
-  gap:18px !important;
-  overflow:auto !important;
-  padding:24px !important;
-}
-.main-line-wrap{
-  display:grid !important;
-  grid-template-columns:minmax(120px,auto) 110px minmax(120px,auto) !important;
-  align-items:center !important;
-  justify-items:center !important;
-  gap:18px !important;
-  min-width:max-content !important;
-}
-.branch{
-  gap:10px !important;
-  overflow:visible !important;
-}
-.branch-left,
-.branch-right{
-  display:flex !important;
-  flex-direction:row !important;
-  align-items:center !important;
-  justify-content:center !important;
-  min-height:112px !important;
-}
-.branch-top,
-.branch-bottom{
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:center !important;
-  justify-content:center !important;
-  min-width:112px !important;
-}
-.spinner-slot{
-  width:110px !important;
-  min-height:112px !important;
-  display:grid !important;
-  place-items:center !important;
-}
-
-/* Default domino = horizontal tile for left/right chain */
-.domino{
-  width:92px !important;
-  height:48px !important;
-  min-width:92px !important;
-  min-height:48px !important;
-  display:flex !important;
-  flex-direction:row !important;
-  align-items:center !important;
-  justify-content:space-around !important;
-  margin:0 !important;
-  transform:none !important;
-  flex:0 0 auto !important;
-}
-.domino .half{
-  width:43% !important;
-  height:100% !important;
-  display:grid !important;
-  grid-template-columns:repeat(3,1fr) !important;
-  grid-template-rows:repeat(3,1fr) !important;
-  padding:5px !important;
-}
-.domino .divider{
-  width:2px !important;
-  height:82% !important;
-}
-
-/* Vertical branch normal tiles stack vertically */
-.branch-top .domino,
-.branch-bottom .domino{
-  width:48px !important;
-  height:92px !important;
-  min-width:48px !important;
-  min-height:92px !important;
-  flex-direction:column !important;
-}
-.branch-top .domino .half,
-.branch-bottom .domino .half,
-.spinner-slot .domino .half{
-  width:100% !important;
-  height:43% !important;
-}
-.branch-top .domino .divider,
-.branch-bottom .domino .divider,
-.spinner-slot .domino .divider{
-  width:82% !important;
-  height:2px !important;
-}
-
-/* Doubles are perpendicular WITHOUT transform */
-.branch-left .domino.double,
-.branch-right .domino.double,
-.spinner-slot .domino{
-  width:48px !important;
-  height:92px !important;
-  min-width:48px !important;
-  min-height:92px !important;
-  flex-direction:column !important;
-}
-.branch-left .domino.double .half,
-.branch-right .domino.double .half{
-  width:100% !important;
-  height:43% !important;
-}
-.branch-left .domino.double .divider,
-.branch-right .domino.double .divider{
-  width:82% !important;
-  height:2px !important;
-}
-
-/* On vertical branches, doubles lay sideways/perpendicular */
-.branch-top .domino.double,
-.branch-bottom .domino.double{
-  width:92px !important;
-  height:48px !important;
-  min-width:92px !important;
-  min-height:48px !important;
-  flex-direction:row !important;
-}
-.branch-top .domino.double .half,
-.branch-bottom .domino.double .half{
-  width:43% !important;
-  height:100% !important;
-}
-.branch-top .domino.double .divider,
-.branch-bottom .domino.double .divider{
-  width:2px !important;
-  height:82% !important;
-}
-
-.domino.top,
-.domino.bottom,
-.domino.left,
-.domino.right,
-.domino.double,
-.domino.sideways{
-  transform:none !important;
-}
-
-.hand .domino,
-.domino-btn .domino{
-  width:48px !important;
-  height:92px !important;
-  min-width:48px !important;
-  min-height:92px !important;
-  flex-direction:column !important;
-}
-.hand .domino .half,
-.domino-btn .domino .half{
-  width:100% !important;
-  height:43% !important;
-}
-.hand .domino .divider,
-.domino-btn .domino .divider{
-  width:82% !important;
-  height:2px !important;
-}
+/* Hand always shows normal vertical tiles. */
+.hand-panel{margin-top:14px;padding:18px}
+.panel-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.panel h2{margin:0;color:var(--gold2);font-family:"Black Ops One";letter-spacing:1px}
+.hand{display:flex;gap:10px;align-items:center;overflow-x:auto;padding:18px 4px 26px}
+.domino-btn{border:0;background:transparent;padding:6px;border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.domino-btn:hover,.domino-btn.selected{background:rgba(242,210,123,.12)}
+.domino-btn small{color:var(--gold2);font-size:10px;letter-spacing:1px;max-width:100px;text-align:center}
+.domino-btn:hover .domino{transform:none!important;filter:brightness(1.18)}
+.controls{display:flex;gap:10px;flex-wrap:wrap;padding:14px;margin-top:14px}
+.log-panel{padding:16px;margin-top:14px}
+#log{margin:10px 0 0;padding-left:20px;color:var(--muted)}
+#log li{margin:4px 0}
 
 @media(max-width:780px){
-  .table-center{
-    padding:16px !important;
-    gap:14px !important;
-  }
-  .main-line-wrap{
-    gap:12px !important;
-  }
-  .domino{
-    width:78px !important;
-    height:42px !important;
-    min-width:78px !important;
-    min-height:42px !important;
-  }
-  .branch-top .domino,
-  .branch-bottom .domino,
-  .branch-left .domino.double,
-  .branch-right .domino.double,
-  .spinner-slot .domino,
-  .hand .domino,
-  .domino-btn .domino{
-    width:42px !important;
-    height:78px !important;
-    min-width:42px !important;
-    min-height:78px !important;
-  }
-  .branch-top .domino.double,
-  .branch-bottom .domino.double{
-    width:78px !important;
-    height:42px !important;
-    min-width:78px !important;
-    min-height:42px !important;
-  }
+  :root{--hW:78px;--hH:42px;--vW:42px;--vH:78px}
+  .hero,.mode-panel{display:block}.status{text-align:left;margin-top:12px}
+  .domino-table{min-height:560px;padding:14px}
+  .table-center{inset:74px 10px 92px 10px;padding:16px}
+  .seat-west,.seat-east{display:none}
+  nav a{font-size:13px}
 }
 
 
-
-/* PLAY 3D DOMINO TOUCHING SPINNER FIX
-   Branches must physically touch the spinner/endpoint.
-   Matching half must face the spinner/branch connection.
+/* PLAY 3D CONNECTED CROSS FINAL PATCH
+   Four branches physically touch the first spinner.
+   No visual gaps between spinner and first tile on each branch.
 */
 .table-center{
+  align-content:center !important;
   gap:0 !important;
-  padding:18px !important;
 }
-.main-line-wrap{
-  grid-template-columns:auto 56px auto !important;
+.cross-row{
   gap:0 !important;
 }
 .branch{
   gap:0 !important;
 }
-.branch-left,
-.branch-right{
-  min-height:96px !important;
-}
-.branch-top,
-.branch-bottom{
-  min-width:96px !important;
-}
 .spinner-slot{
-  width:56px !important;
-  min-width:56px !important;
-  min-height:96px !important;
+  margin:0 !important;
 }
-
-/* Left/right tiles touch side-to-side */
 .branch-left .domino,
-.branch-right .domino{
-  margin-left:-1px !important;
-  margin-right:-1px !important;
-}
-
-/* Top/bottom tiles touch end-to-end */
+.branch-right .domino,
 .branch-top .domino,
-.branch-bottom .domino{
-  margin-top:-1px !important;
-  margin-bottom:-1px !important;
-}
-
-/* Spinner itself should sit flush between branches */
+.branch-bottom .domino,
 .spinner-slot .domino{
   margin:0 !important;
 }
-
-/* Stop hand dominoes from inheriting table touching behavior */
-.hand .domino,
-.domino-btn .domino{
-  margin:0 !important;
+.branch-left,
+.branch-right{
+  min-height:var(--vH) !important;
+}
+.branch-top,
+.branch-bottom{
+  min-width:var(--vW) !important;
 }
 
-/* Connection orientation:
-   left branch rendered OUTSIDE -> SPINNER, so matching connection is right half.
-   right branch rendered SPINNER -> OUTSIDE, so matching connection is left half.
-   top branch rendered OUTSIDE -> SPINNER, so matching connection is bottom half.
-   bottom branch rendered SPINNER -> OUTSIDE, so matching connection is top half.
-*/
+/* Use negative 2px only to collapse border-to-border seam, not overlap faces */
+.branch-left .domino + .domino,
+.branch-right .domino + .domino{
+  margin-left:-2px !important;
+}
+.branch-top .domino + .domino,
+.branch-bottom .domino + .domino{
+  margin-top:-2px !important;
+}
+
+/* Pull first branch tile flush against spinner border */
+.branch-left{margin-right:-2px !important;}
+.branch-right{margin-left:-2px !important;}
+.branch-top{margin-bottom:-2px !important;}
+.branch-bottom{margin-top:-2px !important;}
+
 .domino .half.connect{
-  box-shadow:inset 0 0 0 2px rgba(242,210,123,.85),0 0 12px rgba(242,210,123,.25);
+  background:rgba(242,210,123,.08);
 }
 

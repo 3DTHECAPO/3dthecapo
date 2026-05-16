@@ -1,0 +1,19 @@
+PLAY 3D DOMINOES TOUCHING SPINNER FIX
+
+Fixed:
+- Branches now sit flush against the spinner instead of floating with gaps.
+- Left/right/top/bottom branches use zero-gap physical connection layout.
+- Matching half is oriented toward the spinner/branch endpoint.
+- Example: if spinner is 6-6 and player plays 6-4, the 6 side is the side touching the spinner.
+- No All-Fives scoring added.
+- Normal Draw/Block rules preserved.
+
+Only changed:
+- games/dominoes/style.css
+- games/dominoes/script.js render markup for connection-half highlighting
+
+Not touched:
+- Supabase bridge
+- NFC
+- rewards
+- other games

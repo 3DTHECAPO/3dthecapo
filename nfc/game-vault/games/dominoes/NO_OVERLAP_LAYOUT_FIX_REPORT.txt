@@ -1,0 +1,17 @@
+PLAY 3D DOMINOES NO-OVERLAP LAYOUT FIX
+
+Changed:
+- CSS layout only.
+- Removed transform-based rotation from domino layout.
+- Dominoes now use real width/height orientation so they reserve space.
+- Left/right branch tiles lay horizontally.
+- Top/bottom branch tiles lay vertically.
+- Doubles are perpendicular without overlap.
+- Spinner stays centered.
+- Rules/scoring/script logic unchanged.
+
+Not touched:
+- Supabase bridge
+- NFC
+- rewards
+- other games

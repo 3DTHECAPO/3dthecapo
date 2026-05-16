@@ -1,37 +1,38 @@
-PLAY 3D DOMINOES — REAL SPINNER LAYOUT + NORMAL DRAW/BLOCK RULES
+PLAY 3D DOMINOES — TRUE TOUCH LAYOUT FIX
 
 Applied:
-- Standard double-six set = 28 tiles.
-- 2–4 players.
-- 7 tiles each.
-- Remaining tiles become boneyard.
-- Highest double starts automatically.
-- If no double exists in dealt hands, highest pip tile starts.
-- CPU can start automatically.
-- Clockwise turns.
+- Standard Draw Dominoes rules only.
+- No All-Fives / Muggins / BC scoring.
+- Highest double starts.
+- Only the first double is the spinner.
+- Only the first spinner has left/right/top/bottom branches.
+- Later doubles lay perpendicular but DO NOT open new branches.
+- Matching half physically faces the branch/spinner connection.
+- Example: 6-4 on 6-6 displays with the 6 side touching spinner and 4 as the new open end.
+- Left branch grows left.
+- Right branch grows right.
+- Top branch grows upward.
+- Bottom branch grows downward.
+- No CSS transform rotation.
+- Dominoes use true horizontal/vertical dimensions so they touch without overlay.
+- CPU auto-plays after human turn.
 - Draw until playable.
-- Pass only when boneyard is empty and no legal move.
-- First double acts as spinner.
-- Spinner branches track independent open values:
-  - left
-  - right
-  - top
-  - bottom
-- Tiles must match the exact branch connection value.
-- References were used for layout only, not All-Fives scoring.
-- No BC / Muggins / All-Fives scoring.
-- All doubles render sideways/perpendicular.
-- Round ends when a player goes out.
-- Round also ends on block when boneyard is empty and nobody can move.
+- Pass only if boneyard is empty and no legal move.
 - Winner scores opponents' remaining pips.
-- First player to 100 wins.
+- First to 100 wins.
 
 Only games/dominoes/ changed.
 Supabase bridge / NFC / rewards untouched.
 
 
-LAYOUT CLARIFICATION:
-- The reference images are layout references only.
-- The matching side of a played domino must physically touch the spinner/branch endpoint.
-- If spinner is 6-6 and a 6-4 is played, the 6 side touches the spinner and the 4 becomes the new open end.
-- This applies independently to left, right, top, and bottom spinner branches.
+FINAL CROSS TOUCH CLARIFICATION:
+- The first spinner sits dead center.
+- Left, right, top, and bottom branches physically touch the spinner.
+- Example visual target:
+          [1]
+          [6]
+[2][6][6][6][6][4]
+          [6]
+          [5]
+- Only the first spinner has four playable sides.
+- Later doubles are perpendicular only and do not create new four-way spinners.
