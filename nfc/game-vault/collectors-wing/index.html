@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY 3D — Collector's Wing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main class="collector-page" id="collectorPage">
+  <header class="wing-top">
+    <a class="brand" href="../index.html"><span>3D</span><b>PLAY 3D</b></a>
+    <nav><a href="../index.html">Back to Game Vault</a></nav>
+  </header>
+
+  <section class="hero-copy">
+    <div class="kicker">VAULT MANSION / RESTRICTED LEVEL</div>
+    <h1>The Collector's Wing</h1>
+    <p>Rare assets. Sealed exhibits. Future ownership experiences. Access remains closed until official opening.</p>
+  </section>
+
+  <section class="parallax-stage" id="parallaxStage" aria-label="5D Collector's Wing room">
+    <div class="depth-layer layer-bg" data-depth="0.05" aria-hidden="true">
+      <div class="hall">
+        <div class="wall left-wall"></div>
+        <div class="wall right-wall"></div>
+        <div class="ceiling-lines"></div>
+        <div class="floor-grid"></div>
+        <div class="far-door"><div class="far-emblem">3D</div></div>
+        <div class="side-sign left-sign"><span>PLAY 3D</span><b>Collector's Wing</b><small>Authorized Access Only</small></div>
+        <div class="side-sign right-sign"><span>Rare Assets</span><b>Private Vault</b><small>Coming Soon</small></div>
+      </div>
+    </div>
+
+    <div class="depth-layer layer-fx" data-depth="0.16" aria-hidden="true">
+      <div class="fog fog-one"></div>
+      <div class="fog fog-two"></div>
+      <div class="gold-beam beam-one"></div>
+      <div class="gold-beam beam-two"></div>
+      <div class="dust-field"></div>
+    </div>
+
+    <div class="depth-layer layer-watchmen" data-depth="0.30" aria-hidden="true">
+      <img class="watchman watchman-left" src="./assets/watchman-placeholder.svg" alt="">
+      <img class="watchman watchman-right" src="./assets/watchman-placeholder.svg" alt="">
+    </div>
+
+    <div class="depth-layer layer-butler" data-depth="0.52" aria-hidden="true">
+      <img class="butler-robot" src="./assets/butler-placeholder.svg" alt="">
+    </div>
+
+    <div class="depth-layer layer-front" data-depth="0.86" aria-hidden="true">
+      <div class="front-smoke smoke-left"></div>
+      <div class="front-smoke smoke-right"></div>
+      <div class="lens-flare flare-a"></div>
+      <div class="lens-flare flare-b"></div>
+      <div class="floor-shine"></div>
+    </div>
+
+    <div class="locked-card">
+      <div class="card-mark">3D</div>
+      <div>
+        <span>ACCESS RESTRICTED</span>
+        <b>COMING SOON</b>
+        <p>The Collector’s Wing is closed while rare exhibits and member ownership systems are prepared.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="collector-grid" aria-label="Locked Collector Wing exhibits">
+    <article data-locked-exhibit><span>Locked</span><h2>Rare Asset Archive</h2><p>Holographic catalog systems remain sealed.</p></article>
+    <article data-locked-exhibit><span>Locked</span><h2>PLAY 3D Passes</h2><p>Member pass displays are under construction.</p></article>
+    <article data-locked-exhibit><span>Locked</span><h2>Elite Collections</h2><p>Private collection bays are guarded.</p></article>
+    <article data-locked-exhibit><span>Locked</span><h2>Music NFT Exhibits</h2><p>Listening vault frames remain offline.</p></article>
+    <article data-locked-exhibit><span>Locked</span><h2>Founders Vault</h2><p>Elevator access is not available yet.</p></article>
+  </section>
+</main>
+
+<aside class="butler-panel" id="butlerPanel" aria-label="PLAY 3D Butler guide">
+  <div class="butler-mini" aria-hidden="true"><img src="./assets/butler-placeholder.svg" alt=""></div>
+  <div class="butler-copy">
+    <div class="kicker">ROBOT CONCIERGE / GLOBAL GUIDE</div>
+    <h2 id="butlerTitle">The Butler</h2>
+    <p id="butlerLine">Welcome to the Collector’s Wing.</p>
+    <div class="butler-actions">
+      <button type="button" id="nextLineBtn">Continue</button>
+      <a href="../index.html">Return to Game Vault</a>
+    </div>
+  </div>
+</aside>
+
+<script src="./butler.js"></script>
+<script src="./script.js"></script>
+</body>
+</html>

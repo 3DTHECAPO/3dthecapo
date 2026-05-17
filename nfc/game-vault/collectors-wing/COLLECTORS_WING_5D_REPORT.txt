@@ -1,0 +1,15 @@
+PLAY 3D Collector's Wing 5D Layered Animation
+
+This is a real HTML/CSS/JS layered parallax page, not concept art.
+
+Layers:
+1. Background vault hallway / architecture
+2. Fog, beams, dust particles
+3. Robot Watchmen guards
+4. Robot Butler
+5. Foreground smoke, reflections, lens flare
+
+Drop-in path:
+nfc/game-vault/collectors-wing/
+
+Protected systems untouched.

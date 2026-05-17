@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 640" role="img" aria-labelledby="title desc">
+<title id="title">PLAY 3D Robot Watchman Replaceable Asset</title>
+<desc id="desc">Original black and gold armored robot Watchman guard for Collector's Wing entrance.</desc>
+<defs>
+  <linearGradient id="gold" x1="0" x2="1">
+    <stop offset="0" stop-color="#fff0a8"/>
+    <stop offset=".55" stop-color="#caa24a"/>
+    <stop offset="1" stop-color="#735115"/>
+  </linearGradient>
+  <linearGradient id="armor" x1="0" x2="1" y1="0" y2="1">
+    <stop offset="0" stop-color="#303030"/>
+    <stop offset=".45" stop-color="#050505"/>
+    <stop offset="1" stop-color="#171717"/>
+  </linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="20" stdDeviation="12" flood-color="#000" flood-opacity=".82"/>
+  </filter>
+</defs>
+<ellipse cx="160" cy="612" rx="110" ry="24" fill="#000" opacity=".65"/>
+<g filter="url(#shadow)">
+  <!-- helmet -->
+  <path d="M94 124c0-61 28-96 66-96s66 35 66 96v42H94Z" fill="url(#armor)" stroke="url(#gold)" stroke-width="4"/>
+  <path d="M104 118h112l-17 40h-78Z" fill="#080808"/>
+  <rect x="113" y="121" width="94" height="20" rx="10" fill="#010101" stroke="#333" stroke-width="2"/>
+  <rect x="122" y="127" width="76" height="7" rx="4" fill="url(#gold)"/>
+  <path d="M130 74c18-22 42-31 72-14" stroke="#fff" stroke-width="8" stroke-opacity=".08" fill="none"/>
+  <!-- torso armor -->
+  <path d="M67 240c26-48 57-72 93-72s67 24 93 72l34 250c-29 45-71 68-127 68S62 535 33 490Z" fill="url(#armor)" stroke="#111" stroke-width="5"/>
+  <path d="M96 245h128l25 205-89 62-89-62Z" fill="#060606" stroke="url(#gold)" stroke-width="4"/>
+  <path d="M110 266h100l-12 78h-76Z" fill="#101010" stroke="#272727" stroke-width="3"/>
+  <path d="M122 286h76" stroke="url(#gold)" stroke-width="5" stroke-linecap="round"/>
+  <path d="M122 307h52" stroke="#caa24a" stroke-width="4" stroke-linecap="round" opacity=".72"/>
+  <text x="160" y="338" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="24" fill="#f2d27b">3D</text>
+  <path d="M87 223h146" stroke="url(#gold)" stroke-width="6" stroke-linecap="round"/>
+  <!-- arms as heavy guard stance -->
+  <path d="M70 285c-37 37-50 86-39 147" stroke="#090909" stroke-width="34" stroke-linecap="round"/>
+  <path d="M250 285c37 37 50 86 39 147" stroke="#090909" stroke-width="34" stroke-linecap="round"/>
+  <path d="M38 439c28 32 62 46 103 42" stroke="#0a0a0a" stroke-width="24" stroke-linecap="round"/>
+  <path d="M282 439c-28 32-62 46-103 42" stroke="#0a0a0a" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="140" cy="482" r="16" fill="#070707" stroke="url(#gold)" stroke-width="4"/>
+  <circle cx="180" cy="482" r="16" fill="#070707" stroke="url(#gold)" stroke-width="4"/>
+  <!-- legs -->
+  <path d="M93 500h56l-12 91H76Z" fill="#070707" stroke="#151515" stroke-width="4"/>
+  <path d="M171 500h56l17 91h-61Z" fill="#070707" stroke="#151515" stroke-width="4"/>
+  <path d="M72 589h72c17 0 30 11 30 25H48c0-14 10-25 24-25Z" fill="#050505" stroke="url(#gold)" stroke-width="3"/>
+  <path d="M176 589h72c14 0 24 11 24 25H146c0-14 13-25 30-25Z" fill="#050505" stroke="url(#gold)" stroke-width="3"/>
+</g>
+</svg>

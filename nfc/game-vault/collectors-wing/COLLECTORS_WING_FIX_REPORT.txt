@@ -1,0 +1,32 @@
+PLAY 3D COLLECTOR'S WING CLEAN FIX
+
+Audited uploaded files:
+- index.html existed and referenced butler/watchman placeholders.
+- style.css used a fixed bottom Butler panel and large placeholder figures that could overlap on smaller screens.
+- butler.js was usable but minimal.
+- placeholder SVGs were functional but looked rough as production stand-ins.
+
+Changed:
+- Rebuilt cleaner butler-placeholder.svg with no text inside the asset.
+- Rebuilt cleaner watchman-placeholder.svg with no text inside the asset.
+- Rebuilt responsive Collector's Wing index.html.
+- Rebuilt style.css to reduce overlap, improve mobile layout, keep guards visible, and prevent placeholder text/word collisions.
+- Rebuilt butler.js into reusable guide structure.
+- Added script.js hooks for locked exhibit clicks.
+
+Protected systems:
+- No game logic touched.
+- No Supabase bridge touched.
+- No NFC access logic touched.
+- No rewards logic touched.
+- No generator/analytics/boss/master touched.
+
+Drop-in path:
+nfc/game-vault/collectors-wing/
+
+
+ROBOT UPDATE:
+- Replaced human Butler placeholder with original PLAY 3D robot concierge/butler asset.
+- Replaced human Watchmen placeholder with original armored robot Watchmen guard asset.
+- Kept same filenames so existing HTML paths do not break.
+- No copyrighted robot characters copied directly.
