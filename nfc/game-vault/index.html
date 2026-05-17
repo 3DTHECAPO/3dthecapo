@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -103,8 +103,8 @@
       <article class="glass-card">
         <div class="kicker">Collector Access</div>
         <h3>Collector’s Wing</h3>
-        <p>Restricted rare-asset wing. Closed for now and kept separate from playable games.</p>
-        <a class="cta ghost" href="./collectors-wing/">Open Collector’s Wing</a>
+        <p>Rare assets and future ownership experiences. Coming soon.</p>
+        <a class="cta ghost" href="./collectors-wing/index.html">Enter Wing</a>
       </article>
     </section>
   </main>
@@ -116,6 +116,12 @@
   <script>
     if(window.Play3DAccess){
       window.Play3DAccess.requireAccess({ redirect:false });
+      if(window.Play3DAccess.hasMasterFlag() || window.Play3DAccess.hasMasterSession()){
+        const collectorsWingLink = document.querySelector('a[href="./collectors-wing/index.html"]');
+        if(collectorsWingLink){
+          collectorsWingLink.href = './collectors-wing/index.html?master=1&from=master';
+        }
+      }
     }
   </script>
 </body>
