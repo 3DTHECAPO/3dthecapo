@@ -15,6 +15,7 @@
     'CAPO_PASS_SESSION',
     'PLAY3D_PASS_SESSION',
     'play3d_pass_session',
+    'play3d_vault_pass_v1',
     'vault_pass_session',
     'capo_pass_session'
   ];
@@ -81,27 +82,33 @@
   }
 
   function hasPassSession(){
+    return !!currentPassSession();
+  }
+
+  function currentPassSession(){
     for(const key of PASS_KEYS){
       const session = readJSON(key);
-
       if(!session) continue;
-
-      const valid =
-        session.active === true ||
-        session.unlocked === true ||
-        session.valid === true;
-
+      const valid = session.active === true || session.unlocked === true || session.valid === true || key === 'play3d_vault_pass_v1';
       if(!valid) continue;
-
       if(session.expires_at && now() > Number(session.expires_at)){
         removeKey(key);
         continue;
       }
-
-      return true;
+      return session;
     }
+    return null;
+  }
 
-    return false;
+  function tierRank(value){
+    const tier = String(value || 'entry').toLowerCase();
+    return ({entry:1,gold:2,elite:3,master:4})[tier] || 0;
+  }
+
+  function hasTier(minTier){
+    if(hasMasterFlag() || hasMasterSession()) return true;
+    const pass = currentPassSession();
+    return !!pass && tierRank(pass.tier || pass.code_type) >= tierRank(minTier);
   }
 
   function hasMasterFlag(){
@@ -131,14 +138,14 @@
 
   function buildUnlockUrl(){
     const current = window.location.pathname + window.location.search;
-    const u = new URL(sitePath('nfc/index.html'), window.location.origin);
+    const u = new URL(sitePath('nfc/index.html'), window.location.href);
     u.searchParams.set('target', current);
     return u.toString();
   }
 
   function buildMasterUrl(){
     const current = window.location.pathname + window.location.search;
-    const u = new URL(sitePath('nfc/index.html'), window.location.origin);
+    const u = new URL(sitePath('nfc/index.html'), window.location.href);
     u.searchParams.set('code','CAPO-MASTER-999');
     u.searchParams.set('target', current);
     return u.toString();
@@ -184,13 +191,27 @@
     return false;
   }
 
+  function requireTier(minTier, options){
+    const opts = options || {};
+    if(hasTier(minTier)){
+      document.documentElement.classList.add('p3d-access-ok');
+      return true;
+    }
+    document.documentElement.classList.add('p3d-access-denied');
+    if(opts.redirect === true) window.location.replace(buildUnlockUrl());
+    return false;
+  }
+
   window.Play3DAccess = {
     setMasterSession,
     hasMasterSession,
     hasPassSession,
+    currentPassSession,
+    hasTier,
     hasMasterFlag,
     isAllowed,
     requireAccess,
+    requireTier,
     requireMaster,
     buildUnlockUrl,
     buildMasterUrl
