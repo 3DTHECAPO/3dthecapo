@@ -42,13 +42,23 @@
   }
 
   function siteBase(){
+    if(window.location.protocol === 'file:'){
+      const path = window.location.pathname.replace(/\\/g,'/');
+      const marker = '/nfc/';
+      const idx = path.toLowerCase().indexOf(marker);
+      return idx >= 0 ? path.slice(0, idx + marker.length) : './';
+    }
     const first = window.location.pathname.split('/').filter(Boolean)[0] || '';
     if(first && first !== 'nfc' && first !== 'public' && !first.includes('.')) return '/' + first + '/';
     return '/';
   }
 
   function sitePath(path){
-    return siteBase() + String(path || '').replace(/^\/+/, '');
+    const cleanPath = String(path || '').replace(/^\/+/, '');
+    if(window.location.protocol === 'file:'){
+      return siteBase() + cleanPath.replace(/^nfc\//,'');
+    }
+    return siteBase() + cleanPath;
   }
 
   function removeKey(key){
