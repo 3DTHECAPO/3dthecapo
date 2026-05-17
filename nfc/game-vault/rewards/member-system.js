@@ -4,6 +4,7 @@
   const PASS_KEY = 'play3d_vault_pass_v1';
 
   function isMember(){
+    if(window.Play3DAccess && window.Play3DAccess.hasMasterSession && window.Play3DAccess.hasMasterSession()) return true;
     if(localStorage.getItem(MEMBER_KEY) === '1') return true;
     try{
       const raw = localStorage.getItem(PASS_KEY);
