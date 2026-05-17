@@ -6,6 +6,7 @@ const params = new URLSearchParams(window.location.search);
 
 const code = (params.get('code')||'').toUpperCase().trim();
 const target = params.get('target') || '';
+const MASTER_CODE = 'CAPO-MASTER-999';
 
 const statusPill = byId('statusPill');
 const vaultState = byId('vaultState');
@@ -26,6 +27,10 @@ function setMasterSession(){
       expires_at:Date.now() + (1000 * 60 * 60 * 12)
     }));
   }catch(e){}
+}
+
+function isMasterCode(value){
+  return String(value || '').toUpperCase().trim() === MASTER_CODE;
 }
 
 function buildTargetUrl(path){
@@ -221,6 +226,15 @@ async function init(){
   }
 
   try{
+    if(isMasterCode(code)){
+      playAccessSequence();
+
+      setTimeout(()=>{
+        unlockUI('master');
+      },5400);
+
+      return;
+    }
 
     const record = await getCode(code);
 
@@ -241,9 +255,7 @@ async function init(){
     }
 
     const tier =
-      code === 'CAPO-MASTER-999'
-        ? 'master'
-        : String(record.code_type || 'entry').toLowerCase();
+      String(record.code_type || 'entry').toLowerCase();
 
     playAccessSequence();
 
