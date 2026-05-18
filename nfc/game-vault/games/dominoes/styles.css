@@ -1,2 +1,22 @@
-/* PLAY 3D Dominoes consumer repair override */
-.casino-table{min-height:860px;overflow:visible}.table-center{width:min(1180px,96%);min-height:650px;top:52%;padding:34px;overflow:visible}.spinner-board{min-height:610px;overflow:visible;grid-template-rows:minmax(160px,1fr) auto minmax(160px,1fr);gap:10px}.line-row,.branch-line,.horizontal-arm{overflow:visible}.horizontal-arm{min-width:220px;max-width:42vw;flex-wrap:nowrap}.left-branch,.right-branch{gap:2px}.branch-line{min-height:190px;gap:2px}.tile{width:74px;height:38px;min-height:38px;padding:0;font-size:17px;border-radius:10px;flex:0 0 auto}.tile.spinner{width:46px;height:82px;grid-template-columns:1fr;grid-template-rows:1fr 1px 1fr;box-shadow:0 0 0 4px rgba(242,210,123,.22),0 0 26px rgba(242,210,123,.45),0 12px 20px rgba(0,0,0,.4)}.tile.spinner i{width:70%;height:1px}.tile.branch{width:74px;height:38px}.tile.top-arm,.tile.bottom-arm,.tile.left-arm.double,.tile.right-arm.double{width:46px;height:82px}.tile.top-arm.double,.tile.bottom-arm.double{width:74px;height:38px}.status{min-width:min(520px,95vw)}.status small{line-height:1.3;font-size:12px}.seat{z-index:2}@media(max-width:900px){.casino-table{min-height:720px}.table-center{width:96%;min-height:520px;padding:18px}.spinner-board{min-height:500px;grid-template-rows:minmax(130px,1fr) auto minmax(130px,1fr)}.horizontal-arm{min-width:120px;max-width:36vw}.tile{width:58px;height:32px;min-height:32px;font-size:14px;border-width:1px}.tile.spinner,.tile.top-arm,.tile.bottom-arm,.tile.left-arm.double,.tile.right-arm.double{width:36px;height:64px}.tile.top-arm.double,.tile.bottom-arm.double{width:58px;height:32px}.seat{width:116px;height:72px;font-size:11px}.seat-backs{display:none}}
+/* PLAY 3D DOMINOES ACTIVE LAYOUT FIX */
+:root{--domino-w:76px;--domino-h:38px;--domino-vw:38px;--domino-vh:76px;}
+.casino-table{min-height:640px!important;margin-bottom:24px!important;overflow:hidden!important;z-index:1!important;}
+.controls.panel{position:relative!important;z-index:20!important;margin-top:22px!important;background:linear-gradient(180deg,rgba(17,14,9,.94),rgba(0,0,0,.88))!important;}
+.table-center{width:min(980px,84%)!important;min-height:460px!important;max-height:500px!important;top:52%!important;overflow:auto!important;z-index:2!important;padding:14px!important;touch-action:pan-x pan-y!important;}
+.spinner-board{min-width:760px!important;min-height:430px!important;gap:0!important;transform-origin:center center!important;}
+.line-row{gap:0!important;align-items:center!important;}
+.horizontal-arm{gap:0!important;min-width:240px!important;}
+.left-branch{justify-content:flex-start!important;flex-direction:row-reverse!important;}
+.right-branch{justify-content:flex-start!important;}
+.branch-line{gap:0!important;min-height:138px!important;}
+.top-branch{justify-content:flex-end!important;flex-direction:column-reverse!important;}
+.bottom-branch{justify-content:flex-start!important;flex-direction:column!important;}
+.tile{width:var(--domino-w)!important;height:var(--domino-h)!important;min-height:var(--domino-h)!important;border-radius:10px!important;font-size:17px!important;flex:0 0 auto!important;margin:0!important;}
+.tile.spinner,.tile.top-arm,.tile.bottom-arm,.tile.left-arm.double,.tile.right-arm.double{width:var(--domino-vw)!important;height:var(--domino-vh)!important;min-height:var(--domino-vh)!important;grid-template-columns:1fr!important;grid-template-rows:1fr 1px 1fr!important;}
+.tile.branch{width:var(--domino-w)!important;height:var(--domino-h)!important;min-height:var(--domino-h)!important;}
+.tile.top-arm.double,.tile.bottom-arm.double{width:var(--domino-w)!important;height:var(--domino-h)!important;min-height:var(--domino-h)!important;grid-template-columns:1fr 1px 1fr!important;grid-template-rows:1fr!important;}
+.tile i{width:1px!important;height:70%!important;}
+.tile.spinner i,.tile.top-arm i,.tile.bottom-arm i,.tile.left-arm.double i,.tile.right-arm.double i{width:70%!important;height:1px!important;}
+.hand,.panel{position:relative!important;z-index:20!important;}
+.empty-board{color:var(--gold2);font-weight:900;text-transform:uppercase;}
+@media(max-width:760px){:root{--domino-w:58px;--domino-h:32px;--domino-vw:32px;--domino-vh:58px}.casino-table{min-height:500px!important;margin-bottom:18px!important}.table-center{width:96%!important;min-height:330px!important;max-height:360px!important;padding:10px!important}.spinner-board{min-width:580px!important;min-height:310px!important}.horizontal-arm{min-width:170px!important}.branch-line{min-height:96px!important}.controls.panel{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.controls.panel button{width:100%!important;min-height:44px!important;padding:10px!important}.arm-chooser{grid-column:1/-1!important}}
