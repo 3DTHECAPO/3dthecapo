@@ -5,94 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PLAY 3D — Dominoes AAA</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="../shared/mode-bar.css">
+<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./dominoes-repair.css">
+<link rel="stylesheet" href="../shared/mode-bar.css">
 </head>
 <body>
 <div class="bg"></div>
-
 <main class="app">
-<header class="top">
-<a class="brand" href="../../index.html">
-<span>3D</span>
-<b>PLAY 3D</b>
-</a>
-
-<nav>
-<a href="../../index.html">Vault</a>
-<a href="../../../index.html">Main</a>
-</nav>
-</header>
-
-<section class="hero">
-<div>
-<div class="kicker">AAA DOMINO LOUNGE</div>
-<h1>DOMINOES</h1>
-<p>Luxury multiplayer-ready domino table rebuilt for stable gameplay and responsive scaling.</p>
-</div>
-
-<div class="status">
-<span>POINTS</span>
-<b id="scoreText">0 - 0</b>
-<small id="turnText">YOUR TURN</small>
-</div>
-</section>
-
-<section class="casino-table">
-<div class="table-logo">PLAY 3D</div>
-
-<div class="seat top-seat">FAN / CPU</div>
-<div class="seat left-seat">CPU 2</div>
-<div class="seat right-seat">CPU 3</div>
-<div class="seat bottom-seat">YOU</div>
-
-<div class="table-center">
-<div id="chain" class="chain"></div>
-</div>
-
-<div class="chip-stack">
-<div class="chip"></div>
-<div class="chip"></div>
-<div class="chip"></div>
-</div>
-</section>
-
-<section class="controls panel">
-<button id="newBtn">NEW GAME</button>
-<button class="playerCountBtn" data-count="2">2 Players</button>
-<button class="playerCountBtn" data-count="3">3 Players</button>
-<button class="playerCountBtn" data-count="4">4 Players</button>
-<button id="drawBtn">DRAW</button>
-<button id="passBtn">PASS</button>
-<div id="armChooser" class="arm-chooser" hidden></div>
-</section>
-
-<section class="panel">
-<h2>YOUR HAND</h2>
-<div id="hand" class="hand"></div>
-</section>
-
-<section class="panel">
-<h2>GAME LOG</h2>
-<ol id="log"></ol>
-</section>
-
+<header class="top"><a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a><nav><a href="../../index.html">Vault</a><a href="../../../index.html">Main</a></nav></header>
+<section class="hero"><div><div class="kicker">AAA DOMINO LOUNGE</div><h1>DOMINOES</h1><p>Luxury multiplayer-ready domino table rebuilt for stable gameplay and responsive scaling.</p></div><div class="status"><span>POINTS</span><b id="scoreText">0 - 0</b><small id="turnText">YOUR TURN</small></div></section>
+<section class="casino-table"><div class="table-logo">PLAY 3D</div><div class="seat top-seat">FAN / CPU</div><div class="seat left-seat">CPU 2</div><div class="seat right-seat">CPU 3</div><div class="seat bottom-seat">YOU</div><div class="table-center"><div id="chain" class="chain"></div></div><div class="chip-stack"><div class="chip"></div><div class="chip"></div><div class="chip"></div></div></section>
+<section class="controls panel"><button id="newBtn">NEW GAME</button><button class="playerCountBtn" data-count="2">2 Players</button><button class="playerCountBtn" data-count="3">3 Players</button><button class="playerCountBtn" data-count="4">4 Players</button><button id="drawBtn">DRAW</button><button id="passBtn">PASS</button><div id="armChooser" class="arm-chooser" hidden></div></section>
+<section class="panel"><h2>YOUR HAND</h2><div id="hand" class="hand"></div></section><section class="panel"><h2>GAME LOG</h2><ol id="log"></ol></section>
 </main>
-
-<script src="../shared/mode-bar.js"></script>
-<script src="../shared/game-points.js"></script><script src="./script.js"></script><script>/* CPU SAFE FAN LOADER */
-(function(){
-  var p = new URLSearchParams(location.search);
-  if(p.get('mode') !== 'fan' || !p.get('room')) return;
-
-  function load(src){
-    var s = document.createElement('script');
-    s.src = src;
-    document.body.appendChild(s);
-  }
-
-  load('../shared/supabase-game-bridge.js');
-  load('../shared/multiplayer-room-ui.js');
-})();
-</script>
+<script src="../shared/mode-bar.js"></script><script src="../shared/game-points.js"></script><script src="./script.js"></script><script>(function(){var p=new URLSearchParams(location.search);if(p.get('mode')!=='fan'||!p.get('room'))return;function load(src){var s=document.createElement('script');s.src=src;document.body.appendChild(s)}load('../shared/supabase-game-bridge.js');load('../shared/multiplayer-room-ui.js')})();</script>
 </body>
 </html>
