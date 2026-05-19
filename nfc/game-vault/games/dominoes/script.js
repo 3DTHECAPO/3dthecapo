@@ -1,16 +1,18 @@
 (()=>{
 'use strict';
 
-/* PLAY 3D DOMINOES — TRADITIONAL DRAW/BLOCK REPAIR
-   Scope: Dominoes only.
-   Fixes: no all-fives/get-in scoring, CPU play, DOMINO round end, blocked hand scoring,
-   7-tile hands, wash-the-dishes next hand, stable spinner/arm state.
+/* PLAY 3D DOMINOES — COUNTING FIVES REPAIR
+   Scope: Dominoes script only.
+   Rules: exposed board ends score 5/10/15/20/25/30/35/40 only.
+   First score must be 10+ to get in. Game goes to 150.
+   DOMINO ends hand. Wash The Dishes starts next hand with winner coming out.
 */
 
 const state = {
   players:2,
   hands:[],
   scores:[],
+  gotIn:[],
   stock:[],
   currentPlayerIndex:0,
   passes:0,
@@ -19,12 +21,16 @@ const state = {
   nextStarterIndex:null,
   lastWinnerIndex:null,
   pending:null,
+  lastCount:0,
+  lastAwarded:0,
   handNumber:0,
   board:{ root:null, canBranch:false, arms:{left:[],right:[],top:[],bottom:[]} }
 };
 
 const SCORE_TARGET = 150;
+const GET_IN_MIN = 10;
 const HAND_SIZE = 7;
+const SCORING_COUNTS = new Set([5,10,15,20,25,30,35,40]);
 
 const params = new URLSearchParams(location.search);
 let mode = (params.get('mode') || '').toLowerCase();
@@ -47,9 +53,8 @@ function activeLocal(){ return mode === 'fan' || mode === 'local'; }
 function log(msg){ if(logEl) logEl.innerHTML = '<li>'+String(msg)+'</li>' + logEl.innerHTML; }
 function pips(tile){ return tile[0] + tile[1]; }
 function handPips(playerIndex){ return (state.hands[playerIndex] || []).reduce((sum,t)=>sum+pips(t),0); }
-function allOpponentPips(winner){ return state.hands.reduce((sum,hand,i)=>i===winner ? sum : sum + hand.reduce((s,t)=>s+pips(t),0),0); }
 
-function popMessage(text, good=false){
+function popCount(text, good=false){
   let el = document.getElementById('countPopup');
   if(!el){
     el = document.createElement('div');
@@ -75,6 +80,8 @@ function resetBoard(){
   state.board = { root:null, canBranch:false, arms:{left:[],right:[],top:[],bottom:[]} };
   state.passes = 0;
   state.pending = null;
+  state.lastCount = 0;
+  state.lastAwarded = 0;
   if(armChooser){ armChooser.hidden = true; armChooser.innerHTML = ''; }
 }
 
@@ -109,6 +116,12 @@ function openValue(tile, arm){
   return (arm === 'left' || arm === 'top') ? tile[0] : tile[1];
 }
 
+function outsideValue(tile, arm){
+  if(!tile) return 0;
+  if(isDouble(tile)) return tile[0] + tile[1];
+  return (arm === 'left' || arm === 'top') ? tile[0] : tile[1];
+}
+
 function armTipValue(arm){
   const branch = state.board.arms[arm] || [];
   if(branch.length) return openValue(branch[branch.length-1], arm);
@@ -129,6 +142,45 @@ function legalArms(tile){
 }
 function legal(tile){ return legalArms(tile).length > 0; }
 function canPlay(playerIndex){ return (state.hands[playerIndex] || []).some(legal); }
+
+function exposedArmsForCount(){
+  if(!state.board.root) return [];
+  const arms = activeArms();
+  const used = arms.filter(arm => (state.board.arms[arm] || []).length > 0);
+  if(!used.length) return ['root'];
+  return used;
+}
+
+function countRootOnly(){
+  if(!state.board.root) return 0;
+  return state.board.root[0] + state.board.root[1];
+}
+
+function boardCount(){
+  if(!state.board.root) return 0;
+  const exposed = exposedArmsForCount();
+  if(exposed.length === 1 && exposed[0] === 'root') return countRootOnly();
+
+  let total = 0;
+
+  // Spinner double stays live as both sides while branches are active.
+  // 6/6 + 6/3 = 12 + 3 = 15.
+  if(state.board.canBranch && isDouble(state.board.root)){
+    total += state.board.root[0] + state.board.root[1];
+  }
+
+  exposed.forEach(arm=>{
+    const branch = state.board.arms[arm] || [];
+    const tip = branch[branch.length-1];
+    if(tip) total += outsideValue(tip, arm);
+  });
+
+  return total;
+}
+
+function scoreFromCount(count){
+  return SCORING_COUNTS.has(count) ? count : 0;
+}
 
 function placeTile(tile, arm){
   if(arm === 'open' && !state.board.root){
@@ -154,8 +206,38 @@ function commitPlay(playerIndex,tile,arm){
 
 function openEndsText(){
   if(!state.board.root) return 'No board';
-  const used = activeArms().map(arm=>arm.toUpperCase()+': '+armTipValue(arm));
-  return used.join(' / ');
+  return activeArms().map(arm=>arm.toUpperCase()+': '+armTipValue(arm)).join(' / ');
+}
+
+function awardMoveScore(playerIndex){
+  const count = boardCount();
+  const points = scoreFromCount(count);
+  state.lastCount = count;
+  state.lastAwarded = 0;
+
+  if(!points){
+    popCount('COUNT '+count+' — NO SCORE', false);
+    log('COUNT '+count+' — no score.');
+    return 0;
+  }
+
+  if(!state.gotIn[playerIndex] && points < GET_IN_MIN){
+    popCount('COUNT '+points+' — NEED 10 TO GET IN', false);
+    log(seatName(playerIndex)+' counted '+points+' but needs 10 to get in.');
+    return 0;
+  }
+
+  state.gotIn[playerIndex] = true;
+  state.scores[playerIndex] += points;
+  state.lastAwarded = points;
+  popCount('SCORE '+points, true);
+  log(seatName(playerIndex)+' scored '+points+'.');
+
+  if(state.scores[playerIndex] >= SCORE_TARGET){
+    endGame(playerIndex);
+  }
+
+  return points;
 }
 
 function requestArm(tile){
@@ -173,6 +255,8 @@ function playTile(tile,arm){
   if(player !== 0 && !activeLocal()) return;
   if(!commitPlay(player,tile,arm)){ log('Illegal tile.'); return; }
   log(seatName(player)+' played on '+arm+'. Open ends: '+openEndsText()+'.');
+  awardMoveScore(player);
+  if(state.gameOver) return;
   if(!state.hands[player].length){ domino(player); return; }
   nextTurn();
 }
@@ -185,7 +269,8 @@ function startForcedHighestDouble(){
   removeTile(state.hands[starter.playerIndex], starter.tile);
   state.currentPlayerIndex = (starter.playerIndex + 1) % state.players;
   state.nextStarterIndex = starter.playerIndex;
-  log(seatName(starter.playerIndex)+' opened with spinner '+starter.tile[0]+'-'+starter.tile[1]+'.');
+  state.lastCount = countRootOnly();
+  log(seatName(starter.playerIndex)+' opened with spinner '+starter.tile[0]+'-'+starter.tile[1]+'. No entry points awarded on forced opener.');
   return true;
 }
 
@@ -221,13 +306,15 @@ function newGame(players=state.players, resetMatch=true){
 
   if(resetMatch){
     state.scores = Array.from({length:state.players},()=>0);
+    state.gotIn = Array.from({length:state.players},()=>false);
     state.handNumber = 0;
     state.nextStarterIndex = null;
   }else{
     state.scores = Array.from({length:state.players},(_,i)=>state.scores[i] || 0);
+    state.gotIn = Array.from({length:state.players},(_,i)=>Boolean(state.gotIn[i]));
   }
 
-  log(state.players+' player dominoes started. Traditional draw/block scoring. First to '+SCORE_TARGET+'.');
+  log(state.players+' player dominoes started. Count board ends only. Scores count on 5, 10, 15, 20, 25, 30, 35, 40. First score must be 10+ to get in. Game goes to '+SCORE_TARGET+'.');
   newHand(null);
 }
 
@@ -236,28 +323,19 @@ function endGame(winner){
   state.handOver = true;
   state.lastWinnerIndex = winner;
   if(turnTextEl) turnTextEl.textContent = seatName(winner)+' WINS TO '+SCORE_TARGET;
-  popMessage(seatName(winner)+' WINS '+SCORE_TARGET, true);
+  popCount(seatName(winner)+' WINS '+SCORE_TARGET, true);
   log(seatName(winner)+' wins the game at '+state.scores[winner]+'.');
   render();
-}
-
-function scoreRound(winner, reason){
-  const points = allOpponentPips(winner);
-  state.scores[winner] += points;
-  state.lastWinnerIndex = winner;
-  state.nextStarterIndex = winner;
-  log(reason+' '+seatName(winner)+' scores '+points+' opponent pips.');
-  if(winner === 0 && window.Play3DPoints) window.Play3DPoints.award('dominoes',125,'round_win');
-  if(state.scores[winner] >= SCORE_TARGET){ endGame(winner); return true; }
-  return false;
 }
 
 function domino(winner){
   if(state.gameOver) return;
   state.handOver = true;
-  popMessage('DOMINO!', true);
+  state.lastWinnerIndex = winner;
+  state.nextStarterIndex = winner;
+  popCount('DOMINO!', true);
   log('DOMINO! '+seatName(winner)+' played the last bone.');
-  if(scoreRound(winner, 'DOMINO.')) return;
+  if(winner === 0 && window.Play3DPoints) window.Play3DPoints.award('dominoes',125,'round_win');
   if(turnTextEl) turnTextEl.textContent = 'DOMINO! '+seatName(winner)+' — WASH THE DISHES';
   render();
 }
@@ -272,16 +350,14 @@ function blockedWinner(){
 function blockedHand(){
   const winner = blockedWinner();
   state.handOver = true;
+  state.lastWinnerIndex = winner ?? 0;
+  state.nextStarterIndex = winner ?? 0;
   if(winner === null){
-    state.lastWinnerIndex = 0;
-    state.nextStarterIndex = 0;
     if(turnTextEl) turnTextEl.textContent = 'BLOCKED HAND — TIE';
     log('Blocked hand. Tie. Wash the dishes.');
   }else{
-    state.lastWinnerIndex = winner;
-    state.nextStarterIndex = winner;
-    if(scoreRound(winner, 'BLOCKED HAND.')) return;
-    if(turnTextEl) turnTextEl.textContent = 'BLOCKED HAND — '+seatName(winner)+' WINS';
+    if(turnTextEl) turnTextEl.textContent = 'BLOCKED HAND — '+seatName(winner)+' WASH THE DISHES';
+    log('Blocked hand. '+seatName(winner)+' has lowest hand and comes out next.');
   }
   render();
 }
@@ -353,6 +429,8 @@ function cpuTurn(){
   if(move){
     commitPlay(player, move.tile, move.arm);
     log(seatName(player)+' played on '+move.arm+'. Open ends: '+openEndsText()+'.');
+    awardMoveScore(player);
+    if(state.gameOver) return;
     if(!hand.length){ domino(player); return; }
   }else{
     state.passes++;
@@ -383,10 +461,10 @@ function renderBoard(){
 }
 
 function renderStatus(){
-  const score = state.scores.slice(0,state.players).map((s,i)=>seatName(i)+': '+s).join(' / ');
+  const score = state.scores.slice(0,state.players).map((s,i)=>seatName(i)+': '+s+(state.gotIn[i]?'':' (need 10)')).join(' / ');
   if(scoreTextEl) scoreTextEl.textContent = score;
   if(!state.handOver && turnTextEl && turnTextEl.textContent !== 'OPPONENT THINKING...'){
-    turnTextEl.textContent = seatName(state.currentPlayerIndex)+' TURN | OPEN ENDS '+openEndsText();
+    turnTextEl.textContent = seatName(state.currentPlayerIndex)+' TURN | COUNT '+boardCount()+' | '+(state.gotIn[state.currentPlayerIndex]?'IN':'NEEDS 10');
   }
 }
 
@@ -395,7 +473,7 @@ function renderSeats(){
     const el = document.querySelector(sel);
     if(!el) return;
     if(i >= state.players){ el.innerHTML = ''; return; }
-    el.innerHTML = '<b>'+seatName(i)+'</b><small>'+((state.hands[i]||[]).length)+' tiles</small><small>'+state.scores[i]+' pts</small><div class="seat-backs">'+backs(Math.min(7,(state.hands[i]||[]).length))+'</div>';
+    el.innerHTML = '<b>'+seatName(i)+'</b><small>'+((state.hands[i]||[]).length)+' tiles</small><small>'+state.scores[i]+' pts '+(state.gotIn[i]?'IN':'NEEDS 10')+'</small><div class="seat-backs">'+backs(Math.min(7,(state.hands[i]||[]).length))+'</div>';
   });
 }
 
