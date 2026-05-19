@@ -1,4 +1,4 @@
-﻿/* PLAY 3D PHASE 1 â€” STEP 2 ACCESS BRIDGE
+﻿/* PLAY 3D PHASE 1 — STEP 2 ACCESS BRIDGE
    Safe shared access helper.
 
    This does not force-lock pages by itself.
@@ -122,6 +122,18 @@
     );
   }
 
+  function tierRank(tier){
+    const clean = String(tier || 'entry').toLowerCase();
+    if(clean === 'master') return 99;
+    if(clean === 'elite' || clean === 'drop' || clean === 'merch') return 3;
+    if(clean === 'gold' || clean === 'album') return 2;
+    return 1;
+  }
+
+  function sessionTier(session){
+    return String((session && (session.tier || session.code_type || session.level)) || 'entry').toLowerCase();
+  }
+
   function isAllowed(){
     if(hasMasterFlag()){
       setMasterSession();
@@ -196,6 +208,37 @@
     return false;
   }
 
+  function requireTier(tier, options){
+    const opts = options || {};
+    const needed = String(tier || 'entry').toLowerCase();
+
+    if(hasMasterFlag()){
+      setMasterSession();
+      document.documentElement.classList.add('p3d-access-ok','p3d-master-ok');
+      return true;
+    }
+
+    if(hasMasterSession()){
+      document.documentElement.classList.add('p3d-access-ok','p3d-master-ok');
+      return true;
+    }
+
+    const pass = currentPassSession();
+    if(pass && tierRank(sessionTier(pass)) >= tierRank(needed)){
+      document.documentElement.classList.add('p3d-access-ok','p3d-tier-ok');
+      return true;
+    }
+
+    console.log('[PLAY3D ACCESS]', 'ACCESS DENIED');
+    document.documentElement.classList.add('p3d-access-denied','p3d-tier-denied');
+
+    if(opts.redirect === true){
+      window.location.replace(buildUnlockUrl());
+    }
+
+    return false;
+  }
+
   window.Play3DAccess = {
     setMasterSession,
     hasMasterSession,
@@ -205,6 +248,7 @@
     isAllowed,
     requireAccess,
     requireMaster,
+    requireTier,
     buildUnlockUrl,
     buildMasterUrl
   };
@@ -213,4 +257,3 @@
     setMasterSession();
   }
 })();
-
