@@ -53,6 +53,18 @@
     try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
   }
 
+  function supabaseClient(){
+    return window.PLAY3D_SUPABASE || window.supabaseClient || window.supabase || null;
+  }
+
+  async function insertRewardEvent(event){
+    try{
+      var client = supabaseClient();
+      if(!client || typeof client.from !== 'function') return;
+      await client.from('reward_events').insert(event);
+    }catch(e){}
+  }
+
   function daysBetween(a, b){
     var one = new Date(a + 'T00:00:00').getTime();
     var two = new Date(b + 'T00:00:00').getTime();
@@ -278,8 +290,18 @@
     });
 
     var history = readJSON(HISTORY_KEY, []);
-    history.push({at:new Date().toISOString(), game:game || 'game', points:points, xp:xpGain, reason:reason || 'valid_win', prizeEligible:isMember()});
+    var event = {at:new Date().toISOString(), game:game || 'game', points:points, xp:xpGain, reason:reason || 'valid_win', prizeEligible:isMember()};
+    history.push(event);
     writeJSON(HISTORY_KEY, history.slice(-200));
+    insertRewardEvent({
+      event_type:'points_awarded',
+      game:event.game,
+      points:event.points,
+      xp:event.xp,
+      reason:event.reason,
+      prize_eligible:event.prizeEligible,
+      created_at:event.at
+    });
     return getStatus(total);
   }
 
