@@ -1,4 +1,4 @@
-/* PLAY 3D PHASE 1 — STEP 2 ACCESS BRIDGE
+﻿/* PLAY 3D PHASE 1 â€” STEP 2 ACCESS BRIDGE
    Safe shared access helper.
 
    This does not force-lock pages by itself.
@@ -15,6 +15,7 @@
     'CAPO_PASS_SESSION',
     'PLAY3D_PASS_SESSION',
     'play3d_pass_session',
+    'play3d_vault_pass_v1',
     'vault_pass_session',
     'capo_pass_session'
   ];
@@ -74,13 +75,15 @@
 
     if(session.expires_at && now() > Number(session.expires_at)){
       removeKey(MASTER_KEY);
+      console.log('[PLAY3D ACCESS]', 'SESSION EXPIRED');
       return false;
     }
 
+    console.log('[PLAY3D ACCESS]', 'MASTER SESSION ACTIVE');
     return true;
   }
 
-  function hasPassSession(){
+  function currentPassSession(){
     for(const key of PASS_KEYS){
       const session = readJSON(key);
 
@@ -89,19 +92,26 @@
       const valid =
         session.active === true ||
         session.unlocked === true ||
-        session.valid === true;
+        session.valid === true ||
+        key === 'play3d_vault_pass_v1';
 
       if(!valid) continue;
 
-      if(session.expires_at && now() > Number(session.expires_at)){
+      if(session.expires_at && now() > new Date(session.expires_at).getTime()){
         removeKey(key);
+        console.log('[PLAY3D ACCESS]', 'SESSION EXPIRED');
         continue;
       }
 
-      return true;
+      console.log('[PLAY3D ACCESS]', 'SESSION FOUND');
+      return session;
     }
 
-    return false;
+    return null;
+  }
+
+  function hasPassSession(){
+    return !!currentPassSession();
   }
 
   function hasMasterFlag(){
@@ -152,6 +162,7 @@
       return true;
     }
 
+    console.log('[PLAY3D ACCESS]', 'ACCESS DENIED');
     document.documentElement.classList.add('p3d-access-denied');
 
     if(opts.redirect === true){
@@ -175,6 +186,7 @@
       return true;
     }
 
+    console.log('[PLAY3D ACCESS]', 'ACCESS DENIED');
     document.documentElement.classList.add('p3d-master-denied');
 
     if(opts.redirect === true){
@@ -188,6 +200,7 @@
     setMasterSession,
     hasMasterSession,
     hasPassSession,
+    currentPassSession,
     hasMasterFlag,
     isAllowed,
     requireAccess,
@@ -200,3 +213,4 @@
     setMasterSession();
   }
 })();
+
