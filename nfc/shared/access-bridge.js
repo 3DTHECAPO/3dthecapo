@@ -195,8 +195,55 @@
 
     return false;
   }
+function tierRank(tier){
+  const clean = String(tier || 'entry').toLowerCase();
 
+  if(clean === 'master') return 99;
+  if(clean === 'elite' || clean === 'drop' || clean === 'merch') return 3;
+  if(clean === 'gold' || clean === 'album') return 2;
+
+  return 1;
+}
+
+function sessionTier(session){
+  return String(
+    (session && (session.tier || session.code_type || session.level)) || 'entry'
+  ).toLowerCase();
+}
+
+function requireTier(tier, options){
+  const opts = options || {};
+  const needed = String(tier || 'entry').toLowerCase();
+
+  if(hasMasterFlag()){
+    setMasterSession();
+    document.documentElement.classList.add('p3d-access-ok','p3d-master-ok');
+    return true;
+  }
+
+  if(hasMasterSession()){
+    document.documentElement.classList.add('p3d-access-ok','p3d-master-ok');
+    return true;
+  }
+
+  const pass = currentPassSession();
+
+  if(pass && tierRank(sessionTier(pass)) >= tierRank(needed)){
+    document.documentElement.classList.add('p3d-access-ok','p3d-tier-ok');
+    return true;
+  }
+
+  console.log('[PLAY3D ACCESS]', 'ACCESS DENIED');
+  document.documentElement.classList.add('p3d-access-denied','p3d-tier-denied');
+
+  if(opts.redirect === true){
+    window.location.replace(buildUnlockUrl());
+  }
+
+  return false;
+}
   window.Play3DAccess = {
+     requireTier,
     setMasterSession,
     hasMasterSession,
     hasPassSession,
