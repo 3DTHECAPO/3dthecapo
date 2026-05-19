@@ -25,6 +25,36 @@ function markUsed(code){
   }
 }
 
+function supabaseClient(){
+  return window.PLAY3D_SUPABASE || window.supabaseClient || window.supabase || null;
+}
+
+async function insertClaimRows(parsed){
+  const client = supabaseClient();
+  if(!client || typeof client.from !== 'function') throw new Error('Reward claims connection unavailable');
+  const now = new Date().toISOString();
+  const claim = {
+    claim_code:parsed.raw,
+    reward_type:parsed.type,
+    amount:parsed.amount,
+    status:'pending',
+    source:'game_vault_claim',
+    created_at:now
+  };
+  const reward = await client.from('reward_claims').insert(claim);
+  if(reward.error) throw reward.error;
+  try{
+    await client.from('claim_log').insert({
+      claim_code:parsed.raw,
+      event_type:'submitted',
+      status:'pending',
+      source:'game_vault_claim',
+      created_at:now
+    });
+  }catch(e){}
+  return {ok:true};
+}
+
 function parse(code){
   const upper = code.toUpperCase().trim();
 
@@ -40,7 +70,7 @@ function parse(code){
   return null;
 }
 
-btn.onclick = () => {
+btn.onclick = async () => {
   const raw = input.value.trim();
   const p = parse(raw);
 
@@ -56,6 +86,13 @@ btn.onclick = () => {
 
   if(p.type === 'member' && window.Play3DMemberSystem){
     Play3DMemberSystem.setMember(true);
+  }
+
+  try{
+    await insertClaimRows(p);
+  }catch(e){
+    statusBox.textContent = 'CLAIM SAVE ERROR';
+    return;
   }
 
   Play3DBankroll.queueBoost(p.amount);
