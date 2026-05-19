@@ -465,17 +465,46 @@ async function init(){
       }
     }
 
-    const tier = String(record.code_type || 'ENTRY').toLowerCase();
-    saveVaultPass(record, tier);
-    patchCodeHit(code);
-    fireBrevoSafe(code, tier);
-    logEvent(code, tier, 'success', record);
-    unlockUI(tier);
-    preserveNfcLinks(code);
+   const tier = String(record.code_type || 'ENTRY').toLowerCase();
 
-    setTimeout(()=>{
-      injectVaultConversionScreen(code, tier);
-    }, 1800);
+/* SAVE SESSION FIRST */
+const savedPass = saveVaultPass(record, tier);
+
+/* MASTER SESSION */
+if(tier === 'master'){
+  saveMasterSession(record);
+}
+
+/* VERIFY SESSION EXISTS BEFORE UI/NAV */
+const verifyPass = getActiveSavedPass();
+const verifyMaster = getActiveMasterSession();
+
+if(tier === 'master'){
+  if(!verifyMaster){
+    showLocked('Master session failed');
+    return;
+  }
+}else{
+  if(!verifyPass){
+    showLocked('Session failed');
+    return;
+  }
+}
+
+/* PRESERVE LINKS AFTER SESSION EXISTS */
+preserveNfcLinks(code);
+
+/* NON-BLOCKING ANALYTICS */
+patchCodeHit(code);
+fireBrevoSafe(code, tier);
+logEvent(code, tier, 'success', record);
+
+/* OPEN UI LAST */
+unlockUI(tier);
+
+setTimeout(()=>{
+  injectVaultConversionScreen(code, tier);
+}, 1800);
   }catch(err){
     console.error(err);
     sessionLog('ACCESS DENIED');
