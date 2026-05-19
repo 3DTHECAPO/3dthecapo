@@ -4,13 +4,7 @@
 const byId = (id)=>document.getElementById(id);
 const params = new URLSearchParams(window.location.search);
 const code = (params.get('code')||'').toUpperCase().trim();
-const target = params.get('target') || '';
 
-function goTargetIfNeeded(){
-  if(!target) return false;
-  window.location.href = target;
-  return true;
-}
 const statusPill=byId('statusPill');
 const vaultState=byId('vaultState');
 const lockedActions=byId('lockedActions');
@@ -95,53 +89,24 @@ const ROOM_MAP = {
 function show(el){ if(el) el.classList.remove('hidden'); }
 function hide(el){ if(el) el.classList.add('hidden'); }
 
-async function logEvent(codeValue, tier, type, record){
-  const basePayload = {
-    code: codeValue,
-    tier: tier || '',
-    event_type: type,
-    user_agent: navigator.userAgent,
-    page: window.location.pathname
-  };
-
-  const fullPayload = Object.assign({}, basePayload);
-  if(record){
-    fullPayload.code = record.code || codeValue;
-    fullPayload.tier = record.code_type || tier || '';
-    fullPayload.code_type = record.code_type || tier || '';
-    fullPayload.recipient_email = record.recipient_email || null;
-    fullPayload.sent_at = record.sent_at || null;
-    fullPayload.expires_at = record.expires_at || null;
-    fullPayload.used_at = record.used_at || null;
-  }
-
-  async function insertVaultLog(payload){
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/vault_logs`,{
+async function logEvent(codeValue, tier, type){
+  try{
+    await fetch(`${SUPABASE_URL}/rest/v1/vault_logs`,{
       method:'POST',
       headers:{
         'apikey':SUPABASE_ANON,
         'Authorization':`Bearer ${SUPABASE_ANON}`,
-        'Content-Type':'application/json',
-        'Prefer':'return=minimal'
+        'Content-Type':'application/json'
       },
-      body:JSON.stringify(payload)
+      body:JSON.stringify({
+        code: codeValue,
+        tier: tier || '',
+        event_type: type,
+        user_agent: navigator.userAgent,
+        page: window.location.pathname
+      })
     });
-    if(!res.ok){
-      const text = await res.text().catch(()=>String(res.status));
-      throw new Error(text || ('vault_logs insert failed '+res.status));
-    }
-  }
-
-  try{
-    await insertVaultLog(fullPayload);
-  }catch(fullError){
-    console.error('[PLAY3D VAULT LOG] full insert failed', fullError);
-    try{
-      await insertVaultLog(basePayload);
-    }catch(minimalError){
-      console.error('[PLAY3D VAULT LOG] minimal insert failed', minimalError);
-    }
-  }
+  }catch(e){}
 }
 
 
@@ -442,12 +407,12 @@ async function init(){
   }
 
   try{
+    const activePass = getActiveSavedPass();
     if(activePass && String(activePass.code || '').toUpperCase() === code){
-  const tier = String(activePass.tier || 'ENTRY').toLowerCase();
-  if(goTargetIfNeeded()) return;
-  unlockUI(tier, { skipCinematic:true });
-  return;
-}
+      const tier = String(activePass.tier || 'ENTRY').toLowerCase();
+      unlockUI(tier, { skipCinematic:true });
+      return;
+    }
 
     const record = await getCode(code);
 
@@ -464,56 +429,24 @@ async function init(){
     if(record.expires_at){
       const expiry = new Date(record.expires_at).getTime();
       if(Number.isFinite(expiry) && Date.now() > expiry){
-        await logEvent(code, record.code_type || '', 'expired', record);
+        await logEvent(code, record.code_type || '', 'expired');
         sessionLog('SESSION EXPIRED');
         showLocked('Code expired');
         return;
       }
     }
 
-   const tier = String(record.code_type || 'ENTRY').toLowerCase();
+    const tier = String(record.code_type || 'ENTRY').toLowerCase();
+    saveVaultPass(record, tier);
+    patchCodeHit(code);
+    fireBrevoSafe(code, tier);
+    logEvent(code, tier, 'success');
+    unlockUI(tier);
+    preserveNfcLinks(code);
 
-/* SAVE SESSION FIRST */
-const savedPass = saveVaultPass(record, tier);
-
-/* MASTER SESSION */
-if(tier === 'master'){
-  saveMasterSession(record);
-}
-
-/* VERIFY SESSION EXISTS BEFORE UI/NAV */
-const verifyPass = getActiveSavedPass();
-const verifyMaster = getActiveMasterSession();
-
-if(tier === 'master'){
-  if(!verifyMaster){
-    showLocked('Master session failed');
-    return;
-  }
-}else{
-  if(!verifyPass){
-    showLocked('Session failed');
-    return;
-  }
-}
-
-/* PRESERVE LINKS AFTER SESSION EXISTS */
-preserveNfcLinks(code);
-
-/* NON-BLOCKING ANALYTICS */
-patchCodeHit(code);
-fireBrevoSafe(code, tier);
-logEvent(code, tier, 'success', record);
-
-/* OPEN TARGET ROOM AFTER SESSION IS SAVED */
-if(goTargetIfNeeded()) return;
-
-/* OPEN UI LAST */
-unlockUI(tier);
-
-setTimeout(()=>{
-  injectVaultConversionScreen(code, tier);
-}, 1800);
+    setTimeout(()=>{
+      injectVaultConversionScreen(code, tier);
+    }, 1800);
   }catch(err){
     console.error(err);
     sessionLog('ACCESS DENIED');
@@ -659,7 +592,7 @@ setTimeout(()=>{
 
       box.innerHTML=`
         <div style="font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;font-size:26px;text-transform:uppercase;">
-          Vault Connected ✔
+          Vault Connected âœ”
         </div>
         <p style="color:rgba(244,241,234,.72);">Bonus access connected to ${email}.</p>
       `;
