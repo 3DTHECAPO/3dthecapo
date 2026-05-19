@@ -4,6 +4,7 @@
 const byId = (id)=>document.getElementById(id);
 const params = new URLSearchParams(window.location.search);
 const code = (params.get('code')||'').toUpperCase().trim();
+const target = (params.get('target')||'').trim();
 
 const statusPill=byId('statusPill');
 const vaultState=byId('vaultState');
@@ -193,22 +194,72 @@ function playAccessSequence(){
   }, 5300);
 }
 
+function safeTargetUrl(){
+  if(!target) return '';
+  try{
+    const url = new URL(target, window.location.href);
+    if(url.origin !== window.location.origin) return '';
+    return url.pathname + url.search + url.hash;
+  }catch(e){
+    return '';
+  }
+}
+
+function routeTargetIfPresent(){
+  const destination = safeTargetUrl();
+  if(!destination) return false;
+  window.location.replace(destination);
+  return true;
+}
+
+function routeLinksForTier(rawTier){
+  const tier = String(rawTier || 'entry').toLowerCase();
+  const entry = [
+    ['Entry Room','./entry-backdrop.html'],
+    ['Game Vault','./game-vault/index.html']
+  ];
+  const gold = [
+    ['Album Chamber','./album-chamber.html'],
+    ['Vault Interface','./vault-interface.html']
+  ];
+  const elite = [
+    ['Exclusive Room','./secret-page.html'],
+    ['Merch Room','./merch-drop-room.html']
+  ];
+  const master = [
+    ['Master Room','./rooms/master/index.html'],
+    ['Rewards','./game-vault/rewards/index.html']
+  ];
+
+  if(tier === 'master') return entry.concat(gold, elite, master);
+  if(tier === 'elite') return entry.concat(gold, elite);
+  if(tier === 'gold') return entry.concat(gold);
+  return entry;
+}
+
+function renderSessionRoutes(rawTier){
+  if(!sessionLane) return;
+  sessionLane.innerHTML = '';
+  routeLinksForTier(rawTier).forEach(([label, href])=>{
+    const link = document.createElement('a');
+    link.href = href;
+    link.textContent = label;
+    sessionLane.appendChild(link);
+  });
+}
+
 function unlockUI(rawTier, options){
   const opts = options || {};
   const tier = String(rawTier || 'entry').toLowerCase();
   document.body.classList.remove('locked');
 
+  // The NFC page stays a scan/unlock page. Room sections remain hidden;
+  // navigation goes through real room pages instead of scrolling into inline panels.
   ['entry','gold','elite'].forEach(t=>hide(byId('room-'+t)));
-
-  if(tier === 'master'){
-    ['entry','gold','elite'].forEach(t=>show(byId('room-'+t)));
-  }else{
-    const roomId = ROOM_MAP[tier] || 'room-entry';
-    show(byId(roomId));
-  }
+  renderSessionRoutes(tier);
 
   if(statusPill) statusPill.textContent = tier.toUpperCase();
-  if(vaultState) vaultState.textContent = tier === 'master' ? 'Master Vault Pass' : tier.charAt(0).toUpperCase()+tier.slice(1)+' Room';
+  if(vaultState) vaultState.textContent = tier === 'master' ? 'Master Vault Pass' : tier.charAt(0).toUpperCase()+tier.slice(1)+' Access';
 
   hide(lockedActions);
   hide(lockedRoom);
@@ -391,12 +442,14 @@ async function init(){
   if(!code){
     const masterSession = getActiveMasterSession();
     if(masterSession){
+      if(routeTargetIfPresent()) return;
       unlockUI('master', { skipCinematic:true });
       return;
     }
 
     const activePass = getActiveSavedPass();
     if(activePass){
+      if(routeTargetIfPresent()) return;
       const tier = String(activePass.tier || 'ENTRY').toLowerCase();
       unlockUI(tier, { skipCinematic:true });
       return;
@@ -409,6 +462,7 @@ async function init(){
   try{
     const activePass = getActiveSavedPass();
     if(activePass && String(activePass.code || '').toUpperCase() === code){
+      if(routeTargetIfPresent()) return;
       const tier = String(activePass.tier || 'ENTRY').toLowerCase();
       unlockUI(tier, { skipCinematic:true });
       return;
@@ -441,6 +495,7 @@ async function init(){
     patchCodeHit(code);
     fireBrevoSafe(code, tier);
     logEvent(code, tier, 'success');
+    if(routeTargetIfPresent()) return;
     unlockUI(tier);
     preserveNfcLinks(code);
 
@@ -453,7 +508,36 @@ async function init(){
     showLocked('Connection error');
   }
 }
-  function injectVaultConversionScreen(codeValue, tier){
+  
+async function upsertBonusMember(email, codeValue, tier){
+  try{
+    const payload = {
+      email,
+      code: codeValue,
+      tier: String(tier || 'entry').toLowerCase(),
+      status: 'active',
+      source: 'bonus_email',
+      last_seen_at: new Date().toISOString()
+    };
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/members?on_conflict=email`,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey':SUPABASE_ANON,
+        'Authorization':'Bearer '+SUPABASE_ANON,
+        'Prefer':'resolution=merge-duplicates,return=minimal'
+      },
+      body:JSON.stringify(payload)
+    });
+
+    if(!res.ok) console.warn('[PLAY3D ACCESS] members upsert failed', await res.text());
+  }catch(e){
+    console.warn('[PLAY3D ACCESS] members upsert failed', e);
+  }
+}
+
+function injectVaultConversionScreen(codeValue, tier){
   if(document.getElementById("vaultConversionScreen")) return;
 
   const box=document.createElement("section");
@@ -589,6 +673,8 @@ async function init(){
       });
 
       if(!res.ok) throw new Error(await res.text());
+
+      await upsertBonusMember(email, codeValue, tier);
 
       box.innerHTML=`
         <div style="font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;font-size:26px;text-transform:uppercase;">
