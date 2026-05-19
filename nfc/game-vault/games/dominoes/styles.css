@@ -1,60 +1,50 @@
 
-/* PLAY 3D Dominoes clean support */
-.count-popup{
+/* PLAY 3D Dominoes V3 count + board safety */
+.casino-table{overflow:visible!important;min-height:760px!important;position:relative!important;z-index:1!important}
+.table-center{
+  overflow:auto!important;
+  width:min(1120px,94%)!important;
+  min-height:560px!important;
+  max-height:none!important;
+  z-index:2!important;
+}
+.controls.panel{position:relative!important;z-index:20!important;margin-top:22px!important}
+.spinner-board{min-width:760px!important;min-height:520px!important;gap:0!important}
+.line-row,.horizontal-arm,.branch-line{gap:0!important}
+.tile{margin:0!important}
+.domino-count-popup{
   position:fixed;
   left:50%;
-  top:22%;
-  transform:translate(-50%,-20%) scale(.92);
+  top:18%;
+  transform:translate(-50%,-12px) scale(.96);
   z-index:99999;
   padding:18px 28px;
   border-radius:22px;
-  border:2px solid rgba(242,210,123,.85);
-  background:rgba(0,0,0,.86);
+  border:2px solid rgba(242,210,123,.9);
+  background:rgba(0,0,0,.9);
   color:#f2d27b;
-  font-family:"Black Ops One", Oswald, sans-serif;
-  font-size:clamp(26px,5vw,58px);
+  font-family:"Black Ops One",Oswald,sans-serif;
+  font-size:clamp(28px,7vw,72px);
   letter-spacing:.04em;
-  text-align:center;
+  text-shadow:0 0 22px rgba(242,210,123,.55);
+  box-shadow:0 24px 80px rgba(0,0,0,.75);
   opacity:0;
   pointer-events:none;
-  box-shadow:0 0 40px rgba(242,210,123,.38);
+  transition:opacity .18s ease, transform .18s ease;
 }
-.count-popup.show{
-  animation:play3dCountPop 1.8s ease both;
+.domino-count-popup.show{
+  opacity:1;
+  transform:translate(-50%,0) scale(1);
 }
-.count-popup.score{
-  background:linear-gradient(180deg,rgba(35,24,4,.96),rgba(0,0,0,.92));
+.domino-count-popup.good{
+  border-color:#f2d27b;
+  background:linear-gradient(180deg,rgba(40,28,8,.96),rgba(0,0,0,.92));
 }
-@keyframes play3dCountPop{
-  0%{opacity:0;transform:translate(-50%,-10%) scale(.75)}
-  15%{opacity:1;transform:translate(-50%,-20%) scale(1.08)}
-  75%{opacity:1;transform:translate(-50%,-20%) scale(1)}
-  100%{opacity:0;transform:translate(-50%,-28%) scale(.94)}
-}
-#washBtn{
-  background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#805c1a);
-  color:#100c05;
-}
-.controls{
-  position:relative;
-  z-index:20;
-}
-.casino-table{
-  overflow:visible !important;
-  margin-bottom:22px;
-}
-.table-center{
-  overflow:auto !important;
-  max-width:100%;
-}
-.spinner-board{
-  min-width:620px;
-}
-.line-row,
-.horizontal-arm,
-.branch-line{
-  gap:0 !important;
-}
-.tile{
-  flex:0 0 auto;
+@media(max-width:760px){
+  .casino-table{min-height:660px!important}
+  .table-center{width:96%!important;min-height:470px!important;padding:10px!important}
+  .spinner-board{min-width:620px!important;min-height:440px!important}
+  .tile{width:64px!important;height:36px!important;font-size:14px!important}
+  .tile.spinner,.tile.top-arm,.tile.bottom-arm,.tile.left-arm.double,.tile.right-arm.double{width:38px!important;height:64px!important}
+  .tile.top-arm.double,.tile.bottom-arm.double{width:64px!important;height:36px!important}
 }
