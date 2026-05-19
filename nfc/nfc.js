@@ -17,7 +17,6 @@ const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
 const TABLE = 'vault_codes';
 
-
 function setMasterSession(){
   try{
     localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify({
