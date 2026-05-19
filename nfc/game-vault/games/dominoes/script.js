@@ -209,15 +209,30 @@ function refreshOpenEnds(){
 
 function boardEndTotal(){
   if(!state.board.spinnerTile) return 0;
-  let total = 0;
-  refreshOpenEnds().forEach(end=>{
-    if(end.emptyArm){
-      total += spinnerBaseValue(end.arm);
-    }else{
-      total += exposedValueForTip(end.scoringTile, end.arm);
-    }
-  });
-  return total;
+
+  const sides = armSides();
+
+  // SPINNER RULE USED HERE:
+  // If the spinner is a double, count the spinner itself ONCE as both sides,
+  // then add only the outside exposed tip of each active branch.
+  // Example: 6/6 connected to 6/3 = 12 + 3 = 15.
+  // Example: 4/4 + 2/2 + 0/3 = 8 + 4 + 3 = 15.
+  if(state.board.canBranch && isDouble(state.board.spinnerTile)){
+    let total = state.board.spinnerTile[0] + state.board.spinnerTile[1];
+    sides.forEach(arm => {
+      const tip = branchTip(arm);
+      if(tip) total += exposedValueForTip(tip, arm);
+    });
+    return total;
+  }
+
+  // Standard non-spinner chain: count the two true exposed outside ends.
+  // If one side has no branch yet, that side of the starter is still exposed.
+  return sides.reduce((sum, arm) => {
+    const tip = branchTip(arm);
+    if(tip) return sum + exposedValueForTip(tip, arm);
+    return sum + spinnerBaseValue(arm);
+  }, 0);
 }
 
 function legalArms(tile){
