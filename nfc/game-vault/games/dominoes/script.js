@@ -23,6 +23,7 @@ const state={
     spinnerTile:null,
     canBranch:false,
     spinnerArms:{left:[],right:[],top:[],bottom:[]},
+    armScoreValues:{left:null,right:null,top:null,bottom:null},
     openEnds:[]
   }
 };
@@ -71,7 +72,7 @@ function showWashButton(show){
 }
 
 function resetBoard(){
-  state.board={spinnerTile:null,canBranch:false,spinnerArms:{left:[],right:[],top:[],bottom:[]},openEnds:[]};
+  state.board={spinnerTile:null,canBranch:false,spinnerArms:{left:[],right:[],top:[],bottom:[]},armScoreValues:{left:null,right:null,top:null,bottom:null},openEnds:[]};
   state.lastBoardTotal=0;
   state.lastPointsAwarded=0;
   state.lastScoreNote='Need 10 to get in.';
@@ -217,28 +218,30 @@ function boardEndTotal(){
   if(!hasBoardTiles()) return 0;
 
   const arms=state.board.spinnerArms;
+  const scores=state.board.armScoreValues || {};
   const activeArms=['left','right','top','bottom'].filter(side=>(arms[side]||[]).length>0);
 
-  // First tile coming out can count as the whole bone.
+  // First bone coming out counts as the whole bone.
   if(!activeArms.length) return tileSum(state.board.spinnerTile);
 
-  let total=0;
-
-  // Spinner double counts whole once while it is the center spinner.
-  // Empty spinner arms do NOT get counted separately.
-  if(state.board.canBranch && isDouble(state.board.spinnerTile)){
-    total += tileSum(state.board.spinnerTile);
-  }
-
-  // Only active branch tips count. Do not count inside tiles or connected sides.
-  activeArms.forEach(side=>{
+  // With one branch off a double spinner, the spinner is still counted whole plus the outside tip.
+  // Example: 6/6 + 6/3 = 12 + 3 = 15.
+  if(activeArms.length===1 && state.board.canBranch && isDouble(state.board.spinnerTile)){
+    const side=activeArms[0];
     const branch=arms[side]||[];
     const tip=branch[branch.length-1];
-    total += exposedValue(tip,side);
-  });
+    const tipScore=Number(scores[side] ?? exposedValue(tip,side) ?? 0);
+    return tileSum(state.board.spinnerTile)+tipScore;
+  }
 
-  // Non-double starter with branches: only active branch tips are counted.
-  return total;
+  // Once multiple arms are live, count ONLY the visible exposed tip score on each live arm.
+  // Non-doubles never count whole here: 6/4 exposed on 4 side counts 4, not 10.
+  return activeArms.reduce((sum,side)=>{
+    const branch=arms[side]||[];
+    const tip=branch[branch.length-1];
+    const tipScore=Number(scores[side] ?? exposedValue(tip,side) ?? 0);
+    return sum + tipScore;
+  },0);
 }
 
 function updateBoardTotal(){
@@ -353,7 +356,9 @@ function placeOnArm(tile,arm){
   const end=refreshOpenEnds().find(item=>item.arm===arm);
   if(!end||(tile[0]!==end.value&&tile[1]!==end.value)) return false;
 
+  const parts=splitByMatch(tile,end.value);
   state.board.spinnerArms[arm].push(orientForArm(tile,end.value,arm));
+  state.board.armScoreValues[arm]=isDouble(tile)?tileSum(tile):Number(parts.outside||0);
   refreshOpenEnds();
   updateBoardTotal();
   return true;
