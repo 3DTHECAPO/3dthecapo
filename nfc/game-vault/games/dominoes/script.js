@@ -25,6 +25,7 @@ const state = {
   pending: null,
   lastCount: 0,
   lastAwarded: 0,
+  gameOver: false,
   handNumber: 0,
   board: {
     root: null,
@@ -156,16 +157,28 @@ function boardCount(){
   if(!state.board.root) return 0;
 
   const exposed = exposedArmsForCount();
+
+  // Coming out: first bone counts whole.
   if(exposed.length === 1 && exposed[0] === 'root') return countRootOnly();
 
   let total = 0;
+
+  // Spinner doubles stay counted as both sides while arms are active.
+  // 6/6 + 6/3 = 12 + 3 = 15.
+  // 0/3 + 6/6 + 0/2 = 3 + 12 + 2 = 17.
+  if(state.board.canBranch && isDouble(state.board.root)){
+    total += state.board.root[0] + state.board.root[1];
+  }
+
   exposed.forEach(arm=>{
     const branch = state.board.arms[arm] || [];
     const tip = branch[branch.length-1];
 
     // Only active branch tips count. Empty spinner arms do NOT count.
+    // Non-doubles count outside tip only; doubles count both sides.
     if(tip) total += outsideValue(tip, arm);
   });
+
   return total;
 }
 
@@ -212,7 +225,22 @@ function awardMoveScore(playerIndex){
   state.lastAwarded = points;
   popCount('SCORE '+points, true);
   log(seatName(playerIndex)+' scored '+points+'.');
+
+  if(state.scores[playerIndex] >= SCORE_TARGET){
+    endGame(playerIndex);
+  }
+
   return points;
+}
+
+function endGame(winner){
+  state.gameOver = true;
+  state.handOver = true;
+  state.lastWinnerIndex = winner;
+  if(turnTextEl) turnTextEl.textContent = seatName(winner)+' WINS TO '+SCORE_TARGET;
+  popCount(seatName(winner)+' WINS '+SCORE_TARGET, true);
+  log(seatName(winner)+' wins the game at '+state.scores[winner]+'.');
+  render();
 }
 
 function orientForArm(tile, match, arm){
@@ -259,7 +287,7 @@ function commitPlay(playerIndex, tile, arm){
 }
 
 function requestArm(tile){
-  if(state.handOver) return;
+  if(state.handOver || state.gameOver) return;
   const arms = legalArms(tile);
   if(!arms.length){ log('Illegal tile.'); return; }
 
@@ -313,6 +341,7 @@ function newHand(starterIndex=null){
   }while(!highestDouble());
 
   state.handOver = false;
+  state.gameOver = false;
   state.lastWinnerIndex = null;
 
   if(starterIndex === null || starterIndex === undefined){
@@ -346,6 +375,10 @@ function newGame(players=state.players, resetMatch=true){
 }
 
 function washDishes(){
+  if(state.gameOver){
+    log('Game is over. Press NEW GAME to restart.');
+    return;
+  }
   if(!state.handOver){
     log('Hand is still active.');
     return;
@@ -355,6 +388,7 @@ function washDishes(){
 }
 
 function domino(winner){
+  if(state.gameOver) return;
   state.lastWinnerIndex = winner;
   state.nextStarterIndex = winner;
   state.handOver = true;
@@ -412,7 +446,7 @@ function nextTurn(){
 function drawOne(){
   const player = state.currentPlayerIndex;
   if(player !== 0 && !activeLocal()) return;
-  if(state.handOver) return;
+  if(state.handOver || state.gameOver) return;
 
   if(canPlay(player)){
     log('You have a playable domino.');
@@ -436,7 +470,7 @@ function drawOne(){
 function passTurn(){
   const player = state.currentPlayerIndex;
   if(player !== 0 && !activeLocal()) return;
-  if(state.handOver) return;
+  if(state.handOver || state.gameOver) return;
 
   if(canPlay(player)){ log('Play a legal tile if you can.'); return; }
   if(state.stock.length){ log('Draw from the boneyard before passing.'); return; }
@@ -557,7 +591,7 @@ function ensureWashButton(){
     btn.onclick = washDishes;
     passBtnEl.parentElement.appendChild(btn);
   }
-  if(btn) btn.disabled = !state.handOver;
+  if(btn) btn.disabled = !state.handOver || state.gameOver;
 }
 
 function render(){
