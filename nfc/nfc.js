@@ -17,6 +17,94 @@ const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
 const TABLE = 'vault_codes';
 
+function supabaseHeaders(extra){
+  return Object.assign({
+    'apikey':SUPABASE_ANON,
+    'Authorization':`Bearer ${SUPABASE_ANON}`,
+    'Content-Type':'application/json'
+  }, extra || {});
+}
+
+async function safeSupabaseWrite(path, options){
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, options);
+    return {ok:res.ok, status:res.status, data:await res.json().catch(()=>null)};
+  }catch(e){
+    return {ok:false, error:e};
+  }
+}
+
+async function markCodeUsed(record){
+  if(!record || (record.used === true && record.used_at)) return;
+  await safeSupabaseWrite(`${TABLE}?code=eq.${encodeURIComponent(record.code || code)}`, {
+    method:'PATCH',
+    headers:supabaseHeaders({'Prefer':'return=minimal'}),
+    body:JSON.stringify({used:true, used_at:new Date().toISOString()})
+  });
+}
+
+async function logVaultUnlock(record, tier){
+  await safeSupabaseWrite('vault_logs', {
+    method:'POST',
+    headers:supabaseHeaders({'Prefer':'return=minimal'}),
+    body:JSON.stringify({
+      code:record && record.code || code,
+      code_type:tier || record && record.code_type || 'entry',
+      event_type:'nfc_unlock',
+      source:'nfc_unlock',
+      created_at:new Date().toISOString()
+    })
+  });
+}
+
+async function upsertMember(record, tier){
+  const email = record && record.recipient_email;
+  if(!email) return;
+  const now = new Date().toISOString();
+  const payload = {
+    email,
+    code:record.code || code,
+    tier:tier || record.code_type || 'entry',
+    joined_at:record.joined_at || now,
+    last_seen_at:now,
+    status:'active',
+    source:'nfc_unlock'
+  };
+  const upsert = await safeSupabaseWrite('members?on_conflict=email', {
+    method:'POST',
+    headers:supabaseHeaders({'Prefer':'resolution=merge-duplicates,return=minimal'}),
+    body:JSON.stringify(payload)
+  });
+  if(upsert.ok) return;
+  const patched = await safeSupabaseWrite(`members?email=eq.${encodeURIComponent(email)}`, {
+    method:'PATCH',
+    headers:supabaseHeaders({'Prefer':'return=minimal'}),
+    body:JSON.stringify({
+      code:payload.code,
+      tier:payload.tier,
+      last_seen_at:now,
+      status:'active',
+      source:'nfc_unlock'
+    })
+  });
+  if(patched.ok) return;
+  await safeSupabaseWrite('members', {
+    method:'POST',
+    headers:supabaseHeaders({'Prefer':'return=minimal'}),
+    body:JSON.stringify(payload)
+  });
+}
+
+function isFanTier(tier){
+  return ['fan','game','game_fan','player','play3d'].includes(String(tier || '').toLowerCase());
+}
+
+function gameVaultFanUrl(record){
+  const u = new URL('./game-vault/index.html', window.location.href);
+  u.searchParams.set('mode','fan');
+  u.searchParams.set('code', record && record.code || code);
+  return u.toString();
+}
 
 function setMasterSession(){
   try{
@@ -267,10 +355,17 @@ async function init(){
     const tier =
       String(record.code_type || 'entry').toLowerCase();
     savePassSession(record, tier);
+    await markCodeUsed(record);
+    await logVaultUnlock(record, tier);
+    await upsertMember(record, tier);
 
     playAccessSequence();
 
     setTimeout(()=>{
+      if(isFanTier(tier)){
+        window.location.replace(gameVaultFanUrl(record));
+        return;
+      }
       unlockUI(tier);
     },5400);
 
