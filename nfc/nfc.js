@@ -1,559 +1,284 @@
-﻿(function(){
+(function(){
 'use strict';
 
 const byId = (id)=>document.getElementById(id);
 const params = new URLSearchParams(window.location.search);
-const code = (params.get('code')||'').toUpperCase().trim();
 
-const statusPill=byId('statusPill');
-const vaultState=byId('vaultState');
-const lockedActions=byId('lockedActions');
-const lockedRoom=byId('lockedRoom');
-const vaultSequence=byId('vaultSequence');
-const accessOverlay=byId('accessOverlay');
-const sessionDivider=byId('sessionDivider');
-const sessionLane=byId('sessionLane');
-const connectDivider=byId('connectDivider');
-const connect=byId('connect');
+const code = (params.get('code')||'').toUpperCase().trim();
+const target = params.get('target') || '';
+const MASTER_CODE = 'CAPO-MASTER-999';
+
+const statusPill = byId('statusPill');
+const vaultState = byId('vaultState');
+const lockedActions = byId('lockedActions');
+const lockedRoom = byId('lockedRoom');
 
 const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
 const TABLE = 'vault_codes';
 
-const ROOM_MAP = {
-  entry: 'room-entry',
-  gold: 'room-gold',
-  elite: 'room-elite',
-  master: 'room-elite',
-  drop: 'room-elite',
-  merch: 'room-elite'
-};
-
-function show(el){ if(el) el.classList.remove('hidden'); }
-function hide(el){ if(el) el.classList.add('hidden'); }
-
-async function postVaultLog(payload, label){
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/vault_logs`,{
-    method:'POST',
-    headers:{
-      'apikey':SUPABASE_ANON,
-      'Authorization':`Bearer ${SUPABASE_ANON}`,
-      'Content-Type':'application/json',
-      'Prefer':'return=minimal'
-    },
-    body:JSON.stringify(payload)
-  });
-
-  if(!res.ok){
-    const message = await res.text().catch(()=>res.statusText);
-    throw new Error(`${label || 'vault_logs'} failed: ${message || res.status}`);
-  }
-}
-
-async function logEvent(codeValue, tier, type, record, usedAt){
-  const normalizedTier = tier || (record && record.code_type) || '';
-  const minimalPayload = {
-    code: codeValue,
-    tier: normalizedTier,
-    event_type: type,
-    user_agent: navigator.userAgent,
-    page: window.location.pathname
-  };
-
-  const fullPayload = Object.assign({}, minimalPayload, {
-    recipient_email: record && record.recipient_email || null,
-    sent_at: record && record.sent_at || null,
-    expires_at: record && record.expires_at || null,
-    used_at: usedAt || record && record.used_at || null
-  });
-
+function setMasterSession(){
   try{
-    await postVaultLog(fullPayload, 'vault_logs full insert');
-  }catch(fullError){
-    console.warn('[PLAY3D NFC] Full vault_logs insert failed; retrying minimal payload.', fullError);
-    try{
-      await postVaultLog(minimalPayload, 'vault_logs minimal insert');
-    }catch(minimalError){
-      console.warn('[PLAY3D NFC] Minimal vault_logs insert failed.', minimalError);
-    }
-  }
-}
-
-
-async function patchCodeHit(codeValue, usedAt){
-  if(!codeValue) return false;
-  const stamp = usedAt || new Date().toISOString();
-  try{
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(codeValue)}`,{
-      method:'PATCH',
-      headers:{
-        'apikey':SUPABASE_ANON,
-        'Authorization':`Bearer ${SUPABASE_ANON}`,
-        'Content-Type':'application/json',
-        'Prefer':'return=minimal'
-      },
-      body:JSON.stringify({ used:true, used_at:stamp })
-    });
-
-    if(!res.ok){
-      const message = await res.text().catch(()=>res.statusText);
-      console.warn('[PLAY3D NFC] vault_codes used_at update failed.', message || res.status);
-      return false;
-    }
-    return true;
-  }catch(e){
-    console.warn('[PLAY3D NFC] vault_codes used_at update failed.', e);
-    return false;
-  }
-}
-
-function fireBrevoSafe(codeValue, tier){
-  // Keeps Brevo-compatible hooks non-blocking. If your Brevo script is loaded anywhere,
-  // these events give it something to catch without freezing the vault flow.
-  try{ window.dispatchEvent(new CustomEvent('play3d:redeem_success', { detail:{ code:codeValue, tier:tier||'' } })); }catch(e){}
-  try{
-    if(window.Brevo && typeof window.Brevo.track === 'function') window.Brevo.track('vault_redeem_success', { code:codeValue, tier:tier||'' });
-    if(window.sendinblue && typeof window.sendinblue.track === 'function') window.sendinblue.track('vault_redeem_success', { code:codeValue, tier:tier||'' });
-  }catch(e){}
-}
-
-function showLocked(msg){
-  document.body.classList.add('locked');
-  if(statusPill) statusPill.textContent='Locked';
-  if(vaultState) vaultState.textContent = msg || 'Access code required';
-  show(lockedActions);
-  show(lockedRoom);
-  hide(sessionDivider);
-  hide(sessionLane);
-  hide(connectDivider);
-  hide(connect);
-}
-
-function playAccessSequence(){
-  if(!vaultSequence){
-    document.body.classList.add('access-granted','vault-open');
-    return;
-  }
-
-  // Reset every time so the cinematic can replay on every valid entry.
-  vaultSequence.classList.remove('play','active','open','fadeout');
-  vaultSequence.style.display = 'block';
-  vaultSequence.style.opacity = '1';
-  vaultSequence.style.visibility = 'visible';
-  vaultSequence.removeAttribute('aria-hidden');
-  void vaultSequence.offsetWidth;
-
-  document.body.classList.add('access-granted');
-
-  // 1) Access Granted screen first.
-  if(accessOverlay){
-    accessOverlay.classList.add('show','active');
-  }
-  vaultSequence.classList.add('active');
-
-  // 2) Then remove Access overlay and play the doors so it does not get stuck covering them.
-  setTimeout(()=>{
-    if(accessOverlay){
-      accessOverlay.classList.remove('show','active');
-    }
-    vaultSequence.classList.add('play','open');
-    document.body.classList.add('vault-open');
-  }, 950);
-
-  // 3) Fade the cinematic away and reveal the unlocked room underneath.
-  setTimeout(()=>{
-    vaultSequence.classList.add('fadeout');
-  }, 4450);
-
-  setTimeout(()=>{
-    vaultSequence.classList.remove('play','active','open','fadeout');
-    vaultSequence.style.display = 'none';
-    vaultSequence.setAttribute('aria-hidden','true');
-    document.body.classList.remove('access-granted');
-  }, 5300);
-}
-
-function unlockUI(rawTier){
-  const tier = String(rawTier || 'entry').toLowerCase();
-  document.body.classList.remove('locked');
-
-  ['entry','gold','elite'].forEach(t=>hide(byId('room-'+t)));
-
-  if(tier === 'master'){
-    ['entry','gold','elite'].forEach(t=>show(byId('room-'+t)));
-  }else{
-    const roomId = ROOM_MAP[tier] || 'room-entry';
-    show(byId(roomId));
-  }
-
-  if(statusPill) statusPill.textContent = tier.toUpperCase();
-  if(vaultState) vaultState.textContent = tier === 'master' ? 'Master Vault Pass' : tier.charAt(0).toUpperCase()+tier.slice(1)+' Room';
-
-  hide(lockedActions);
-  hide(lockedRoom);
-  show(sessionDivider);
-  show(sessionLane);
-  show(connectDivider);
-  show(connect);
-
-  if(tier === 'master') addMasterRoomLinks();
-  playAccessSequence();
-}
-
-function addMasterRoomLinks(){
-  const targets = [sessionLane].filter(Boolean);
-  targets.forEach((target)=>{
-    if(target.querySelector('[data-master-room-link]')) return;
-    const link = document.createElement('a');
-    link.href = '/nfc/rooms/master/';
-    link.textContent = 'Master';
-    link.setAttribute('data-master-room-link','1');
-    if(target === sessionLane) link.textContent = 'Master Room';
-    target.appendChild(link);
-  });
-}
-
-async function getCode(codeValue){
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(codeValue)}&select=*`,{
-    headers:{
-      'apikey':SUPABASE_ANON,
-      'Authorization':`Bearer ${SUPABASE_ANON}`
-    }
-  });
-  if(!res.ok) throw new Error('DB error');
-  const data = await res.json();
-  return data.length ? data[0] : null;
-}
-
-
-async function startTimerIfNeeded(record){
-  if(!record || record.expires_at) return record;
-
-  const map = {
-    "1h": 1 * 60 * 60 * 1000,
-    "6h": 6 * 60 * 60 * 1000,
-    "12h": 12 * 60 * 60 * 1000,
-    "1d": 24 * 60 * 60 * 1000,
-    "3d": 3 * 24 * 60 * 60 * 1000,
-    "7d": 7 * 24 * 60 * 60 * 1000,
-    "30d": 30 * 24 * 60 * 60 * 1000
-  };
-
-  const key = String(record.duration || "1h").trim();
-
-  // "none" means no expiration by choice.
-  if(key === "none") return record;
-
-  const durationMs = map[key] || map["1h"];
-  const expires = new Date(Date.now() + durationMs).toISOString();
-
-  try{
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?id=eq.${encodeURIComponent(record.id)}`,{
-      method:'PATCH',
-      headers:{
-        'apikey':SUPABASE_ANON,
-        'Authorization':`Bearer ${SUPABASE_ANON}`,
-        'Content-Type':'application/json',
-        'Prefer':'return=representation'
-      },
-      body:JSON.stringify({ expires_at: expires })
-    });
-
-    if(res.ok){
-      const rows = await res.json().catch(()=>[]);
-      if(Array.isArray(rows) && rows[0]){
-        return rows[0];
-      }
-      record.expires_at = expires;
-    }
-  }catch(e){
-    console.warn('Timer start failed', e);
-  }
-
-  return record;
-}
-
-function saveVaultPass(record, tier){
-  try{
-    const expires = record && record.expires_at
-      ? record.expires_at
-      : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-
-    localStorage.setItem("play3d_vault_pass_v1", JSON.stringify({
-      tier: tier || record.code_type || "ENTRY",
-      code: record.code || code,
-      route: record.route || "",
-      expires_at: expires
+    localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify({
+      active:true,
+      code:'CAPO-MASTER-999',
+      started_at:Date.now(),
+      expires_at:Date.now() + (1000 * 60 * 60 * 12)
     }));
   }catch(e){}
 }
 
-function getSavedPassCode(){
+function isMasterCode(value){
+  return String(value || '').toUpperCase().trim() === MASTER_CODE;
+}
+
+function savePassSession(record, tier){
   try{
-    const raw = localStorage.getItem("play3d_vault_pass_v1");
-    const pass = raw ? JSON.parse(raw) : null;
-    return pass && pass.code ? String(pass.code).toUpperCase().trim() : "";
+    localStorage.setItem('play3d_vault_pass_v1', JSON.stringify({
+      tier: tier || record.code_type || 'entry',
+      code: record.code || code,
+      expires_at: record.expires_at || new Date(Date.now() + (1000 * 60 * 60 * 24)).toISOString()
+    }));
+  }catch(e){}
+}
+
+function buildTargetUrl(path){
+  if(!path) return '';
+
+  try{
+    const u = new URL(path, window.location.origin);
+    u.searchParams.set('from', 'master');
+    u.searchParams.set('master', '1');
+    return u.toString();
   }catch(e){
-    return "";
+    return '';
   }
 }
 
-function getActiveSavedPass(){
-  try{
-    const raw = localStorage.getItem("play3d_vault_pass_v1");
-    const pass = raw ? JSON.parse(raw) : null;
-    if(!pass || !pass.expires_at) return null;
-    const expiry = new Date(pass.expires_at).getTime();
-    if(!Number.isFinite(expiry) || expiry <= Date.now()){
-      localStorage.removeItem("play3d_vault_pass_v1");
-      return null;
-    }
-    return pass;
-  }catch(e){
-    return null;
-  }
+function showLocked(msg){
+  document.body.classList.add('locked');
+
+  if(statusPill) statusPill.textContent='LOCKED';
+  if(vaultState) vaultState.textContent = msg || 'Access code required';
+
+  if(lockedActions) lockedActions.classList.remove('hidden');
+  if(lockedRoom) lockedRoom.classList.remove('hidden');
 }
 
-function preserveNfcLinks(codeValue){
-  const activeCode = String(codeValue || getSavedPassCode() || "").toUpperCase().trim();
-  if(!activeCode) return;
-
-  const paths = [
-    "/nfc/index.html",
-    "/nfc/entry-backdrop.html",
-    "/nfc/album-chamber.html",
-    "/nfc/vault-interface.html",
-    "/nfc/merch-drop-room.html",
-    "/nfc/exclusive-merch-vault.html",
-    "/nfc/secret-page.html",
-    "/nfc/scan.html",
-    "/nfc/game-vault/index.html",
-    "/nfc/game-vault/rewards/index.html",
-    "/nfc/rooms/master/index.html"
-  ];
-
-  document.querySelectorAll("a[href]").forEach((link)=>{
-    const href = link.getAttribute("href") || "";
-    if(!href || href.charAt(0)==="#" || /^(https?:|mailto:|tel:)/i.test(href)) return;
-
-    try{
-      const url = new URL(href, window.location.href);
-      if(url.origin !== window.location.origin) return;
-      if(!paths.includes(url.pathname)) return;
-      url.searchParams.set("code", activeCode);
-      link.setAttribute("href", url.pathname + url.search + url.hash);
-    }catch(e){}
+function hideAllRooms(){
+  ['entry','gold','elite','master'].forEach(t=>{
+    const el = byId('room-'+t);
+    if(el) el.classList.add('hidden');
   });
 }
 
-async function init(){
-  if(!code){
-    const activePass = getActiveSavedPass();
-    if(activePass){
-      const tier = String(activePass.tier || 'ENTRY').toLowerCase();
-      unlockUI(tier);
-      preserveNfcLinks(activePass.code || '');
+function unlockUI(tier){
+
+  const cleanTier = String(tier || 'entry').toLowerCase();
+
+  const allowedTier =
+    (cleanTier === 'gold' || cleanTier === 'elite' || cleanTier === 'master')
+      ? cleanTier
+      : 'entry';
+
+  window.__vaultUnlockedTier = allowedTier;
+
+  document.body.classList.remove('locked');
+
+  const lockedGate = byId('lockedGate');
+
+  if(lockedGate) lockedGate.classList.add('hidden');
+  if(lockedActions) lockedActions.classList.add('hidden');
+  if(lockedRoom) lockedRoom.classList.add('hidden');
+
+  hideAllRooms();
+
+  if(allowedTier === 'master'){
+    setMasterSession();
+
+    const destination = buildTargetUrl(target);
+    if(destination){
+      window.location.replace(destination);
       return;
     }
+
+    const masterRoom = byId('room-master');
+
+    if(masterRoom){
+      masterRoom.classList.remove('hidden');
+    }
+
+  }else{
+
+    const room = byId('room-'+allowedTier);
+
+    if(room){
+      room.classList.remove('hidden');
+    }
+  }
+
+  if(statusPill){
+    statusPill.textContent = allowedTier.toUpperCase();
+  }
+
+  if(vaultState){
+    vaultState.textContent =
+      allowedTier === 'master'
+        ? 'Master Access Granted'
+        : allowedTier.charAt(0).toUpperCase()+allowedTier.slice(1)+' Room';
+  }
+
+  window.scrollTo(0,0);
+}
+
+async function getCode(code){
+
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${code}&select=*`,
+    {
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':`Bearer ${SUPABASE_ANON}`
+      }
+    }
+  );
+
+  if(!res.ok){
+    throw new Error('DB error');
+  }
+
+  const data = await res.json();
+
+  return data.length ? data[0] : null;
+}
+
+function playAccessSequence(){
+
+  const seq = document.getElementById('vaultSequence');
+  const overlay = document.getElementById('accessOverlay');
+
+  if(!seq) return;
+
+  seq.classList.remove('active','play','fadeout');
+
+  if(overlay){
+    overlay.classList.remove('show');
+  }
+
+  seq.style.display = 'block';
+
+  if(overlay){
+    overlay.classList.add('show');
+  }
+
+  setTimeout(()=>{
+    seq.classList.add('active');
+  },300);
+
+  setTimeout(()=>{
+    if(overlay){
+      overlay.classList.remove('show');
+    }
+
+    seq.classList.add('play');
+  },1200);
+
+  setTimeout(()=>{
+    seq.classList.add('fadeout');
+  },4200);
+
+  setTimeout(()=>{
+    seq.classList.remove('active','play','fadeout');
+    seq.style.display='none';
+  },5400);
+}
+
+function showMasterRoomTarget(tier){
+
+  if(window.__vaultUnlockedTier !== 'master'){
+    return;
+  }
+
+  const cleanTier = String(tier || '').toLowerCase();
+
+  hideAllRooms();
+
+  const room = byId('room-'+cleanTier);
+
+  if(room){
+    room.classList.remove('hidden');
+  }
+
+  window.scrollTo(0,0);
+}
+
+document.addEventListener('click', function(e){
+
+  const link = e.target.closest('[data-master-room]');
+
+  if(!link){
+    return;
+  }
+
+  e.preventDefault();
+
+  const tier = link.getAttribute('data-master-room');
+
+  showMasterRoomTarget(tier);
+});
+
+async function init(){
+
+  if(!code){
     showLocked('No code provided');
     return;
   }
 
   try{
+    if(isMasterCode(code)){
+      playAccessSequence();
+
+      setTimeout(()=>{
+        unlockUI('master');
+      },5400);
+
+      return;
+    }
+
     const record = await getCode(code);
 
     if(!record){
-      await logEvent(code, '', 'invalid', null);
       showLocked('Invalid code');
       return;
     }
+
     if(record.expires_at){
+
+      const now = new Date().getTime();
       const expiry = new Date(record.expires_at).getTime();
-      if(Number.isFinite(expiry) && Date.now() > expiry){
-        await logEvent(code, record.code_type || '', 'expired', record);
+
+      if(now > expiry){
         showLocked('Code expired');
         return;
       }
     }
 
-    const tier = String(record.code_type || 'ENTRY').toLowerCase();
-    saveVaultPass(record, tier);
-    const usedAt = new Date().toISOString();
-    record.used_at = usedAt;
-    await patchCodeHit(code, usedAt);
-    fireBrevoSafe(code, tier);
-    await logEvent(code, tier, 'success', record, usedAt);
-    unlockUI(tier);
-    preserveNfcLinks(code);
+    const tier =
+      String(record.code_type || 'entry').toLowerCase();
+    savePassSession(record, tier);
+
+    playAccessSequence();
 
     setTimeout(()=>{
-      injectVaultConversionScreen(code, tier);
-    }, 1800);
+      unlockUI(tier);
+    },5400);
+
   }catch(err){
-    console.error(err);
+
     showLocked('Connection error');
   }
 }
-  function injectVaultConversionScreen(codeValue, tier){
-  if(document.getElementById("vaultConversionScreen")) return;
 
-  const box=document.createElement("section");
-  box.id="vaultConversionScreen";
-  box.style.cssText=`
-    width:min(920px,92vw);
-    margin:28px auto;
-    padding:24px;
-    border:1px solid rgba(202,162,74,.36);
-    border-radius:26px;
-    background:linear-gradient(180deg,rgba(12,10,7,.92),rgba(0,0,0,.78));
-    box-shadow:0 28px 80px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.05);
-    color:#f4f1ea;
-    font-family:Oswald,Arial,sans-serif;
-    text-align:center;
-    position:relative;
-    z-index:99999;
-    display:block;
-    visibility:visible;
-    opacity:1;
-  `;
-
-  box.innerHTML=`
-    <div style="font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;font-size:26px;letter-spacing:1px;text-transform:uppercase;">
-      Stay Connected
-    </div>
-
-    <p style="color:rgba(244,241,234,.72);font-size:15px;letter-spacing:1px;text-transform:uppercase;margin:10px 0 18px;">
-      Enter your email for bonus drops, code updates, and future vault access.
-    </p>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:18px 0;">
-      <div style="border:1px solid rgba(202,162,74,.25);border-radius:18px;padding:14px;background:rgba(0,0,0,.42);">
-        <b style="color:#f2d27b;">Bonus Codes</b><br>
-        <span style="color:rgba(244,241,234,.65);font-size:13px;">Get future access drops.</span>
-      </div>
-      <div style="border:1px solid rgba(202,162,74,.25);border-radius:18px;padding:14px;background:rgba(0,0,0,.42);">
-        <b style="color:#f2d27b;">Early Merch</b><br>
-        <span style="color:rgba(244,241,234,.65);font-size:13px;">First look at vault releases.</span>
-      </div>
-      <div style="border:1px solid rgba(202,162,74,.25);border-radius:18px;padding:14px;background:rgba(0,0,0,.42);">
-        <b style="color:#f2d27b;">Tier Upgrades</b><br>
-        <span style="color:rgba(244,241,234,.65);font-size:13px;">Move from ${String(tier||"ENTRY").toUpperCase()} to higher rooms.</span>
-      </div>
-    </div>
-
-    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0;">
-      <a href="./scan.html" style="
-        text-decoration:none;
-        border-radius:999px;
-        background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);
-        color:#100c05;
-        padding:12px 20px;
-        font-weight:900;
-        letter-spacing:1px;
-        text-transform:uppercase;
-        font-family:Oswald,Arial,sans-serif;
-      ">Enter Gold Code</a>
-
-      <a href="./scan.html" style="
-        text-decoration:none;
-        border-radius:999px;
-        background:rgba(0,0,0,.65);
-        color:#f2d27b;
-        border:1px solid rgba(202,162,74,.45);
-        padding:12px 20px;
-        font-weight:900;
-        letter-spacing:1px;
-        text-transform:uppercase;
-        font-family:Oswald,Arial,sans-serif;
-      ">Enter Elite Code</a>
-    </div>
-
-    <input id="vaultEmailInput" type="email" placeholder="Enter email for bonus access" style="
-      width:100%;
-      min-height:48px;
-      border-radius:14px;
-      border:1px solid rgba(202,162,74,.34);
-      background:rgba(0,0,0,.65);
-      color:#f4f1ea;
-      padding:0 14px;
-      outline:none;
-      font-family:Oswald,Arial,sans-serif;
-      font-size:16px;
-      margin-bottom:12px;
-    ">
-
-    <button id="vaultEmailBtn" style="
-      border:0;
-      border-radius:999px;
-      background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);
-      color:#100c05;
-      padding:12px 22px;
-      font-weight:900;
-      letter-spacing:1px;
-      text-transform:uppercase;
-      cursor:pointer;
-      box-shadow:0 14px 34px rgba(202,162,74,.22);
-      font-family:Oswald,Arial,sans-serif;
-    ">Connect My Vault Access</button>
-
-    <div id="vaultEmailStatus" style="margin-top:12px;color:rgba(244,241,234,.68);font-size:13px;"></div>
-  `;
-
-  const target=document.getElementById("connect")||document.querySelector("main")||document.body;
-  target.parentNode.insertBefore(box,target);
-
-  document.getElementById("vaultEmailBtn").onclick=async()=>{
-    const email=document.getElementById("vaultEmailInput").value.trim().toLowerCase();
-    const status=document.getElementById("vaultEmailStatus");
-
-    if(!email){
-      status.textContent="Enter email first.";
-      return;
-    }
-
-    status.textContent="Saving...";
-
-    try{
-      const res=await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(codeValue)}`,{
-        method:"PATCH",
-        headers:{
-          "Content-Type":"application/json",
-          "apikey":SUPABASE_ANON,
-          "Authorization":"Bearer "+SUPABASE_ANON,
-          "Prefer":"return=minimal"
-        },
-        body:JSON.stringify({
-          recipient_email:email,
-          sent:true,
-          sent_at:new Date().toISOString()
-        })
-      });
-
-      if(!res.ok) throw new Error(await res.text());
-
-      box.innerHTML=`
-        <div style="font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;font-size:26px;text-transform:uppercase;">
-          Vault Connected âœ”
-        </div>
-        <p style="color:rgba(244,241,234,.72);">Bonus access connected to ${email}.</p>
-      `;
-    }catch(e){
-      status.textContent="Save failed. Try again.";
-    }
-  };
-}
 init();
+
 })();
-
-function hideBrokenVaultImages(){
-  document.querySelectorAll('img[src*="/assets/"], img[src*="./assets/"]').forEach((img)=>{
-    if(img.complete && img.naturalWidth === 0){
-      img.hidden = true;
-    }
-  });
-}
-
-window.addEventListener('load', hideBrokenVaultImages);
-
-
-
