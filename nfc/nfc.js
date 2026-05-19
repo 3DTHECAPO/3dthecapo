@@ -89,24 +89,53 @@ const ROOM_MAP = {
 function show(el){ if(el) el.classList.remove('hidden'); }
 function hide(el){ if(el) el.classList.add('hidden'); }
 
-async function logEvent(codeValue, tier, type){
-  try{
-    await fetch(`${SUPABASE_URL}/rest/v1/vault_logs`,{
+async function logEvent(codeValue, tier, type, record){
+  const basePayload = {
+    code: codeValue,
+    tier: tier || '',
+    event_type: type,
+    user_agent: navigator.userAgent,
+    page: window.location.pathname
+  };
+
+  const fullPayload = Object.assign({}, basePayload);
+  if(record){
+    fullPayload.code = record.code || codeValue;
+    fullPayload.tier = record.code_type || tier || '';
+    fullPayload.code_type = record.code_type || tier || '';
+    fullPayload.recipient_email = record.recipient_email || null;
+    fullPayload.sent_at = record.sent_at || null;
+    fullPayload.expires_at = record.expires_at || null;
+    fullPayload.used_at = record.used_at || null;
+  }
+
+  async function insertVaultLog(payload){
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/vault_logs`,{
       method:'POST',
       headers:{
         'apikey':SUPABASE_ANON,
         'Authorization':`Bearer ${SUPABASE_ANON}`,
-        'Content-Type':'application/json'
+        'Content-Type':'application/json',
+        'Prefer':'return=minimal'
       },
-      body:JSON.stringify({
-        code: codeValue,
-        tier: tier || '',
-        event_type: type,
-        user_agent: navigator.userAgent,
-        page: window.location.pathname
-      })
+      body:JSON.stringify(payload)
     });
-  }catch(e){}
+    if(!res.ok){
+      const text = await res.text().catch(()=>String(res.status));
+      throw new Error(text || ('vault_logs insert failed '+res.status));
+    }
+  }
+
+  try{
+    await insertVaultLog(fullPayload);
+  }catch(fullError){
+    console.error('[PLAY3D VAULT LOG] full insert failed', fullError);
+    try{
+      await insertVaultLog(basePayload);
+    }catch(minimalError){
+      console.error('[PLAY3D VAULT LOG] minimal insert failed', minimalError);
+    }
+  }
 }
 
 
@@ -429,7 +458,7 @@ async function init(){
     if(record.expires_at){
       const expiry = new Date(record.expires_at).getTime();
       if(Number.isFinite(expiry) && Date.now() > expiry){
-        await logEvent(code, record.code_type || '', 'expired');
+        await logEvent(code, record.code_type || '', 'expired', record);
         sessionLog('SESSION EXPIRED');
         showLocked('Code expired');
         return;
@@ -440,7 +469,7 @@ async function init(){
     saveVaultPass(record, tier);
     patchCodeHit(code);
     fireBrevoSafe(code, tier);
-    logEvent(code, tier, 'success');
+    logEvent(code, tier, 'success', record);
     unlockUI(tier);
     preserveNfcLinks(code);
 
@@ -592,7 +621,7 @@ async function init(){
 
       box.innerHTML=`
         <div style="font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;font-size:26px;text-transform:uppercase;">
-          Vault Connected âœ”
+          Vault Connected ✔
         </div>
         <p style="color:rgba(244,241,234,.72);">Bonus access connected to ${email}.</p>
       `;
