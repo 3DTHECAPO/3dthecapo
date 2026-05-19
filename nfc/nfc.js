@@ -4,7 +4,13 @@
 const byId = (id)=>document.getElementById(id);
 const params = new URLSearchParams(window.location.search);
 const code = (params.get('code')||'').toUpperCase().trim();
+const target = params.get('target') || '';
 
+function goTargetIfNeeded(){
+  if(!target) return false;
+  window.location.href = target;
+  return true;
+}
 const statusPill=byId('statusPill');
 const vaultState=byId('vaultState');
 const lockedActions=byId('lockedActions');
@@ -436,12 +442,12 @@ async function init(){
   }
 
   try{
-    const activePass = getActiveSavedPass();
     if(activePass && String(activePass.code || '').toUpperCase() === code){
-      const tier = String(activePass.tier || 'ENTRY').toLowerCase();
-      unlockUI(tier, { skipCinematic:true });
-      return;
-    }
+  const tier = String(activePass.tier || 'ENTRY').toLowerCase();
+  if(goTargetIfNeeded()) return;
+  unlockUI(tier, { skipCinematic:true });
+  return;
+}
 
     const record = await getCode(code);
 
@@ -498,6 +504,9 @@ preserveNfcLinks(code);
 patchCodeHit(code);
 fireBrevoSafe(code, tier);
 logEvent(code, tier, 'success', record);
+
+/* OPEN TARGET ROOM AFTER SESSION IS SAVED */
+if(goTargetIfNeeded()) return;
 
 /* OPEN UI LAST */
 unlockUI(tier);
