@@ -72,10 +72,46 @@ API:
     eventCallbacks:{}
   };
 
+  async function safeTableWrite(table, method, payload, options){
+    try{
+      const client = getClient();
+      if(!client || typeof client.from !== 'function') return {skipped:true};
+      const query = client.from(table);
+      if(method === 'upsert' && typeof query.upsert === 'function') return await query.upsert(payload, options || {});
+      return await query.insert(payload);
+    }catch(e){
+      return {ok:false, error:e};
+    }
+  }
+
+  async function recordRoom(){
+    return safeTableWrite('play3d_rooms', 'upsert', {
+      room_id:room,
+      room,
+      game,
+      status:'active',
+      updated_at:new Date().toISOString(),
+      created_at:new Date().toISOString()
+    }, {onConflict:'room_id'});
+  }
+
+  async function recordMove(type, payload, msg){
+    return safeTableWrite('play3d_moves', 'insert', {
+      room_id:room,
+      room,
+      game,
+      player_id:playerId,
+      move_type:type || 'event',
+      payload:payload || {},
+      created_at:msg && msg.at || new Date().toISOString()
+    });
+  }
+
   async function ensureChannel(){
     const client = getClient();
     if(!client || typeof client.channel !== 'function'){
       console.warn('[PLAY3D_SYNC] Supabase client not found. Room link active, live sync disabled.');
+      recordRoom();
       return null;
     }
 
@@ -108,6 +144,7 @@ API:
       state.connected = status === 'SUBSCRIBED';
       if(state.connected){
         channel.track({playerId, game, room, joinedAt:new Date().toISOString()});
+        recordRoom();
       }
     });
 
@@ -129,6 +166,7 @@ API:
       at:new Date().toISOString(),
       payload
     };
+    recordMove(type, payload, msg);
 
     if(!channel){
       const queueKey = 'play3d_offline_events_' + game + '_' + room;
