@@ -513,96 +513,51 @@ ol{
   .controls{position:relative;z-index:20}
 }
 
-/* CPU + CLIP FIX ONLY — keep controls clickable and stop domino cut-off */
-.casino-table{
-  overflow:hidden !important;
-  min-height:720px !important;
+/* V8 spinner-touch alignment fix */
+.top-branch{
+  flex-direction:column !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
 }
 
-.table-center{
-  width:min(1040px,88%) !important;
-  min-height:520px !important;
-  height:auto !important;
-  max-height:none !important;
-  overflow:auto !important;
-  overscroll-behavior:contain;
-  padding:22px !important;
-  z-index:2;
+.bottom-branch{
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+  align-items:center !important;
 }
 
-.spinner-board{
-  min-width:900px !important;
-  min-height:540px !important;
-  padding:90px 140px !important;
+.left-branch{
+  flex-direction:row-reverse !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
 }
 
-.line-row,
+.right-branch{
+  flex-direction:row !important;
+  justify-content:flex-start !important;
+  align-items:center !important;
+}
+
+.line-row{
+  gap:0 !important;
+}
+
 .branch-line,
 .horizontal-arm{
   gap:0 !important;
 }
 
-.branch-line{
-  min-height:150px !important;
+.branch-line .tile{
+  margin-top:-1px;
+  margin-bottom:-1px;
 }
 
-.horizontal-arm{
-  min-width:150px !important;
+.horizontal-arm .tile{
+  margin-left:-1px;
+  margin-right:-1px;
 }
 
-.tile{
-  flex:0 0 auto;
-}
-
-.controls,
-.panel{
-  position:relative !important;
-  z-index:20 !important;
-}
-
-@media(max-width:760px){
-  .casino-table{
-    min-height:620px !important;
-  }
-
-  .table-center{
-    width:92% !important;
-    min-height:430px !important;
-    padding:16px !important;
-  }
-
-  .spinner-board{
-    min-width:720px !important;
-    min-height:480px !important;
-    padding:80px 110px !important;
-  }
-
-  .branch-line{
-    min-height:130px !important;
-  }
-
-  .horizontal-arm{
-    min-width:120px !important;
-  }
-
-  .tile{
-    width:64px !important;
-    height:36px !important;
-    font-size:14px !important;
-  }
-
-  .tile.spinner,
-  .tile.top-arm,
-  .tile.bottom-arm,
-  .tile.left-arm.double,
-  .tile.right-arm.double{
-    width:38px !important;
-    height:64px !important;
-  }
-
-  .tile.top-arm.double,
-  .tile.bottom-arm.double{
-    width:64px !important;
-    height:36px !important;
-  }
+.tile.spinner{
+  margin:0 !important;
+  z-index:3;
 }
