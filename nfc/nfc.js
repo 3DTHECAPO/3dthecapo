@@ -1,4 +1,4 @@
-(function(){
+﻿(function(){
 'use strict';
 
 const byId = (id)=>document.getElementById(id);
@@ -19,6 +19,63 @@ const connect=byId('connect');
 const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
 const TABLE = 'vault_codes';
+const PASS_KEY = 'play3d_vault_pass_v1';
+const MASTER_KEY = 'CAPO_MASTER_SESSION';
+
+function sessionLog(message){
+  try{ console.log('[PLAY3D ACCESS]', message); }catch(e){}
+}
+
+function readJSON(key){
+  try{
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){
+    return null;
+  }
+}
+
+function writeJSON(key, value){
+  try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
+}
+
+function removeKey(key){
+  try{ localStorage.removeItem(key); }catch(e){}
+}
+
+function passIsValid(pass){
+  if(!pass || !pass.expires_at) return false;
+  const expiry = new Date(pass.expires_at).getTime();
+  return Number.isFinite(expiry) && expiry > Date.now();
+}
+
+function getActiveMasterSession(){
+  const session = readJSON(MASTER_KEY);
+  if(!session || session.active !== true) return null;
+  if(session.expires_at && Number(session.expires_at) <= Date.now()){
+    removeKey(MASTER_KEY);
+    sessionLog('SESSION EXPIRED');
+    return null;
+  }
+  sessionLog('MASTER SESSION ACTIVE');
+  return session;
+}
+
+function saveMasterSession(record){
+  const existing = getActiveMasterSession();
+  if(existing) return existing;
+  const expires = record && record.expires_at ? new Date(record.expires_at).getTime() : Date.now() + (1000 * 60 * 60 * 12);
+  const session = {
+    active:true,
+    tier:'master',
+    code:record && record.code || code || '',
+    started_at:Date.now(),
+    expires_at:expires
+  };
+  writeJSON(MASTER_KEY, session);
+  sessionLog('MASTER SESSION ACTIVE');
+  return session;
+}
 
 const ROOM_MAP = {
   entry: 'room-entry',
@@ -136,7 +193,8 @@ function playAccessSequence(){
   }, 5300);
 }
 
-function unlockUI(rawTier){
+function unlockUI(rawTier, options){
+  const opts = options || {};
   const tier = String(rawTier || 'entry').toLowerCase();
   document.body.classList.remove('locked');
 
@@ -160,7 +218,7 @@ function unlockUI(rawTier){
   show(connect);
 
   if(tier === 'master') addMasterRoomLinks();
-  playAccessSequence();
+  if(!opts.skipCinematic) playAccessSequence();
 }
 
 function addMasterRoomLinks(){
@@ -242,13 +300,30 @@ function saveVaultPass(record, tier){
       ? record.expires_at
       : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
-    localStorage.setItem("play3d_vault_pass_v1", JSON.stringify({
-      tier: tier || record.code_type || "ENTRY",
+    const normalizedTier = String(tier || record.code_type || 'ENTRY').toLowerCase();
+    const existing = readJSON(PASS_KEY);
+    if(existing && passIsValid(existing) && String(existing.code || '').toUpperCase() === String(record.code || code || '').toUpperCase()){
+      sessionLog('SESSION FOUND');
+      if(normalizedTier === 'master') saveMasterSession(record);
+      return existing;
+    }
+
+    const pass = {
+      active:true,
+      valid:true,
+      unlocked:true,
+      tier: normalizedTier,
       code: record.code || code,
-      route: record.route || "",
+      route: record.route || '',
       expires_at: expires
-    }));
-  }catch(e){}
+    };
+    writeJSON(PASS_KEY, pass);
+    sessionLog('SESSION FOUND');
+    if(normalizedTier === 'master') saveMasterSession(record);
+    return pass;
+  }catch(e){
+    return null;
+  }
 }
 
 function getSavedPassCode(){
@@ -263,14 +338,14 @@ function getSavedPassCode(){
 
 function getActiveSavedPass(){
   try{
-    const raw = localStorage.getItem("play3d_vault_pass_v1");
-    const pass = raw ? JSON.parse(raw) : null;
-    if(!pass || !pass.expires_at) return null;
-    const expiry = new Date(pass.expires_at).getTime();
-    if(!Number.isFinite(expiry) || expiry <= Date.now()){
-      localStorage.removeItem("play3d_vault_pass_v1");
+    const pass = readJSON(PASS_KEY);
+    if(!pass) return null;
+    if(!passIsValid(pass)){
+      removeKey(PASS_KEY);
+      sessionLog('SESSION EXPIRED');
       return null;
     }
+    sessionLog('SESSION FOUND');
     return pass;
   }catch(e){
     return null;
@@ -278,55 +353,72 @@ function getActiveSavedPass(){
 }
 
 function preserveNfcLinks(codeValue){
-  const activeCode = String(codeValue || getSavedPassCode() || "").toUpperCase().trim();
+  const activePass = getActiveSavedPass();
+  if(activePass || getActiveMasterSession()) return;
+
+  const activeCode = String(codeValue || getSavedPassCode() || '').toUpperCase().trim();
   if(!activeCode) return;
 
   const paths = [
-    "/nfc/index.html",
-    "/nfc/entry-backdrop.html",
-    "/nfc/album-chamber.html",
-    "/nfc/vault-interface.html",
-    "/nfc/merch-drop-room.html",
-    "/nfc/exclusive-merch-vault.html",
-    "/nfc/secret-page.html",
-    "/nfc/scan.html",
-    "/nfc/game-vault/index.html",
-    "/nfc/game-vault/rewards/index.html",
-    "/nfc/rooms/master/index.html"
+    '/nfc/index.html',
+    '/nfc/entry-backdrop.html',
+    '/nfc/album-chamber.html',
+    '/nfc/vault-interface.html',
+    '/nfc/merch-drop-room.html',
+    '/nfc/exclusive-merch-vault.html',
+    '/nfc/secret-page.html',
+    '/nfc/scan.html',
+    '/nfc/game-vault/index.html',
+    '/nfc/game-vault/rewards/index.html',
+    '/nfc/rooms/master/index.html'
   ];
 
-  document.querySelectorAll("a[href]").forEach((link)=>{
-    const href = link.getAttribute("href") || "";
-    if(!href || href.charAt(0)==="#" || /^(https?:|mailto:|tel:)/i.test(href)) return;
+  document.querySelectorAll('a[href]').forEach((link)=>{
+    const href = link.getAttribute('href') || '';
+    if(!href || href.charAt(0)==='#' || /^(https?:|mailto:|tel:)/i.test(href)) return;
 
     try{
       const url = new URL(href, window.location.href);
       if(url.origin !== window.location.origin) return;
       if(!paths.includes(url.pathname)) return;
-      url.searchParams.set("code", activeCode);
-      link.setAttribute("href", url.pathname + url.search + url.hash);
+      url.searchParams.set('code', activeCode);
+      link.setAttribute('href', url.pathname + url.search + url.hash);
     }catch(e){}
   });
 }
 
 async function init(){
   if(!code){
+    const masterSession = getActiveMasterSession();
+    if(masterSession){
+      unlockUI('master', { skipCinematic:true });
+      return;
+    }
+
     const activePass = getActiveSavedPass();
     if(activePass){
       const tier = String(activePass.tier || 'ENTRY').toLowerCase();
-      unlockUI(tier);
-      preserveNfcLinks(activePass.code || '');
+      unlockUI(tier, { skipCinematic:true });
       return;
     }
+    sessionLog('ACCESS DENIED');
     showLocked('No code provided');
     return;
   }
 
   try{
+    const activePass = getActiveSavedPass();
+    if(activePass && String(activePass.code || '').toUpperCase() === code){
+      const tier = String(activePass.tier || 'ENTRY').toLowerCase();
+      unlockUI(tier, { skipCinematic:true });
+      return;
+    }
+
     const record = await getCode(code);
 
     if(!record){
       await logEvent(code, '', 'invalid');
+      sessionLog('ACCESS DENIED');
       showLocked('Invalid code');
       return;
     }
@@ -338,6 +430,7 @@ async function init(){
       const expiry = new Date(record.expires_at).getTime();
       if(Number.isFinite(expiry) && Date.now() > expiry){
         await logEvent(code, record.code_type || '', 'expired');
+        sessionLog('SESSION EXPIRED');
         showLocked('Code expired');
         return;
       }
@@ -356,6 +449,7 @@ async function init(){
     }, 1800);
   }catch(err){
     console.error(err);
+    sessionLog('ACCESS DENIED');
     showLocked('Connection error');
   }
 }
@@ -498,7 +592,7 @@ async function init(){
 
       box.innerHTML=`
         <div style="font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;font-size:26px;text-transform:uppercase;">
-          Vault Connected ✔
+          Vault Connected âœ”
         </div>
         <p style="color:rgba(244,241,234,.72);">Bonus access connected to ${email}.</p>
       `;
@@ -519,3 +613,5 @@ function hideBrokenVaultImages(){
 }
 
 window.addEventListener('load', hideBrokenVaultImages);
+
+
