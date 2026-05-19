@@ -6,6 +6,7 @@ const params = new URLSearchParams(window.location.search);
 
 const code = (params.get('code')||'').toUpperCase().trim();
 const target = params.get('target') || '';
+const MASTER_CODE = 'CAPO-MASTER-999';
 
 const statusPill = byId('statusPill');
 const vaultState = byId('vaultState');
@@ -24,6 +25,20 @@ function setMasterSession(){
       code:'CAPO-MASTER-999',
       started_at:Date.now(),
       expires_at:Date.now() + (1000 * 60 * 60 * 12)
+    }));
+  }catch(e){}
+}
+
+function isMasterCode(value){
+  return String(value || '').toUpperCase().trim() === MASTER_CODE;
+}
+
+function savePassSession(record, tier){
+  try{
+    localStorage.setItem('play3d_vault_pass_v1', JSON.stringify({
+      tier: tier || record.code_type || 'entry',
+      code: record.code || code,
+      expires_at: record.expires_at || new Date(Date.now() + (1000 * 60 * 60 * 24)).toISOString()
     }));
   }catch(e){}
 }
@@ -221,6 +236,15 @@ async function init(){
   }
 
   try{
+    if(isMasterCode(code)){
+      playAccessSequence();
+
+      setTimeout(()=>{
+        unlockUI('master');
+      },5400);
+
+      return;
+    }
 
     const record = await getCode(code);
 
@@ -241,9 +265,8 @@ async function init(){
     }
 
     const tier =
-      code === 'CAPO-MASTER-999'
-        ? 'master'
-        : String(record.code_type || 'entry').toLowerCase();
+      String(record.code_type || 'entry').toLowerCase();
+    savePassSession(record, tier);
 
     playAccessSequence();
 
