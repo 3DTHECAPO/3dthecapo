@@ -61,7 +61,6 @@ async function logEvent(codeValue, tier, type, record, usedAt){
   };
 
   const fullPayload = Object.assign({}, minimalPayload, {
-    code_type: (record && record.code_type) || normalizedTier,
     recipient_email: record && record.recipient_email || null,
     sent_at: record && record.sent_at || null,
     expires_at: record && record.expires_at || null,
@@ -555,5 +554,6 @@ function hideBrokenVaultImages(){
 }
 
 window.addEventListener('load', hideBrokenVaultImages);
+
 
 
