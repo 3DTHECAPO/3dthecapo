@@ -1,3 +1,13 @@
+/* PLAY 3D DOMINOES — FULL TEST CSS
+   Goal: bones lay directly on the felt table, NOT inside a visible box/screen.
+   This is CSS-only. It does not change scoring or gameplay.
+
+   Use this as a temporary test replacement for style.css OR load after style.css:
+   <link rel="stylesheet" href="./style.css">
+   <link rel="stylesheet" href="./dominoes-table-direct-test.css">
+   <link rel="stylesheet" href="../shared/mode-bar.css">
+*/
+
 :root{
   --gold:#caa24a;
   --gold2:#f2d27b;
@@ -28,19 +38,20 @@ html,body{
 
 .app{
   position:relative;
-  width:min(1400px,95vw);
+  width:min(1500px,96vw);
   margin:auto;
-  padding:20px 0 60px;
+  padding:18px 0 70px;
   z-index:1;
 }
 
+/* HEADER */
 .top{
   display:flex;
   justify-content:space-between;
   align-items:center;
   gap:12px;
   flex-wrap:wrap;
-  margin-bottom:18px;
+  margin-bottom:16px;
 }
 
 .brand{
@@ -93,16 +104,17 @@ button:disabled{
   cursor:not-allowed;
 }
 
+/* HERO */
 .hero{
   display:grid;
   grid-template-columns:1fr auto;
-  gap:20px;
+  gap:18px;
   align-items:end;
-  padding:24px;
+  padding:22px;
   border-radius:28px;
   border:1px solid var(--line);
   background:linear-gradient(180deg,rgba(18,18,18,.82),rgba(0,0,0,.64));
-  margin-bottom:20px;
+  margin-bottom:18px;
   box-shadow:0 30px 90px rgba(0,0,0,.6);
 }
 
@@ -115,7 +127,7 @@ button:disabled{
 
 h1{
   font-family:"Black Ops One";
-  font-size:clamp(44px,8vw,92px);
+  font-size:clamp(42px,7vw,86px);
   line-height:.9;
   margin:10px 0;
   color:var(--gold2);
@@ -123,7 +135,7 @@ h1{
 
 .status{
   min-width:260px;
-  padding:18px;
+  padding:16px;
   border-radius:22px;
   border:1px solid rgba(242,210,123,.2);
   background:rgba(0,0,0,.4);
@@ -142,11 +154,12 @@ h1{
   color:var(--gold2);
 }
 
+/* PANELS / CONTROLS */
 .panel{
   position:relative;
-  z-index:5;
-  margin-top:18px;
-  padding:18px;
+  z-index:20;
+  margin-top:16px;
+  padding:16px;
   border-radius:28px;
   border:1px solid var(--line);
   background:linear-gradient(180deg,rgba(17,14,9,.94),rgba(0,0,0,.88));
@@ -154,6 +167,8 @@ h1{
 }
 
 .controls{
+  position:relative;
+  z-index:50;
   display:flex;
   gap:10px;
   flex-wrap:wrap;
@@ -186,18 +201,19 @@ h1{
 
 .arm-chooser[hidden]{display:none}
 
+/* TABLE — NO INNER BOX LOOK */
 .casino-table{
   position:relative;
-  min-height:680px;
-  border-radius:42px;
+  min-height:760px;
+  border-radius:48px;
   border:10px solid #caa24a;
   background:
-    radial-gradient(circle at center,#1f5d2e 0%,#0d2d16 60%,#06120a 100%);
+    radial-gradient(circle at center,rgba(47,132,63,.96) 0%,rgba(25,91,40,.96) 40%,rgba(9,40,19,.98) 75%,#06120a 100%);
   overflow:hidden;
   box-shadow:
     0 0 0 8px #3b2a0c,
-    0 30px 100px rgba(0,0,0,.7),
-    inset 0 0 70px rgba(255,255,255,.06);
+    0 30px 100px rgba(0,0,0,.72),
+    inset 0 0 80px rgba(255,255,255,.06);
   z-index:1;
 }
 
@@ -205,7 +221,7 @@ h1{
   content:"";
   position:absolute;
   inset:18px;
-  border-radius:34px;
+  border-radius:38px;
   border:2px solid rgba(242,210,123,.34);
   pointer-events:none;
 }
@@ -222,23 +238,30 @@ h1{
   pointer-events:none;
 }
 
+/* THIS IS THE KEY FIX:
+   .table-center still exists in HTML, but it is now invisible.
+   It becomes the board placement layer, not a visible box. */
 .table-center{
-  position:absolute;
-  left:50%;
-  top:53%;
-  transform:translate(-50%,-50%);
-  width:min(980px,82%);
-  height:430px;
-  padding:18px;
-  border-radius:30px;
-  border:2px solid rgba(242,210,123,.25);
-  background:rgba(0,0,0,.22);
-  display:grid;
-  place-items:center;
-  overflow:auto;
-  overscroll-behavior:contain;
+  position:absolute !important;
+  left:auto !important;
+  top:auto !important;
+  transform:none !important;
+  inset:105px 185px 125px 185px !important;
+  width:auto !important;
+  height:auto !important;
+  min-height:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+  display:grid !important;
+  place-items:center !important;
+  pointer-events:auto;
 }
 
+/* Board directly on felt */
 .chain{
   display:flex;
   gap:0;
@@ -252,9 +275,11 @@ h1{
   gap:0;
   align-items:center;
   justify-items:center;
-  min-width:max-content;
-  min-height:max-content;
-  padding:60px;
+  width:auto;
+  min-width:760px;
+  min-height:420px;
+  padding:70px 110px;
+  background:transparent !important;
 }
 
 .line-row{
@@ -270,7 +295,7 @@ h1{
   gap:0;
   align-items:center;
   justify-content:flex-end;
-  min-height:130px;
+  min-height:125px;
   flex-direction:column-reverse;
 }
 
@@ -283,7 +308,7 @@ h1{
   display:flex;
   gap:0;
   align-items:center;
-  min-width:70px;
+  min-width:125px;
 }
 
 .left-branch{
@@ -301,6 +326,7 @@ h1{
   letter-spacing:.12em;
 }
 
+/* DOMINO TILES */
 .hand{
   display:flex;
   gap:10px;
@@ -309,7 +335,7 @@ h1{
 }
 
 .tile{
-  width:74px;
+  width:72px;
   height:38px;
   border-radius:10px;
   border:2px solid #caa24a;
@@ -323,20 +349,21 @@ h1{
   box-shadow:0 10px 16px rgba(0,0,0,.38);
   cursor:pointer;
   padding:0;
+  flex:0 0 auto;
 }
 
 .tile:hover{transform:translateY(-3px)}
 
 .tile.spinner{
   width:42px;
-  height:74px;
+  height:72px;
   grid-template-columns:1fr;
   grid-template-rows:1fr 1px 1fr;
   box-shadow:0 0 0 4px rgba(242,210,123,.22),0 0 26px rgba(242,210,123,.45),0 12px 20px rgba(0,0,0,.4);
 }
 
 .tile.branch{
-  width:74px;
+  width:72px;
   height:38px;
   grid-template-columns:1fr 1px 1fr;
   grid-template-rows:1fr;
@@ -344,20 +371,20 @@ h1{
 
 .tile.top-arm,.tile.bottom-arm{
   width:42px;
-  height:74px;
+  height:72px;
   grid-template-columns:1fr;
   grid-template-rows:1fr 1px 1fr;
 }
 
 .tile.left-arm.double,.tile.right-arm.double{
   width:42px;
-  height:74px;
+  height:72px;
   grid-template-columns:1fr;
   grid-template-rows:1fr 1px 1fr;
 }
 
 .tile.top-arm.double,.tile.bottom-arm.double{
-  width:74px;
+  width:72px;
   height:38px;
   grid-template-columns:1fr 1px 1fr;
   grid-template-rows:1fr;
@@ -384,6 +411,7 @@ h1{
   height:1px;
 }
 
+/* SEATS */
 .tile-back{
   width:20px;
   height:30px;
@@ -407,6 +435,7 @@ h1{
   letter-spacing:.08em;
   box-shadow:0 12px 28px rgba(0,0,0,.35);
   padding:8px;
+  z-index:4;
 }
 
 .seat b,.seat small{
@@ -439,6 +468,7 @@ h1{
   display:flex;
   gap:10px;
   pointer-events:none;
+  z-index:2;
 }
 
 .chip{
@@ -462,6 +492,7 @@ ol{
   color:#cfc6b5;
 }
 
+/* SCORE POPUP */
 .count-popup{
   position:fixed;
   left:50%;
@@ -493,71 +524,117 @@ ol{
   transform:translate(-50%,0) scale(1);
 }
 
+/* MEDIUM SCREENS */
+@media(max-width:1100px){
+  .table-center{
+    inset:100px 135px 125px 135px !important;
+  }
+
+  .spinner-board{
+    min-width:680px;
+    padding:62px 88px;
+  }
+
+  .horizontal-arm{
+    min-width:105px;
+  }
+
+  .branch-line{
+    min-height:110px;
+  }
+
+  .tile{
+    width:64px;
+    height:35px;
+    font-size:15px;
+  }
+
+  .tile.spinner,
+  .tile.top-arm,
+  .tile.bottom-arm,
+  .tile.left-arm.double,
+  .tile.right-arm.double{
+    width:38px;
+    height:64px;
+  }
+
+  .tile.top-arm.double,
+  .tile.bottom-arm.double{
+    width:64px;
+    height:35px;
+  }
+}
+
+/* MOBILE */
 @media(max-width:760px){
   .app{width:96vw;padding-top:12px}
   .hero{grid-template-columns:1fr;padding:18px}
   .status{text-align:left;min-width:0}
   nav a,button{width:100%}
-  .casino-table{min-height:560px;border-width:7px;border-radius:30px}
-  .table-center{width:90%;height:340px;padding:12px}
-  .spinner-board{padding:44px}
-  .tile{width:60px;height:34px;font-size:14px}
-  .tile.spinner,.tile.top-arm,.tile.bottom-arm,.tile.left-arm.double,.tile.right-arm.double{width:36px;height:60px}
-  .tile.top-arm.double,.tile.bottom-arm.double{width:60px;height:34px}
+
+  .casino-table{
+    min-height:600px;
+    border-width:7px;
+    border-radius:30px;
+  }
+
+  .table-center{
+    inset:82px 72px 92px 72px !important;
+    overflow:visible !important;
+  }
+
+  .spinner-board{
+    min-width:440px;
+    min-height:310px;
+    padding:42px 56px;
+  }
+
+  .branch-line{
+    min-height:82px;
+  }
+
+  .horizontal-arm{
+    min-width:70px;
+  }
+
+  .tile{
+    width:46px;
+    height:28px;
+    font-size:12px;
+    border-radius:8px;
+  }
+
+  .tile.spinner,
+  .tile.top-arm,
+  .tile.bottom-arm,
+  .tile.left-arm.double,
+  .tile.right-arm.double{
+    width:30px;
+    height:46px;
+  }
+
+  .tile.top-arm.double,
+  .tile.bottom-arm.double{
+    width:46px;
+    height:28px;
+  }
+
   .chip-stack{display:none}
-  .seat{width:118px;min-height:58px;font-size:11px;padding:5px}
-  .left-seat{left:8px}
-  .right-seat{right:8px}
-  .top-seat{top:10px}
-  .bottom-seat{bottom:10px}
-  .controls{position:relative;z-index:20}
-}
 
-/* V8 spinner-touch alignment fix */
-.top-branch{
-  flex-direction:column !important;
-  justify-content:flex-end !important;
-  align-items:center !important;
-}
+  .seat{
+    width:105px;
+    min-height:52px;
+    font-size:10px;
+    padding:5px;
+  }
 
-.bottom-branch{
-  flex-direction:column !important;
-  justify-content:flex-start !important;
-  align-items:center !important;
-}
+  .left-seat{left:5px}
+  .right-seat{right:5px}
+  .top-seat{top:8px}
+  .bottom-seat{bottom:8px}
 
-.left-branch{
-  flex-direction:row-reverse !important;
-  justify-content:flex-end !important;
-  align-items:center !important;
-}
-
-.right-branch{
-  flex-direction:row !important;
-  justify-content:flex-start !important;
-  align-items:center !important;
-}
-
-.line-row{
-  gap:0 !important;
-}
-
-.branch-line,
-.horizontal-arm{
-  gap:0 !important;
-}
-
-.branch-line .tile{
-  margin-top:-1px;
-  margin-bottom:-1px;
-}
-
-.horizontal-arm .tile{
-  margin-left:-1px;
-  margin-right:-1px;
-}
-
-.tile.spinner{
-  margin:0 !important;
-  z-index:3;
+  .controls{
+    position:relative;
+    z-index:50;
+  }
 }
