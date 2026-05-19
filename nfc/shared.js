@@ -1,4 +1,4 @@
-window.GV = {
+﻿window.GV = {
   params: new URLSearchParams(location.search),
   isBonus() { return this.params.get('nfc') === '1' || localStorage.getItem('gv_bonus') === '1'; },
   setReward(key, value='1'){ localStorage.setItem('gv_reward_'+key, value); },
@@ -8,12 +8,21 @@ window.GV = {
   // Rewards bridge: lets games/rewards know a valid vault pass is active.
   hasActivePass(){
     try{
+      const masterRaw = localStorage.getItem('CAPO_MASTER_SESSION');
+      const master = masterRaw ? JSON.parse(masterRaw) : null;
+      if(master && master.active === true && (!master.expires_at || Number(master.expires_at) > Date.now())){
+        console.log('[PLAY3D ACCESS]', 'MASTER SESSION ACTIVE');
+        return true;
+      }
       const raw = localStorage.getItem('play3d_vault_pass_v1');
       if(!raw) return false;
       const pass = JSON.parse(raw);
       if(!pass || !pass.expires_at) return false;
       const expiry = new Date(pass.expires_at).getTime();
-      return Number.isFinite(expiry) && expiry > Date.now();
+      const ok = Number.isFinite(expiry) && expiry > Date.now();
+      if(ok) console.log('[PLAY3D ACCESS]', 'SESSION FOUND');
+      else console.log('[PLAY3D ACCESS]', 'SESSION EXPIRED');
+      return ok;
     }catch(e){
       return false;
     }
@@ -64,6 +73,19 @@ if (GV.params.get('nfc') === '1') GV.enableBonus();
     "logout.html"
   ]);
 
+  function loadMaster(){
+    try{
+      const raw = localStorage.getItem('CAPO_MASTER_SESSION');
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+
+  function masterIsValid(master){
+    if(!master || master.active !== true) return false;
+    if(!master.expires_at) return true;
+    return Number(master.expires_at) > Date.now();
+  }
+
   function loadPass(){
     try{
       const raw = localStorage.getItem(PASS_KEY);
@@ -96,12 +118,19 @@ if (GV.params.get('nfc') === '1') GV.enableBonus();
   }
 
   function goToSecureEntry(){
-    location.href = "/public/redeem/";
+    console.log('[PLAY3D ACCESS]', 'ACCESS DENIED');
+    location.href = '/public/redeem/';
   }
 
   clearExpiredPass();
 
   if(isProtectedRoomPage()){
+    const master = loadMaster();
+    if(masterIsValid(master)){
+      console.log('[PLAY3D ACCESS]', 'MASTER SESSION ACTIVE');
+      return;
+    }
+
     const pass = loadPass();
     if(!passIsValid(pass)){
       goToSecureEntry();
@@ -115,3 +144,6 @@ if (GV.params.get('nfc') === '1') GV.enableBonus();
     localStorage.setItem("gv_pass_expiry", String(pass.expires_at || ""));
   }
 })();
+
+
+
