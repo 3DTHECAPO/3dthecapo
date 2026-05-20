@@ -13,7 +13,17 @@
         url("./assets/vault_interface.jpg") center/cover fixed no-repeat;
     }
     .page-wrap{width:min(1180px,92vw);margin:0 auto;padding:18px 0 56px}
-  </style>
+  </style>  
+</style>
+
+  <script src="./shared/access-bridge.js"></script>
+  <script>
+    (function(){
+      if(window.Play3DAccess && window.Play3DAccess.requireTier('gold',{redirect:true})) return;
+    })();
+  </script>
+
+</head>
 </head>
 <body class="room-cinematic room-interface">
   <div class="noise"></div>
