@@ -254,6 +254,20 @@ h4{
   window.addEventListener('load',()=>{
     setTimeout(activateMasterPanel,1200);
   });
+  document.addEventListener('click', function(e){
+  const btn = e.target.closest('[data-master-room]');
+  if(!btn) return;
+
+  e.preventDefault();
+
+  const room = btn.getAttribute('data-master-room');
+
+  ['entry','gold','elite','master'].forEach(function(t){
+    toggle('room-' + t, false);
+  });
+
+  toggle('room-' + room, true);
+});
 })();
 </script>
 <script src="./nfc.js?v=target-master-pipeline-v1"></script>
