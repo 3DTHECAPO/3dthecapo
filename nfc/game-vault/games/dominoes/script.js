@@ -102,7 +102,18 @@ function highestDouble(){
 
 function activeArms(){
   if(!state.board.root) return [];
-  return state.board.canBranch ? ['left','right','top','bottom'] : ['left','right'];
+  if(state.board.canBranch){
+    const leftUsed = (state.board.arms.left || []).length > 0;
+    const rightUsed = (state.board.arms.right || []).length > 0;
+
+    // Domino rule: after the spinner, the first two lay-offs must fill
+    // the left and right sides before top/bottom arms become playable.
+    if(!leftUsed && !rightUsed) return ['left','right'];
+    if(!leftUsed) return ['left'];
+    if(!rightUsed) return ['right'];
+    return ['left','right','top','bottom'];
+  }
+  return ['left','right'];
 }
 
 function armBaseValue(arm){
@@ -149,7 +160,15 @@ function countRootOnly(){
 }
 
 function hasAnyBranch(){
-  return activeArms().some(arm => (state.board.arms[arm] || []).length > 0);
+  return ['left','right','top','bottom'].some(arm => (state.board.arms[arm] || []).length > 0);
+}
+
+function countArms(){
+  if(!state.board.canBranch) return ['left','right'];
+  const leftUsed = (state.board.arms.left || []).length > 0;
+  const rightUsed = (state.board.arms.right || []).length > 0;
+  if(leftUsed && rightUsed) return ['left','right','top','bottom'];
+  return ['left','right'];
 }
 
 function openEndValue(arm){
@@ -164,10 +183,9 @@ function boardCount(){
   // Before anything is laid off the opener, count the opener itself.
   if(!hasAnyBranch()) return countRootOnly();
 
-  // After the board is active, count every live/open end, not only the arms
-  // that already have tiles. This fixes undercounting when one side is still
-  // open on a regular starter and keeps spinner arms countable from all sides.
-  return activeArms().reduce((sum, arm)=>sum + openEndValue(arm), 0);
+  // Count every live/open scoring end. For a spinner, top/bottom only become
+  // live after left and right are both filled.
+  return countArms().reduce((sum, arm)=>sum + openEndValue(arm), 0);
 }
 
 function scoreFromCount(count){
@@ -306,7 +324,7 @@ function newGame(players=state.players, resetMatch=true){
     state.gotIn = Array.from({length:state.players},(_,i)=>Boolean(state.gotIn[i]));
   }
 
-  log(state.players+' player dominoes started. Count open board ends only. Scores count on 5, 10, 15, 20, 25, 30, 35, 40. First score must be 10+ to get in. Game goes to '+SCORE_TARGET+'.');
+  log(state.players+' player dominoes started. Spinner must fill left and right before top/bottom open. Scores count on 5, 10, 15, 20, 25, 30, 35, 40. First score must be 10+ to get in. Game goes to '+SCORE_TARGET+'.');
   newHand(null);
 }
 
