@@ -81,7 +81,7 @@ const ROOM_MAP = {
   entry: 'room-entry',
   gold: 'room-gold',
   elite: 'room-elite',
-  master: 'room-elite',
+  master: 'room-master',
   drop: 'room-elite',
   merch: 'room-elite'
 };
