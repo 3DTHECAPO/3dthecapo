@@ -22,6 +22,12 @@ body.cinematic-vault-room{
   overflow-x:hidden;
 }
 
+body.cinematic-vault-room.master-room{
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.88)),
+    url("./assets/master_control_bg.png") center/cover fixed no-repeat;
+}
+
 .vault-smoke{
   position:fixed;
   inset:auto 0 0;
