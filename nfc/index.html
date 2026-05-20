@@ -205,6 +205,57 @@ h4{
   });
 })();
 </script>
+  <script>
+(function(){
+  function readJSON(key){
+    try{return JSON.parse(localStorage.getItem(key)||'null');}
+    catch(e){return null;}
+  }
+
+  function isMaster(){
+    const params=new URLSearchParams(window.location.search);
+    const code=(params.get('code')||'').toUpperCase();
+    const pass=readJSON('play3d_vault_pass_v1');
+    const master=readJSON('CAPO_MASTER_SESSION');
+
+    return (
+      code==='CAPO-MASTER-999' ||
+      (pass && String(pass.tier||'').toLowerCase()==='master') ||
+      (master && master.active===true)
+    );
+  }
+
+  function toggle(id,show){
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.classList[show?'remove':'add']('hidden');
+  }
+
+  function activateMasterPanel(){
+    if(!isMaster()) return;
+
+    toggle('room-entry',false);
+    toggle('room-gold',false);
+    toggle('room-elite',false);
+    toggle('room-master',true);
+
+    toggle('sessionDivider',false);
+    toggle('sessionLane',false);
+    toggle('connectDivider',false);
+    toggle('connect',false);
+
+    const status=document.getElementById('statusPill');
+    const state=document.getElementById('vaultState');
+
+    if(status) status.textContent='MASTER';
+    if(state) state.textContent='Master Control Room';
+  }
+
+  window.addEventListener('load',()=>{
+    setTimeout(activateMasterPanel,1200);
+  });
+})();
+</script>
 <script src="./nfc.js?v=target-master-pipeline-v1"></script>
 <script src="./vault-conversion.js"></script>
 </body>
