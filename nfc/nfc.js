@@ -609,6 +609,24 @@ async function init(){
     }
   };
 }
+   document.addEventListener('click', function(e){
+  const btn = e.target.closest('[data-master-room]');
+  if(!btn) return;
+
+  e.preventDefault();
+
+  const room = btn.getAttribute('data-master-room');
+  ['entry','gold','elite','master'].forEach(t=>{
+    const el = document.getElementById('room-' + t);
+    if(el) el.classList.add('hidden');
+  });
+
+  const target = document.getElementById('room-' + room);
+  if(target){
+    target.classList.remove('hidden');
+    target.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+});
 init();
 })();
 
