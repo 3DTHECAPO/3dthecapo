@@ -3,7 +3,7 @@
 
 /* PLAY 3D DOMINOES — COUNTING FIVES REPAIR
    Scope: Dominoes script only.
-   Rules: exposed board ends score 5/10/15/20/25/30/35/40 only.
+   Rules: open board ends score 5/10/15/20/25/30/35/40 only.
    First score must be 10+ to get in. Game goes to 150.
    DOMINO ends hand. Wash The Dishes starts next hand with winner coming out.
 */
@@ -143,39 +143,31 @@ function legalArms(tile){
 function legal(tile){ return legalArms(tile).length > 0; }
 function canPlay(playerIndex){ return (state.hands[playerIndex] || []).some(legal); }
 
-function exposedArmsForCount(){
-  if(!state.board.root) return [];
-  const arms = activeArms();
-  const used = arms.filter(arm => (state.board.arms[arm] || []).length > 0);
-  if(!used.length) return ['root'];
-  return used;
-}
-
 function countRootOnly(){
   if(!state.board.root) return 0;
   return state.board.root[0] + state.board.root[1];
 }
 
+function hasAnyBranch(){
+  return activeArms().some(arm => (state.board.arms[arm] || []).length > 0);
+}
+
+function openEndValue(arm){
+  const branch = state.board.arms[arm] || [];
+  if(!branch.length) return armBaseValue(arm) || 0;
+  return outsideValue(branch[branch.length - 1], arm);
+}
+
 function boardCount(){
   if(!state.board.root) return 0;
-  const exposed = exposedArmsForCount();
-  if(exposed.length === 1 && exposed[0] === 'root') return countRootOnly();
 
-  let total = 0;
+  // Before anything is laid off the opener, count the opener itself.
+  if(!hasAnyBranch()) return countRootOnly();
 
-  // Spinner double stays live as both sides while branches are active.
-  // 6/6 + 6/3 = 12 + 3 = 15.
-  if(state.board.canBranch && isDouble(state.board.root)){
-    total += state.board.root[0] + state.board.root[1];
-  }
-
-  exposed.forEach(arm=>{
-    const branch = state.board.arms[arm] || [];
-    const tip = branch[branch.length-1];
-    if(tip) total += outsideValue(tip, arm);
-  });
-
-  return total;
+  // After the board is active, count every live/open end, not only the arms
+  // that already have tiles. This fixes undercounting when one side is still
+  // open on a regular starter and keeps spinner arms countable from all sides.
+  return activeArms().reduce((sum, arm)=>sum + openEndValue(arm), 0);
 }
 
 function scoreFromCount(count){
@@ -314,7 +306,7 @@ function newGame(players=state.players, resetMatch=true){
     state.gotIn = Array.from({length:state.players},(_,i)=>Boolean(state.gotIn[i]));
   }
 
-  log(state.players+' player dominoes started. Count board ends only. Scores count on 5, 10, 15, 20, 25, 30, 35, 40. First score must be 10+ to get in. Game goes to '+SCORE_TARGET+'.');
+  log(state.players+' player dominoes started. Count open board ends only. Scores count on 5, 10, 15, 20, 25, 30, 35, 40. First score must be 10+ to get in. Game goes to '+SCORE_TARGET+'.');
   newHand(null);
 }
 
@@ -402,12 +394,44 @@ function passTurn(){
   nextTurn();
 }
 
+function simulateMove(tile, arm){
+  const rootBefore = state.board.root;
+  const branchBefore = state.board.arms[arm] ? state.board.arms[arm].slice() : [];
+  const canBranchBefore = state.board.canBranch;
+  if(!placeTile(tile, arm)) return null;
+  const count = boardCount();
+  const points = scoreFromCount(count);
+  state.board.root = rootBefore;
+  state.board.canBranch = canBranchBefore;
+  state.board.arms[arm] = branchBefore;
+  return {count, points};
+}
+
 function chooseCpuMove(hand){
-  for(const tile of hand){
-    const arms = legalArms(tile);
-    if(arms.length) return {tile, arm:arms.find(x=>x==='top'||x==='bottom') || arms[0]};
-  }
-  return null;
+  const player = state.currentPlayerIndex;
+  const moves = [];
+
+  hand.forEach(tile=>{
+    legalArms(tile).forEach(arm=>{
+      const sim = simulateMove(tile, arm);
+      if(!sim) return;
+      const rawScore = sim.points;
+      const usableScore = (!state.gotIn[player] && rawScore < GET_IN_MIN) ? 0 : rawScore;
+      const leavePips = handPips(player) - pips(tile);
+      moves.push({tile, arm, count:sim.count, points:usableScore, rawScore, leavePips});
+    });
+  });
+
+  if(!moves.length) return null;
+
+  moves.sort((a,b)=>{
+    if(b.points !== a.points) return b.points - a.points;
+    if(a.leavePips !== b.leavePips) return a.leavePips - b.leavePips;
+    if(isDouble(b.tile) !== isDouble(a.tile)) return Number(isDouble(b.tile)) - Number(isDouble(a.tile));
+    return pips(b.tile) - pips(a.tile);
+  });
+
+  return moves[0];
 }
 
 function scheduleCpu(){
