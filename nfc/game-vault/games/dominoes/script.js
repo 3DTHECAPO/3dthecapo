@@ -169,11 +169,6 @@ function countArms(){
   const leftUsed = (state.board.arms.left || []).length > 0;
   const rightUsed = (state.board.arms.right || []).length > 0;
 
-  // Spinner count rule:
-  // - Spinner alone counts both sides through countRootOnly().
-  // - After one side is played, count that exposed end plus the opposite spinner side.
-  // - After left + right are filled, stop counting the spinner body.
-  // - Top/bottom only count after a domino is actually played there.
   if(!leftUsed || !rightUsed) return ['left','right'];
 
   const arms = ['left','right'];
@@ -191,11 +186,26 @@ function openEndValue(arm){
 function boardCount(){
   if(!state.board.root) return 0;
 
-  // Before anything is laid off the opener, count the opener itself.
+  // Spinner/opening double by itself counts both numbers.
   if(!hasAnyBranch()) return countRootOnly();
 
-  // Count every live/open scoring end. For a spinner, top/bottom only count
-  // after a domino has been played on that arm.
+  // Your spinner rule:
+  // 6-6 + one side 6-4 = 12 + 4.
+  // Once left and right are both filled, the middle spinner stops counting:
+  // 6-6 + 6-4 + 6-3 = 4 + 3.
+  if(state.board.canBranch){
+    const leftUsed = (state.board.arms.left || []).length > 0;
+    const rightUsed = (state.board.arms.right || []).length > 0;
+    const topUsed = (state.board.arms.top || []).length > 0;
+    const bottomUsed = (state.board.arms.bottom || []).length > 0;
+
+    if(leftUsed !== rightUsed && !topUsed && !bottomUsed){
+      return countRootOnly() + openEndValue(leftUsed ? 'left' : 'right');
+    }
+  }
+
+  // Count live exposed end numbers only. Top/bottom only count after a domino
+  // is actually played there.
   return countArms().reduce((sum, arm)=>sum + openEndValue(arm), 0);
 }
 
@@ -335,7 +345,7 @@ function newGame(players=state.players, resetMatch=true){
     state.gotIn = Array.from({length:state.players},(_,i)=>Boolean(state.gotIn[i]));
   }
 
-  log(state.players+' player dominoes started. Spinner must fill left and right before top/bottom open. Top/bottom only count after played. First score must be 10+ to get in. Game goes to '+SCORE_TARGET+'.');
+  log(state.players+' player dominoes started. Spinner must fill left and right before top/bottom open. One-sided spinner counts spinner plus exposed end. First score must be 10+ to get in. Game goes to '+SCORE_TARGET+'.');
   newHand(null);
 }
 
