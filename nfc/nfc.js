@@ -438,6 +438,12 @@ async function init(){
 
     const tier = String(record.code_type || 'ENTRY').toLowerCase();
     saveVaultPass(record, tier);
+    const route = String(record.route || '').trim();
+
+if(route && route !== window.location.pathname){
+  window.location.href = route;
+  return;
+}
     patchCodeHit(code);
     fireBrevoSafe(code, tier);
     logEvent(code, tier, 'success');
