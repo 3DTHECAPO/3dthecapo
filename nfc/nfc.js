@@ -201,8 +201,9 @@ function unlockUI(rawTier, options){
   ['entry','gold','elite'].forEach(t=>hide(byId('room-'+t)));
 
   if(tier === 'master'){
-    ['entry','gold','elite'].forEach(t=>show(byId('room-'+t)));
-  }else{
+  show(byId('room-master'));
+  ['entry','gold','elite'].forEach(t=>show(byId('room-'+t)));
+}else{
     const roomId = ROOM_MAP[tier] || 'room-entry';
     show(byId(roomId));
   }
