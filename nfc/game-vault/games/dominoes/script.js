@@ -165,10 +165,21 @@ function hasAnyBranch(){
 
 function countArms(){
   if(!state.board.canBranch) return ['left','right'];
+
   const leftUsed = (state.board.arms.left || []).length > 0;
   const rightUsed = (state.board.arms.right || []).length > 0;
-  if(leftUsed && rightUsed) return ['left','right','top','bottom'];
-  return ['left','right'];
+
+  // Spinner count rule:
+  // - Spinner alone counts both sides through countRootOnly().
+  // - After one side is played, count that exposed end plus the opposite spinner side.
+  // - After left + right are filled, stop counting the spinner body.
+  // - Top/bottom only count after a domino is actually played there.
+  if(!leftUsed || !rightUsed) return ['left','right'];
+
+  const arms = ['left','right'];
+  if((state.board.arms.top || []).length) arms.push('top');
+  if((state.board.arms.bottom || []).length) arms.push('bottom');
+  return arms;
 }
 
 function openEndValue(arm){
@@ -183,8 +194,8 @@ function boardCount(){
   // Before anything is laid off the opener, count the opener itself.
   if(!hasAnyBranch()) return countRootOnly();
 
-  // Count every live/open scoring end. For a spinner, top/bottom only become
-  // live after left and right are both filled.
+  // Count every live/open scoring end. For a spinner, top/bottom only count
+  // after a domino has been played on that arm.
   return countArms().reduce((sum, arm)=>sum + openEndValue(arm), 0);
 }
 
@@ -324,7 +335,7 @@ function newGame(players=state.players, resetMatch=true){
     state.gotIn = Array.from({length:state.players},(_,i)=>Boolean(state.gotIn[i]));
   }
 
-  log(state.players+' player dominoes started. Spinner must fill left and right before top/bottom open. Scores count on 5, 10, 15, 20, 25, 30, 35, 40. First score must be 10+ to get in. Game goes to '+SCORE_TARGET+'.');
+  log(state.players+' player dominoes started. Spinner must fill left and right before top/bottom open. Top/bottom only count after played. First score must be 10+ to get in. Game goes to '+SCORE_TARGET+'.');
   newHand(null);
 }
 
