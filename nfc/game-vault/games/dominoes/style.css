@@ -1,640 +1,497 @@
-/* PLAY 3D DOMINOES — FULL TEST CSS
-   Goal: bones lay directly on the felt table, NOT inside a visible box/screen.
-   This is CSS-only. It does not change scoring or gameplay.
-
-   Use this as a temporary test replacement for style.css OR load after style.css:
-   <link rel="stylesheet" href="./style.css">
-   <link rel="stylesheet" href="./dominoes-table-direct-test.css">
-   <link rel="stylesheet" href="../shared/mode-bar.css">
-*/
-
 :root{
-  --gold:#caa24a;
-  --gold2:#f2d27b;
-  --cream:#f5efe3;
-  --line:rgba(242,210,123,.28);
+--gold:#caa24a;
+--gold2:#f2d27b;
+--cream:#f5efe3;
+--line:rgba(242,210,123,.28);
 }
 
 *{box-sizing:border-box}
 
 html,body{
-  margin:0;
-  padding:0;
-  min-height:100%;
-  overflow-x:hidden;
-  background:#000;
-  font-family:Oswald,Arial,sans-serif;
-  color:var(--cream);
+margin:0;
+padding:0;
+overflow-x:hidden;
+background:#000;
+font-family:Oswald,sans-serif;
+color:var(--cream);
 }
 
 .bg{
-  position:fixed;
-  inset:0;
-  background:
-    radial-gradient(circle at top,rgba(242,210,123,.18),transparent 34%),
-    linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.96));
-  z-index:0;
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at top,rgba(242,210,123,.18),transparent 34%),
+linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.96));
 }
 
 .app{
-  position:relative;
-  width:min(1500px,96vw);
-  margin:auto;
-  padding:18px 0 70px;
-  z-index:1;
+position:relative;
+width:min(1400px,95vw);
+margin:auto;
+padding:20px 0 40px;
+z-index:1;
 }
 
-/* HEADER */
 .top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:16px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
+margin-bottom:18px;
 }
 
 .brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  text-decoration:none;
-  color:var(--cream);
+display:flex;
+align-items:center;
+gap:10px;
+text-decoration:none;
+color:var(--cream);
 }
 
 .brand span{
-  width:54px;
-  height:54px;
-  border-radius:18px;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#805c1a);
-  color:#100c05;
-  font-family:"Black Ops One";
-  font-size:24px;
+width:54px;
+height:54px;
+border-radius:18px;
+display:grid;
+place-items:center;
+background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#805c1a);
+color:#100c05;
+font-family:"Black Ops One";
+font-size:24px;
 }
 
-.brand b{font-family:"Black Ops One"}
+.brand b{
+font-family:"Black Ops One";
+}
 
 nav{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
 }
 
 nav a,button{
-  border:1px solid var(--line);
-  border-radius:999px;
-  min-height:42px;
-  padding:11px 15px;
-  background:rgba(255,255,255,.05);
-  color:var(--cream);
-  text-decoration:none;
-  font-weight:900;
-  cursor:pointer;
+border:1px solid var(--line);
+border-radius:999px;
+min-height:42px;
+padding:11px 15px;
+background:rgba(255,255,255,.05);
+color:var(--cream);
+text-decoration:none;
+font-weight:900;
+cursor:pointer;
 }
 
 button:hover{
-  background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#805c1a);
-  color:#100c05;
+background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#805c1a);
+color:#100c05;
+transform:translateY(-2px);
 }
 
-button:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-}
-
-/* HERO */
 .hero{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:18px;
-  align-items:end;
-  padding:22px;
-  border-radius:28px;
-  border:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(18,18,18,.82),rgba(0,0,0,.64));
-  margin-bottom:18px;
-  box-shadow:0 30px 90px rgba(0,0,0,.6);
+display:grid;
+grid-template-columns:1fr auto;
+gap:20px;
+align-items:end;
+padding:24px;
+border-radius:28px;
+border:1px solid var(--line);
+background:linear-gradient(180deg,rgba(18,18,18,.82),rgba(0,0,0,.64));
+margin-bottom:20px;
+box-shadow:0 30px 90px rgba(0,0,0,.6);
 }
 
 .kicker{
-  font-size:12px;
-  letter-spacing:.2em;
-  font-weight:900;
-  color:var(--gold2);
+font-size:12px;
+letter-spacing:.2em;
+font-weight:900;
+color:var(--gold2);
 }
 
 h1{
-  font-family:"Black Ops One";
-  font-size:clamp(42px,7vw,86px);
-  line-height:.9;
-  margin:10px 0;
-  color:var(--gold2);
+font-family:"Black Ops One";
+font-size:clamp(44px,8vw,92px);
+line-height:.9;
+margin:10px 0;
+color:var(--gold2);
 }
 
 .status{
-  min-width:260px;
-  padding:16px;
-  border-radius:22px;
-  border:1px solid rgba(242,210,123,.2);
-  background:rgba(0,0,0,.4);
-  text-align:right;
+min-width:180px;
+padding:18px;
+border-radius:22px;
+border:1px solid rgba(242,210,123,.2);
+background:rgba(0,0,0,.4);
+text-align:right;
 }
 
 .status span,.status small{
-  display:block;
-  color:#cfc6b5;
+display:block;
+color:#cfc6b5;
 }
 
 .status b{
-  display:block;
-  font-size:clamp(16px,2vw,26px);
-  font-family:"Black Ops One";
-  color:var(--gold2);
+display:block;
+font-size:34px;
+font-family:"Black Ops One";
+color:var(--gold2);
 }
 
-/* PANELS / CONTROLS */
 .panel{
-  position:relative;
-  z-index:20;
-  margin-top:16px;
-  padding:16px;
-  border-radius:28px;
-  border:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(17,14,9,.94),rgba(0,0,0,.88));
-  box-shadow:0 28px 90px rgba(0,0,0,.58);
+margin-top:18px;
+padding:18px;
+border-radius:28px;
+border:1px solid var(--line);
+background:linear-gradient(180deg,rgba(17,14,9,.78),rgba(0,0,0,.70));
+box-shadow:0 28px 90px rgba(0,0,0,.58);
 }
 
 .controls{
-  position:relative;
-  z-index:50;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
 }
 
-.playerCountBtn.active,#washBtn:not(:disabled){
-  background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#805c1a);
-  color:#100c05;
+.playerCountBtn.active{
+background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#805c1a);
+color:#100c05;
 }
 
 .arm-chooser{
-  display:flex;
-  gap:8px;
-  align-items:center;
-  flex-wrap:wrap;
-  width:100%;
-  border:1px solid rgba(242,210,123,.24);
-  border-radius:16px;
-  padding:10px;
-  background:rgba(0,0,0,.32);
+display:flex;
+gap:8px;
+align-items:center;
+flex-wrap:wrap;
+width:100%;
+border:1px solid rgba(242,210,123,.24);
+border-radius:16px;
+padding:10px;
+background:rgba(0,0,0,.32);
 }
 
 .arm-chooser span{
-  color:var(--gold2);
-  font-weight:900;
-  text-transform:uppercase;
-  letter-spacing:.08em;
+color:var(--gold2);
+font-weight:900;
+text-transform:uppercase;
+letter-spacing:.08em;
 }
 
-.arm-chooser[hidden]{display:none}
+.arm-chooser[hidden]{
+display:none;
+}
 
-/* TABLE — NO INNER BOX LOOK */
 .casino-table{
-  position:relative;
-  min-height:760px;
-  border-radius:48px;
-  border:10px solid #caa24a;
-  background:
-    radial-gradient(circle at center,rgba(47,132,63,.96) 0%,rgba(25,91,40,.96) 40%,rgba(9,40,19,.98) 75%,#06120a 100%);
-  overflow:hidden;
-  box-shadow:
-    0 0 0 8px #3b2a0c,
-    0 30px 100px rgba(0,0,0,.72),
-    inset 0 0 80px rgba(255,255,255,.06);
-  z-index:1;
+position:relative;
+min-height:560px;
+border-radius:50px;
+border:12px solid #caa24a;
+background:
+radial-gradient(circle at center,#1f5d2e 0%,#0d2d16 60%,#06120a 100%);
+overflow:hidden;
+box-shadow:
+0 0 0 8px #3b2a0c,
+0 30px 100px rgba(0,0,0,.7),
+inset 0 0 70px rgba(255,255,255,.06);
 }
 
 .casino-table:before{
-  content:"";
-  position:absolute;
-  inset:18px;
-  border-radius:38px;
-  border:2px solid rgba(242,210,123,.34);
-  pointer-events:none;
+content:"";
+position:absolute;
+inset:18px;
+border-radius:40px;
+border:2px solid rgba(242,210,123,.34);
+pointer-events:none;
 }
 
 .table-logo{
-  position:absolute;
-  inset:0;
-  display:grid;
-  place-items:center;
-  font-family:"Black Ops One";
-  font-size:clamp(44px,10vw,130px);
-  color:rgba(242,210,123,.09);
-  transform:rotate(-8deg);
-  pointer-events:none;
+position:absolute;
+inset:0;
+display:grid;
+place-items:center;
+font-family:"Black Ops One";
+font-size:clamp(44px,10vw,130px);
+color:rgba(242,210,123,.09);
+transform:rotate(-8deg);
+pointer-events:none;
 }
 
-/* THIS IS THE KEY FIX:
-   .table-center still exists in HTML, but it is now invisible.
-   It becomes the board placement layer, not a visible box. */
 .table-center{
-  position:absolute !important;
-  left:auto !important;
-  top:auto !important;
-  transform:none !important;
-  inset:105px 185px 125px 185px !important;
-  width:auto !important;
-  height:auto !important;
-  min-height:0 !important;
-  padding:0 !important;
-  border:0 !important;
-  border-radius:0 !important;
-  background:transparent !important;
-  box-shadow:none !important;
-  overflow:visible !important;
-  display:grid !important;
-  place-items:center !important;
-  pointer-events:auto;
+position:absolute;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+width:min(900px,88%);
+min-height:160px;
+padding:20px;
+border-radius:30px;
+border:2px solid rgba(242,210,123,.25);
+background:rgba(0,0,0,.22);
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
 }
 
-/* Board directly on felt */
 .chain{
-  display:flex;
-  gap:0;
-  flex-wrap:wrap;
-  justify-content:center;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:center;
 }
 
 .spinner-board{
-  display:grid;
-  grid-template-rows:auto auto auto;
-  gap:0;
-  align-items:center;
-  justify-items:center;
-  width:auto;
-  min-width:760px;
-  min-height:420px;
-  padding:70px 110px;
-  background:transparent !important;
+display:grid;
+grid-template-rows:auto auto auto;
+gap:8px;
+align-items:center;
+justify-items:center;
 }
 
-.line-row{
-  display:flex;
-  gap:0;
-  align-items:center;
-  justify-content:center;
-  flex-wrap:nowrap;
+.line-row,
+.branch-line{
+display:flex;
+gap:10px;
+align-items:center;
+justify-content:center;
+flex-wrap:wrap;
 }
 
 .branch-line{
-  display:flex;
-  gap:0;
-  align-items:center;
-  justify-content:flex-end;
-  min-height:125px;
-  flex-direction:column-reverse;
+min-height:54px;
 }
 
-.bottom-branch{
-  justify-content:flex-start;
-  flex-direction:column;
-}
-
-.horizontal-arm{
-  display:flex;
-  gap:0;
-  align-items:center;
-  min-width:125px;
-}
-
-.left-branch{
-  justify-content:flex-start;
-  flex-direction:row-reverse;
-}
-
-.right-branch{
-  justify-content:flex-start;
-}
-
-.empty-board{
-  color:rgba(242,210,123,.65);
-  font-family:"Black Ops One";
-  letter-spacing:.12em;
-}
-
-/* DOMINO TILES */
 .hand{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  justify-content:center;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:center;
 }
 
 .tile{
-  width:72px;
-  height:38px;
-  border-radius:10px;
-  border:2px solid #caa24a;
-  background:linear-gradient(180deg,#f8e7b8,#b68a36);
-  color:#111;
-  display:grid;
-  grid-template-columns:1fr 1px 1fr;
-  place-items:center;
-  font-weight:900;
-  font-size:17px;
-  box-shadow:0 10px 16px rgba(0,0,0,.38);
-  cursor:pointer;
-  padding:0;
-  flex:0 0 auto;
+width:92px;
+height:46px;
+border-radius:12px;
+border:2px solid #caa24a;
+background:linear-gradient(180deg,#f8e7b8,#b68a36);
+color:#111;
+display:grid;
+grid-template-columns:1fr 1px 1fr;
+place-items:center;
+font-weight:900;
+font-size:20px;
+box-shadow:0 12px 20px rgba(0,0,0,.4);
+cursor:pointer;
+transition:transform .15s ease;
 }
 
-.tile:hover{transform:translateY(-3px)}
+.tile:hover{
+transform:translateY(-6px);
+}
 
 .tile.spinner{
-  width:42px;
-  height:72px;
-  grid-template-columns:1fr;
-  grid-template-rows:1fr 1px 1fr;
-  box-shadow:0 0 0 4px rgba(242,210,123,.22),0 0 26px rgba(242,210,123,.45),0 12px 20px rgba(0,0,0,.4);
+width:52px;
+height:92px;
+grid-template-columns:1fr;
+grid-template-rows:1fr 1px 1fr;
+transform:rotate(90deg);
+box-shadow:0 0 0 4px rgba(242,210,123,.22),0 0 26px rgba(242,210,123,.45),0 12px 20px rgba(0,0,0,.4);
 }
 
 .tile.branch{
-  width:72px;
-  height:38px;
-  grid-template-columns:1fr 1px 1fr;
-  grid-template-rows:1fr;
-}
-
-.tile.top-arm,.tile.bottom-arm{
-  width:42px;
-  height:72px;
-  grid-template-columns:1fr;
-  grid-template-rows:1fr 1px 1fr;
-}
-
-.tile.left-arm.double,.tile.right-arm.double{
-  width:42px;
-  height:72px;
-  grid-template-columns:1fr;
-  grid-template-rows:1fr 1px 1fr;
-}
-
-.tile.top-arm.double,.tile.bottom-arm.double{
-  width:72px;
-  height:38px;
-  grid-template-columns:1fr 1px 1fr;
-  grid-template-rows:1fr;
+width:52px;
+height:92px;
+grid-template-columns:1fr;
+grid-template-rows:1fr 1px 1fr;
 }
 
 .tile.disabled{
-  opacity:.45;
-  filter:grayscale(.45);
+opacity:.45;
+filter:grayscale(.45);
+}
+
+.tile-back{
+width:22px;
+height:34px;
+border-radius:6px;
+border:1px solid rgba(242,210,123,.55);
+background:linear-gradient(135deg,rgba(20,14,7,.9),rgba(0,0,0,.9));
+box-shadow:0 4px 10px rgba(0,0,0,.34);
+display:inline-block;
 }
 
 .tile i{
-  display:block;
-  width:1px;
-  height:70%;
-  background:#111;
+display:block;
+width:1px;
+height:70%;
+background:#111;
 }
 
-.tile.top-arm i,
-.tile.bottom-arm i,
 .tile.spinner i,
-.tile.left-arm.double i,
-.tile.right-arm.double i{
-  width:70%;
-  height:1px;
-}
-
-/* SEATS */
-.tile-back{
-  width:20px;
-  height:30px;
-  border-radius:6px;
-  border:1px solid rgba(242,210,123,.55);
-  background:linear-gradient(135deg,rgba(20,14,7,.9),rgba(0,0,0,.9));
-  box-shadow:0 4px 10px rgba(0,0,0,.34);
-  display:inline-block;
+.tile.branch i{
+width:70%;
+height:1px;
 }
 
 .seat{
-  position:absolute;
-  width:180px;
-  min-height:84px;
-  display:grid;
-  place-items:center;
-  border-radius:24px;
-  background:rgba(0,0,0,.46);
-  border:1px solid rgba(242,210,123,.25);
-  font-weight:900;
-  letter-spacing:.08em;
-  box-shadow:0 12px 28px rgba(0,0,0,.35);
-  padding:8px;
-  z-index:4;
+position:absolute;
+width:180px;
+height:80px;
+display:grid;
+place-items:center;
+border-radius:24px;
+background:rgba(0,0,0,.42);
+border:1px solid rgba(242,210,123,.25);
+font-weight:900;
+letter-spacing:.08em;
+box-shadow:0 12px 28px rgba(0,0,0,.35);
 }
 
-.seat b,.seat small{
-  display:block;
-  text-align:center;
+.seat b,
+.seat small{
+display:block;
+text-align:center;
 }
 
 .seat small{
-  color:#cfc6b5;
-  font-size:11px;
+color:#cfc6b5;
+font-size:11px;
 }
 
 .seat-backs{
-  display:flex;
-  gap:3px;
-  max-width:150px;
-  overflow:hidden;
-  justify-content:center;
+display:flex;
+gap:3px;
+max-width:150px;
+overflow:hidden;
+justify-content:center;
 }
 
-.top-seat{top:22px;left:50%;transform:translateX(-50%)}
-.bottom-seat{bottom:22px;left:50%;transform:translateX(-50%)}
-.left-seat{left:24px;top:50%;transform:translateY(-50%)}
-.right-seat{right:24px;top:50%;transform:translateY(-50%)}
+.top-seat{
+top:22px;
+left:50%;
+transform:translateX(-50%);
+}
+
+.bottom-seat{
+bottom:22px;
+left:50%;
+transform:translateX(-50%);
+}
+
+.left-seat{
+left:24px;
+top:50%;
+transform:translateY(-50%);
+}
+
+.right-seat{
+right:24px;
+top:50%;
+transform:translateY(-50%);
+}
 
 .chip-stack{
-  position:absolute;
-  right:70px;
-  bottom:90px;
-  display:flex;
-  gap:10px;
-  pointer-events:none;
-  z-index:2;
+position:absolute;
+right:70px;
+bottom:90px;
+display:flex;
+gap:10px;
 }
 
 .chip{
-  width:60px;
-  height:60px;
-  border-radius:50%;
-  border:6px dashed #fff;
-  background:radial-gradient(circle,#f2d27b,#7b5919);
-  box-shadow:0 10px 20px rgba(0,0,0,.45);
+width:60px;
+height:60px;
+border-radius:50%;
+border:6px dashed #fff;
+background:radial-gradient(circle,#f2d27b,#7b5919);
+box-shadow:0 10px 20px rgba(0,0,0,.45);
 }
 
 h2{
-  font-family:"Black Ops One";
-  color:var(--gold2);
-  margin:0 0 14px;
+font-family:"Black Ops One";
+color:var(--gold2);
+margin:0 0 14px;
 }
 
 ol{
-  max-height:280px;
-  overflow:auto;
-  color:#cfc6b5;
+max-height:280px;
+overflow:auto;
+color:#cfc6b5;
 }
 
-/* SCORE POPUP */
-.count-popup{
-  position:fixed;
-  left:50%;
-  top:18%;
-  transform:translate(-50%,-20px) scale(.9);
-  z-index:9999;
-  opacity:0;
-  pointer-events:none;
-  border:2px solid rgba(242,210,123,.72);
-  border-radius:22px;
-  padding:18px 28px;
-  background:rgba(0,0,0,.88);
-  color:#f2d27b;
-  font-family:"Black Ops One";
-  font-size:clamp(24px,5vw,56px);
-  letter-spacing:.04em;
-  box-shadow:0 0 60px rgba(242,210,123,.24);
-  transition:.2s ease;
-  text-align:center;
-}
-
-.count-popup.good{
-  background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#805c1a);
-  color:#120b02;
-}
-
-.count-popup.show{
-  opacity:1;
-  transform:translate(-50%,0) scale(1);
-}
-
-/* MEDIUM SCREENS */
-@media(max-width:1100px){
-  .table-center{
-    inset:100px 135px 125px 135px !important;
-  }
-
-  .spinner-board{
-    min-width:680px;
-    padding:62px 88px;
-  }
-
-  .horizontal-arm{
-    min-width:105px;
-  }
-
-  .branch-line{
-    min-height:110px;
-  }
-
-  .tile{
-    width:64px;
-    height:35px;
-    font-size:15px;
-  }
-
-  .tile.spinner,
-  .tile.top-arm,
-  .tile.bottom-arm,
-  .tile.left-arm.double,
-  .tile.right-arm.double{
-    width:38px;
-    height:64px;
-  }
-
-  .tile.top-arm.double,
-  .tile.bottom-arm.double{
-    width:64px;
-    height:35px;
-  }
-}
-
-/* MOBILE */
 @media(max-width:760px){
-  .app{width:96vw;padding-top:12px}
-  .hero{grid-template-columns:1fr;padding:18px}
-  .status{text-align:left;min-width:0}
-  nav a,button{width:100%}
 
-  .casino-table{
-    min-height:600px;
-    border-width:7px;
-    border-radius:30px;
-  }
+.hero{
+grid-template-columns:1fr;
+}
 
-  .table-center{
-    inset:82px 72px 92px 72px !important;
-    overflow:visible !important;
-  }
+.status{
+text-align:left;
+}
 
-  .spinner-board{
-    min-width:440px;
-    min-height:310px;
-    padding:42px 56px;
-  }
+nav a,button{
+width:100%;
+}
 
-  .branch-line{
-    min-height:82px;
-  }
+.casino-table{
+min-height:460px;
+border-width:8px;
+border-radius:30px;
+}
 
-  .horizontal-arm{
-    min-width:70px;
-  }
+.table-center{
+width:92%;
+min-height:120px;
+}
 
-  .tile{
-    width:46px;
-    height:28px;
-    font-size:12px;
-    border-radius:8px;
-  }
+.tile{
+width:72px;
+height:40px;
+font-size:16px;
+}
 
-  .tile.spinner,
-  .tile.top-arm,
-  .tile.bottom-arm,
-  .tile.left-arm.double,
-  .tile.right-arm.double{
-    width:30px;
-    height:46px;
-  }
+.chip-stack{
+display:none;
+}
 
-  .tile.top-arm.double,
-  .tile.bottom-arm.double{
-    width:46px;
-    height:28px;
-  }
+.seat{
+width:120px;
+height:56px;
+font-size:12px;
+}
+}
 
-  .chip-stack{display:none}
 
-  .seat{
-    width:105px;
-    min-height:52px;
-    font-size:10px;
-    padding:5px;
-  }
-
-  .left-seat{left:5px}
-  .right-seat{right:5px}
-  .top-seat{top:8px}
-  .bottom-seat{bottom:8px}
-
-  .controls{
-    position:relative;
-    z-index:50;
-  }
+/* DOMINOES MOBILE / VIEWPORT REPAIR */
+.table-center{
+  overflow:auto;
+  max-height:calc(100% - 170px);
+}
+.spinner-board{
+  min-height:260px;
+  padding:30px 12px;
+}
+.branch-line{
+  min-height:92px;
+  max-width:100%;
+}
+.top-branch,.bottom-branch{
+  flex-direction:column-reverse;
+  flex-wrap:nowrap;
+}
+.bottom-branch{
+  flex-direction:column;
+}
+.line-row{
+  max-width:100%;
+  overflow:visible;
+}
+@media(max-width:760px){
+  .controls{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
+  .controls button{width:100%;padding:10px 8px;font-size:12px}
+  .casino-table{min-height:620px;overflow:visible}
+  .table-center{top:52%;width:96%;max-height:430px;overflow:auto;padding:12px}
+  .top-seat{top:10px}.bottom-seat{bottom:10px}.left-seat{left:8px}.right-seat{right:8px}
+  .seat{width:98px;height:54px;font-size:11px}
+  .spinner-board{min-height:360px}
 }
