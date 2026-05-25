@@ -7,6 +7,8 @@
     wp:'\u2659', wr:'\u2656', wn:'\u2658', wb:'\u2657', wq:'\u2655', wk:'\u2654',
     bp:'\u265F', br:'\u265C', bn:'\u265E', bb:'\u265D', bq:'\u265B', bk:'\u265A'
   };
+  const pieceValue = {p:100,n:320,b:330,r:500,q:900,k:20000};
+  const cpuDifficulty = 'boss';
 
   let selected = null;
   let flipped = false;
@@ -70,15 +72,45 @@
     }
   }
 
+  function scoreCandidate(candidate){
+    let score = Math.random() * 6;
+    if(candidate.captured) score += (pieceValue[candidate.captured] || 0) + 35;
+    if(candidate.promotion) score += 780;
+    if(candidate.san && candidate.san.includes('+')) score += 90;
+    if(candidate.san && candidate.san.includes('#')) score += 100000;
+
+    const played = game.move({from:candidate.from, to:candidate.to, promotion:candidate.promotion || 'q'});
+    if(!played) return -999999;
+
+    if(game.isCheckmate()) score += 100000;
+    else if(game.isCheck()) score += 120;
+
+    const replies = game.moves({verbose:true});
+    let worstReply = 0;
+    for(const reply of replies){
+      if(reply.captured) worstReply = Math.max(worstReply, pieceValue[reply.captured] || 0);
+      if(reply.san && reply.san.includes('#')) worstReply = Math.max(worstReply, 50000);
+      else if(reply.san && reply.san.includes('+')) worstReply = Math.max(worstReply, 140);
+    }
+    score -= worstReply * (cpuDifficulty === 'boss' ? 0.9 : 0.55);
+    score -= replies.length * 0.25;
+
+    if(typeof game.undo === 'function') game.undo();
+    return score;
+  }
+
+  function chooseCpuMove(moves){
+    return moves
+      .map(move => ({move, score:scoreCandidate(move)}))
+      .sort((a,b)=>b.score - a.score)[0].move;
+  }
+
   function cpuMove(){
     if(mode !== 'cpu' || game.turn() !== 'b' || game.isGameOver()) return;
     render('OPPONENT THINKING...');
     const moves = game.moves({verbose:true});
     if(!moves.length){ render(); return; }
-    const checks = moves.filter(move => move.san.includes('+') || move.san.includes('#'));
-    const captures = moves.filter(move => move.captured);
-    const pool = checks.length ? checks : captures.length ? captures : moves;
-    const picked = pool[Math.floor(Math.random() * pool.length)];
+    const picked = chooseCpuMove(moves);
     const move = game.move({from:picked.from, to:picked.to, promotion:picked.promotion || 'q'});
     render(move ? move.san : 'CPU PASS');
   }
