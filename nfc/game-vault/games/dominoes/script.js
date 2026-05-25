@@ -450,6 +450,8 @@ function newGame(players){
     placeOpeningDouble(starter.player,starter.tile);
     state.currentPlayerIndex = (starter.player + 1) % state.players;
     log(seatName(starter.player)+' opened with highest double '+starter.tile[0]+'-'+starter.tile[1]+'.');
+    scoreBoardCount(starter.player);
+    if(state.gameOver){ render(); return; }
   }else{
     state.currentPlayerIndex = 0;
     log('No double found. Start manually.');
