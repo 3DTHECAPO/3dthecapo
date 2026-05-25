@@ -64,30 +64,52 @@ function patchNfcLinks(codeValue){
   });
 }
 
-async function insertSidecar(table, payload, label){
-  try{
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{
-      method:'POST',
-      headers:{
-        'apikey':SUPABASE_ANON,
-        'Authorization':'Bearer '+SUPABASE_ANON,
-        'Content-Type':'application/json',
-        'Prefer':'return=minimal'
-      },
-      body:JSON.stringify(payload)
-    });
-
-    if(!res.ok){
-      const text = await res.text().catch(()=>'');
-      console.error('[PLAY3D SIDECAR] '+label+' failed', text || res.status);
-      return false;
+async function writeSidecar(table, payload, label){
+  const baseHeaders = {
+    'apikey':SUPABASE_ANON,
+    'Authorization':'Bearer '+SUPABASE_ANON,
+    'Content-Type':'application/json'
+  };
+  const attempts = [
+    {
+      name:'upsert',
+      url:`${SUPABASE_URL}/rest/v1/${table}?on_conflict=email`,
+      headers:Object.assign({}, baseHeaders, {'Prefer':'resolution=merge-duplicates,return=minimal'})
+    },
+    {
+      name:'insert',
+      url:`${SUPABASE_URL}/rest/v1/${table}`,
+      headers:Object.assign({}, baseHeaders, {'Prefer':'return=minimal'})
     }
+  ];
 
-    return true;
-  }catch(e){
-    console.error('[PLAY3D SIDECAR] '+label+' failed', e);
-    return false;
+  for(const attempt of attempts){
+    try{
+      const res = await fetch(attempt.url,{
+        method:'POST',
+        headers:attempt.headers,
+        body:JSON.stringify(payload)
+      });
+
+      if(res.ok){
+        return true;
+      }
+
+      const text = await res.text().catch(()=>'');
+      console.error('[PLAY3D SIDECAR] '+label+' failed', {
+        attempt:attempt.name,
+        status:res.status,
+        error:text || res.statusText || 'Supabase write failed'
+      });
+    }catch(e){
+      console.error('[PLAY3D SIDECAR] '+label+' failed', {
+        attempt:attempt.name,
+        error:e
+      });
+    }
   }
+
+  return false;
 }
 
 async function logVaultSidecars(email, codeValue, tier){
@@ -115,8 +137,8 @@ async function logVaultSidecars(email, codeValue, tier){
     last_seen_at:now
   };
 
-  const emailOk = await insertSidecar('email_signups', emailPayload, 'email_signups insert');
-  const memberOk = await insertSidecar('members', memberPayload, 'members insert');
+  const emailOk = await writeSidecar('email_signups', emailPayload, 'email_signups');
+  const memberOk = await writeSidecar('members', memberPayload, 'members');
   return {email:emailOk, member:memberOk};
 }
 
@@ -257,8 +279,16 @@ function renderVaultConversionScreen(codeValue, tier){
 
       if(!res.ok) throw new Error(await res.text());
 
-      const sidecar = await logVaultSidecars(email, vaultCode, displayTier);
+      let sidecar = {email:false, member:false};
+      try{
+        sidecar = await logVaultSidecars(email, vaultCode, displayTier);
+      }catch(sidecarError){
+        console.error('[PLAY3D SIDECAR] optional logging failed', sidecarError);
+      }
       const sidecarOk = sidecar.email && sidecar.member;
+      if(!sidecarOk){
+        console.error('[PLAY3D SIDECAR] optional logging incomplete', sidecar);
+      }
       const warning = sidecarOk ? '' : '<p style="color:#f2d27b;">Vault access is connected. Optional member logging needs review.</p>';
 
       box.innerHTML=`
