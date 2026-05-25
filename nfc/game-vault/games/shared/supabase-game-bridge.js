@@ -20,6 +20,8 @@ API:
 (function(){
   'use strict';
 
+  const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
   const params = new URLSearchParams(location.search);
   const mode = params.get('mode');
   const room = params.get('room');
@@ -68,11 +70,71 @@ API:
     room,
     playerId,
     channel:null,
+    roomPersisted:false,
     moveCallbacks:[],
     eventCallbacks:{}
   };
 
+  async function restInsert(table, payload, label){
+    try{
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{
+        method:'POST',
+        headers:{
+          'apikey':SUPABASE_ANON,
+          'Authorization':'Bearer '+SUPABASE_ANON,
+          'Content-Type':'application/json',
+          'Prefer':'return=minimal'
+        },
+        body:JSON.stringify(payload)
+      });
+
+      if(!res.ok){
+        const text = await res.text().catch(()=>'');
+        console.error('[PLAY3D_SYNC] '+label+' failed', text || res.status);
+        return false;
+      }
+
+      return true;
+    }catch(e){
+      console.error('[PLAY3D_SYNC] '+label+' failed', e);
+      return false;
+    }
+  }
+
+  async function persistRoom(){
+    if(state.roomPersisted) return true;
+    const payload = {
+      room_code:room,
+      game,
+      host_id:playerId,
+      status:'open',
+      state:{source:'supabase-game-bridge', mode:'fan', path:location.pathname},
+      updated_at:new Date().toISOString()
+    };
+    const ok = await restInsert('play3d_rooms', payload, 'play3d_rooms insert');
+    state.roomPersisted = ok;
+    return ok;
+  }
+
+  async function persistMove(msg){
+    const payload = {
+      room_code:room,
+      game,
+      player_id:playerId,
+      event:{
+        type:msg.type,
+        payload:msg.payload,
+        at:msg.at,
+        room:msg.room,
+        game:msg.game,
+        playerId:msg.playerId
+      }
+    };
+    return restInsert('play3d_moves', payload, 'play3d_moves insert');
+  }
+
   async function ensureChannel(){
+    persistRoom();
     const client = getClient();
     if(!client || typeof client.channel !== 'function'){
       console.warn('[PLAY3D_SYNC] Supabase client not found. Room link active, live sync disabled.');
@@ -129,6 +191,8 @@ API:
       at:new Date().toISOString(),
       payload
     };
+
+    if(asMove) persistMove(msg);
 
     if(!channel){
       const queueKey = 'play3d_offline_events_' + game + '_' + room;
