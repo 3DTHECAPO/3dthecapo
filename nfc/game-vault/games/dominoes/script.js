@@ -125,6 +125,16 @@ function armOrderForPlay(){
   return ['left','right','top','bottom'];
 }
 
+function exposedPip(arm,tile){
+  if(!tile) return 0;
+  return (arm === 'left' || arm === 'top') ? tile[0] : tile[1];
+}
+
+function exposedCount(arm,tile){
+  if(!tile) return 0;
+  return isDouble(tile) ? tile[0] + tile[1] : exposedPip(arm,tile);
+}
+
 function refreshOpenEnds(){
   const ends = [];
 
@@ -137,7 +147,7 @@ function refreshOpenEnds(){
     const spinnerValue = state.board.spinnerTile[0];
     armOrderForPlay().forEach(side=>{
       const arm = state.board.spinnerArms[side];
-      ends.push({arm:side,value:arm.length ? arm[arm.length-1][1] : spinnerValue});
+      ends.push({arm:side,value:arm.length ? exposedPip(side,arm[arm.length-1]) : spinnerValue});
     });
   }else{
     const line = state.board.spinnerArms.right;
@@ -178,13 +188,13 @@ function openEndValue(arm){
   if(!state.board.spinnerTile){
     const line = state.board.spinnerArms.right;
     if(!line.length) return 0;
-    return arm === 'left' ? line[0][0] : line[line.length-1][1];
+    const tip = arm === 'left' ? line[0] : line[line.length-1];
+    return isDouble(tip) ? tip[0] + tip[1] : (arm === 'left' ? tip[0] : tip[1]);
   }
 
   const branch = state.board.spinnerArms[arm] || [];
   if(!branch.length) return state.board.spinnerTile[0];
-  const tip = branch[branch.length-1];
-  return isDouble(tip) ? tip[0] + tip[1] : tip[1];
+  return exposedCount(arm,branch[branch.length-1]);
 }
 
 function boardCount(){
