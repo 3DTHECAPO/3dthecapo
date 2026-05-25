@@ -64,33 +64,60 @@ function patchNfcLinks(codeValue){
   });
 }
 
-async function upsertEmailSignup(email, codeValue, tier){
+async function insertSidecar(table, payload, label){
   try{
-    const cleanEmail = String(email || '').trim().toLowerCase();
-    if(!cleanEmail) return;
-    const cleanTier = String(tier || 'entry').toLowerCase();
-    const now = new Date().toISOString();
-
-    await fetch(`${SUPABASE_URL}/rest/v1/email_signups?on_conflict=email`,{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{
       method:'POST',
       headers:{
         'apikey':SUPABASE_ANON,
         'Authorization':'Bearer '+SUPABASE_ANON,
         'Content-Type':'application/json',
-        'Prefer':'resolution=merge-duplicates,return=minimal'
+        'Prefer':'return=minimal'
       },
-      body:JSON.stringify({
-        email:cleanEmail,
-        source:'vault_conversion',
-        code:codeValue || '',
-        tier:cleanTier,
-        page:window.location.pathname,
-        user_agent:navigator.userAgent,
-        tags:['vault', cleanTier],
-        last_seen_at:now
-      })
+      body:JSON.stringify(payload)
     });
-  }catch(e){}
+
+    if(!res.ok){
+      const text = await res.text().catch(()=>'');
+      console.error('[PLAY3D SIDECAR] '+label+' failed', text || res.status);
+      return false;
+    }
+
+    return true;
+  }catch(e){
+    console.error('[PLAY3D SIDECAR] '+label+' failed', e);
+    return false;
+  }
+}
+
+async function logVaultSidecars(email, codeValue, tier){
+  const cleanEmail = String(email || '').trim().toLowerCase();
+  if(!cleanEmail) return {email:false, member:false};
+
+  const cleanTier = String(tier || 'entry').toLowerCase();
+  const now = new Date().toISOString();
+  const emailPayload = {
+    email:cleanEmail,
+    source:'nfc_vault_capture',
+    code:codeValue || '',
+    tier:cleanTier,
+    page:window.location.pathname,
+    user_agent:navigator.userAgent,
+    consent:true,
+    tags:['nfc','vault',cleanTier],
+    last_seen_at:now
+  };
+  const memberPayload = {
+    email:cleanEmail,
+    member_status:'active',
+    tier:cleanTier,
+    source:'nfc_vault_capture',
+    last_seen_at:now
+  };
+
+  const emailOk = await insertSidecar('email_signups', emailPayload, 'email_signups insert');
+  const memberOk = await insertSidecar('members', memberPayload, 'members insert');
+  return {email:emailOk, member:memberOk};
 }
 
 function renderVaultConversionScreen(codeValue, tier){
@@ -230,13 +257,16 @@ function renderVaultConversionScreen(codeValue, tier){
 
       if(!res.ok) throw new Error(await res.text());
 
-      await upsertEmailSignup(email, vaultCode, displayTier);
+      const sidecar = await logVaultSidecars(email, vaultCode, displayTier);
+      const sidecarOk = sidecar.email && sidecar.member;
+      const warning = sidecarOk ? '' : '<p style="color:#f2d27b;">Vault access is connected. Optional member logging needs review.</p>';
 
       box.innerHTML=`
         <div style="font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;font-size:26px;text-transform:uppercase;">
-          Vault Connected ✔
+          Vault Access Connected ✔
         </div>
         <p style="color:rgba(244,241,234,.72);">Bonus access connected to ${email}.</p>
+        ${warning}
       `;
     }catch(e){
       status.textContent='Save failed. Try again.';
