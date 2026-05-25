@@ -26,13 +26,46 @@
       <div class="seat left-seat" id="seat2"></div>
       <div class="seat right-seat" id="seat3"></div>
       <div class="seat bottom-seat" id="seat0"></div>
-      <div class="table-content">
-        <div class="row"><button id="dealBtn">Deal</button><input id="bidInput" type="number" min="50" step="10" value="50" aria-label="Bid amount"><button id="teamBtn">Bid</button><button id="passBidBtn">Pass</button><button id="meldBtn">Meld</button></div><div class="row trump-row"><button data-trump="S">Spades</button><button data-trump="H">Hearts</button><button data-trump="D">Diamonds</button><button data-trump="C">Clubs</button></div>
-        <h2>Opponent</h2><div id="opponentHand" class="hand"></div>
-        <h2>Trick Pile</h2><div id="trickPile" class="hand"></div>
-        <h2>Meld Area</h2><div id="meldArea" class="hand"></div>
-        <h2>Stock</h2><div id="stockArea" class="hand"></div>
-        <h2>Your Hand</h2><div id="playerHand" class="hand"></div>
+      <div class="table-content pinochle-layout">
+        <section class="control-panel" aria-label="Pinochle controls">
+          <div class="row action-row">
+            <button id="dealBtn">Deal</button>
+            <label class="bid-field" for="bidInput"><span>Bid</span><input id="bidInput" type="number" min="50" step="10" value="50" aria-label="Bid amount"></label>
+            <button id="teamBtn">Bid</button>
+            <button id="passBidBtn">Pass</button>
+            <button id="meldBtn">Meld</button>
+          </div>
+          <div class="row trump-row" aria-label="Choose trump suit">
+            <button data-trump="S">Spades</button>
+            <button data-trump="H">Hearts</button>
+            <button data-trump="D">Diamonds</button>
+            <button data-trump="C">Clubs</button>
+          </div>
+        </section>
+
+        <section class="board-grid" aria-label="Pinochle table areas">
+          <div class="game-zone opponent-zone">
+            <h2>Opponents</h2>
+            <div id="opponentHand" class="hand compact-hand"></div>
+          </div>
+          <div class="game-zone trick-zone">
+            <h2>Trick Pile</h2>
+            <div id="trickPile" class="hand trick-hand"></div>
+          </div>
+          <div class="game-zone meld-zone">
+            <h2>Meld / Bid</h2>
+            <div id="meldArea" class="hand meld-hand"></div>
+          </div>
+          <div class="game-zone stock-zone">
+            <h2>Deck</h2>
+            <div id="stockArea" class="hand compact-hand"></div>
+          </div>
+        </section>
+
+        <section class="player-zone">
+          <h2>Your Hand</h2>
+          <div id="playerHand" class="hand player-hand"></div>
+        </section>
       </div>
     </div>
   </section>
