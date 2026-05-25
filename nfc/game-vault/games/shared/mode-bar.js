@@ -7,10 +7,19 @@
   var params = new URLSearchParams(location.search);
   var initialMode = params.get('mode') === 'fan' ? 'fan' : (localStorage.getItem('play3d_game_mode') || 'cpu');
 
+  function roomPrefix(){
+    var path = location.pathname.toLowerCase();
+    if(path.includes('/dominoes/')) return 'DOMINO';
+    if(path.includes('/chess/')) return 'CHESS';
+    if(path.includes('/slot-machine-custom/')) return 'SLOTS';
+    if(path.includes('/pinochle/') || path.includes('/spades/') || path.includes('/rummy/') || path.includes('/poker/') || path.includes('/blackjack/')) return 'CARDS';
+    return 'PLAY3D';
+  }
+
   function roomCode(){
     var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    var out = 'FAN-';
-    for(var i = 0; i < 5; i++) out += chars[Math.floor(Math.random() * chars.length)];
+    var out = roomPrefix() + '-';
+    for(var i = 0; i < 4; i++) out += chars[Math.floor(Math.random() * chars.length)];
     return out;
   }
 
@@ -28,7 +37,7 @@
   function openFanRoom(){
     var next = new URL(location.href);
     next.searchParams.set('mode', 'fan');
-    next.searchParams.set('room', params.get('room') || roomCode());
+    next.searchParams.set('room', roomCode());
     location.href = next.toString();
   }
 
