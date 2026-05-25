@@ -38,7 +38,7 @@
     deck.sort(()=>Math.random() - 0.5);
   }
 
-  function value(hand){
+  function handInfo(hand){
     let total = 0;
     let aces = 0;
     hand.forEach(card=>{
@@ -46,8 +46,14 @@
       else if(['K','Q','J'].includes(card.r)) total += 10;
       else total += Number(card.r);
     });
+    let soft = aces > 0;
     while(total > 21 && aces > 0){ total -= 10; aces--; }
-    return total;
+    soft = aces > 0;
+    return {total, soft};
+  }
+
+  function value(hand){
+    return handInfo(hand).total;
   }
 
   function cardHTML(card, hidden){
@@ -129,7 +135,8 @@
 
   function dealerStep(){
     if(!live) return;
-    if(value(dealer) < 17){
+    const info = handInfo(dealer);
+    if(info.total < 17 || (info.total === 17 && info.soft)){
       stateTextEl.textContent = 'OPPONENT THINKING...';
       render(true);
       window.setTimeout(()=>{
