@@ -24,8 +24,26 @@ body.cinematic-vault-room{
 
 body.cinematic-vault-room.master-room{
   background:
-    linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.88)),
-    url("./assets/master_control_bg.png") center/cover fixed no-repeat;
+    radial-gradient(circle at 50% 18%,rgba(210,167,79,.20),transparent 34%),
+    linear-gradient(180deg,rgba(0,0,0,.24),rgba(0,0,0,.74)),
+    url("./assets/master_control_bg.png") center/cover fixed no-repeat,
+    #050403;
+}
+
+body.cinematic-vault-room.master-room::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(circle at 50% 12%,rgba(255,222,151,.14),transparent 32%),
+    linear-gradient(90deg,rgba(0,0,0,.58),transparent 28%,transparent 72%,rgba(0,0,0,.58));
+}
+
+body.cinematic-vault-room.master-room .vault-page{
+  position:relative;
+  z-index:3;
 }
 
 .vault-smoke{
