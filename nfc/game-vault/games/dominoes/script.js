@@ -10,7 +10,11 @@
 const SCORE_TARGET = 150;
 const GET_IN_MIN = 10;
 const HAND_SIZE = 7;
-const BOARD_STEP = { horizontal: 92, vertical: 92 };
+const TILE_SIZE = { horizontal:{w:92,h:46}, vertical:{w:52,h:92} };
+function axisSpan(orientation,arm){
+  const size = TILE_SIZE[orientation] || TILE_SIZE.horizontal;
+  return (arm === 'left' || arm === 'right') ? size.w : size.h;
+}
 const BRANCH_DIRS = {
   left:{x:-1,y:0},
   right:{x:1,y:0},
@@ -29,6 +33,7 @@ const state = {
   pending:null,
   handOver:false,
   gameOver:false,
+  nextLeader:null,
   board:{
     spinnerTile:null,
     spinnerArms:{left:[],right:[],top:[],bottom:[]},
@@ -188,8 +193,8 @@ function makeBranchPlacement(rawTile,arm,match){
   const dir = BRANCH_DIRS[arm];
   const branch = state.board.spinnerArms[arm] || [];
   const anchor = branch.length ? branch[branch.length-1] : state.board.spinnerTile;
-  const step = orientation === 'horizontal' ? BOARD_STEP.horizontal : BOARD_STEP.vertical;
-  const anchorStep = anchor.orientation === 'horizontal' ? BOARD_STEP.horizontal : BOARD_STEP.vertical;
+  const step = axisSpan(orientation,arm);
+  const anchorStep = axisSpan(anchor.orientation || 'horizontal',arm);
   const distance = (step / 2) + (anchorStep / 2);
 
   return {
@@ -314,13 +319,23 @@ function boardCount(){
 function scoreFromCount(count){ return count > 0 && count % 5 === 0 ? count : 0; }
 
 function legalArms(tile){
+  const ends = refreshOpenEnds();
   if(!hasBoardTiles()) return ['open'];
-  return refreshOpenEnds()
+  return ends
     .filter(end=>tile[0] === end.value || tile[1] === end.value)
     .map(end=>end.arm);
 }
 function legal(tile){ return legalArms(tile).length > 0; }
-function canPlay(playerIndex){ return (state.hands[playerIndex] || []).some(legal); }
+function validPlaySummary(playerIndex){
+  const hand = state.hands[playerIndex] || [];
+  const openEnds = refreshOpenEnds().map(end=>({arm:end.arm,value:end.value}));
+  const playable = hand
+    .map(tile=>({tile,arms:legalArms(tile)}))
+    .filter(item=>item.arms.length);
+  console.log('[DOMINO VALID PLAYS]', { hand, openEnds, playable });
+  return playable;
+}
+function canPlay(playerIndex){ return validPlaySummary(playerIndex).length > 0; }
 
 function placeOpeningDouble(player,tile){
   removeTile(state.hands[player],tile);
@@ -361,12 +376,14 @@ function placeOnArm(tile,arm){
     const oriented = orientForArm(tile,end.value,arm);
     const previous = arm === 'left' ? line[0] : line[line.length-1];
     const direction = arm === 'left' ? -1 : 1;
+    const orientation = isDouble(oriented) ? 'vertical' : 'horizontal';
+    const distance = previous ? (axisSpan(previous.orientation || 'horizontal',arm) / 2) + (axisSpan(orientation,arm) / 2) : 0;
     const placement = {
       tile:oriented,
       raw:tile.slice(),
-      x:(previous ? previous.x : 0) + direction * BOARD_STEP.horizontal,
+      x:(previous ? previous.x : 0) + direction * distance,
       y:previous ? previous.y : 0,
-      orientation:isDouble(oriented) ? 'vertical' : 'horizontal',
+      orientation,
       branch:arm,
       connectedSide:oppositeSide(arm),
       exposedSide:arm,
@@ -395,11 +412,11 @@ function commitPlay(playerIndex,tile,arm){
   return true;
 }
 
-function scoreBoardCount(player){
+function scoreBoardCount(player,reason='play'){
   const openEnds = countDisplayArms().map(arm=>({arm,value:openEndValue(arm)}));
   const count = boardCount();
   const points = scoreFromCount(count);
-  console.log('[DOMINO SCORE]', { openEnds, total:count, awarded:points });
+  console.log('[DOMINO SCORE]', { reason, openEnds, total:count, awarded:points });
 
   if(!points){
     popCount('COUNT '+count+' — NO SCORE', false);
@@ -407,7 +424,7 @@ function scoreBoardCount(player){
     return count;
   }
 
-  if(!state.gotIn[player] && points < GET_IN_MIN){
+  if(reason !== 'opening_lead' && !state.gotIn[player] && points < GET_IN_MIN){
     popCount('COUNT '+points+' — NEED 10 TO GET IN', false);
     log(seatName(player)+' counted '+points+' but needs 10 to get in.');
     return count;
@@ -436,8 +453,9 @@ function requestArm(tile){
 function playTile(tile,arm){
   const player = state.currentPlayerIndex;
   if(player !== 0 && !activeLocal()) return;
+  const opening = !hasBoardTiles();
   if(!commitPlay(player,tile,arm)){ log('Illegal domino.'); return; }
-  const count = scoreBoardCount(player);
+  const count = scoreBoardCount(player,opening ? 'opening_lead' : 'play');
   log(seatName(player)+' played on '+arm+'. Board count '+count+'.');
   if(state.gameOver) return;
   if(!state.hands[player].length){ finishHand(player); return; }
@@ -451,10 +469,11 @@ function chooseCpuMove(hand){
     legalArms(tile).forEach(arm=>{
       const snapshot = cloneBoard();
       if(!placeOnArm(tile,arm)){ restoreBoard(snapshot); return; }
+      const opening = !hasBoardTiles();
       const count = boardCount();
       const points = scoreFromCount(count);
       restoreBoard(snapshot);
-      const usablePoints = (!state.gotIn[player] && points < GET_IN_MIN) ? 0 : points;
+      const usablePoints = (!opening && !state.gotIn[player] && points < GET_IN_MIN) ? 0 : points;
       moves.push({tile,arm,count,points:usablePoints,leave:handTotal(player)-dominoTotal(tile)});
     });
   });
@@ -519,6 +538,7 @@ function finishGame(winner){
 
 function finishHand(winner){
   state.handOver = true;
+  state.nextLeader = winner;
   if(winner === 0 && window.Play3DPoints) window.Play3DPoints.award('dominoes',125,'round_win');
   if(turnTextEl) turnTextEl.textContent = seatName(winner)+' DOMINOES — WASH THE DISHES';
   log('DOMINO! '+seatName(winner)+' played the last domino.');
@@ -527,8 +547,13 @@ function finishHand(winner){
 
 function finishBlocked(){
   state.handOver = true;
-  if(turnTextEl) turnTextEl.textContent = 'BLOCKED ROUND — WASH THE DISHES';
-  log('Blocked round. Wash the dishes.');
+  const winner = state.hands.reduce((best,hand,index)=>{
+    const total = handTotal(index);
+    return total < best.total ? {index,total} : best;
+  },{index:0,total:Infinity}).index;
+  state.nextLeader = winner;
+  if(turnTextEl) turnTextEl.textContent = 'BLOCKED ROUND ? WASH THE DISHES';
+  log('Blocked round. '+seatName(winner)+' leads next hand.');
   render();
 }
 
@@ -549,8 +574,9 @@ function cpuTurn(){
     move = chooseCpuMove(hand);
   }
   if(move){
+    const opening = !hasBoardTiles();
     commitPlay(player,move.tile,move.arm);
-    const count = scoreBoardCount(player);
+    const count = scoreBoardCount(player,opening ? 'opening_lead' : 'play');
     log(seatName(player)+' played on '+move.arm+'. Board count '+count+'.');
     if(state.gameOver) return;
     if(!hand.length){ finishHand(player); return; }
@@ -604,12 +630,22 @@ function newGame(players){
   state.gotIn = Array.from({length:state.players},(_,i)=>Boolean(state.gotIn[i]));
   state.gameOver = false;
 
+  const handLeader = Number.isInteger(state.nextLeader) ? state.nextLeader % state.players : null;
+  if(handLeader !== null){
+    state.currentPlayerIndex = handLeader;
+    state.nextLeader = null;
+    log(seatName(handLeader)+' leads this hand and may play any domino.');
+    render();
+    if(state.currentPlayerIndex !== 0 && !activeLocal()) scheduleCpu();
+    return;
+  }
+
   const starter = ensureOpeningDouble();
   if(starter){
     placeOpeningDouble(starter.player,starter.tile);
     state.currentPlayerIndex = (starter.player + 1) % state.players;
     log(seatName(starter.player)+' opened with highest double '+starter.tile[0]+'-'+starter.tile[1]+'.');
-    scoreBoardCount(starter.player);
+    scoreBoardCount(starter.player,'opening_double');
     if(state.gameOver){ render(); return; }
   }else{
     state.currentPlayerIndex = 0;
@@ -624,6 +660,19 @@ function tileHTML(tile,index,cls=''){
   const realTile = placementTile(tile);
   return '<button class="tile '+cls+'" data-i="'+index+'"><span>'+realTile[0]+'</span><i></i><span>'+realTile[1]+'</span></button>';
 }
+
+function fitBoardToPlacements(){
+  const placements = state.board.placements || [];
+  let maxX = 480;
+  let maxY = 250;
+  placements.forEach(item=>{
+    const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
+    maxX = Math.max(maxX, Math.abs(item.x || 0) + size.w / 2 + 70);
+    maxY = Math.max(maxY, Math.abs(item.y || 0) + size.h / 2 + 70);
+  });
+  return { width:Math.ceil(maxX * 2), height:Math.ceil(maxY * 2) };
+}
+
 function boardTileHTML(placement,index){
   const tile = placementTile(placement);
   const cls = [
@@ -642,10 +691,16 @@ function renderBoard(){
   if(!chainEl) return;
   refreshPlacements();
   if(state.board.placements.length){
+    const fit = fitBoardToPlacements();
     chainEl.className = 'chain tree-board';
+    chainEl.style.width = fit.width+'px';
+    chainEl.style.height = fit.height+'px';
+    chainEl.style.minWidth = fit.width+'px';
+    chainEl.style.minHeight = fit.height+'px';
     chainEl.innerHTML = state.board.placements.map(boardTileHTML).join('');
   }else{
     chainEl.className = 'chain';
+    chainEl.removeAttribute('style');
     chainEl.innerHTML = '';
   }
 }
@@ -700,6 +755,7 @@ if(armChooser){
 if(newBtnEl) newBtnEl.onclick = ()=>{
   state.scores = [];
   state.gotIn = [];
+  state.nextLeader = null;
   newGame(state.players);
 };
 if(drawBtnEl) drawBtnEl.onclick = drawTile;
@@ -708,12 +764,14 @@ if(passBtnEl) passBtnEl.onclick = passTurn;
 document.querySelectorAll('.playerCountBtn').forEach(btn=>btn.onclick=()=>{
   state.scores = [];
   state.gotIn = [];
+  state.nextLeader = null;
   newGame(Number(btn.dataset.count));
 });
 window.addEventListener('play3d:modechange',event=>{
   mode = event.detail.mode;
   state.scores = [];
   state.gotIn = [];
+  state.nextLeader = null;
   newGame(mode === 'cpu' ? 2 : 4);
 });
 
