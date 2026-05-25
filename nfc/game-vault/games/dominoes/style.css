@@ -495,3 +495,53 @@ font-size:12px;
   .seat{width:98px;height:54px;font-size:11px}
   .spinner-board{min-height:360px}
 }
+
+/* DOMINOES ORIENTATION / CONNECTION REPAIR */
+.left-branch{
+  flex-direction:row-reverse;
+  flex-wrap:nowrap;
+}
+.right-branch{
+  flex-direction:row;
+  flex-wrap:nowrap;
+}
+.tile.spinner{
+  transform:none;
+}
+.tile.left-arm,
+.tile.right-arm,
+.tile.top-arm.double,
+.tile.bottom-arm.double{
+  width:92px;
+  height:46px;
+  grid-template-columns:1fr 1px 1fr;
+  grid-template-rows:none;
+}
+.tile.left-arm i,
+.tile.right-arm i,
+.tile.top-arm.double i,
+.tile.bottom-arm.double i{
+  width:1px;
+  height:70%;
+}
+.tile.top-arm,
+.tile.bottom-arm,
+.tile.spinner,
+.tile.left-arm.double,
+.tile.right-arm.double{
+  width:52px;
+  height:92px;
+  grid-template-columns:1fr;
+  grid-template-rows:1fr 1px 1fr;
+}
+.tile.top-arm i,
+.tile.bottom-arm i,
+.tile.spinner i,
+.tile.left-arm.double i,
+.tile.right-arm.double i{
+  width:70%;
+  height:1px;
+}
+.tile.spinner:hover{
+  transform:translateY(-2px);
+}
