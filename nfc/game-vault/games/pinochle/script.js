@@ -42,12 +42,30 @@
     const pin=Math.min(countRankSuit(counts,'Q','S'),countRankSuit(counts,'J','D')); total+=pin*4;
     return total;
   }
+  function estimateBidOption(player){
+    const hand=state.hands[player]||[];
+    let best=null;
+    const originalTrump=state.trump;
+    suits.forEach(suit=>{
+      if(!hasMarriage(hand,suit)) return;
+      state.trump=suit;
+      const meld=meldScore(hand);
+      const countersHeld=hand.reduce((sum,card)=>sum+(counters[card.rank]||0),0);
+      const trumpPower=hand.filter(card=>card.suit===suit).reduce((sum,card)=>sum+order[card.rank],0);
+      const raw=50+Math.floor((meld+countersHeld+trumpPower/4)/10)*10;
+      const bid=Math.max(50,Math.min(120,raw));
+      const score=meld+countersHeld*2+trumpPower;
+      if(!best||score>best.score) best={player,suit,bid,score};
+    });
+    state.trump=originalTrump;
+    return best;
+  }
   function deal(){
     const deck=buildDeck();
     state.hands=Array.from({length:4},()=>deck.splice(0,20));
     state.captured=[[],[]]; state.trick=[]; state.handScores=[0,0]; state.meldScores=[0,0]; state.trickScores=[0,0];
     state.bid=50; state.bidder=0; state.bidTeam=0; state.trump='S'; state.phase='bidding'; state.currentPlayerIndex=0; state.lastWinner=0;
-    sortHands(); render('BID OR PASS - MIN 50');
+    sortHands(); render(state.scores[0]||state.scores[1]?'NEXT HAND - BID OR PASS':'BID OR PASS - MIN 50');
   }
   function setTrump(suit){state.trump=suit; render('TRUMP '+suit)}
   function startHandWithBid(player,bid){
@@ -60,8 +78,9 @@
   }
   function playerBid(){startHandWithBid(0, document.getElementById('bidInput')?.value || 50)}
   function playerPass(){
-    const cpu=state.hands.findIndex((hand,i)=>i>0&&suits.some(s=>hasMarriage(hand,s)));
-    if(cpu>0){const suit=suits.find(s=>hasMarriage(state.hands[cpu],s)); state.trump=suit; startHandWithBid(cpu,50); if(state.phase==='meld')takeMeld(true);}
+    const options=[1,2,3].map(estimateBidOption).filter(Boolean).sort((a,b)=>b.score-a.score);
+    const pick=options[0];
+    if(pick){state.trump=pick.suit; startHandWithBid(pick.player,pick.bid); if(state.phase==='meld')takeMeld(true);}
     else render('NO TRUMP MARRIAGE - DEAL AGAIN');
   }
   function takeMeld(auto){
@@ -106,7 +125,7 @@
     const winner=state.scores[0]>=500||state.scores[1]>=500?(state.scores[0]>=state.scores[1]?0:1):null;
     state.phase=winner===null?'over':'gameover';
     if(window.Play3DPoints&&winner===0)window.Play3DPoints.award('pinochle',300,'round_win');
-    render(winner===null?(made?'BID MADE':'SET - LOSE BID'):'TEAM '+(winner?'B':'A')+' WINS GAME');
+    render(winner===null?(made?'BID MADE - DEAL NEXT HAND':'SET - DEAL NEXT HAND'):'TEAM '+(winner?'B':'A')+' WINS GAME');
   }
   function play(player,index){
     if(player!==state.currentPlayerIndex||state.phase!=='play')return;
@@ -116,16 +135,35 @@
     if(state.trick.length===4)finishTrick(); else{state.currentPlayerIndex=(player+1)%4; render('TRICK LIVE'); if(state.currentPlayerIndex!==0)scheduleCpu();}
   }
   function scheduleCpu(){render('OPPONENT THINKING...');setTimeout(cpuTurn,thinkDelay())}
+  function chooseCpuCard(player,legal){
+    const sorted=legal.slice().sort((a,b)=>(counters[a.rank]-counters[b.rank])||order[a.rank]-order[b.rank]);
+    if(!state.trick.length){
+      const trumps=sorted.filter(c=>c.suit===state.trump);
+      const aces=sorted.filter(c=>c.rank==='A');
+      if(teamIndex(player)===state.bidTeam && trumps.length) return trumps[trumps.length-1];
+      if(aces.length) return aces[0];
+      return sorted[0];
+    }
+    const best=currentBest();
+    const partnerWinning=teamIndex(best.player)===teamIndex(player);
+    if(partnerWinning){
+      const countersToFeed=sorted.filter(c=>counters[c.rank]);
+      return countersToFeed.length?countersToFeed[countersToFeed.length-1]:sorted[0];
+    }
+    const beaters=sorted.filter(c=>beats(c,best.card));
+    if(beaters.length) return beaters[0];
+    return sorted[0];
+  }
   function cpuTurn(){
     if(state.phase==='meld'){takeMeld(true);return}
     if(state.phase!=='play'||state.currentPlayerIndex===0)return;
     const legal=legalCards(state.currentPlayerIndex); if(!legal.length)return;
-    const best=state.trick.length?currentBest().card:null;
-    const beaters=best?legal.filter(c=>beats(c,best)):[];
-    const chosen=(beaters.length?beaters:legal).slice().sort((a,b)=>counters[a.rank]-counters[b.rank]||order[a.rank]-order[b.rank])[0];
+    const chosen=chooseCpuCard(state.currentPlayerIndex,legal);
     play(state.currentPlayerIndex,state.hands[state.currentPlayerIndex].findIndex(c=>c.id===chosen.id));
   }
   function render(label){
+    const dealButton=document.getElementById('dealBtn');
+    if(dealButton) dealButton.textContent=state.phase==='over'?'Deal Next Hand':'Deal';
     opponentHand.innerHTML=backs((state.hands[1]||[]).length)+'<div class="count-card">Partner '+(state.hands[2]||[]).length+'<br>Right '+(state.hands[3]||[]).length+'</div>';
     trickPile.innerHTML=state.trick.map(play=>'<div><small>'+seatName(play.player)+'</small>'+cardHTML(play.card,0,false)+'</div>').join('')||'<div class="count-card">Trick Empty</div>';
     meldArea.innerHTML='<div class="count-card">Trump '+state.trump+'</div><div class="count-card">Bid '+state.bid+'</div><div class="count-card">Meld A '+state.meldScores[0]+' / B '+state.meldScores[1]+'</div><div class="count-card">Tricks A '+state.trickScores[0]+' / B '+state.trickScores[1]+'</div>';
