@@ -310,49 +310,8 @@ async function getCode(codeValue){
 
 
 async function startTimerIfNeeded(record){
-  if(!record || record.expires_at) return record;
-
-  const map = {
-    "1h": 1 * 60 * 60 * 1000,
-    "6h": 6 * 60 * 60 * 1000,
-    "12h": 12 * 60 * 60 * 1000,
-    "1d": 24 * 60 * 60 * 1000,
-    "3d": 3 * 24 * 60 * 60 * 1000,
-    "7d": 7 * 24 * 60 * 60 * 1000,
-    "30d": 30 * 24 * 60 * 60 * 1000
-  };
-
-  const key = String(record.duration || "1h").trim();
-
-  // "none" means no expiration by choice.
-  if(key === "none") return record;
-
-  const durationMs = map[key] || map["1h"];
-  const expires = new Date(Date.now() + durationMs).toISOString();
-
-  try{
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?id=eq.${encodeURIComponent(record.id)}`,{
-      method:'PATCH',
-      headers:{
-        'apikey':SUPABASE_ANON,
-        'Authorization':`Bearer ${SUPABASE_ANON}`,
-        'Content-Type':'application/json',
-        'Prefer':'return=representation'
-      },
-      body:JSON.stringify({ expires_at: expires })
-    });
-
-    if(res.ok){
-      const rows = await res.json().catch(()=>[]);
-      if(Array.isArray(rows) && rows[0]){
-        return rows[0];
-      }
-      record.expires_at = expires;
-    }
-  }catch(e){
-    console.warn('Timer start failed', e);
-  }
-
+  // NFC validation must never create or update expiration values.
+  // The generator/send pipeline is the only owner of expires_at.
   return record;
 }
 
