@@ -19,21 +19,30 @@
     <div><div class="kicker">CARD TABLE</div><h1>Rummy</h1><p>Draw, meld sets or runs, discard, and race the CPU opponent.</p></div>
     <div class="score"><span>Points</span><b id="mainScore">0</b><small id="stateText">READY</small></div>
   </section>
-  <section class="table">
-    <div class="casino-table">
-      <div class="table-logo">RUMMY</div>
-      <div class="table-content">
-        <div class="row">
+  <section class="table rummy-shell">
+    <div class="rummy-layout" aria-label="Rummy table layout">
+      <aside class="rummy-rail" aria-label="Rummy controls">
+        <div class="row rummy-controls">
           <button id="dealBtn">Deal</button>
           <button id="drawStockBtn">Draw Stock</button>
           <button id="drawDiscardBtn">Draw Discard</button>
           <button id="meldBtn">Meld Selected</button>
           <button id="discardBtn">Discard Selected</button>
         </div>
-        <h2>CPU Opponent</h2><div id="opponentHand" class="hand"></div>
-        <h2>Stock / Discard</h2><div id="tableCards" class="hand"></div>
-        <h2>Melds</h2><div id="meldArea" class="hand"></div>
-        <h2>Your Hand</h2><div id="playerHand" class="hand"></div>
+        <section class="rail-zone rummy-status">
+          <h2>Table</h2>
+          <p>Draw, meld, discard. Keep the center table clear.</p>
+        </section>
+      </aside>
+
+      <div class="casino-table">
+        <div class="table-logo">RUMMY</div>
+        <div class="table-content rummy-zones">
+          <section class="rummy-zone opponent-zone"><h2>CPU Opponent</h2><div id="opponentHand" class="hand"></div></section>
+          <section class="rummy-zone table-zone"><h2>Stock / Discard</h2><div id="tableCards" class="hand"></div></section>
+          <section class="rummy-zone meld-zone"><h2>Melds</h2><div id="meldArea" class="hand"></div></section>
+          <section class="rummy-zone player-zone"><h2>Your Hand</h2><div id="playerHand" class="hand"></div></section>
+        </div>
       </div>
     </div>
   </section>
