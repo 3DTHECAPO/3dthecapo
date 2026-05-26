@@ -17,7 +17,6 @@
   </header>
   <section class="hero">
     <div><div class="kicker">CARD TABLE</div><h1>Pinochle</h1><p>Double-deck partnership Pinochle: bid, name trump, meld, then take tricks to 500.</p></div>
-    <div class="score"><span>Score</span><b id="mainScore">0 - 0</b><small id="stateText">READY</small></div>
   </section>
   <section class="table pinochle-table-shell">
     <div class="pinochle-layout" aria-label="Pinochle table layout">
@@ -30,10 +29,6 @@
 
       <div class="casino-table">
         <div class="table-logo">PINOCHLE</div>
-        <div class="seat top-seat" id="seat1"></div>
-        <div class="seat left-seat" id="seat2"></div>
-        <div class="seat right-seat" id="seat3"></div>
-        <div class="seat bottom-seat" id="seat0"></div>
         <div class="table-content">
           <section class="center-stage">
             <section class="opponent-zone"><h2>Opponent</h2><div id="opponentHand" class="hand opponent-hand"></div></section>
@@ -42,6 +37,24 @@
           </section>
         </div>
       </div>
+
+      <aside class="pinochle-rail pinochle-right-rail" aria-label="Pinochle score and player rail">
+        <section class="rail-zone rail-score-zone">
+          <h2>Score / Status</h2>
+          <div class="score rail-score"><span>Score</span><b id="mainScore">0 - 0</b><small id="stateText">READY</small></div>
+        </section>
+        <section class="rail-zone player-stats-zone">
+          <h2>Player Stats</h2>
+          <div class="seat top-seat" id="seat1"></div>
+          <div class="seat left-seat" id="seat2"></div>
+          <div class="seat right-seat" id="seat3"></div>
+          <div class="seat bottom-seat" id="seat0"></div>
+        </section>
+        <section class="rail-zone live-action-zone">
+          <h2>Live Action</h2>
+          <div class="live-action-card">Bids, trump, meld, and tricks stay visible on the table.</div>
+        </section>
+      </aside>
     </div>
   </section>
 </main>
