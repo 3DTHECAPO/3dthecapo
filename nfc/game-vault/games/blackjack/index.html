@@ -36,46 +36,44 @@
   </div>
 </section>
 
-<section class="casino-table">
-  <div class="table-logo">21</div>
+<section class="blackjack-layout" aria-label="Blackjack table layout">
+  <section class="casino-table" aria-label="Blackjack table">
+    <div class="table-logo">21</div>
 
-  <div class="dealer-seat">DEALER</div>
-  <div class="player-seat">YOU</div>
+    <div class="dealer-seat">DEALER</div>
+    <div class="player-seat">YOU</div>
 
-  <div class="dealer-zone">
-    <h2>Dealer</h2>
-    <div id="dealerHand" class="hand"></div>
-    <div id="dealerTotal" class="total">Total: ?</div>
-  </div>
+    <div class="dealer-zone">
+      <h2>Dealer</h2>
+      <div id="dealerHand" class="hand"></div>
+      <div id="dealerTotal" class="total">Total: ?</div>
+    </div>
 
-  <div class="player-zone">
-    <h2>Your Hand</h2>
-    <div id="playerHand" class="hand"></div>
-    <div id="playerTotal" class="total">Total: 0</div>
-  </div>
+    <div class="player-zone">
+      <h2>Your Hand</h2>
+      <div id="playerHand" class="hand"></div>
+      <div id="playerTotal" class="total">Total: 0</div>
+    </div>
+  </section>
 
-  <div class="chip-stack">
-    <div class="chip"></div>
-    <div class="chip"></div>
-    <div class="chip"></div>
-  </div>
-</section>
+  <aside class="blackjack-rail" aria-label="Blackjack controls and bank">
+    <section class="controls panel">
+      <button id="dealBtn">Deal</button>
+      <button id="hitBtn">Hit</button>
+      <button id="standBtn">Stand</button>
+      <button id="doubleBtn">Double</button>
+      <button id="playAgainBtn">Play Again</button>
+    </section>
 
-<section class="controls panel">
-  <button id="dealBtn">Deal</button>
-  <button id="hitBtn">Hit</button>
-  <button id="standBtn">Stand</button>
-  <button id="doubleBtn">Double</button>
-  <button id="playAgainBtn">Play Again</button>
-</section>
-
-<section class="panel bank">
-  <h2>Bank</h2>
-  <div class="bank-grid">
-    <div><span>Credits</span><b id="credits">1000</b></div>
-    <div><span>Bet</span><b id="bet">50</b></div>
-    <div><span>Result</span><b id="result">Ready</b></div>
-  </div>
+    <section class="panel bank">
+      <h2>Bank</h2>
+      <div class="bank-grid">
+        <div><span>Credits</span><b id="credits">1000</b></div>
+        <div><span>Bet</span><b id="bet">50</b></div>
+        <div><span>Result</span><b id="result">Ready</b></div>
+      </div>
+    </section>
+  </aside>
 </section>
 </main>
 
