@@ -9,7 +9,7 @@
   const state={
     players:4,
     hands:[], captured:[[],[]], trick:[], scores:[0,0], handScores:[0,0], meldScores:[0,0], trickScores:[0,0],
-    currentPlayerIndex:0, dealer:3, bidder:0, bidTeam:0, bid:50, trump:'S', phase:'bidding', lastWinner:0
+    currentPlayerIndex:0, dealer:3, currentBidder:0, bidder:null, bidTeam:0, bid:0, trump:'S', phase:'bidding', lastWinner:0, handNumber:0, passed:[false,false,false,false]
   };
 
   function thinkDelay(){return 450+Math.floor(Math.random()*850)}
@@ -42,27 +42,101 @@
     const pin=Math.min(countRankSuit(counts,'Q','S'),countRankSuit(counts,'J','D')); total+=pin*4;
     return total;
   }
+  function leftOfDealer(){return (state.dealer+1)%4}
+  function bidDebug(event,extra){
+    console.log('[PINOCHLE BID]', Object.assign({
+      event,
+      dealer:state.dealer,
+      firstBidder:leftOfDealer(),
+      currentBidder:state.currentBidder,
+      highBidder:state.bidder,
+      bid:state.bid,
+      bidTeam:state.bidTeam,
+      passed:(state.passed||[]).slice(),
+      phase:state.phase
+    },extra||{}));
+  }
+  function activeBidders(){return [0,1,2,3].filter(player=>!state.passed[player])}
+  function nextBidderAfter(player){
+    for(let step=1;step<=4;step++){
+      const next=(player+step)%4;
+      if(!state.passed[next])return next;
+    }
+    return null;
+  }
+  function finishBiddingIfReady(){
+    const active=activeBidders();
+    if(state.bidder===null&&active.length===0){state.phase='over';bidDebug('all_passed');render('ALL PASSED - DEAL AGAIN');return true}
+    if(state.bidder!==null&&active.length===1&&active[0]===state.bidder){
+      bidDebug('bidding_won',{winner:state.bidder});
+      const started=startHandWithBid(state.bidder,state.bid);
+      if(started&&state.currentPlayerIndex!==0)scheduleCpu();
+      return true;
+    }
+    return false;
+  }
+  function advanceBidder(){
+    if(finishBiddingIfReady())return;
+    const next=nextBidderAfter(state.currentBidder);
+    if(next===null){finishBiddingIfReady();return}
+    state.currentBidder=next; state.currentPlayerIndex=next;
+    bidDebug('next_bidder');
+    render(seatName(next)+' TO BID - CURRENT '+(state.bid||'NONE'));
+    if(next!==0)scheduleCpu();
+  }
+  function placeBid(player,bid){
+    if(state.phase!=='bidding'||player!==state.currentBidder)return false;
+    const amount=Number(bid)||0;
+    const minimum=state.bid>0?state.bid+10:50;
+    if(amount<minimum){render('BID MUST BE '+minimum+' OR PASS');bidDebug('bad_bid',{player,amount,minimum});return false}
+    state.bid=amount; state.bidder=player; state.bidTeam=teamIndex(player); state.passed[player]=false;
+    bidDebug('bid',{player,amount});
+    advanceBidder();
+    return true;
+  }
+  function passBid(player){
+    if(state.phase!=='bidding'||player!==state.currentBidder)return false;
+    state.passed[player]=true;
+    bidDebug('pass',{player});
+    advanceBidder();
+    return true;
+  }
   function deal(){
+    if(state.handNumber>0)state.dealer=(state.dealer+1)%4;
+    state.handNumber++;
     const deck=buildDeck();
     state.hands=Array.from({length:4},()=>deck.splice(0,20));
     state.captured=[[],[]]; state.trick=[]; state.handScores=[0,0]; state.meldScores=[0,0]; state.trickScores=[0,0];
-    state.bid=50; state.bidder=0; state.bidTeam=0; state.trump='S'; state.phase='bidding'; state.currentPlayerIndex=0; state.lastWinner=0;
-    sortHands(); render('BID OR PASS - MIN 50');
+    state.bid=0; state.bidder=null; state.bidTeam=0; state.trump='S'; state.phase='bidding'; state.lastWinner=0; state.passed=[false,false,false,false]; state.currentBidder=leftOfDealer(); state.currentPlayerIndex=state.currentBidder;
+    sortHands(); bidDebug('deal'); render('DEALER '+seatName(state.dealer)+' - '+seatName(state.currentBidder)+' BIDS FIRST');
+    if(state.currentBidder!==0)scheduleCpu();
   }
   function setTrump(suit){state.trump=suit; render('TRUMP '+suit)}
   function startHandWithBid(player,bid){
     const chosen=state.trump;
-    if(!hasMarriage(state.hands[player], chosen)){render('BIDDER NEEDS TRUMP MARRIAGE');return false}
+    if(!hasMarriage(state.hands[player], chosen)){bidDebug('missing_trump_marriage',{player,trump:chosen});render('BIDDER NEEDS TRUMP MARRIAGE');return false}
     state.bidder=player; state.bidTeam=teamIndex(player); state.bid=Math.max(50,Number(bid)||50);
-    state.phase='meld'; state.currentPlayerIndex=(state.dealer+1)%4;
-    render(seatName(player)+' BID '+state.bid+' / TRUMP '+state.trump+' - TAKE MELD');
+    state.phase='meld'; state.currentPlayerIndex=player;
+    bidDebug('meld_start',{player,bid:state.bid,trump:state.trump});
+    render(seatName(player)+' WON BID '+state.bid+' / TRUMP '+state.trump+' - TAKE MELD');
     return true;
   }
-  function playerBid(){startHandWithBid(0, document.getElementById('bidInput')?.value || 50)}
+  function playerBid(){
+    if(state.phase!=='bidding')return;
+    if(state.currentBidder!==0){render(seatName(state.currentBidder)+' TO BID');return}
+    placeBid(0, document.getElementById('bidInput')?.value || 50);
+  }
   function playerPass(){
-    const cpu=state.hands.findIndex((hand,i)=>i>0&&suits.some(s=>hasMarriage(hand,s)));
-    if(cpu>0){const suit=suits.find(s=>hasMarriage(state.hands[cpu],s)); state.trump=suit; startHandWithBid(cpu,50); if(state.phase==='meld')takeMeld(true);}
-    else render('NO TRUMP MARRIAGE - DEAL AGAIN');
+    if(state.phase!=='bidding')return;
+    if(state.currentBidder!==0){render(seatName(state.currentBidder)+' TO BID');return}
+    passBid(0);
+  }
+  function cpuBid(player){
+    if(state.phase!=='bidding'||player!==state.currentBidder)return;
+    const suit=suits.find(s=>hasMarriage(state.hands[player],s));
+    const ceiling=player===2?70:80;
+    if(suit&&state.bid<ceiling){state.trump=suit; placeBid(player,state.bid>0?state.bid+10:50);}
+    else passBid(player);
   }
   function takeMeld(auto){
     if(state.phase!=='meld')return;
@@ -117,6 +191,7 @@
   }
   function scheduleCpu(){render('OPPONENT THINKING...');setTimeout(cpuTurn,thinkDelay())}
   function cpuTurn(){
+    if(state.phase==='bidding'){cpuBid(state.currentBidder);return}
     if(state.phase==='meld'){takeMeld(true);return}
     if(state.phase!=='play'||state.currentPlayerIndex===0)return;
     const legal=legalCards(state.currentPlayerIndex); if(!legal.length)return;
