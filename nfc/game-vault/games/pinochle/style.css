@@ -37,311 +37,189 @@ ol{max-height:360px;overflow:auto;color:var(--muted)}
 .card b{font-size:1.45em;line-height:1}
 .card small{align-self:end;justify-self:end;font-size:.62em;line-height:1}
 
-/* EMERGENCY GAME REPAIR - PINOCHLE CLEAN TABLE LAYOUT */
-html,
-body { min-height:100%; }
-body { overflow:auto; }
-.app {
-  width:min(1800px,98vw);
+/* CONSUMER RUN REPAIR - PINOCHLE SINGLE ACTIVE LAYOUT */
+body{overflow:auto;}
+.app{
+  width:min(1840px,98vw);
   min-height:100vh;
   display:flex;
   flex-direction:column;
-  gap:5px;
-  padding:5px 8px 8px;
-  overflow:visible;
+  gap:6px;
+  padding:6px 8px 8px;
 }
-.top {
-  height:32px;
-  max-height:32px;
-  min-height:32px;
-  margin:0;
-  gap:10px;
-  align-items:center;
+.top{
   position:relative;
-  z-index:40;
-}
-.brand span { width:30px;height:30px;border-radius:10px;font-size:15px; }
-.brand b { font-size:13px;letter-spacing:.08em; }
-nav { gap:8px; }
-nav a,
-button { min-height:40px;padding:8px 12px;font-size:13px;line-height:1; }
-.hero {
-  height:40px;
-  max-height:40px;
-  min-height:40px;
+  z-index:20;
+  height:34px;
+  max-height:34px;
   margin:0;
-  padding:5px 10px;
-  border-radius:14px;
-  gap:10px;
+  display:flex;
   align-items:center;
-  position:relative;
-  z-index:39;
-  overflow:visible;
-  box-shadow:0 10px 24px rgba(0,0,0,.34);
-}
-.hero p { display:none; }
-.kicker { font-size:9px;letter-spacing:.15em; }
-h1 { font-size:clamp(23px,2.6vw,36px);line-height:.86;margin:0; }
-.play3d-mode-bar,
-.play3d-points-panel {
+  justify-content:space-between;
+  gap:10px;
   flex:0 0 auto;
-  margin:0!important;
-  padding:5px 7px!important;
-  border-radius:12px!important;
-  gap:6px!important;
+}
+.brand span{width:32px;height:32px;border-radius:10px;font-size:15px;}
+.brand b{font-size:13px;}
+.hero{
   position:relative;
-  z-index:38;
+  z-index:20;
+  height:52px;
+  max-height:52px;
+  min-height:52px;
+  margin:0;
+  padding:6px 10px;
+  border-radius:14px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:10px;
+  flex:0 0 auto;
 }
-.play3d-mode-bar button,
-.play3d-mode-bar a,
-.play3d-points-panel button {
-  min-height:38px!important;
-  padding:8px 11px!important;
-  font-size:12px!important;
-  line-height:1.05!important;
-}
-.play3d-mode-status,
-.play3d-points-panel span,
-.play3d-points-panel small { font-size:10px!important; }
-.pinochle-table-shell {
+.hero p{display:none;}
+.kicker{font-size:9px;letter-spacing:.16em;}
+h1{font-size:clamp(24px,2.7vw,40px);line-height:1;margin:0;}
+.play3d-mode-bar,.play3d-points-panel{margin:0!important;padding:5px 7px!important;}
+.pinochle-table-shell{
   flex:1 1 auto;
-  min-height:700px;
   margin:0;
   padding:0;
+  border:0;
+  background:transparent;
+  box-shadow:none;
 }
-.pinochle-layout {
+.pinochle-layout{
   display:grid;
-  grid-template-columns:190px minmax(620px, 1fr) 190px;
-  height:calc(100vh - 96px);
-  min-height:700px;
+  grid-template-columns:190px minmax(620px,1fr) 190px;
   gap:10px;
-  margin-top:0;
-  align-self:stretch;
-  overflow:visible;
+  height:calc(100vh - 104px);
+  min-height:700px;
+  align-items:stretch;
 }
-.pinochle-rail {
+.pinochle-rail{
   min-height:0;
-  padding:8px;
-  border:1px solid rgba(212,175,55,.35);
+  padding:10px;
+  border:1px solid var(--line);
   border-radius:18px;
-  background:linear-gradient(180deg,rgba(7,7,10,.92),rgba(0,0,0,.62));
-  box-shadow:inset 0 0 20px rgba(255,215,0,.08),0 14px 34px rgba(0,0,0,.35);
+  background:linear-gradient(180deg,rgba(17,14,9,.78),rgba(0,0,0,.70));
   overflow:auto;
-  position:relative;
-  z-index:3;
 }
 .pinochle-rail .row,
 .pinochle-rail .action-row,
-.pinochle-rail .trump-row {
+.pinochle-rail .trump-row{
   display:grid;
   grid-template-columns:1fr;
-  gap:6px;
-  justify-content:stretch;
+  gap:8px;
   margin:0 0 8px;
 }
 .pinochle-rail button,
-.pinochle-rail input {
+.pinochle-rail input{
   width:100%;
   min-height:40px;
-  padding:8px 10px;
   font-size:13px;
-  letter-spacing:.05em;
-  white-space:normal;
+  padding:9px 10px;
 }
-.pinochle-rail button:disabled,
-.pinochle-rail input:disabled { opacity:.42;cursor:not-allowed; }
-.rail-zone {
-  margin-top:7px;
-  padding-top:7px;
+.rail-zone{
+  margin-top:8px;
+  padding-top:8px;
   border-top:1px solid rgba(212,175,55,.18);
 }
-.rail-zone:first-child { margin-top:0;padding-top:0;border-top:0; }
-.rail-zone h2,
-.center-stage h2 {
-  margin:0 0 5px;
-  font-size:11px;
-  letter-spacing:.14em;
-  color:var(--muted);
-}
-.rail-zone .hand {
-  min-height:46px;
-  max-height:118px;
-  overflow:auto;
-  justify-content:flex-start;
-  gap:5px;
-}
-.casino-table {
-  width:100%;
+.rail-zone:first-child{margin-top:0;padding-top:0;border-top:0;}
+.rail-zone h2,.center-stage h2{font-size:11px;margin:0 0 6px;letter-spacing:.13em;}
+.rail-zone .hand{min-height:42px;max-height:96px;overflow:auto;justify-content:flex-start;}
+.casino-table{
+  position:relative;
   height:100%;
   min-height:700px;
   margin:0;
-  padding:16px;
+  padding:0;
   border-width:10px;
-  border-radius:44px;
+  border-radius:46px;
   overflow:hidden;
+}
+.table-content{position:relative;z-index:2;height:100%;min-height:0;}
+.center-stage{
   position:relative;
-  z-index:1;
-  box-shadow:0 0 0 6px #3b2a0c,0 26px 82px rgba(0,0,0,.72),inset 0 0 88px rgba(255,255,255,.08);
-}
-.table-logo { font-size:clamp(52px,9vw,138px);opacity:.62;z-index:0; }
-.table-content { position:relative;z-index:2;height:100%;min-height:0; }
-.center-stage {
-  height:100%;
-  min-height:0;
-  display:grid;
-  grid-template-rows:minmax(0, 1fr) 148px;
-  gap:12px;
-  padding:70px 42px 95px;
-  box-sizing:border-box;
-}
-.opponent-zone {
-  display:none!important;
-}
-.trick-zone,
-.player-zone {
-  min-width:0;
-  min-height:0;
-  border:1px solid rgba(212,175,55,.18);
-  border-radius:18px;
-  background:rgba(0,0,0,.18);
-  padding:9px;
-  position:relative;
-  z-index:2;
-}
-.trick-zone {
-  display:grid;
-  grid-template-rows:auto minmax(0,1fr);
-  align-items:stretch;
-  background:radial-gradient(circle at center,rgba(212,175,55,.18),transparent 58%),rgba(0,0,0,.22);
-}
-.trick-pile,
-#trickPile {
-  min-height:0;
-  height:100%;
-  align-items:center;
-  justify-content:center;
-  overflow:visible;
-  gap:12px;
-}
-.card { width:68px;height:98px;border-radius:12px;font-size:21px; }
-#trickPile .card { width:78px;height:112px;font-size:23px; }
-#playerHand.hand {
-  gap:8px;
-  align-items:center;
-  justify-content:flex-start;
-  flex-wrap:nowrap;
-  overflow-x:auto;
-  overflow-y:hidden;
-  scrollbar-width:none;
-}
-#playerHand.hand::-webkit-scrollbar { height:0; }
-.pinochle-right-rail { display:flex;flex-direction:column;gap:7px; }
-.rail-score-zone .score,
-.rail-score {
-  max-width:132px;
-  width:100%;
-  min-height:46px;
-  padding:6px 9px;
-  border-radius:13px;
-  text-align:left;
-}
-.rail-score span,
-.rail-score small { font-size:10px;line-height:1.1; }
-.rail-score b { font-size:19px;line-height:1.05; }
-.player-stats-zone { display:grid;gap:6px; }
-.pinochle-right-rail .seat {
-  position:relative;
-  inset:auto;
-  transform:none;
-  max-width:132px;
-  width:100%;
-  min-width:0;
-  min-height:46px;
-  padding:6px 9px;
-  font-size:11px;
-  line-height:1.1;
-  border-radius:12px;
   z-index:3;
+  height:100%;
+  min-height:0;
+  display:grid;
+  grid-template-rows:minmax(260px,1fr) 142px;
+  gap:12px;
+  padding:72px 42px 96px;
 }
-.pinochle-right-rail .seat.current-bidder {
-  border-color:#f2d27b;
-  background:linear-gradient(180deg,rgba(242,210,123,.25),rgba(0,0,0,.58));
-  box-shadow:0 0 0 3px rgba(242,210,123,.18),0 0 28px rgba(242,210,123,.35);
-}
-.seat-cards,
-.pinochle-right-rail .seat-cards {
-  display:none!important;
-}
-.live-action-card,
-.count-card {
-  min-width:0;
-  min-height:46px;
-  border-radius:12px;
-  border:1px solid rgba(242,210,123,.42);
-  background:rgba(0,0,0,.46);
+.opponent-zone{display:none!important;}
+.seat-cards,.pinochle-right-rail .seat-cards{display:none!important;}
+.trick-zone{
+  min-height:0;
   display:grid;
   place-items:center;
-  color:#f2d27b;
-  font-weight:900;
-  text-transform:uppercase;
-  letter-spacing:.05em;
-  text-align:center;
-  padding:6px;
-  font-size:11px;
+  border:1px solid rgba(242,210,123,.18);
+  border-radius:24px;
+  background:rgba(0,0,0,.17);
 }
-.card.back { background:linear-gradient(135deg,rgba(22,16,10,.72),rgba(5,5,5,.88)),url("../shared/assets/bg-vault-door.jpg") center/cover;color:#f2d27b;border-color:#caa24a;text-shadow:0 2px 10px rgba(0,0,0,.85); }
-.card.disabled { opacity:.48;cursor:not-allowed;pointer-events:none; }
-.card span { align-self:start;justify-self:start;font-size:.72em;line-height:1; }
-.card b { font-size:1.45em;line-height:1; }
-.card small { align-self:end;justify-self:end;font-size:.62em;line-height:1; }
-.row input { border:1px solid var(--line);border-radius:999px;background:rgba(0,0,0,.55);color:var(--cream);font:900 14px Oswald,Arial,sans-serif;text-align:center; }
-.bid-banner {
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%) scale(.96);
-  z-index:12;
-  padding:18px 28px;
-  border:2px solid rgba(242,210,123,.75);
+.trick-zone h2{position:absolute;top:18px;left:22px;}
+.trick-pile{align-items:center;justify-content:center;min-height:150px;}
+.player-zone{
+  min-height:0;
+  border:1px solid rgba(242,210,123,.20);
   border-radius:22px;
-  background:rgba(0,0,0,.78);
-  color:#f2d27b;
-  font:900 clamp(24px,4vw,48px) "Black Ops One",Oswald,sans-serif;
-  letter-spacing:.05em;
-  text-align:center;
-  opacity:0;
-  pointer-events:none;
-  box-shadow:0 0 42px rgba(242,210,123,.34),0 20px 60px rgba(0,0,0,.58);
-  transition:opacity .18s ease,transform .18s ease;
+  background:rgba(0,0,0,.22);
+  padding:10px;
+  overflow:hidden;
 }
-.bid-banner.show { opacity:1;transform:translate(-50%,-50%) scale(1); }
-.bid-status-panel {
-  position:absolute;
-  left:50%;
-  top:18px;
-  transform:translateX(-50%);
-  z-index:11;
+.player-zone .hand,#playerHand.hand{
+  flex-wrap:nowrap;
+  justify-content:flex-start;
+  overflow-x:auto;
+  min-height:104px;
+}
+.pinochle-right-rail{display:flex;flex-direction:column;gap:8px;}
+.rail-score-zone .score,.rail-score{
   display:grid;
+  grid-template-columns:1fr;
   gap:2px;
-  min-width:220px;
-  padding:8px 11px;
-  border:1px solid rgba(242,210,123,.42);
-  border-radius:16px;
-  background:rgba(0,0,0,.68);
-  color:#f5efe3;
-  text-align:center;
-  box-shadow:0 12px 28px rgba(0,0,0,.38);
+  min-width:0;
+  padding:8px 9px;
+  text-align:left;
+  border-radius:14px;
 }
-.bid-status-panel b { color:#f2d27b;font-size:12px; }
-.bid-status-panel span,
-.bid-status-panel small { font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em; }
-@media(max-width:1100px) {
-  .app { display:block;height:auto;min-height:100vh;padding:8px; }
-  .top,.hero { height:auto;max-height:none;min-height:0; }
-  .pinochle-layout { grid-template-columns:1fr;height:auto;min-height:0; }
-  .casino-table { height:74vh;min-height:620px; }
-  .center-stage { padding:72px 16px 70px;grid-template-rows:minmax(190px,1fr) 140px; }
-  .pinochle-rail .action-row { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .pinochle-rail .trump-row { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.rail-score span,.rail-score small{font-size:10px;line-height:1.1;}
+.rail-score b{font-size:19px;line-height:1.05;}
+.pinochle-right-rail .seat{
+  position:relative!important;
+  inset:auto!important;
+  transform:none!important;
+  width:100%;
+  max-width:140px;
+  min-height:46px;
+  padding:6px 7px;
+  margin:0 auto 7px;
+  border-radius:14px;
+  font-size:10px;
+  line-height:1.1;
+  z-index:4;
 }
-
+.pinochle-right-rail .seat.current-bidder{
+  outline:2px solid rgba(242,210,123,.88);
+  box-shadow:0 0 26px rgba(242,210,123,.34);
+}
+.live-action-card{
+  min-height:46px;
+  padding:8px;
+  border-radius:14px;
+  font-size:12px;
+}
+.card{width:62px;height:92px;font-size:18px;}
+.player-zone .card{width:66px;height:98px;}
+@media(max-width:980px){
+  .app{display:block;padding:6px;}
+  .top,.hero{height:auto;max-height:none;min-height:0;margin-bottom:6px;}
+  .hero{grid-template-columns:1fr;}
+  .pinochle-layout{grid-template-columns:1fr;height:auto;min-height:0;}
+  .casino-table{height:74vh;min-height:620px;}
+  .center-stage{padding:62px 14px 72px;grid-template-rows:minmax(190px,1fr) 136px;}
+  .pinochle-rail{margin-bottom:8px;}
+  .pinochle-rail .action-row{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .pinochle-rail .trump-row{grid-template-columns:repeat(4,minmax(0,1fr));}
+}
