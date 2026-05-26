@@ -1,5 +1,0 @@
-PASS no transform rotation
-PASS true horizontal vertical classes
-PASS first spinner only
-PASS connect value faces branch
-PASS no all fives
