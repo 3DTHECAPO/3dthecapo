@@ -707,3 +707,144 @@ h1{font-size:clamp(26px,3vw,44px);line-height:.86;margin:2px 0 0;}
   z-index: 2;
 }
 
+/* DOMINOES HEADER + PLAYER PROPORTION FIX */
+.app {
+  grid-template-rows: 32px 44px minmax(680px, calc(100vh - 98px));
+  gap: 5px;
+  padding: 5px 8px 8px;
+  overflow: visible;
+}
+
+.top {
+  height: 32px;
+  max-height: 32px;
+  min-height: 32px;
+  position: relative;
+  z-index: 40;
+}
+
+.hero {
+  height: 44px;
+  max-height: 44px;
+  min-height: 44px;
+  padding: 5px 10px;
+  position: relative;
+  z-index: 39;
+  overflow: visible;
+}
+
+.brand span {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.brand b {
+  font-size: 13px;
+}
+
+nav a,
+button {
+  min-height: 38px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.kicker {
+  font-size: 9px;
+}
+
+h1 {
+  font-size: clamp(24px, 2.7vw, 38px);
+  margin: 0;
+}
+
+.status {
+  min-width: min(520px, 46vw);
+  padding: 5px 10px;
+  border-radius: 12px;
+}
+
+.status span,
+.status small {
+  font-size: 10px;
+}
+
+.status b {
+  font-size: clamp(15px, 1.35vw, 20px);
+}
+
+.dominoes-layout {
+  height: calc(100vh - 98px);
+  min-height: 680px;
+  margin-top: 0;
+  align-self: start;
+  overflow: visible;
+}
+
+.casino-table {
+  min-height: 680px;
+  height: 100%;
+  margin-top: 0;
+  clear: both;
+}
+
+.seat {
+  max-width: 132px;
+  min-width: 96px;
+  min-height: 46px;
+  padding: 6px 9px;
+  font-size: 11px;
+  line-height: 1.1;
+}
+
+.top-seat,
+.left-seat {
+  left: 10px;
+}
+
+.right-seat,
+.bottom-seat {
+  right: 10px;
+}
+
+.top-seat,
+.right-seat {
+  top: 68px;
+}
+
+.left-seat,
+.bottom-seat {
+  top: 120px;
+}
+
+.controls button,
+.controls .playerCountBtn {
+  min-height: 40px;
+  padding: 9px 10px;
+  font-size: 13px;
+}
+
+.hand-dock.panel {
+  z-index: 12;
+}
+
+@media(max-width:980px) {
+  .app {
+    display: block;
+    height: auto;
+    min-height: 100vh;
+  }
+  .top,
+  .hero {
+    height: auto;
+    max-height: none;
+    min-height: 0;
+  }
+  .dominoes-layout {
+    height: auto;
+    min-height: 0;
+  }
+}
+
