@@ -9,7 +9,7 @@
   const state={
     players:4,
     hands:[], captured:[[],[]], trick:[], scores:[0,0], handScores:[0,0], meldScores:[0,0], trickScores:[0,0],
-    currentPlayerIndex:0, dealer:3, currentBidder:0, bidder:null, bidTeam:0, bid:0, trump:'S', phase:'bidding', lastWinner:0, handNumber:0, passed:[false,false,false,false]
+    currentPlayerIndex:0, dealer:3, currentBidder:0, bidder:null, bidTeam:0, bid:0, trump:'S', phase:'bidding', lastWinner:0, handNumber:0, passed:[false,false,false,false], lastBidMessage:''
   };
 
   function thinkDelay(){return 450+Math.floor(Math.random()*850)}
@@ -56,6 +56,45 @@
       phase:state.phase
     },extra||{}));
   }
+  function showBidBanner(message){
+    state.lastBidMessage = message;
+    const table = document.querySelector('.casino-table');
+    if(!table) return;
+    let banner = document.getElementById('bidBanner');
+    if(!banner){
+      banner = document.createElement('div');
+      banner.id = 'bidBanner';
+      banner.className = 'bid-banner';
+      table.appendChild(banner);
+    }
+    banner.textContent = message;
+    banner.classList.remove('show');
+    void banner.offsetWidth;
+    banner.classList.add('show');
+  }
+  function updateBidStatusPanel(){
+    const table = document.querySelector('.casino-table');
+    if(!table) return;
+    let panel = document.getElementById('bidStatusPanel');
+    if(!panel){
+      panel = document.createElement('div');
+      panel.id = 'bidStatusPanel';
+      panel.className = 'bid-status-panel';
+      table.appendChild(panel);
+    }
+    const high = state.bidder===null ? 'NONE' : seatName(state.bidder)+' '+state.bid;
+    const current = state.phase==='bidding' ? seatName(state.currentBidder) : '?';
+    panel.innerHTML = '<b>HIGH BID: '+high+'</b><span>CURRENT BIDDER: '+current+'</span><small>'+seatName(state.dealer)+' DEALS</small>';
+  }
+  function updateBidControls(){
+    const humanTurn = state.phase==='bidding' && state.currentBidder===0;
+    ['teamBtn','passBidBtn','bidInput'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.disabled = !humanTurn;
+      el.style.display = humanTurn ? '' : 'none';
+    });
+  }
   function activeBidders(){return [0,1,2,3].filter(player=>!state.passed[player])}
   function nextBidderAfter(player){
     for(let step=1;step<=4;step++){
@@ -68,6 +107,7 @@
     const active=activeBidders();
     if(state.bidder===null&&active.length===0){state.phase='over';bidDebug('all_passed');render('ALL PASSED - DEAL AGAIN');return true}
     if(state.bidder!==null&&active.length===1&&active[0]===state.bidder){
+      showBidBanner(seatName(state.bidder)+' WINS BID '+state.bid);
       bidDebug('bidding_won',{winner:state.bidder});
       const started=startHandWithBid(state.bidder,state.bid);
       if(started&&state.currentPlayerIndex!==0)scheduleCpu();
@@ -87,9 +127,10 @@
   function placeBid(player,bid){
     if(state.phase!=='bidding'||player!==state.currentBidder)return false;
     const amount=Number(bid)||0;
-    const minimum=state.bid>0?state.bid+10:50;
+    const minimum=state.bid>0?state.bid+1:50;
     if(amount<minimum){render('BID MUST BE '+minimum+' OR PASS');bidDebug('bad_bid',{player,amount,minimum});return false}
     state.bid=amount; state.bidder=player; state.bidTeam=teamIndex(player); state.passed[player]=false;
+    showBidBanner(seatName(player)+' BID '+amount);
     bidDebug('bid',{player,amount});
     advanceBidder();
     return true;
@@ -97,6 +138,7 @@
   function passBid(player){
     if(state.phase!=='bidding'||player!==state.currentBidder)return false;
     state.passed[player]=true;
+    showBidBanner(seatName(player)+' PASS');
     bidDebug('pass',{player});
     advanceBidder();
     return true;
@@ -108,7 +150,7 @@
     state.hands=Array.from({length:4},()=>deck.splice(0,20));
     state.captured=[[],[]]; state.trick=[]; state.handScores=[0,0]; state.meldScores=[0,0]; state.trickScores=[0,0];
     state.bid=0; state.bidder=null; state.bidTeam=0; state.trump='S'; state.phase='bidding'; state.lastWinner=0; state.passed=[false,false,false,false]; state.currentBidder=leftOfDealer(); state.currentPlayerIndex=state.currentBidder;
-    sortHands(); bidDebug('deal'); render('DEALER '+seatName(state.dealer)+' - '+seatName(state.currentBidder)+' BIDS FIRST');
+    sortHands(); bidDebug('deal'); showBidBanner(seatName(state.currentBidder)+' BIDS FIRST'); render('DEALER '+seatName(state.dealer)+' - '+seatName(state.currentBidder)+' BIDS FIRST');
     if(state.currentBidder!==0)scheduleCpu();
   }
   function setTrump(suit){state.trump=suit; render('TRUMP '+suit)}
@@ -135,7 +177,7 @@
     if(state.phase!=='bidding'||player!==state.currentBidder)return;
     const suit=suits.find(s=>hasMarriage(state.hands[player],s));
     const ceiling=player===2?70:80;
-    if(suit&&state.bid<ceiling){state.trump=suit; placeBid(player,state.bid>0?state.bid+10:50);}
+    if(suit&&state.bid<ceiling){state.trump=suit; placeBid(player,state.bid>0?state.bid+5:50);}
     else passBid(player);
   }
   function takeMeld(auto){
@@ -201,6 +243,8 @@
     play(state.currentPlayerIndex,state.hands[state.currentPlayerIndex].findIndex(c=>c.id===chosen.id));
   }
   function render(label){
+    updateBidStatusPanel();
+    updateBidControls();
     opponentHand.innerHTML=backs((state.hands[1]||[]).length)+'<div class="count-card">Partner '+(state.hands[2]||[]).length+'<br>Right '+(state.hands[3]||[]).length+'</div>';
     trickPile.innerHTML=state.trick.map(play=>'<div><small>'+seatName(play.player)+'</small>'+cardHTML(play.card,0,false)+'</div>').join('')||'<div class="count-card">Trick Empty</div>';
     meldArea.innerHTML='<div class="count-card">Trump '+state.trump+'</div><div class="count-card">Bid '+state.bid+'</div><div class="count-card">Meld A '+state.meldScores[0]+' / B '+state.meldScores[1]+'</div><div class="count-card">Tricks A '+state.trickScores[0]+' / B '+state.trickScores[1]+'</div>';
@@ -211,7 +255,7 @@
     stateText.textContent=label||(state.phase==='play'?(state.currentPlayerIndex===0?'YOUR TURN':seatName(state.currentPlayerIndex)+' TURN'):state.phase.toUpperCase());
     renderSeats();
   }
-  function renderSeats(){[0,1,2,3].forEach(player=>{const el=document.getElementById('seat'+player);if(!el)return;el.hidden=false;el.innerHTML='<b>'+seatName(player)+'</b><small>'+(state.hands[player]||[]).length+' cards</small>'+(player===0?'':'<div class="seat-cards">'+backs(Math.min(5,(state.hands[player]||[]).length))+'</div>')})}
+  function renderSeats(){[0,1,2,3].forEach(player=>{const el=document.getElementById('seat'+player);if(!el)return;el.hidden=false;el.classList.toggle('current-bidder',state.phase==='bidding'&&player===state.currentBidder);el.innerHTML='<b>'+seatName(player)+'</b><small>'+(state.hands[player]||[]).length+' cards</small>'+(player===0?'':'<div class="seat-cards">'+backs(Math.min(5,(state.hands[player]||[]).length))+'</div>')})}
   dealBtn.onclick=deal; meldBtn.onclick=()=>takeMeld(false); teamBtn.onclick=playerBid;
   const passBtn=document.getElementById('passBidBtn'); if(passBtn)passBtn.onclick=playerPass;
   document.querySelectorAll('[data-trump]').forEach(btn=>btn.onclick=()=>setTrump(btn.dataset.trump));
