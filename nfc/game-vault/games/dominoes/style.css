@@ -677,3 +677,33 @@ h1{font-size:clamp(26px,3vw,44px);line-height:.86;margin:2px 0 0;}
   .open-end-debug{top:50px;font-size:10px;max-width:92%;overflow:hidden;text-overflow:ellipsis;}
 }
 
+/* DOMINOES HEADER STACK FIX */
+.top,
+.hero {
+  position: relative;
+  z-index: 30;
+}
+
+.dominoes-layout {
+  position: relative;
+  z-index: 1;
+  align-self: start;
+  margin-top: 0;
+}
+
+.casino-table {
+  position: relative;
+  z-index: 1;
+}
+
+.hand-dock.panel {
+  z-index: 12;
+}
+
+.table-logo,
+.table-center,
+.open-end-debug,
+.seat {
+  z-index: 2;
+}
+
