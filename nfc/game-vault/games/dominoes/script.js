@@ -10,7 +10,7 @@
 const SCORE_TARGET = 150;
 const GET_IN_MIN = 10;
 const HAND_SIZE = 7;
-const TILE_SIZE = { horizontal:{w:92,h:46}, vertical:{w:52,h:92} };
+const TILE_SIZE = { horizontal:{w:82,h:42}, vertical:{w:50,h:88} };
 function axisSpan(orientation,arm){
   const size = TILE_SIZE[orientation] || TILE_SIZE.horizontal;
   return (arm === 'left' || arm === 'right') ? size.w : size.h;
@@ -681,8 +681,8 @@ function tileHTML(tile,index,cls=''){
 
 function fitBoardToPlacements(){
   const placements = state.board.placements || [];
-  let maxX = 480;
-  let maxY = 250;
+  let maxX = 540;
+  let maxY = 340;
   placements.forEach(item=>{
     const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
     maxX = Math.max(maxX, Math.abs(item.x || 0) + size.w / 2 + 70);
@@ -715,6 +715,9 @@ function renderBoard(){
     chainEl.style.height = fit.height+'px';
     chainEl.style.minWidth = fit.width+'px';
     chainEl.style.minHeight = fit.height+'px';
+    chainEl.style.margin = 'auto';
+    chainEl.style.position = 'relative';
+    chainEl.style.transformOrigin = 'center center';
     chainEl.innerHTML = state.board.placements.map(boardTileHTML).join('');
   }else{
     chainEl.className = 'chain';
