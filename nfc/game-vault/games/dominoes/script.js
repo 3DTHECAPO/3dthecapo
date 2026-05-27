@@ -1,6 +1,10 @@
 (()=>{
 'use strict';
 
+function play3dAnnounce(event, type, message){
+  window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'dominoes', event:event, type:type, message:message } }));
+}
+
 /* PLAY 3D DOMINOES — SCORE-ON-PLAY COUNTING FIVES
    Scope: Dominoes script only.
    Rules kept: score every scoring play, first score must be 10+ to get in, game to 150.
@@ -163,6 +167,35 @@ function oppositeSide(arm){
   return {left:'right',right:'left',top:'bottom',bottom:'top'}[arm] || 'right';
 }
 
+function buildBranchPlacement(rawTile,logicalArm,match,anchor,flowSide){
+  const oriented = orientForArm(rawTile,match,flowSide);
+  const orientation = branchOrientation(flowSide,oriented);
+  const dir = BRANCH_DIRS[flowSide] || BRANCH_DIRS.right;
+  const step = axisSpan(orientation,flowSide);
+  const anchorFlow = (anchor.flowSide || anchor.exposedSide) === 'all'
+    ? logicalArm
+    : (anchor.flowSide || anchor.exposedSide || logicalArm);
+  const anchorStep = axisSpan(anchor.orientation || 'horizontal',anchorFlow);
+  const distance = (step / 2) + (anchorStep / 2);
+
+  return {
+    tile:oriented,
+    raw:rawTile.slice(),
+    x:(anchor.x || 0) + dir.x * distance,
+    y:(anchor.y || 0) + dir.y * distance,
+    orientation,
+    branch:logicalArm,
+    flowSide,
+    direction:dir,
+    connectedSide:oppositeSide(flowSide),
+    exposedSide:flowSide,
+    exposedPip:exposedPipFromOriented(flowSide,oriented),
+    matchPip:match,
+    double:isDouble(oriented),
+    spinner:false
+  };
+}
+
 function makeSpinnerPlacement(tile){
   return {
     tile:tile.slice(),
@@ -181,30 +214,39 @@ function makeSpinnerPlacement(tile){
 }
 
 function makeBranchPlacement(rawTile,arm,match){
-  const oriented = orientForArm(rawTile,match,arm);
-  const orientation = branchOrientation(arm,oriented);
-  const dir = BRANCH_DIRS[arm];
   const branch = state.board.spinnerArms[arm] || [];
   const anchor = branch.length ? branch[branch.length-1] : state.board.spinnerTile;
-  const step = axisSpan(orientation,arm);
-  const anchorStep = axisSpan(anchor.orientation || 'horizontal',arm);
-  const distance = (step / 2) + (anchorStep / 2);
+  return buildBranchPlacement(rawTile,arm,match,anchor,arm);
+}
 
-  return {
-    tile:oriented,
-    raw:rawTile.slice(),
-    x:(anchor.x || 0) + dir.x * distance,
-    y:(anchor.y || 0) + dir.y * distance,
-    orientation,
-    branch:arm,
-    direction:dir,
-    connectedSide:oppositeSide(arm),
-    exposedSide:arm,
-    exposedPip:exposedPipFromOriented(arm,oriented),
-    matchPip:match,
-    double:isDouble(oriented),
+function rebranchPlacement(item,branch){
+  return Object.assign({}, item, {
+    branch,
+    flowSide:branch,
+    direction:BRANCH_DIRS[branch],
+    exposedSide:branch,
+    connectedSide:oppositeSide(branch),
+    exposedPip:exposedPipFromOriented(branch, placementTile(item)),
     spinner:false
-  };
+  });
+}
+
+function promoteFirstDoubleToSpinner(placement,arm,existingLine){
+  state.board.spinnerTile = Object.assign({}, placement, {
+    branch:'spinner',
+    connectedSide:null,
+    exposedSide:'all',
+    exposedPip:placement.tile[0],
+    matchPip:placement.tile[0],
+    double:true,
+    spinner:true
+  });
+  state.board.spinnerArms = {left:[],right:[],top:[],bottom:[]};
+  if(arm === 'left'){
+    state.board.spinnerArms.right = existingLine.map(item=>rebranchPlacement(item,'right'));
+  }else{
+    state.board.spinnerArms.left = existingLine.slice().reverse().map(item=>rebranchPlacement(item,'left'));
+  }
 }
 
 function refreshPlacements(){
@@ -334,23 +376,6 @@ function updateOpenEndDebug(){
 function legalArms(tile){
   const ends = refreshOpenEnds();
   if(!hasBoardTiles()) return ['open'];
-
-  // Spinner side-lock rule applies every hand:
-  // after any spinner/double is on board, left and right must both be filled
-  // before top or bottom can be played. This keeps CPU and arm chooser legal.
-  if(state.board.spinnerTile){
-    const arms = state.board.spinnerArms;
-    const leftUsed = arms.left.length > 0;
-    const rightUsed = arms.right.length > 0;
-    const sideLocked = !(leftUsed && rightUsed);
-    return ends
-      .filter(end=>{
-        if(sideLocked && end.arm !== 'left' && end.arm !== 'right') return false;
-        return tile[0] === end.value || tile[1] === end.value;
-      })
-      .map(end=>end.arm);
-  }
-
   return ends
     .filter(end=>tile[0] === end.value || tile[1] === end.value)
     .map(end=>end.arm);
@@ -386,6 +411,7 @@ function placeOnArm(tile,arm){
         y:0,
         orientation:'horizontal',
         branch:'right',
+        flowSide:'right',
         connectedSide:null,
         exposedSide:'right',
         exposedPip:oriented[1],
@@ -403,26 +429,13 @@ function placeOnArm(tile,arm){
 
   if(!state.board.spinnerTile){
     const line = state.board.spinnerArms.right;
-    const oriented = orientForArm(tile,end.value,arm);
+    const existingLine = line.slice();
     const previous = arm === 'left' ? line[0] : line[line.length-1];
-    const direction = arm === 'left' ? -1 : 1;
-    const orientation = isDouble(oriented) ? 'vertical' : 'horizontal';
-    const distance = previous ? (axisSpan(previous.orientation || 'horizontal',arm) / 2) + (axisSpan(orientation,arm) / 2) : 0;
-    const placement = {
-      tile:oriented,
-      raw:tile.slice(),
-      x:(previous ? previous.x : 0) + direction * distance,
-      y:previous ? previous.y : 0,
-      orientation,
-      branch:arm,
-      connectedSide:oppositeSide(arm),
-      exposedSide:arm,
-      exposedPip:exposedPipFromOriented(arm,oriented),
-      matchPip:end.value,
-      double:isDouble(oriented),
-      spinner:false
-    };
-    if(arm === 'left') line.unshift(placement);
+    const anchor = previous || {x:0,y:0,orientation:'horizontal',flowSide:arm,exposedSide:arm};
+    const placement = buildBranchPlacement(tile,arm,end.value,anchor,arm);
+    if(isDouble(placement.tile)){
+      promoteFirstDoubleToSpinner(placement,arm,existingLine);
+    }else if(arm === 'left') line.unshift(placement);
     else line.push(placement);
   }else{
     const placement = makeBranchPlacement(tile,arm,end.value);
@@ -434,7 +447,9 @@ function placeOnArm(tile,arm){
 }
 
 function commitPlay(playerIndex,tile,arm){
+  const hadSpinner = !!state.board.spinnerTile;
   if(!placeOnArm(tile,arm)) return false;
+  if(!hadSpinner && state.board.spinnerTile) play3dAnnounce('SPINNER','elite');
   removeTile(state.hands[playerIndex],tile);
   state.passes = 0;
   state.pending = null;
@@ -531,6 +546,7 @@ function clonePlacement(item){
     y:item.y || 0,
     orientation:item.orientation || 'horizontal',
     branch:item.branch || 'right',
+    flowSide:item.flowSide || item.exposedSide || item.branch || 'right',
     direction:item.direction ? Object.assign({},item.direction) : undefined,
     connectedSide:item.connectedSide || null,
     exposedSide:item.exposedSide || null,
@@ -577,6 +593,7 @@ function finishHand(winner){
   if(winner === 0 && window.Play3DPoints) window.Play3DPoints.award('dominoes',125,'round_win');
   if(turnTextEl) turnTextEl.textContent = seatName(winner)+' DOMINOES — WASH THE DISHES';
   log('DOMINO! '+seatName(winner)+' played the last domino.');
+  play3dAnnounce('DOMINO','success');
   render();
 }
 
@@ -586,9 +603,10 @@ function finishBlocked(){
     const total = handTotal(index);
     return total < best.total ? {index,total} : best;
   },{index:0,total:Infinity}).index;
-  state.nextLeader = winner;
+  state.nextLeader = null;
   if(turnTextEl) turnTextEl.textContent = 'BLOCKED ROUND ? WASH THE DISHES';
-  log('Blocked round. '+seatName(winner)+' leads next hand.');
+  log('Blocked round. '+seatName(winner)+' wins low count. Next hand starts by highest available double.');
+  play3dAnnounce('BLOCKED','warning');
   render();
 }
 
@@ -666,6 +684,8 @@ function newGame(players){
   state.gameOver = false;
 
   const handLeader = Number.isInteger(state.nextLeader) ? state.nextLeader % state.players : null;
+  play3dAnnounce('NEW_GAME','normal','DOMINOES TABLE OPEN.');
+
   if(handLeader !== null){
     state.currentPlayerIndex = handLeader;
     state.nextLeader = null;
@@ -680,6 +700,7 @@ function newGame(players){
     placeOpeningDouble(starter.player,starter.tile);
     state.currentPlayerIndex = (starter.player + 1) % state.players;
     log(seatName(starter.player)+' opened with highest double '+starter.tile[0]+'-'+starter.tile[1]+'.');
+    play3dAnnounce('SPINNER','elite');
     scoreBoardCount(starter.player,'opening_double');
     if(state.gameOver){ render(); return; }
   }else{
@@ -726,15 +747,8 @@ function renderBoard(){
   if(!chainEl) return;
   refreshPlacements();
   if(state.board.placements.length){
-    const fit = fitBoardToPlacements();
     chainEl.className = 'chain tree-board';
-    chainEl.style.width = fit.width+'px';
-    chainEl.style.height = fit.height+'px';
-    chainEl.style.minWidth = fit.width+'px';
-    chainEl.style.minHeight = fit.height+'px';
-    chainEl.style.margin = 'auto';
-    chainEl.style.position = 'relative';
-    chainEl.style.transformOrigin = 'center center';
+    chainEl.removeAttribute('style');
     chainEl.innerHTML = state.board.placements.map(boardTileHTML).join('');
   }else{
     chainEl.className = 'chain';
