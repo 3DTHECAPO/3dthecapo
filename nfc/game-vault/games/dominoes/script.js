@@ -1,6 +1,10 @@
 (()=>{
 'use strict';
 
+function play3dAnnounce(event, type, message){
+  window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'dominoes', event:event, type:type, message:message } }));
+}
+
 /* PLAY 3D DOMINOES — SCORE-ON-PLAY COUNTING FIVES
    Scope: Dominoes script only.
    Rules kept: score every scoring play, first score must be 10+ to get in, game to 150.
