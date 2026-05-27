@@ -1,0 +1,109 @@
+﻿:root {
+  --superior-gold: #f2d27b;
+  --superior-gold-deep: #caa24a;
+  --superior-black: rgba(0,0,0,.82);
+  --superior-cream: #f8edc8;
+}
+
+.superior-event-overlay {
+  position: fixed;
+  left: 50%;
+  bottom: max(22px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 99999;
+  display: grid;
+  gap: 10px;
+  width: min(720px, calc(100vw - 28px));
+  pointer-events: none;
+  justify-items: center;
+}
+
+.superior-event-message {
+  max-width: 100%;
+  padding: 12px 18px;
+  border: 1px solid rgba(242,210,123,.52);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.18)),
+    var(--superior-black);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.05) inset,
+    0 18px 46px rgba(0,0,0,.52),
+    0 0 34px rgba(242,210,123,.18);
+  color: var(--superior-cream);
+  font: 900 clamp(13px, 1.8vw, 18px) Oswald, Arial, sans-serif;
+  letter-spacing: .09em;
+  text-align: center;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(14px) scale(.98);
+  transition: opacity .22s ease, transform .22s ease, filter .22s ease;
+  filter: saturate(.9);
+}
+
+.superior-event-message.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: saturate(1.08);
+}
+
+.superior-event-message.is-exiting {
+  opacity: 0;
+  transform: translateY(10px) scale(.98);
+}
+
+.superior-event-normal {
+  border-color: rgba(242,210,123,.48);
+}
+
+.superior-event-success {
+  border-color: rgba(116,255,171,.75);
+  box-shadow: 0 18px 46px rgba(0,0,0,.52), 0 0 34px rgba(116,255,171,.24);
+}
+
+.superior-event-warning {
+  border-color: rgba(255,198,78,.8);
+  color: #ffe3a6;
+}
+
+.superior-event-elite {
+  border-color: rgba(242,210,123,.9);
+  color: var(--superior-gold);
+  box-shadow: 0 18px 46px rgba(0,0,0,.52), 0 0 42px rgba(242,210,123,.28);
+}
+
+.superior-event-boss {
+  border-color: rgba(255,255,255,.72);
+  color: #fff7d8;
+  background:
+    linear-gradient(180deg, rgba(242,210,123,.16), rgba(0,0,0,.22)),
+    var(--superior-black);
+}
+
+.superior-event-casino {
+  border-color: rgba(242,210,123,.78);
+  color: var(--superior-gold);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(242,210,123,.22), transparent 58%),
+    var(--superior-black);
+}
+
+.superior-event-music {
+  border-color: rgba(180,118,255,.76);
+  color: #ead7ff;
+  box-shadow: 0 18px 46px rgba(0,0,0,.52), 0 0 38px rgba(180,118,255,.22);
+}
+
+@media (max-width: 640px) {
+  .superior-event-overlay {
+    bottom: max(14px, env(safe-area-inset-bottom));
+    width: calc(100vw - 18px);
+  }
+
+  .superior-event-message {
+    width: 100%;
+    border-radius: 18px;
+    padding: 11px 13px;
+    letter-spacing: .06em;
+  }
+}
