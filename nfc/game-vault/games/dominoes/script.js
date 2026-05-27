@@ -25,7 +25,6 @@ const BRANCH_DIRS = {
   top:{x:0,y:-1},
   bottom:{x:0,y:1}
 };
-const EDGE_TURN_PADDING = 64;
 
 const state = {
   players:2,
@@ -168,40 +167,6 @@ function oppositeSide(arm){
   return {left:'right',right:'left',top:'bottom',bottom:'top'}[arm] || 'right';
 }
 
-function visibleBoardBounds(){
-  const table = document.querySelector('.table-center');
-  const rect = table ? table.getBoundingClientRect() : null;
-  const width = rect && rect.width ? rect.width : 1080;
-  const height = rect && rect.height ? rect.height : 680;
-  return {
-    left:-(width / 2) + EDGE_TURN_PADDING,
-    right:(width / 2) - EDGE_TURN_PADDING,
-    top:-(height / 2) + EDGE_TURN_PADDING,
-    bottom:(height / 2) - EDGE_TURN_PADDING
-  };
-}
-
-function placementFitsBoard(placement,bounds){
-  const size = TILE_SIZE[placement.orientation || 'horizontal'] || TILE_SIZE.horizontal;
-  const x = placement.x || 0;
-  const y = placement.y || 0;
-  return x - size.w / 2 >= bounds.left &&
-    x + size.w / 2 <= bounds.right &&
-    y - size.h / 2 >= bounds.top &&
-    y + size.h / 2 <= bounds.bottom;
-}
-
-function cornerOptions(flowSide,anchor,bounds){
-  if(flowSide === 'left' || flowSide === 'right'){
-    const topSpace = (anchor.y || 0) - bounds.top;
-    const bottomSpace = bounds.bottom - (anchor.y || 0);
-    return bottomSpace >= topSpace ? ['bottom','top'] : ['top','bottom'];
-  }
-  const leftSpace = (anchor.x || 0) - bounds.left;
-  const rightSpace = bounds.right - (anchor.x || 0);
-  return rightSpace >= leftSpace ? ['right','left'] : ['left','right'];
-}
-
 function buildBranchPlacement(rawTile,logicalArm,match,anchor,flowSide){
   const oriented = orientForArm(rawTile,match,flowSide);
   const orientation = branchOrientation(flowSide,oriented);
@@ -231,22 +196,6 @@ function buildBranchPlacement(rawTile,logicalArm,match,anchor,flowSide){
   };
 }
 
-function chooseEdgeAwarePlacement(rawTile,logicalArm,match,anchor){
-  const bounds = visibleBoardBounds();
-  const preferredSide = anchor && anchor.flowSide ? anchor.flowSide : logicalArm;
-  let placement = buildBranchPlacement(rawTile,logicalArm,match,anchor,preferredSide);
-  if(placementFitsBoard(placement,bounds)) return placement;
-
-  const turns = cornerOptions(preferredSide,anchor,bounds);
-  for(const side of turns){
-    const turned = buildBranchPlacement(rawTile,logicalArm,match,anchor,side);
-    if(placementFitsBoard(turned,bounds)) return turned;
-    if(!placement) placement = turned;
-  }
-
-  return buildBranchPlacement(rawTile,logicalArm,match,anchor,turns[0] || preferredSide);
-}
-
 function makeSpinnerPlacement(tile){
   return {
     tile:tile.slice(),
@@ -267,7 +216,7 @@ function makeSpinnerPlacement(tile){
 function makeBranchPlacement(rawTile,arm,match){
   const branch = state.board.spinnerArms[arm] || [];
   const anchor = branch.length ? branch[branch.length-1] : state.board.spinnerTile;
-  return chooseEdgeAwarePlacement(rawTile,arm,match,anchor);
+  return buildBranchPlacement(rawTile,arm,match,anchor,arm);
 }
 
 function rebranchPlacement(item,branch){
