@@ -198,7 +198,7 @@
       return;
     }
     spinning = true;
-    play3dAnnounce('SPIN','casino');
+    play3dAnnounce('SPIN','casino','SPINNING.');
     creditsVal -= betVal;
     if(bank) bank.addJackpot(Math.ceil(betVal * 0.08));
     lastWin.textContent = '0';
