@@ -9,7 +9,7 @@
   const state={
     players:4,
     hands:[], captured:[[],[]], trick:[], scores:[0,0], handScores:[0,0], meldScores:[0,0], trickScores:[0,0],
-    currentPlayerIndex:0, dealer:3, currentBidder:0, bidder:null, bidTeam:0, bid:0, trump:'S', phase:'bidding', lastWinner:0, handNumber:0, passed:[false,false,false,false], lastBidMessage:''
+    currentPlayerIndex:0, dealer:3, currentBidder:0, bidder:null, bidTeam:0, bid:0, trump:'S', phase:'bidding', lastWinner:0, handNumber:0, passed:[false,false,false,false], meldShown:false, lastBidMessage:''
   };
 
   function thinkDelay(){return 450+Math.floor(Math.random()*850)}
@@ -110,7 +110,7 @@
       showBidBanner(seatName(state.bidder)+' WINS BID '+state.bid);
       bidDebug('bidding_won',{winner:state.bidder});
       const started=startHandWithBid(state.bidder,state.bid);
-      if(started&&state.currentPlayerIndex!==0)scheduleCpu();
+      if(started) render(seatName(state.bidder)+' WON BID '+state.bid+' / SHOW MELD');
       return true;
     }
     return false;
@@ -149,7 +149,7 @@
     const deck=buildDeck();
     state.hands=Array.from({length:4},()=>deck.splice(0,20));
     state.captured=[[],[]]; state.trick=[]; state.handScores=[0,0]; state.meldScores=[0,0]; state.trickScores=[0,0];
-    state.bid=0; state.bidder=null; state.bidTeam=0; state.trump='S'; state.phase='bidding'; state.lastWinner=0; state.passed=[false,false,false,false]; state.currentBidder=leftOfDealer(); state.currentPlayerIndex=state.currentBidder;
+    state.bid=0; state.bidder=null; state.bidTeam=0; state.trump='S'; state.phase='bidding'; state.lastWinner=0; state.passed=[false,false,false,false]; state.meldShown=false; state.currentBidder=leftOfDealer(); state.currentPlayerIndex=state.currentBidder;
     sortHands(); bidDebug('deal'); showBidBanner(seatName(state.currentBidder)+' BIDS FIRST'); render('DEALER '+seatName(state.dealer)+' - '+seatName(state.currentBidder)+' BIDS FIRST');
     if(state.currentBidder!==0)scheduleCpu();
   }
@@ -158,7 +158,7 @@
     const chosen=state.trump;
     if(!hasMarriage(state.hands[player], chosen)){bidDebug('missing_trump_marriage',{player,trump:chosen});render('BIDDER NEEDS TRUMP MARRIAGE');return false}
     state.bidder=player; state.bidTeam=teamIndex(player); state.bid=Math.max(50,Number(bid)||50);
-    state.phase='meld'; state.currentPlayerIndex=player;
+    state.phase='meld'; state.currentPlayerIndex=player; state.meldShown=false;
     bidDebug('meld_start',{player,bid:state.bid,trump:state.trump});
     render(seatName(player)+' WON BID '+state.bid+' / TRUMP '+state.trump+' - TAKE MELD');
     return true;
@@ -182,13 +182,18 @@
   }
   function takeMeld(auto){
     if(state.phase!=='meld')return;
-    state.meldScores=[0,0];
-    state.hands.forEach((hand,p)=>{state.meldScores[teamIndex(p)]+=meldScore(hand)});
-    state.handScores[0]=state.meldScores[0]; state.handScores[1]=state.meldScores[1];
+    if(!state.meldShown){
+      state.meldScores=[0,0];
+      state.hands.forEach((hand,p)=>{state.meldScores[teamIndex(p)]+=meldScore(hand)});
+      state.handScores[0]=state.meldScores[0]; state.handScores[1]=state.meldScores[1];
+      state.meldShown=true;
+      render('MELD: TEAM A '+state.meldScores[0]+' / TEAM B '+state.meldScores[1]+' - START PLAY');
+      if(window.Play3DPoints&&state.meldScores[0]>0)window.Play3DPoints.award('pinochle',Math.min(150,state.meldScores[0]*5),'meld_score');
+      return;
+    }
     state.phase='play'; state.currentPlayerIndex=state.bidder;
-    render('MELD: TEAM A '+state.meldScores[0]+' / TEAM B '+state.meldScores[1]);
-    if(window.Play3DPoints&&state.meldScores[0]>0)window.Play3DPoints.award('pinochle',Math.min(150,state.meldScores[0]*5),'meld_score');
-    if(auto||state.currentPlayerIndex!==0)scheduleCpu();
+    render('PLAY STARTS - '+seatName(state.currentPlayerIndex)+' LEADS');
+    if(state.currentPlayerIndex!==0)scheduleCpu();
   }
   function leadSuit(){return state.trick[0]?.card.suit}
   function beats(card,best){
@@ -234,7 +239,7 @@
   function scheduleCpu(){render('OPPONENT THINKING...');setTimeout(cpuTurn,thinkDelay())}
   function cpuTurn(){
     if(state.phase==='bidding'){cpuBid(state.currentBidder);return}
-    if(state.phase==='meld'){takeMeld(true);return}
+    if(state.phase==='meld')return
     if(state.phase!=='play'||state.currentPlayerIndex===0)return;
     const legal=legalCards(state.currentPlayerIndex); if(!legal.length)return;
     const best=state.trick.length?currentBest().card:null;
@@ -243,6 +248,7 @@
     play(state.currentPlayerIndex,state.hands[state.currentPlayerIndex].findIndex(c=>c.id===chosen.id));
   }
   function render(label){
+    if(typeof meldBtn !== 'undefined' && meldBtn) meldBtn.textContent = state.phase==='meld' && state.meldShown ? 'Start Play' : 'Meld';
     updateBidStatusPanel();
     updateBidControls();
     opponentHand.innerHTML=backs((state.hands[1]||[]).length)+'<div class="count-card">Partner '+(state.hands[2]||[]).length+'<br>Right '+(state.hands[3]||[]).length+'</div>';
