@@ -13,7 +13,7 @@
   const state={
     players:4,
     hands:[], captured:[[],[]], trick:[], scores:[0,0], handScores:[0,0], meldScores:[0,0], trickScores:[0,0],
-    currentPlayerIndex:0, dealer:3, currentBidder:0, bidder:null, bidTeam:0, bid:0, trump:'S', phase:'bidding', lastWinner:0, handNumber:0, handToken:0, cpuTimer:null, passed:[false,false,false,false], meldShown:false, lastBidMessage:''
+    currentPlayerIndex:0, dealer:3, currentBidder:0, bidder:null, bidTeam:0, bid:0, trump:'S', phase:'bidding', lastWinner:0, handNumber:0, handToken:0, cpuTimer:null, passed:[false,false,false,false], meldShown:false, trumpMarriageValid:true, lastBidMessage:''
   };
 
   function thinkDelay(){return 450+Math.floor(Math.random()*850)}
@@ -36,14 +36,18 @@
   function meldScore(hand){
     const counts=countCards(hand); let total=0;
     for(const suit of suits){
-      const marriage=Math.min(countRankSuit(counts,'K',suit),countRankSuit(counts,'Q',suit));
-      total+=marriage*(suit===state.trump?4:2);
       const run=Math.min(countRankSuit(counts,'A',suit),countRankSuit(counts,'10',suit),countRankSuit(counts,'K',suit),countRankSuit(counts,'Q',suit),countRankSuit(counts,'J',suit));
-      total+=run*(suit===state.trump?15:0);
+      if(suit===state.trump){
+        total+=run>=2?150:run*15;
+      }
+      const marriages=Math.min(countRankSuit(counts,'K',suit),countRankSuit(counts,'Q',suit));
+      const unusedMarriage=Math.max(0,marriages-(suit===state.trump?run:0));
+      total+=unusedMarriage*(suit===state.trump?4:2);
+      if(suit===state.trump) total+=countRankSuit(counts,'9',suit);
     }
-    const around=(rank,points)=>{const copies=Math.min(...suits.map(s=>countRankSuit(counts,rank,s))); total+=copies*points};
-    around('A',10); around('K',8); around('Q',6); around('J',4);
-    const pin=Math.min(countRankSuit(counts,'Q','S'),countRankSuit(counts,'J','D')); total+=pin*4;
+    const around=(rank,points,doublePoints)=>{const copies=Math.min(...suits.map(s=>countRankSuit(counts,rank,s))); total+=copies>=2?doublePoints:copies*points};
+    around('A',10,100); around('K',8,80); around('Q',6,60); around('J',4,40);
+    const pin=Math.min(countRankSuit(counts,'Q','S'),countRankSuit(counts,'J','D')); total+=pin>=2?30:pin*4;
     return total;
   }
   function leftOfDealer(){return (state.dealer+1)%4}
@@ -109,7 +113,16 @@
   }
   function finishBiddingIfReady(){
     const active=activeBidders();
-    if(state.bidder===null&&active.length===0){state.phase='over';bidDebug('all_passed');render('ALL PASSED - DEAL AGAIN');return true}
+    if(state.bidder===null&&active.length===0){
+      state.bidder=state.dealer;
+      state.bidTeam=teamIndex(state.dealer);
+      state.bid=50;
+      state.trump=chooseTrumpForBidder(state.dealer);
+      showBidBanner('STICK THE DEALER - '+seatName(state.dealer)+' TAKES 50');
+      bidDebug('stick_dealer',{dealer:state.dealer,trump:state.trump});
+      startHandWithBid(state.dealer,50);
+      return true;
+    }
     if(state.bidder!==null&&active.length===1&&active[0]===state.bidder){
       showBidBanner(seatName(state.bidder)+' WINS BID '+state.bid);
       bidDebug('bidding_won',{winner:state.bidder});
@@ -130,8 +143,9 @@
   }
   function placeBid(player,bid){
     if(state.phase!=='bidding'||player!==state.currentBidder)return false;
-    const amount=Number(bid)||0;
-    const minimum=state.bid>0?state.bid+1:50;
+    let amount=Number(bid)||0;
+    if(amount%5!==0) amount=Math.ceil(amount/5)*5;
+    const minimum=state.bid>0?state.bid+5:50;
     if(amount<minimum){render('BID MUST BE '+minimum+' OR PASS');bidDebug('bad_bid',{player,amount,minimum});return false}
     state.bid=amount; state.bidder=player; state.bidTeam=teamIndex(player); state.passed[player]=false;
     showBidBanner(seatName(player)+' BID '+amount);
@@ -163,11 +177,16 @@
     const deck=buildDeck();
     state.hands=Array.from({length:4},()=>deck.splice(0,20));
     state.captured=[[],[]]; state.trick=[]; state.handScores=[0,0]; state.meldScores=[0,0]; state.trickScores=[0,0];
-    state.bid=0; state.bidder=null; state.bidTeam=0; state.trump='S'; state.phase='bidding'; state.lastWinner=0; state.passed=[false,false,false,false]; state.meldShown=false; state.currentBidder=leftOfDealer(); state.currentPlayerIndex=state.currentBidder;
+    state.bid=0; state.bidder=null; state.bidTeam=0; state.trump='S'; state.phase='bidding'; state.lastWinner=0; state.passed=[false,false,false,false]; state.meldShown=false; state.trumpMarriageValid=true; state.currentBidder=leftOfDealer(); state.currentPlayerIndex=state.currentBidder;
     sortHands(); bidDebug('deal'); showBidBanner(seatName(state.currentBidder)+' BIDS FIRST'); render('DEALER '+seatName(state.dealer)+' - '+seatName(state.currentBidder)+' BIDS FIRST');
     if(state.currentBidder!==0)scheduleCpu();
   }
-function setTrump(suit){state.trump=suit; play3dAnnounce('TRUMP','elite','TRUMP '+suit); render('TRUMP '+suit)}
+function setTrump(suit){
+  state.trump=suit;
+  if(state.phase==='meld'&&state.bidder!==null) state.trumpMarriageValid=hasMarriage(state.hands[state.bidder]||[],state.trump);
+  play3dAnnounce('TRUMP','elite','TRUMP '+suit);
+  render('TRUMP '+suit+(state.phase==='meld'&&!state.trumpMarriageValid?' - NO TRUMP MARRIAGE':''));
+}
 function chooseTrumpForBidder(player){
   const hand=state.hands[player]||[];
   if(hasMarriage(hand,state.trump))return state.trump;
@@ -181,9 +200,10 @@ function startHandWithBid(player,bid){
     showBidBanner(seatName(player)+' SETS TRUMP '+chosen);
   }
   state.bidder=player; state.bidTeam=teamIndex(player); state.bid=Math.max(50,Number(bid)||50);
+  state.trumpMarriageValid=hasMarriage(state.hands[player]||[],state.trump);
   state.phase='meld'; state.currentPlayerIndex=player; state.meldShown=false;
   bidDebug('meld_start',{player,bid:state.bid,trump:state.trump});
-  render(seatName(player)+' WON BID '+state.bid+' / TRUMP '+state.trump+' - SHOW MELD');
+  render(seatName(player)+' WON BID '+state.bid+' / TRUMP '+state.trump+(state.trumpMarriageValid?' - SHOW MELD':' - NO TRUMP MARRIAGE'));
   return true;
 }
   function playerBid(){
@@ -246,10 +266,11 @@ function takeMeld(auto){
   if(!state.meldShown){
     state.meldScores=[0,0];
     state.hands.forEach((hand,p)=>{state.meldScores[teamIndex(p)]+=meldScore(hand)});
+    if(!state.trumpMarriageValid) state.meldScores[state.bidTeam]=0;
       state.handScores[0]=state.meldScores[0]; state.handScores[1]=state.meldScores[1];
       state.meldShown=true;
       play3dAnnounce('MELD','elite');
-      render('MELD: TEAM A '+state.meldScores[0]+' / TEAM B '+state.meldScores[1]+' - START PLAY');
+      render((state.trumpMarriageValid?'MELD':'NO TRUMP MARRIAGE - BID TEAM MELD ZERO')+': TEAM A '+state.meldScores[0]+' / TEAM B '+state.meldScores[1]+' - START PLAY');
       if(window.Play3DPoints&&state.meldScores[0]>0)window.Play3DPoints.award('pinochle',Math.min(150,state.meldScores[0]*5),'meld_score');
       return;
     }
