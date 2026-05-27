@@ -6,6 +6,7 @@
   var maxMessages = 2;
   var queue = [];
   var speaking = false;
+  var voiceUnlocked = false;
 
   function readFlag(key, fallback){
     try{
@@ -51,12 +52,27 @@
     }, 3300);
   }
 
+  function unlockVoice(){
+    voiceUnlocked = true;
+    try{
+      if('speechSynthesis' in window) window.speechSynthesis.resume();
+    }catch(e){}
+    speakNext();
+  }
+
+  function installVoiceUnlock(){
+    ['pointerdown','click','keydown','touchstart'].forEach(function(eventName){
+      window.addEventListener(eventName, unlockVoice, { once:true, passive:true });
+    });
+  }
+
   function speakNext(){
     if(speaking || !queue.length) return;
     if(!voiceEnabled || muted || !('speechSynthesis' in window)){
       queue.length = 0;
       return;
     }
+    if(!voiceUnlocked) return;
     var text = queue.shift();
     speaking = true;
     try{
@@ -106,11 +122,14 @@
     unmute:function(){ muted = false; saveFlag(MUTE_KEY, false); this.say('PLAY 3D announcer unmuted.', 'success'); },
     enable:function(){ this.unmute(); },
     disable:function(){ this.mute(); },
-    isVoiceEnabled:function(){ return !!voiceEnabled && !muted; }
+    isVoiceEnabled:function(){ return !!voiceEnabled && !muted; },
+    unlockVoice:unlockVoice
   };
 
   window.SuperiorEvents = SuperiorEvents;
   window.Superior = window.Superior || SuperiorEvents;
+  installVoiceUnlock();
+  console.log('[PLAY3D ANNOUNCER] loaded');
 
   window.addEventListener('superior:event', function(evt){
     var detail = evt.detail || {};
