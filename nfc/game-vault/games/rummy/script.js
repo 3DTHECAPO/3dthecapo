@@ -31,6 +31,24 @@
     return nums.length === cards.length && nums.every((n,i)=>i === 0 || n === nums[i - 1] + 1);
   }
   function isMeld(cards){ return isSet(cards) || isRun(cards); }
+  function sortedRun(cards){ return cards.slice().sort((a,b)=>order[a.r] - order[b.r]); }
+  function isSameSuit(cards){ return cards.length > 0 && cards.every(c => c.s === cards[0].s); }
+  function isExtendableRun(meld, cardToAdd){
+    if(!cardToAdd || !isRun(meld) || !isSameSuit([...meld, cardToAdd])) return false;
+    const values = meld.map(c => order[c.r]);
+    const value = order[cardToAdd.r];
+    if(values.includes(value)) return false;
+    return value === Math.min(...values) - 1 || value === Math.max(...values) + 1;
+  }
+  function isExtendableSet(meld, cardToAdd){
+    if(!cardToAdd || !isSet(meld) || cardToAdd.r !== meld[0].r) return false;
+    return !meld.some(c => c.s === cardToAdd.s);
+  }
+  function extendedMeld(meld, cardToAdd){
+    if(isExtendableRun(meld, cardToAdd)) return sortedRun([...meld, cardToAdd]);
+    if(isExtendableSet(meld, cardToAdd)) return [...meld, cardToAdd];
+    return null;
+  }
   function cardValue(c){ if(c.r === 'A') return 15; if(['K','Q','J'].includes(c.r)) return 10; return Number(c.r); }
   function deadwood(hand){ return hand.reduce((sum,c)=>sum + cardValue(c), 0); }
   function removeIndexes(hand, indexes){ const picked = indexes.map(i => hand[i]).filter(Boolean); indexes.sort((a,b)=>b-a).forEach(i => hand.splice(i, 1)); return picked; }
@@ -87,6 +105,29 @@
     if(window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(10, scoreMeld(picked)), 'meld');
     checkRound();
     render();
+  }
+  function layoffSelected(){
+    if(state.phase !== 'meld') return;
+    const indexes = [...state.selected].sort((a,b)=>a-b);
+    if(indexes.length !== 1){ els.text.textContent = 'SELECT ONE CARD TO ADD'; return; }
+    const index = indexes[0];
+    const cardToAdd = state.hands[0][index];
+    if(!cardToAdd){ els.text.textContent = 'SELECT ONE CARD TO ADD'; return; }
+    for(let i = 0; i < state.playerMelds.length; i++){
+      const nextMeld = extendedMeld(state.playerMelds[i], cardToAdd);
+      if(nextMeld){
+        removeIndexes(state.hands[0], [index]);
+        state.playerMelds[i] = nextMeld;
+        state.score += cardValue(cardToAdd);
+        state.selected.clear();
+        if(window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(5, cardValue(cardToAdd)), 'layoff');
+        checkRound();
+        render();
+        els.text.textContent = 'ADDED ' + cardToAdd.r + suitIcon[cardToAdd.s] + ' TO EXISTING MELD';
+        return;
+      }
+    }
+    els.text.textContent = 'CARD DOES NOT FIT EXISTING MELD';
   }
   function discardSelected(){
     if(state.phase !== 'meld') return;
@@ -146,6 +187,7 @@
   document.getElementById('drawStockBtn').onclick = drawFromStock;
   document.getElementById('drawDiscardBtn').onclick = drawFromDiscard;
   document.getElementById('meldBtn').onclick = meldSelected;
+  document.getElementById('layoffBtn').onclick = layoffSelected;
   document.getElementById('discardBtn').onclick = discardSelected;
   window.addEventListener('play3d:modechange', function(){ state.playerCount = 2; deal(); });
   deal();
