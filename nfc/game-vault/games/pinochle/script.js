@@ -328,32 +328,54 @@ function takeMeld(auto){
     render('OPPONENT THINKING...');
     state.cpuTimer=setTimeout(()=>cpuTurn(token),thinkDelay());
   }
-  function cpuTurn(token){
+function chooseCpuCard(player,legal){
+  const best=state.trick.length?currentBest():null;
+  const bestCard=best?best.card:null;
+  const partnerWinning=best&&teamIndex(best.player)===teamIndex(player);
+  const legalCounters=legal.filter(c=>counters[c.rank]>0);
+  const legalNonCounters=legal.filter(c=>counters[c.rank]===0);
+  const legalTrumps=legal.filter(c=>c.suit===state.trump);
+  const beaters=bestCard?legal.filter(c=>beats(c,bestCard)):[];
+
+  if(partnerWinning){
+    const safeCounters=legalCounters.filter(c=>c.suit!==state.trump||state.trick.some(p=>p.card.suit===state.trump));
+    if(safeCounters.length){
+      return safeCounters.slice().sort((a,b)=>counters[b.rank]-counters[a.rank]||order[b.rank]-order[a.rank])[0];
+    }
+    if(legalNonCounters.length){
+      return legalNonCounters.slice().sort((a,b)=>order[a.rank]-order[b.rank])[0];
+    }
+    return legal.slice().sort((a,b)=>order[a.rank]-order[b.rank])[0];
+  }
+
+  if(bestCard&&beaters.length){
+    return beaters.slice().sort((a,b)=>{
+      const aTrump=a.suit===state.trump, bTrump=b.suit===state.trump;
+      if(aTrump!==bTrump) return Number(aTrump)-Number(bTrump);
+      if(counters[a.rank]!==counters[b.rank]) return counters[a.rank]-counters[b.rank];
+      return order[a.rank]-order[b.rank];
+    })[0];
+  }
+
+  if(bestCard&&legalTrumps.length&&!state.trick.some(p=>teamIndex(p.player)===teamIndex(player))){
+    return legalTrumps.slice().sort((a,b)=>order[a.rank]-order[b.rank])[0];
+  }
+
+  if(!state.trick.length){
+    const lowNonCounter=legalNonCounters.slice().sort((a,b)=>order[a.rank]-order[b.rank])[0];
+    return lowNonCounter||legal.slice().sort((a,b)=>order[b.rank]-order[a.rank])[0];
+  }
+
+  return (legalNonCounters.length?legalNonCounters:legal).slice().sort((a,b)=>order[a.rank]-order[b.rank])[0];
+}
+function cpuTurn(token){
     state.cpuTimer=null;
     if(token!==undefined&&token!==state.handToken)return;
     if(state.phase==='bidding'){cpuBid(state.currentBidder);return}
     if(state.phase==='meld')return
     if(state.phase!=='play'||state.currentPlayerIndex===0)return;
     const legal=legalCards(state.currentPlayerIndex); if(!legal.length)return;
-    const best=state.trick.length?currentBest().card:null;
-    const partnerWinning=state.trick.length&&currentBest().player%2===state.currentPlayerIndex%2;
-    const lateTrick=state.trick.length>=2;
-    const beaters=best?legal.filter(c=>beats(c,best)):[];
-    let pool=legal;
-    if(beaters.length&&!partnerWinning) pool=beaters;
-    const chosen=pool.slice().sort((a,b)=>{
-      const aCounter=counters[a.rank], bCounter=counters[b.rank];
-      const aTrump=a.suit===state.trump, bTrump=b.suit===state.trump;
-      if(partnerWinning){
-        if(aCounter!==bCounter) return aCounter-bCounter;
-        if(aTrump!==bTrump) return Number(aTrump)-Number(bTrump);
-      }
-      if(lateTrick&&!partnerWinning&&aCounter!==bCounter) return bCounter-aCounter;
-      if(aTrump!==bTrump&&best&&best.suit!==state.trump) return Number(aTrump)-Number(bTrump);
-      if(beaters.length&&!partnerWinning) return order[a.rank]-order[b.rank];
-      if(aCounter!==bCounter) return aCounter-bCounter;
-      return order[a.rank]-order[b.rank];
-    })[0];
+    const chosen=chooseCpuCard(state.currentPlayerIndex,legal);
     play(state.currentPlayerIndex,state.hands[state.currentPlayerIndex].findIndex(c=>c.id===chosen.id));
   }
 function render(label){
