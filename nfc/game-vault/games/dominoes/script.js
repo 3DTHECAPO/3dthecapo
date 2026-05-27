@@ -207,6 +207,35 @@ function makeBranchPlacement(rawTile,arm,match){
   };
 }
 
+function rebranchPlacement(item,branch){
+  return Object.assign({}, item, {
+    branch,
+    direction:BRANCH_DIRS[branch],
+    exposedSide:branch,
+    connectedSide:oppositeSide(branch),
+    exposedPip:exposedPipFromOriented(branch, placementTile(item)),
+    spinner:false
+  });
+}
+
+function promoteFirstDoubleToSpinner(placement,arm,existingLine){
+  state.board.spinnerTile = Object.assign({}, placement, {
+    branch:'spinner',
+    connectedSide:null,
+    exposedSide:'all',
+    exposedPip:placement.tile[0],
+    matchPip:placement.tile[0],
+    double:true,
+    spinner:true
+  });
+  state.board.spinnerArms = {left:[],right:[],top:[],bottom:[]};
+  if(arm === 'left'){
+    state.board.spinnerArms.right = existingLine.map(item=>rebranchPlacement(item,'right'));
+  }else{
+    state.board.spinnerArms.left = existingLine.slice().reverse().map(item=>rebranchPlacement(item,'left'));
+  }
+}
+
 function refreshPlacements(){
   const placements = [];
   if(state.board.spinnerTile) placements.push(state.board.spinnerTile);
@@ -386,6 +415,7 @@ function placeOnArm(tile,arm){
 
   if(!state.board.spinnerTile){
     const line = state.board.spinnerArms.right;
+    const existingLine = line.slice();
     const oriented = orientForArm(tile,end.value,arm);
     const previous = arm === 'left' ? line[0] : line[line.length-1];
     const direction = arm === 'left' ? -1 : 1;
@@ -405,7 +435,9 @@ function placeOnArm(tile,arm){
       double:isDouble(oriented),
       spinner:false
     };
-    if(arm === 'left') line.unshift(placement);
+    if(isDouble(oriented)){
+      promoteFirstDoubleToSpinner(placement,arm,existingLine);
+    }else if(arm === 'left') line.unshift(placement);
     else line.push(placement);
   }else{
     const placement = makeBranchPlacement(tile,arm,end.value);
@@ -569,9 +601,9 @@ function finishBlocked(){
     const total = handTotal(index);
     return total < best.total ? {index,total} : best;
   },{index:0,total:Infinity}).index;
-  state.nextLeader = winner;
+  state.nextLeader = null;
   if(turnTextEl) turnTextEl.textContent = 'BLOCKED ROUND ? WASH THE DISHES';
-  log('Blocked round. '+seatName(winner)+' leads next hand.');
+  log('Blocked round. '+seatName(winner)+' wins low count. Next hand starts by highest available double.');
   render();
 }
 
