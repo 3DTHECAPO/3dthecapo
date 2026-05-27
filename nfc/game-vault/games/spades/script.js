@@ -1,6 +1,10 @@
 (()=>{
   'use strict';
 
+  function play3dAnnounce(event, type, message){
+    window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'spades', event:event, type:type, message:message } }));
+  }
+
   const suits = ['S','H','D','C'];
   const ranks = ['A','K','Q','J','10','9','8','7','6','5','4','3','2'];
   const seats = ['south','west','north','east'];
@@ -53,6 +57,7 @@
     if(state.phase !== 'bid' || state.bids[seat] !== null) return;
     state.bids[seat] = Number(bid);
     log(seatName(seat) + ' bid ' + (Number(bid) === 0 ? 'nil' : bid) + '.');
+    play3dAnnounce(Number(bid) === 0 ? 'NIL' : 'BID', 'casino');
     for(const cpu of seats.filter(s => s !== 'south')){
       if(state.bids[cpu] === null) state.bids[cpu] = estimateBid(cpu);
     }
@@ -134,6 +139,7 @@
     const win = trickWinnerCard().seat;
     state.taken[win]++;
     log(seatName(win) + ' won the trick.');
+    play3dAnnounce('TRICK','boss');
     state.turn = win;
     state.trick = [];
     if((state.hands.south || []).length === 0){ finishHand(); return; }
@@ -147,6 +153,7 @@
     state.phase = 'over';
     if(window.Play3DPoints && state.score.NS >= state.score.EW) window.Play3DPoints.award('spades', 175, 'contract_hand');
     log('Hand scored. Bags: NS ' + state.bags.NS + ', EW ' + state.bags.EW + '.');
+    play3dAnnounce('WIN','success');
     render();
   }
 
