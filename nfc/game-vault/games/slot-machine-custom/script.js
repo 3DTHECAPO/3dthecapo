@@ -1,6 +1,10 @@
 (()=>{
   'use strict';
 
+  function play3dAnnounce(event, type, message){
+    window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'slots', event:event, type:type, message:message } }));
+  }
+
   const bank = window.Play3DGameBank;
   const points = window.Play3DPoints;
   const regularSymbols = [
@@ -26,6 +30,18 @@
   let spinning = false;
   const cells = [];
   const payListEl = document.getElementById('payList');
+  const paylineOverlay = document.getElementById('paylineOverlay');
+  const payLines = [
+    {key:'top', name:'Top row', cells:[0,1,2]},
+    {key:'middle', name:'Middle row', cells:[3,4,5]},
+    {key:'bottom', name:'Bottom row', cells:[6,7,8]},
+    {key:'diagonal-down', name:'Diagonal down', cells:[0,4,8]},
+    {key:'diagonal-up', name:'Diagonal up', cells:[2,4,6]},
+    {key:'left-column', name:'Left column', cells:[0,3,6]},
+    {key:'middle-column', name:'Middle column', cells:[1,4,7]},
+    {key:'right-column', name:'Right column', cells:[2,5,8]}
+  ];
+  let lastLineHits = [];
 
   function save(){
     if(bank) bank.setCredits(creditsVal);
@@ -75,34 +91,46 @@
 
   function renderPayList(){
     if(!payListEl) return;
-    const rows = regularSymbols.map(symbol => {
+    const rows = [];
+    lastLineHits.forEach(hit => {
+      rows.push('<div class="last-hit"><span>Last hit: ' + hit.line + ' - ' + hit.combo + '</span><b>' + hit.payout + '</b></div>');
+    });
+    regularSymbols.forEach(symbol => {
       const payout = betVal * symbol.pay;
-      return '<div><span>3 ' + symbolLabel(symbol.id) + '</span><b>' + symbol.pay + 'x / ' + payout + '</b></div>';
+      rows.push('<div><span>3 ' + symbolLabel(symbol.id) + '</span><b>' + symbol.pay + 'x / ' + payout + '</b></div>');
     });
     rows.push('<div><span>3 Vault Pass Covers</span><b>25x / ' + (betVal * 25) + '</b></div>');
     rows.push('<div><span>Vault Jackpot Line</span><b>Jackpot + line</b></div>');
     payListEl.innerHTML = rows.join('');
   }
 
+  function clearPaylines(){
+    if(!paylineOverlay) return;
+    paylineOverlay.querySelectorAll('.line').forEach(line => line.classList.remove('hit'));
+  }
+
+  function showPaylineHits(hits){
+    clearPaylines();
+    if(!paylineOverlay || !hits || !hits.length) return;
+    hits.forEach(hit => {
+      const line = paylineOverlay.querySelector('[data-line="' + hit.key + '"]');
+      if(line) line.classList.add('hit');
+    });
+  }
+
   function lineScore(board){
-    const lines = [
-      [0,1,2],[3,4,5],[6,7,8],
-      [0,3,6],[1,4,7],[2,5,8],
-      [0,4,8],[2,4,6]
-    ];
     let total = 0;
     let jackpotHit = false;
     const pays = Object.fromEntries(regularSymbols.map(s => [s.id, s.pay]));
-    const lineNames = ['Top row','Middle row','Bottom row','Left column','Center column','Right column','Diagonal down','Diagonal up'];
     const hits = [];
 
-    for(let i = 0; i < lines.length; i++){
-      const line = lines[i];
-      const ids = line.map(i => board[i].id);
+    for(let i = 0; i < payLines.length; i++){
+      const line = payLines[i];
+      const ids = line.cells.map(i => board[i].id);
       if(ids[0] === ids[1] && ids[1] === ids[2] && pays[ids[0]]){
         const payout = betVal * pays[ids[0]];
         total += payout;
-        hits.push({line:lineNames[i], combo:'3 ' + symbolLabel(ids[0]), payout});
+        hits.push({key:line.key, line:line.name, combo:'3 ' + symbolLabel(ids[0]), payout});
         if(ids[0] === 'vault') jackpotHit = true;
       }
     }
@@ -125,13 +153,20 @@
     cells.forEach(cell => cell.classList.remove('spinning'));
     const passCount = vaultPassCount(board);
     const scored = lineScore(board);
+    lastLineHits = scored.hits || [];
+    showPaylineHits(lastLineHits);
     let win = scored.total;
     let label = win ? 'ASSET LINE WIN' : 'NO WIN';
+
+    if(scored.hits && scored.hits.length) play3dAnnounce('COMBO_HIT','casino');
 
     if(scored.jackpotHit && bank){
       win += bank.claimJackpot();
       label = 'VAULT JACKPOT';
+      play3dAnnounce('JACKPOT','elite');
     }
+    if(win > 0) play3dAnnounce('WIN','success');
+
     if(passCount >= 3){
       label = 'VAULT PASS';
       win += betVal * 25;
@@ -163,12 +198,15 @@
       return;
     }
     spinning = true;
+    play3dAnnounce('SPIN','casino');
     creditsVal -= betVal;
     if(bank) bank.addJackpot(Math.ceil(betVal * 0.08));
     lastWin.textContent = '0';
     stateText.textContent = 'SPINNING';
     resultLine.textContent = 'Reels spinning...';
     playAgainBtn.hidden = true;
+    lastLineHits = [];
+    clearPaylines();
     spinBtn.classList.add('pulled');
     cells.forEach(cell => cell.classList.add('spinning'));
     save();

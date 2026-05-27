@@ -25,13 +25,26 @@ p{color:var(--muted);line-height:1.45}
 .machine-top span{font-family:"Black Ops One";font-size:24px;color:var(--gold2)}
 .machine-top strong{font-family:"Black Ops One";color:#fff;text-shadow:0 0 16px rgba(242,210,123,.45)}
 .machine-top b{color:var(--gold2)}
-.reel-window{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px;border-radius:26px;background:linear-gradient(180deg,#050505,#130f0b);border:5px solid #caa24a;box-shadow:inset 0 0 40px rgba(0,0,0,.9),0 18px 36px rgba(0,0,0,.5);overflow:hidden}
+.reel-stage{position:relative}
+.reel-window{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px;border-radius:26px;background:linear-gradient(180deg,#050505,#130f0b);border:5px solid #caa24a;box-shadow:inset 0 0 40px rgba(0,0,0,.9),0 18px 36px rgba(0,0,0,.5);overflow:hidden}
 .reel-cell{aspect-ratio:1;border-radius:16px;display:grid;place-items:center;background:linear-gradient(180deg,#fff5ce,#cdb26a 52%,#7b5514);border:3px solid #171006;box-shadow:inset 0 12px 20px rgba(255,255,255,.28),inset 0 -18px 30px rgba(0,0,0,.28);overflow:hidden}
 .reel-cell img{display:block;width:82%;height:82%;object-fit:contain;filter:drop-shadow(0 10px 10px rgba(0,0,0,.42))}
 .reel-cell[data-vault-pass="true"]{background:linear-gradient(180deg,#12090e,#020202);border-color:#f2d27b}
 .reel-cell[data-vault-pass="true"] img{width:100%;height:100%;object-fit:cover}
 .reel-cell.spinning img{animation:reelBlur .12s linear infinite}
 @keyframes reelBlur{0%{transform:translateY(-18px) scale(.96);opacity:.35}50%{transform:translateY(18px) scale(1.04);opacity:1}100%{transform:translateY(-18px) scale(.96);opacity:.35}}
+.payline-overlay{position:absolute;inset:21px;z-index:4;pointer-events:none;border-radius:19px;overflow:hidden}
+.payline-overlay .line{position:absolute;display:block;background:linear-gradient(90deg,transparent,rgba(255,244,180,.92),var(--gold2),rgba(255,244,180,.92),transparent);box-shadow:0 0 14px rgba(242,210,123,.58);opacity:.42}
+.payline-overlay .line.hit{opacity:1;background:linear-gradient(90deg,transparent,#fff4b4,#ff3535,#fff4b4,transparent);box-shadow:0 0 22px rgba(255,53,53,.9),0 0 18px rgba(242,210,123,.75);animation:paylinePulse .62s ease-in-out infinite alternate}
+.line-top,.line-middle,.line-bottom{left:0;right:0;height:3px}
+.line-top{top:16.666%}.line-middle{top:50%}.line-bottom{top:83.333%}
+.line-left-column,.line-middle-column,.line-right-column{top:0;bottom:0;width:3px;background:linear-gradient(180deg,transparent,rgba(255,244,180,.92),var(--gold2),rgba(255,244,180,.92),transparent)}
+.line-left-column{left:16.666%}.line-middle-column{left:50%}.line-right-column{left:83.333%}
+.line-diagonal-down,.line-diagonal-up{left:-21%;top:50%;width:142%;height:3px;transform-origin:center}
+.line-diagonal-down{transform:rotate(45deg)}.line-diagonal-up{transform:rotate(-45deg)}
+.line-marker{position:absolute;top:50%;z-index:5;transform:translateY(-50%);border:1px solid rgba(242,210,123,.58);border-radius:999px;background:rgba(0,0,0,.68);color:var(--gold2);font-size:10px;font-weight:900;letter-spacing:.12em;padding:4px 7px;box-shadow:0 0 14px rgba(0,0,0,.62)}
+.line-marker-left{left:6px}.line-marker-right{right:6px}
+@keyframes paylinePulse{from{filter:saturate(1);opacity:.82}to{filter:saturate(1.5);opacity:1}}
 .payline{height:4px;margin:16px 20px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);box-shadow:0 0 18px rgba(242,210,123,.8)}
 .machine-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
 .meter{border:1px solid rgba(242,210,123,.22);border-radius:16px;padding:12px;background:#080604;text-align:center}
@@ -46,6 +59,7 @@ p{color:var(--muted);line-height:1.45}
 .result-line{margin:14px 4px 0;text-align:center;color:#f7df9a;font-weight:800}
 .pay-list{margin-top:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;position:relative;z-index:2}
 .pay-list div{border:1px solid rgba(242,210,123,.24);border-radius:14px;background:rgba(0,0,0,.42);padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--muted);font-size:12px;font-weight:900;text-transform:uppercase}
+.pay-list div.last-hit{border-color:rgba(255,53,53,.52);background:linear-gradient(180deg,rgba(143,21,40,.32),rgba(0,0,0,.5));color:#fff4b4}
 .pay-list b{color:var(--gold2);white-space:nowrap}
 .vault-pass-overlay{position:fixed;inset:0;z-index:10;display:grid;place-items:center;padding:22px;background:rgba(0,0,0,.72);backdrop-filter:blur(10px)}
 .vault-pass-overlay[hidden]{display:none}

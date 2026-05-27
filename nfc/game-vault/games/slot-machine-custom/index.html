@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -6,6 +6,7 @@
 <title>PLAY 3D - 3D Slots</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="../../shared/superior/superior-events.css">
 <link rel="stylesheet" href="../shared/mode-bar.css">
 </head>
 <body>
@@ -36,7 +37,21 @@
       <strong>JACKPOT <b id="jackpot">5000</b></strong>
     </div>
 
-    <div class="reel-window" id="reelBoard" aria-label="slot reels"></div>
+    <div class="reel-stage">
+      <div class="reel-window" id="reelBoard" aria-label="slot reels"></div>
+      <div class="payline-overlay" id="paylineOverlay" aria-hidden="true">
+        <span class="line-marker line-marker-left">LINES</span>
+        <span class="line-marker line-marker-right">PAY</span>
+        <i class="line line-top" data-line="top"></i>
+        <i class="line line-middle" data-line="middle"></i>
+        <i class="line line-bottom" data-line="bottom"></i>
+        <i class="line line-diagonal-down" data-line="diagonal-down"></i>
+        <i class="line line-diagonal-up" data-line="diagonal-up"></i>
+        <i class="line line-left-column" data-line="left-column"></i>
+        <i class="line line-middle-column" data-line="middle-column"></i>
+        <i class="line line-right-column" data-line="right-column"></i>
+      </div>
+    </div>
     <div class="payline" aria-hidden="true"></div>
 
     <div class="machine-panel">
@@ -70,6 +85,8 @@
 </section>
 </main>
 
+<script src="../../shared/superior/superior-lines.js"></script>
+<script src="../../shared/superior/superior-events.js"></script>
 <script src="../shared/mode-bar.js"></script>
 <script src="../shared/game-bank.js"></script>
 <script src="../shared/game-points.js"></script>
@@ -85,3 +102,4 @@
 </script>
 </body>
 </html>
+
