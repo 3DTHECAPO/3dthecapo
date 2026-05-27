@@ -476,8 +476,14 @@ body{overflow:auto;}
 .log-panel ol,#log{max-height:calc(100vh - 220px);font-size:11px;overflow:auto;}
 .casino-table{position:relative;height:100%;min-height:680px;margin:0;border-width:10px;border-radius:46px;overflow:hidden;}
 .table-center{position:absolute!important;left:50%!important;top:50%!important;width:96%!important;height:94%!important;min-height:0!important;padding:0!important;transform:translate(-50%,-50%)!important;border-radius:34px;overflow:visible!important;}
-.chain,#chain,.tree-board{position:absolute!important;left:50%!important;top:50%!important;width:0!important;height:0!important;transform:translate(-50%,-50%)!important;transform-origin:center center!important;overflow:visible!important;}
-.placed-domino{left:calc(50% + var(--x,0px))!important;top:calc(50% + var(--y,0px))!important;transform:translate(-50%,-50%) rotate(var(--rot,0deg))!important;}
+.chain,#chain,.tree-board{position:absolute!important;left:50%!important;top:50%!important;width:0!important;height:0!important;min-width:0!important;min-height:0!important;transform:translate(-50%,-50%)!important;transform-origin:center center!important;overflow:visible!important;}
+.tile.board-tile{position:absolute!important;left:calc(50% + var(--x,0px))!important;top:calc(50% + var(--y,0px))!important;transform:translate(-50%,-50%)!important;width:82px;height:42px;grid-template-columns:1fr 1px 1fr;grid-template-rows:none;}
+.tile.board-tile.vertical,.tile.board-tile.spinner{width:50px;height:88px;grid-template-columns:1fr;grid-template-rows:1fr 1px 1fr;}
+.tile.board-tile.vertical i,.tile.board-tile.spinner i{width:70%;height:1px;}
+/* Center diagnostic: add class "debug-center" to .table-center to show crosshair while testing. */
+.table-center.debug-center::before,.table-center.debug-center::after{content:"";position:absolute;z-index:50;pointer-events:none;background:rgba(255,255,255,.35);}
+.table-center.debug-center::before{left:50%;top:0;width:1px;height:100%;}
+.table-center.debug-center::after{left:0;top:50%;width:100%;height:1px;}
 .seat{width:clamp(104px,7.5vw,136px);max-width:136px;min-height:46px;padding:6px 7px;border-radius:14px;font-size:10px;line-height:1.1;z-index:5;pointer-events:none;}
 .seat b,.seat small{line-height:1.05;}.seat small{font-size:9px;}.seat-backs,.seat .seat-backs{display:none!important;}
 .top-seat,.left-seat{left:12px;right:auto;transform:none;}.right-seat,.bottom-seat{right:12px;left:auto;transform:none;}.top-seat,.right-seat{top:68px;}.left-seat,.bottom-seat{top:120px;}

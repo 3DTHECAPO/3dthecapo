@@ -709,15 +709,8 @@ function renderBoard(){
   if(!chainEl) return;
   refreshPlacements();
   if(state.board.placements.length){
-    const fit = fitBoardToPlacements();
     chainEl.className = 'chain tree-board';
-    chainEl.style.width = fit.width+'px';
-    chainEl.style.height = fit.height+'px';
-    chainEl.style.minWidth = fit.width+'px';
-    chainEl.style.minHeight = fit.height+'px';
-    chainEl.style.margin = 'auto';
-    chainEl.style.position = 'relative';
-    chainEl.style.transformOrigin = 'center center';
+    chainEl.removeAttribute('style');
     chainEl.innerHTML = state.board.placements.map(boardTileHTML).join('');
   }else{
     chainEl.className = 'chain';
