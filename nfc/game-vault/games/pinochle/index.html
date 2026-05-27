@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PLAY 3D - Poker</title>
+<title>PLAY 3D - Pinochle</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
 <link rel="stylesheet" href="../shared/superior/superior-events.css">
@@ -17,42 +17,52 @@
     <nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav>
   </header>
   <section class="hero">
-    <div><div class="kicker">CARD TABLE</div><h1>Poker</h1><p>Playable video poker with hold, draw, shared credits, and responsive table layout.</p></div>
-    <div class="score"><span>Status</span><b id="mainScore">0</b><small id="stateText">READY</small></div>
+    <div><div class="kicker">CARD TABLE</div><h1>Pinochle</h1><p>Double-deck partnership Pinochle: bid, name trump, meld, then take tricks to 500.</p></div>
   </section>
-  <section class="table poker-shell">
-    <div class="poker-layout" aria-label="Poker table layout">
-      <aside class="poker-rail" aria-label="Poker controls and status">
-        <div class="row poker-controls">
-          <button id="dealBtn">Deal</button>
-          <button id="drawBtn">Draw</button>
-          <button id="betDown">Bet -</button>
-          <button id="betUp">Bet +</button>
-          <button id="playAgainBtn">Play Again</button>
-        </div>
-        <section class="rail-zone poker-status">
-          <h2>Status</h2>
-          <p>Credits: <b id="credits">1000</b></p>
-          <p>Bet: <b id="bet">25</b></p>
-          <p>Hand: <b id="rankName">Ready</b></p>
-          <p>Click cards to hold, then Draw.</p>
-        </section>
+  <section class="table pinochle-table-shell">
+    <div class="pinochle-layout" aria-label="Pinochle table layout">
+      <aside class="pinochle-rail" aria-label="Pinochle controls rail">
+        <div class="row action-row"><button id="dealBtn">Deal</button><input id="bidInput" type="number" min="50" step="10" value="50" aria-label="Bid amount"><button id="teamBtn">Bid</button><button id="passBidBtn">Pass</button><button id="meldBtn">Meld</button></div>
+        <div class="row trump-row"><button data-trump="S">Spades</button><button data-trump="H">Hearts</button><button data-trump="D">Diamonds</button><button data-trump="C">Clubs</button></div>
+        <section class="rail-zone meld-zone"><h2>Meld Area</h2><div id="meldArea" class="hand"></div></section>
+        <section class="rail-zone stock-zone"><h2>Stock</h2><div id="stockArea" class="hand"></div></section>
       </aside>
 
       <div class="casino-table">
-        <div class="table-logo">POKER</div>
-        <div class="table-content poker-center">
-          <div id="hand" class="hand"></div>
+        <div class="table-logo">PINOCHLE</div>
+        <div class="table-content">
+          <section class="center-stage">
+            <section class="opponent-zone"><h2>Opponent</h2><div id="opponentHand" class="hand opponent-hand"></div></section>
+            <section class="trick-zone"><h2>Trick Pile</h2><div id="trickPile" class="hand trick-pile"></div></section>
+            <section class="player-zone"><h2>Your Hand</h2><div id="playerHand" class="hand"></div></section>
+          </section>
         </div>
       </div>
+
+      <aside class="pinochle-rail pinochle-right-rail" aria-label="Pinochle score and player rail">
+        <section class="rail-zone rail-score-zone">
+          <h2>Score / Status</h2>
+          <div class="score rail-score"><span>Score</span><b id="mainScore">0 - 0</b><small id="stateText">READY</small></div>
+        </section>
+        <section class="rail-zone player-stats-zone">
+          <h2>Player Stats</h2>
+          <div class="seat top-seat" id="seat1"></div>
+          <div class="seat left-seat" id="seat2"></div>
+          <div class="seat right-seat" id="seat3"></div>
+          <div class="seat bottom-seat" id="seat0"></div>
+        </section>
+        <section class="rail-zone live-action-zone">
+          <h2>Live Action</h2>
+          <div class="live-action-card">Bids, trump, meld, and tricks stay visible on the table.</div>
+        </section>
+      </aside>
     </div>
   </section>
 </main>
-<script src="../shared/game-bank.js"></script>
-<script src="../shared/game-points.js"></script>
 <script src="../shared/superior/superior-lines.js"></script>
 <script src="../shared/superior/superior-events.js"></script>
 <script src="../shared/mode-bar.js"></script>
+<script src="../shared/game-points.js"></script>
 <script src="./script.js"></script>
 <script>
 (function(){
