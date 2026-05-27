@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PLAY 3D - Video Poker</title>
+<title>PLAY 3D - Poker</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
 <link rel="stylesheet" href="../shared/mode-bar.css">
@@ -16,36 +16,33 @@
     <nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav>
   </header>
   <section class="hero">
-    <div><div class="kicker">CARD TABLE</div><h1>Video Poker</h1><p>Playable video poker with hold, draw, shared credits, and responsive table layout.</p></div>
+    <div><div class="kicker">CARD TABLE</div><h1>Poker</h1><p>Playable video poker with hold, draw, shared credits, and responsive table layout.</p></div>
     <div class="score"><span>Status</span><b id="mainScore">0</b><small id="stateText">READY</small></div>
   </section>
-  <section class="table">
-    <div class="casino-table">
-      <div class="table-logo">POKER</div>
-      <div class="table-content">
-        <aside id="cpuPanel" class="cpu-panel">
-          <div class="cpu-head">
-            <span>Dealer / House</span>
-            <b id="cpuCredits">House Bank</b>
-          </div>
-          <div id="cpuCards" class="cpu-cards"></div>
-          <p id="cpuStatus">House watches the table.</p>
-          <strong id="cpuResult">Ready</strong>
-        </aside>
-        <div class="row">
+  <section class="table poker-shell">
+    <div class="poker-layout" aria-label="Poker table layout">
+      <aside class="poker-rail" aria-label="Poker controls and status">
+        <div class="row poker-controls">
           <button id="dealBtn">Deal</button>
           <button id="drawBtn">Draw</button>
           <button id="betDown">Bet -</button>
           <button id="betUp">Bet +</button>
           <button id="playAgainBtn">Play Again</button>
         </div>
-        <div id="hand" class="hand player-hand"></div>
-        <p>Credits: <b id="credits">1000</b> | Bet: <b id="bet">25</b> | Hand: <b id="rankName">Ready</b></p>
-        <p>Click cards to hold, then Draw.</p>
-        <section class="paytable-panel">
-          <h2>Jacks-or-Better Paytable</h2>
-          <div id="paytable" class="paytable"></div>
+        <section class="rail-zone poker-status">
+          <h2>Status</h2>
+          <p>Credits: <b id="credits">1000</b></p>
+          <p>Bet: <b id="bet">25</b></p>
+          <p>Hand: <b id="rankName">Ready</b></p>
+          <p>Click cards to hold, then Draw.</p>
         </section>
+      </aside>
+
+      <div class="casino-table">
+        <div class="table-logo">POKER</div>
+        <div class="table-content poker-center">
+          <div id="hand" class="hand"></div>
+        </div>
       </div>
     </div>
   </section>
