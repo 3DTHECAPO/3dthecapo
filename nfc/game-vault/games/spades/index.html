@@ -28,39 +28,43 @@
   </div>
 </section>
 
-<section class="casino-table">
-  <div class="table-logo">SPADES</div>
+<section class="spades-layout" aria-label="Spades table layout">
+  <aside class="spades-rail left-rail" aria-label="Spades game log">
+    <section class="panel log-panel">
+      <h2>Game Log</h2>
+      <ol id="log"></ol>
+    </section>
+  </aside>
 
-  <div class="seat top-seat">NORTH<br><small>Partner</small></div>
-  <div class="seat left-seat">WEST</div>
-  <div class="seat right-seat">EAST</div>
-  <div class="seat bottom-seat">YOU</div>
+  <section class="casino-table" aria-label="Spades table">
+    <div class="table-logo">SPADES</div>
 
-  <div class="table-center">
-    <h2>Current Trick</h2>
-    <div id="trickArea" class="trick-area"></div>
-  </div>
+    <div class="seat top-seat">NORTH<br><small>Partner</small></div>
+    <div class="seat left-seat">WEST</div>
+    <div class="seat right-seat">EAST</div>
+    <div class="seat bottom-seat">YOU</div>
 
-  <div class="chip-stack"><div class="chip"></div><div class="chip"></div><div class="chip"></div></div>
+    <div class="table-center">
+      <h2>Current Trick</h2>
+      <div id="trickArea" class="trick-area"></div>
+    </div>
+  </section>
+
+  <aside class="spades-rail right-rail" aria-label="Spades controls">
+    <section class="controls panel">
+      <button id="newBtn">Deal</button>
+      <button class="bidBtn" data-bid="0">Bid Nil</button>
+      <button class="bidBtn" data-bid="2">Bid 2</button>
+      <button class="bidBtn" data-bid="3">Bid 3</button>
+      <button class="bidBtn" data-bid="4">Bid 4</button>
+      <button id="autoBtn">Auto Play</button>
+    </section>
+  </aside>
 </section>
 
-<section class="controls panel">
-  <button id="newBtn">Deal</button>
-  <button class="bidBtn" data-bid="0">Bid Nil</button>
-  <button class="bidBtn" data-bid="2">Bid 2</button>
-  <button class="bidBtn" data-bid="3">Bid 3</button>
-  <button class="bidBtn" data-bid="4">Bid 4</button>
-  <button id="autoBtn">Auto Play</button>
-</section>
-
-<section class="panel">
+<section class="panel hand-dock">
   <h2>Your Hand</h2>
   <div id="hand" class="hand"></div>
-</section>
-
-<section class="panel">
-  <h2>Game Log</h2>
-  <ol id="log"></ol>
 </section>
 </main>
 <script src="../shared/mode-bar.js"></script>
