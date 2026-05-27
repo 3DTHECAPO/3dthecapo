@@ -1,5 +1,9 @@
 (()=>{
   'use strict';
+
+  function play3dAnnounce(event, type, message){
+    window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'rummy', event:event, type:type, message:message } }));
+  }
   const suits = ['S','H','D','C'];
   const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
   const order = Object.fromEntries(ranks.map((r,i)=>[r,i + 1]));
@@ -101,6 +105,7 @@
     removeIndexes(state.hands[0], indexes);
     state.playerMelds.push(picked);
     state.score += scoreMeld(picked);
+    play3dAnnounce('MELD','success');
     state.selected.clear();
     if(window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(10, scoreMeld(picked)), 'meld');
     checkRound();
@@ -123,6 +128,7 @@
         if(window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(5, cardValue(cardToAdd)), 'layoff');
         checkRound();
         render();
+        play3dAnnounce('LAYOFF','success');
         els.text.textContent = 'ADDED ' + cardToAdd.r + suitIcon[cardToAdd.s] + ' TO EXISTING MELD';
         return;
       }
@@ -168,9 +174,11 @@
         state.score += playerNet;
         if(window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(50, playerNet), 'round_win');
         state.phase = 'over';
+        play3dAnnounce('ROUND_END','success');
         els.text.textContent = 'PLAYER WINS';
       } else {
         state.phase = 'over';
+        play3dAnnounce('ROUND_END','warning');
         els.text.textContent = 'CPU WINS';
       }
     }
