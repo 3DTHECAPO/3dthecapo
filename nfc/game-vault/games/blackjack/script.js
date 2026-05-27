@@ -1,6 +1,10 @@
 (()=>{
   'use strict';
 
+  function play3dAnnounce(event, type, message){
+    window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'blackjack', event:event, type:type, message:message } }));
+  }
+
   let deck = [];
   let player = [];
   let dealer = [];
@@ -67,6 +71,10 @@
   }
 
   function finish(text, pay){
+    if(/blackjack/i.test(text)) play3dAnnounce('BLACKJACK','success');
+    else if(/bust/i.test(text)) play3dAnnounce('BUST','warning');
+    else if(/push/i.test(text)) play3dAnnounce('PUSH','normal');
+    else if(/win/i.test(text)) play3dAnnounce('WIN','success');
     credits += Math.max(0, pay || 0);
     if(window.Play3DPoints && pay > currentBet) window.Play3DPoints.award('blackjack', Math.min(180, Math.floor(pay / 4)), 'blackjack_win');
     live = false;
@@ -87,6 +95,7 @@
     live = true;
     saveBank();
     setResult('Hand started');
+    play3dAnnounce('DEAL','casino','CARDS DEALT.');
     if(value(player) === 21) finish('Blackjack', Math.floor(currentBet * 2.5));
     else render(false);
   }
