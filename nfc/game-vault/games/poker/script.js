@@ -1,6 +1,10 @@
 (()=>{
   'use strict';
 
+  function play3dAnnounce(event, type, message){
+    window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'poker', event:event, type:type, message:message } }));
+  }
+
   const suits = ['S','H','D','C'];
   const ranks = ['A','K','Q','J','10','9','8','7','6','5','4','3','2'];
   const order = {'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'J':11,'Q':12,'K':13,'A':14};
@@ -78,6 +82,7 @@
         const i = Number(button.dataset.i);
         if(phase !== 'draw') return;
         hold = hold.includes(i) ? hold.filter(x=>x !== i) : hold.concat(i);
+        play3dAnnounce('HOLD','normal');
         render();
       };
     });
@@ -99,6 +104,7 @@
     hold = [];
     phase = 'draw';
     rankName.textContent = 'Pick Holds';
+    play3dAnnounce('DEAL','casino');
     render();
   }
 
@@ -111,6 +117,8 @@
     if(window.Play3DPoints && pay > 0) window.Play3DPoints.award('poker', Math.min(250, Math.max(25, Math.floor(pay / 3))), res.name.toLowerCase().replaceAll(' ','_'));
     saveBank();
     rankName.textContent = res.name + ' +' + pay;
+    play3dAnnounce('DRAW','casino');
+    if(pay > 0) play3dAnnounce('WIN','success',res.name + ' pays ' + pay);
     phase = 'deal';
     render();
   }
