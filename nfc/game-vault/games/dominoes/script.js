@@ -432,7 +432,7 @@ function placeOnArm(tile,arm){
     const existingLine = line.slice();
     const previous = arm === 'left' ? line[0] : line[line.length-1];
     const anchor = previous || {x:0,y:0,orientation:'horizontal',flowSide:arm,exposedSide:arm};
-    const placement = chooseEdgeAwarePlacement(tile,arm,end.value,anchor);
+    const placement = buildBranchPlacement(tile,arm,end.value,anchor,arm);
     if(isDouble(placement.tile)){
       promoteFirstDoubleToSpinner(placement,arm,existingLine);
     }else if(arm === 'left') line.unshift(placement);
