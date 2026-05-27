@@ -1,92 +1,142 @@
-(function(){
+﻿(function(){
   const PASS_KEY = 'play3d_vault_pass_v1';
   const tierRank = { entry:1, gold:2, elite:3, drop:3, merch:3, master:4 };
 
-  const exhibits = {
-    entry: [
-      {
-        title:'First Door Archive',
-        type:'Visual',
-        mark:'ENTRY',
-        text:'A placeholder exhibit for the opening vault door, early visuals, and first-room access moments.'
-      },
-      {
-        title:'Capo Audio Lane',
-        type:'Audio',
-        mark:'3D',
-        text:'A future slot for private audio previews, drops, voice notes, or coded listening sessions.'
-      },
-      {
-        title:'Starter Relic',
-        type:'Artifact',
-        mark:'VAULT',
-        text:'An entry-tier archive card for early supporters and first scans from in-person NFC sales.'
-      }
-    ],
-    gold: [
-      {
-        title:'Gold Chamber Cover',
-        type:'Music',
-        mark:'GOLD',
-        text:'A premium placeholder for album chambers, coded covers, and private rollout material.'
-      },
-      {
-        title:'Hidden Interface Study',
-        type:'Interface',
-        mark:'UI',
-        text:'A gold-tier exhibit for future vault interface moments, access panels, and member-only screens.'
-      },
-      {
-        title:'Drop Route Map',
-        type:'Route',
-        mark:'MAP',
-        text:'A cinematic placeholder for future drop routes, merch windows, and private code paths.'
-      }
-    ],
-    elite: [
-      {
-        title:'Elite Merch Vault',
-        type:'Merch',
-        mark:'ELITE',
-        text:'A top-tier exhibit for exclusive merch previews, premium bundles, and claimable collector pieces.'
-      },
-      {
-        title:'Private Film Wall',
-        type:'Video',
-        mark:'FILM',
-        text:'A future gallery slot for unreleased visuals, behind-the-scenes clips, and premium vault cinema.'
-      },
-      {
-        title:'Holder Relic',
-        type:'Artifact',
-        mark:'RARE',
-        text:'A placeholder for high-value holder perks, archive drops, and luxury museum moments.'
-      }
-    ]
-  };
+  // Museum content admin data. Drop real images into:
+  // nfc/museum/assets/exhibits/
+  // Then set image:'./assets/exhibits/your-file.jpg'
+  const museumExhibits = [
+    {
+      title:'First Door Archive',
+      image:'',
+      description:'Opening vault door visuals, early scans, and first-room access moments.',
+      type:'cover art',
+      year:'2026',
+      tag:'ENTRY',
+      unlockTier:'entry',
+      section:'gallery'
+    },
+    {
+      title:'Capo Audio Lane',
+      image:'',
+      description:'Private audio previews, drops, voice notes, and coded listening-session artwork.',
+      type:'photo',
+      year:'2026',
+      tag:'3D',
+      unlockTier:'entry',
+      section:'gallery'
+    },
+    {
+      title:'Starter Relic',
+      image:'',
+      description:'Entry-tier archive card for early supporters and first scans from NFC sales.',
+      type:'award',
+      year:'2026',
+      tag:'VAULT',
+      unlockTier:'entry',
+      section:'trophy'
+    },
+    {
+      title:'Gold Chamber Cover',
+      image:'',
+      description:'Premium placeholder for album chambers, coded covers, and private rollout material.',
+      type:'cover art',
+      year:'2026',
+      tag:'GOLD',
+      unlockTier:'gold',
+      section:'gallery'
+    },
+    {
+      title:'Hidden Interface Study',
+      image:'',
+      description:'Gold-tier interface moments, access panels, and member-only screens.',
+      type:'poster',
+      year:'2026',
+      tag:'UI',
+      unlockTier:'gold',
+      section:'gallery'
+    },
+    {
+      title:'Drop Route Map',
+      image:'',
+      description:'Cinematic map for future drop routes, merch windows, and private code paths.',
+      type:'poster',
+      year:'2026',
+      tag:'MAP',
+      unlockTier:'gold',
+      section:'timeline'
+    },
+    {
+      title:'Elite Merch Vault',
+      image:'',
+      description:'Exclusive merch previews, premium bundles, and claimable collector pieces.',
+      type:'merch',
+      year:'2026',
+      tag:'ELITE',
+      unlockTier:'elite',
+      section:'gallery'
+    },
+    {
+      title:'Private Film Wall',
+      image:'',
+      description:'Unreleased visuals, behind-the-scenes clips, and premium vault cinema.',
+      type:'video',
+      year:'2026',
+      tag:'FILM',
+      unlockTier:'elite',
+      section:'video',
+      video:''
+    },
+    {
+      title:'Holder Relic',
+      image:'',
+      description:'High-value holder perks, archive drops, and luxury museum moments.',
+      type:'rare collectible',
+      year:'2026',
+      tag:'RARE',
+      unlockTier:'elite',
+      section:'trophy'
+    },
+    {
+      title:'Fan Wall Feature',
+      image:'',
+      description:'Featured fan art, tagged moments, and community highlights will appear here.',
+      type:'fan submission',
+      year:'2026',
+      tag:'FAN',
+      unlockTier:'entry',
+      section:'fan'
+    }
+  ];
+
+  window.PLAY3DMuseumContent = museumExhibits;
 
   function readPass(){
     try{
       const raw = localStorage.getItem(PASS_KEY);
       return raw ? JSON.parse(raw) : null;
-    }catch(e){
-      return null;
-    }
+    }catch(e){ return null; }
   }
 
   function currentTier(){
     const pass = readPass();
     if(!pass || !pass.expires_at) return 'entry';
-
     const expires = new Date(pass.expires_at).getTime();
     if(!Number.isFinite(expires) || expires <= Date.now()) return 'entry';
-
     return String(pass.tier || 'entry').toLowerCase();
+  }
+
+  function canOpenTier(unlockTier, tier){
+    return (tierRank[tier] || 1) >= (tierRank[unlockTier || 'entry'] || 1);
   }
 
   function canOpen(room, tier){
     if(room === 'entry') return true;
-    return (tierRank[tier] || 1) >= (tierRank[room] || 1);
+    return canOpenTier(room, tier);
+  }
+
+  function roomItems(room){
+    return museumExhibits.filter(item => (item.unlockTier || 'entry') === room && item.section !== 'fan' && item.section !== 'video');
   }
 
   function coverClass(room){
@@ -95,29 +145,42 @@
     return 'cover';
   }
 
+  function frameStyle(item, room){
+    if(item.image){
+      return `style="background-image:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.58)),url('${item.image}')"`;
+    }
+    const tone = room === 'elite' ? '#1b1b1b' : room === 'gold' ? '#3b2a10' : '#241a0d';
+    return `style="background-image:radial-gradient(circle at 50% 32%,rgba(242,210,123,.28),transparent 32%),linear-gradient(145deg,${tone},#050403)"`;
+  }
+
+  function cardMarkup(item, index, open, room, className='exhibit-card'){
+    const locked = !open;
+    return `
+      <article class="${className}${locked ? ' is-locked' : ''}">
+        <button class="image-frame" type="button" data-exhibit-index="${index}" ${locked ? 'disabled' : ''} ${frameStyle(item, room)}>
+          <span class="frame-tag">${locked ? 'LOCKED' : item.tag || item.type || '3D'}</span>
+          <span class="frame-type">${item.type || 'Exhibit'}</span>
+        </button>
+        <div class="exhibit-body">
+          <div class="exhibit-type">${item.year || ''} ${item.type || ''}</div>
+          <div class="exhibit-title">${item.title}</div>
+          <button class="enter-btn" type="button" data-exhibit-index="${index}" ${locked ? 'disabled' : ''}>${locked ? 'Locked' : 'Expand'}</button>
+        </div>
+      </article>
+    `;
+  }
+
   function renderRoom(room, tier){
     const section = document.querySelector(`[data-room="${room}"]`);
     const grid = document.getElementById(`${room}Grid`);
     const open = canOpen(room, tier);
-
     if(section){
       section.classList.toggle('locked', !open);
       const status = section.querySelector('.room-status');
       if(status) status.textContent = open ? 'Open' : 'Locked';
     }
-
     if(!grid) return;
-
-    grid.innerHTML = exhibits[room].map((item, index) => `
-      <article class="exhibit-card">
-        <div class="${coverClass(room)}">${item.mark}</div>
-        <div class="exhibit-body">
-          <div class="exhibit-type">${item.type}</div>
-          <div class="exhibit-title">${item.title}</div>
-          <button class="enter-btn" type="button" data-room="${room}" data-index="${index}" ${open ? '' : 'disabled'}>${open ? 'Enter' : 'Locked'}</button>
-        </div>
-      </article>
-    `).join('');
+    grid.innerHTML = roomItems(room).map(item => cardMarkup(item, museumExhibits.indexOf(item), open, room)).join('');
   }
 
   function setPassState(tier){
@@ -125,28 +188,78 @@
     if(state) state.textContent = `${String(tier || 'entry').toUpperCase()} ACCESS`;
   }
 
-  function openModal(room, index){
-    const item = exhibits[room] && exhibits[room][index];
-    if(!item) return;
+  function renderImageWall(tier){
+    const grid = document.getElementById('imageWallGrid');
+    if(!grid) return;
+    const items = museumExhibits.filter(item => ['cover art','photo','poster','merch','award','rare collectible'].includes(String(item.type).toLowerCase()));
+    grid.innerHTML = items.map(item => cardMarkup(item, museumExhibits.indexOf(item), canOpenTier(item.unlockTier,tier), item.unlockTier, 'museum-frame-card')).join('');
+  }
 
+  function renderVideoWall(tier){
+    const wall = document.getElementById('videoWall');
+    if(!wall) return;
+    const videos = museumExhibits.filter(item => item.section === 'video' || item.type === 'video');
+    wall.innerHTML = videos.map(item => {
+      const open = canOpenTier(item.unlockTier,tier);
+      const idx = museumExhibits.indexOf(item);
+      const embed = item.video && open ? `<iframe src="${item.video}" title="${item.title}" loading="lazy" allowfullscreen></iframe>` : `<button class="video-placeholder" data-exhibit-index="${idx}" ${open ? '' : 'disabled'}>${open ? 'Open Video Exhibit' : 'Locked Video Exhibit'}</button>`;
+      return `<article class="video-card ${open ? '' : 'is-locked'}">${embed}<h4>${item.title}</h4><p>${item.description}</p></article>`;
+    }).join('') || '<div class="empty-museum-slot">Add YouTube, MP4, trailer, or interview exhibits in script.js.</div>';
+  }
+
+  function renderTrophyShelf(tier){
+    const shelf = document.getElementById('trophyShelf');
+    if(!shelf) return;
+    const items = museumExhibits.filter(item => item.section === 'trophy' || /award|collectible|plaque|record/i.test(item.type));
+    shelf.innerHTML = items.map(item => {
+      const open = canOpenTier(item.unlockTier,tier);
+      return `<button class="trophy-plaque ${open ? '' : 'is-locked'}" data-exhibit-index="${museumExhibits.indexOf(item)}" ${open ? '' : 'disabled'}><span>${item.tag}</span><b>${item.title}</b><small>${open ? item.year : 'LOCKED'}</small></button>`;
+    }).join('');
+  }
+
+  function renderHistoryWall(tier){
+    const wall = document.getElementById('historyWall');
+    if(!wall) return;
+    const items = museumExhibits.filter(item => item.section === 'timeline' || /album|single|milestone|music|cover/i.test(item.type));
+    wall.innerHTML = items.map(item => {
+      const open = canOpenTier(item.unlockTier,tier);
+      return `<button class="history-item ${open ? '' : 'is-locked'}" data-exhibit-index="${museumExhibits.indexOf(item)}" ${open ? '' : 'disabled'}><span>${item.year || 'TBA'}</span><b>${item.title}</b><small>${open ? item.description : 'Unlock required'}</small></button>`;
+    }).join('');
+  }
+
+  function renderFanGrid(tier){
+    const grid = document.getElementById('fanGrid');
+    if(!grid) return;
+    const items = museumExhibits.filter(item => item.section === 'fan');
+    grid.innerHTML = items.map(item => cardMarkup(item, museumExhibits.indexOf(item), canOpenTier(item.unlockTier,tier), item.unlockTier, 'museum-frame-card')).join('');
+  }
+
+  function openModalByIndex(index){
+    const item = museumExhibits[index];
+    if(!item) return;
     const modal = document.getElementById('exhibitModal');
     const art = document.getElementById('modalArt');
     const type = document.getElementById('modalType');
     const title = document.getElementById('modalTitle');
+    const meta = document.getElementById('modalMeta');
     const text = document.getElementById('modalText');
+    const video = document.getElementById('modalVideo');
+    const unlock = document.getElementById('modalUnlock');
 
     if(art){
       art.className = 'modal-art';
-      art.style.background = room === 'elite'
-        ? 'radial-gradient(circle at 50% 32%,rgba(255,255,255,.24),transparent 32%),linear-gradient(145deg,#1b1b1b,#050403)'
-        : room === 'gold'
-          ? 'radial-gradient(circle at 50% 32%,rgba(242,210,123,.36),transparent 32%),linear-gradient(145deg,#3b2a10,#050403)'
-          : 'radial-gradient(circle at 50% 32%,rgba(242,210,123,.3),transparent 32%),linear-gradient(145deg,#2b200f,#050403)';
+      art.setAttribute('style', item.image ? `background-image:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.58)),url('${item.image}')` : frameStyle(item, item.unlockTier).replace(/^style="|"$/g,''));
+      art.textContent = item.image ? '' : (item.tag || '3D');
     }
-
-    if(type) type.textContent = item.type;
+    if(type) type.textContent = item.type || 'Exhibit';
     if(title) title.textContent = item.title;
-    if(text) text.textContent = item.text;
+    if(meta) meta.textContent = [item.year, item.tag, String(item.unlockTier || 'entry').toUpperCase()].filter(Boolean).join(' / ');
+    if(text) text.textContent = item.description || '';
+    if(video){
+      video.classList.toggle('hidden', !item.video);
+      video.innerHTML = item.video ? `<iframe src="${item.video}" title="${item.title}" loading="lazy" allowfullscreen></iframe>` : '';
+    }
+    if(unlock) unlock.textContent = `${String(item.unlockTier || 'entry').toUpperCase()} EXHIBIT`;
     if(modal) modal.classList.remove('hidden');
   }
 
@@ -161,11 +274,16 @@
     renderRoom('entry', tier);
     renderRoom('gold', tier);
     renderRoom('elite', tier);
+    renderImageWall(tier);
+    renderVideoWall(tier);
+    renderTrophyShelf(tier);
+    renderHistoryWall(tier);
+    renderFanGrid(tier);
 
     document.body.addEventListener('click', event => {
-      const button = event.target.closest('.enter-btn');
-      if(!button || button.disabled) return;
-      openModal(button.dataset.room, Number(button.dataset.index));
+      const trigger = event.target.closest('[data-exhibit-index]');
+      if(!trigger || trigger.disabled) return;
+      openModalByIndex(Number(trigger.dataset.exhibitIndex));
     });
 
     const close = document.getElementById('modalClose');

@@ -29,7 +29,7 @@ body::before{
 
   <main class="museum-shell">
     <header class="museum-header">
-      <button class="museum-back" type="button" onclick="if(history.length > 1){ history.back(); } else { location.href='/nfc/index.html'; }">Back</button>
+      <button class="museum-back" type="button" onclick="history.back()">← Back</button>
       <div>
         <div class="museum-kicker">3D THE CAPO</div>
         <h1>Vault Museum</h1>
@@ -41,7 +41,7 @@ body::before{
       <div class="hero-copy">
         <div class="museum-kicker">Private Archive</div>
         <h2>Exhibits From The Capo Vault</h2>
-        <p>Music, visuals, merch concepts, and hidden-room exhibits arranged like a luxury archive for the next phase of the vault.</p>
+        <p>Music, visuals, merch concepts, and hidden-room placeholders arranged like a luxury archive for the next phase of the vault.</p>
       </div>
       <div class="hero-mark" aria-hidden="true">3D</div>
     </section>
@@ -78,6 +78,66 @@ body::before{
       </div>
       <div class="exhibit-grid" id="eliteGrid"></div>
     </section>
+
+    <section class="museum-display-block">
+      <div class="room-head">
+        <div>
+          <div class="room-tier">IMAGE WALL</div>
+          <h3>Framed Gallery</h3>
+        </div>
+        <span class="room-status">Tap To Expand</span>
+      </div>
+      <div class="museum-grid" id="imageWallGrid"></div>
+    </section>
+
+    <section class="museum-display-block">
+      <div class="room-head">
+        <div>
+          <div class="room-tier">VIDEO WALL</div>
+          <h3>Trailers / Interviews</h3>
+        </div>
+        <span class="room-status">Optional Embeds</span>
+      </div>
+      <div class="video-wall" id="videoWall"></div>
+    </section>
+
+    <section class="museum-display-block museum-two-col">
+      <div>
+        <div class="room-head">
+          <div>
+            <div class="room-tier">TROPHY SHELF</div>
+            <h3>Awards / Collectibles</h3>
+          </div>
+        </div>
+        <div class="trophy-shelf" id="trophyShelf"></div>
+      </div>
+      <div>
+        <div class="room-head">
+          <div>
+            <div class="room-tier">MUSIC HISTORY</div>
+            <h3>Timeline</h3>
+          </div>
+        </div>
+        <div class="history-wall" id="historyWall"></div>
+      </div>
+    </section>
+
+    <section class="museum-display-block">
+      <div class="room-head">
+        <div>
+          <div class="room-tier">FAN SUBMISSIONS</div>
+          <h3>Featured Fan Art / Moments</h3>
+        </div>
+        <span class="room-status">Display Only</span>
+      </div>
+      <div class="fan-submission-panel">
+        <div>
+          <strong>Upload Area Placeholder</strong>
+          <p>Drop future fan art, tagged photos, and featured community moments into the museum content data.</p>
+        </div>
+        <div class="museum-grid compact" id="fanGrid"></div>
+      </div>
+    </section>
   </main>
 
   <div class="exhibit-modal hidden" id="exhibitModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -87,8 +147,10 @@ body::before{
       <div class="modal-copy">
         <div class="modal-type" id="modalType"></div>
         <h2 id="modalTitle"></h2>
+        <div class="modal-meta" id="modalMeta"></div>
         <p id="modalText"></p>
-        <div class="audio-placeholder">Audio Preview</div>
+        <div class="modal-video hidden" id="modalVideo"></div>
+        <div class="audio-placeholder" id="modalUnlock"></div>
       </div>
     </div>
   </div>
