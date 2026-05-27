@@ -65,6 +65,54 @@ body{
   color:var(--bright);
 }
 
+nav a,
+.vault-main-nav a,
+.museum-main-nav a,
+.museum-nav a,
+.museum-pill,
+.cta{
+  border-radius:999px;
+  border:1px solid rgba(242,210,123,.35);
+  background:rgba(0,0,0,.45);
+  color:#f2d27b;
+  text-decoration:none;
+  padding:10px 14px;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 28px rgba(0,0,0,.28);
+  transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease;
+}
+
+nav a:visited,
+.vault-main-nav a:visited,
+.museum-main-nav a:visited,
+.museum-nav a:visited,
+.museum-pill:visited,
+.cta:visited{
+  color:#f2d27b;
+}
+
+nav a:hover,
+nav a:focus-visible,
+.vault-main-nav a:hover,
+.vault-main-nav a:focus-visible,
+.museum-main-nav a:hover,
+.museum-main-nav a:focus-visible,
+.museum-nav a:hover,
+.museum-nav a:focus-visible,
+.museum-pill:hover,
+.museum-pill:focus-visible,
+.cta:hover,
+.cta:focus-visible{
+  background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#8b641e);
+  border-color:rgba(242,210,123,.78);
+  color:#100c05;
+  outline:none;
+  transform:translateY(-1px);
+}
+
 .museum-kicker,
 .room-tier,
 .modal-type{
