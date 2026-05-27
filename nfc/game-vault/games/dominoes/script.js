@@ -21,6 +21,7 @@ const BRANCH_DIRS = {
   top:{x:0,y:-1},
   bottom:{x:0,y:1}
 };
+const EDGE_TURN_PADDING = 64;
 
 const state = {
   players:2,
@@ -163,6 +164,85 @@ function oppositeSide(arm){
   return {left:'right',right:'left',top:'bottom',bottom:'top'}[arm] || 'right';
 }
 
+function visibleBoardBounds(){
+  const table = document.querySelector('.table-center');
+  const rect = table ? table.getBoundingClientRect() : null;
+  const width = rect && rect.width ? rect.width : 1080;
+  const height = rect && rect.height ? rect.height : 680;
+  return {
+    left:-(width / 2) + EDGE_TURN_PADDING,
+    right:(width / 2) - EDGE_TURN_PADDING,
+    top:-(height / 2) + EDGE_TURN_PADDING,
+    bottom:(height / 2) - EDGE_TURN_PADDING
+  };
+}
+
+function placementFitsBoard(placement,bounds){
+  const size = TILE_SIZE[placement.orientation || 'horizontal'] || TILE_SIZE.horizontal;
+  const x = placement.x || 0;
+  const y = placement.y || 0;
+  return x - size.w / 2 >= bounds.left &&
+    x + size.w / 2 <= bounds.right &&
+    y - size.h / 2 >= bounds.top &&
+    y + size.h / 2 <= bounds.bottom;
+}
+
+function cornerOptions(flowSide,anchor,bounds){
+  if(flowSide === 'left' || flowSide === 'right'){
+    const topSpace = (anchor.y || 0) - bounds.top;
+    const bottomSpace = bounds.bottom - (anchor.y || 0);
+    return bottomSpace >= topSpace ? ['bottom','top'] : ['top','bottom'];
+  }
+  const leftSpace = (anchor.x || 0) - bounds.left;
+  const rightSpace = bounds.right - (anchor.x || 0);
+  return rightSpace >= leftSpace ? ['right','left'] : ['left','right'];
+}
+
+function buildBranchPlacement(rawTile,logicalArm,match,anchor,flowSide){
+  const oriented = orientForArm(rawTile,match,flowSide);
+  const orientation = branchOrientation(flowSide,oriented);
+  const dir = BRANCH_DIRS[flowSide] || BRANCH_DIRS.right;
+  const step = axisSpan(orientation,flowSide);
+  const anchorFlow = (anchor.flowSide || anchor.exposedSide) === 'all'
+    ? logicalArm
+    : (anchor.flowSide || anchor.exposedSide || logicalArm);
+  const anchorStep = axisSpan(anchor.orientation || 'horizontal',anchorFlow);
+  const distance = (step / 2) + (anchorStep / 2);
+
+  return {
+    tile:oriented,
+    raw:rawTile.slice(),
+    x:(anchor.x || 0) + dir.x * distance,
+    y:(anchor.y || 0) + dir.y * distance,
+    orientation,
+    branch:logicalArm,
+    flowSide,
+    direction:dir,
+    connectedSide:oppositeSide(flowSide),
+    exposedSide:flowSide,
+    exposedPip:exposedPipFromOriented(flowSide,oriented),
+    matchPip:match,
+    double:isDouble(oriented),
+    spinner:false
+  };
+}
+
+function chooseEdgeAwarePlacement(rawTile,logicalArm,match,anchor){
+  const bounds = visibleBoardBounds();
+  const preferredSide = anchor && anchor.flowSide ? anchor.flowSide : logicalArm;
+  let placement = buildBranchPlacement(rawTile,logicalArm,match,anchor,preferredSide);
+  if(placementFitsBoard(placement,bounds)) return placement;
+
+  const turns = cornerOptions(preferredSide,anchor,bounds);
+  for(const side of turns){
+    const turned = buildBranchPlacement(rawTile,logicalArm,match,anchor,side);
+    if(placementFitsBoard(turned,bounds)) return turned;
+    if(!placement) placement = turned;
+  }
+
+  return buildBranchPlacement(rawTile,logicalArm,match,anchor,turns[0] || preferredSide);
+}
+
 function makeSpinnerPlacement(tile){
   return {
     tile:tile.slice(),
@@ -181,35 +261,15 @@ function makeSpinnerPlacement(tile){
 }
 
 function makeBranchPlacement(rawTile,arm,match){
-  const oriented = orientForArm(rawTile,match,arm);
-  const orientation = branchOrientation(arm,oriented);
-  const dir = BRANCH_DIRS[arm];
   const branch = state.board.spinnerArms[arm] || [];
   const anchor = branch.length ? branch[branch.length-1] : state.board.spinnerTile;
-  const step = axisSpan(orientation,arm);
-  const anchorStep = axisSpan(anchor.orientation || 'horizontal',arm);
-  const distance = (step / 2) + (anchorStep / 2);
-
-  return {
-    tile:oriented,
-    raw:rawTile.slice(),
-    x:(anchor.x || 0) + dir.x * distance,
-    y:(anchor.y || 0) + dir.y * distance,
-    orientation,
-    branch:arm,
-    direction:dir,
-    connectedSide:oppositeSide(arm),
-    exposedSide:arm,
-    exposedPip:exposedPipFromOriented(arm,oriented),
-    matchPip:match,
-    double:isDouble(oriented),
-    spinner:false
-  };
+  return chooseEdgeAwarePlacement(rawTile,arm,match,anchor);
 }
 
 function rebranchPlacement(item,branch){
   return Object.assign({}, item, {
     branch,
+    flowSide:branch,
     direction:BRANCH_DIRS[branch],
     exposedSide:branch,
     connectedSide:oppositeSide(branch),
@@ -398,6 +458,7 @@ function placeOnArm(tile,arm){
         y:0,
         orientation:'horizontal',
         branch:'right',
+        flowSide:'right',
         connectedSide:null,
         exposedSide:'right',
         exposedPip:oriented[1],
@@ -416,26 +477,10 @@ function placeOnArm(tile,arm){
   if(!state.board.spinnerTile){
     const line = state.board.spinnerArms.right;
     const existingLine = line.slice();
-    const oriented = orientForArm(tile,end.value,arm);
     const previous = arm === 'left' ? line[0] : line[line.length-1];
-    const direction = arm === 'left' ? -1 : 1;
-    const orientation = isDouble(oriented) ? 'vertical' : 'horizontal';
-    const distance = previous ? (axisSpan(previous.orientation || 'horizontal',arm) / 2) + (axisSpan(orientation,arm) / 2) : 0;
-    const placement = {
-      tile:oriented,
-      raw:tile.slice(),
-      x:(previous ? previous.x : 0) + direction * distance,
-      y:previous ? previous.y : 0,
-      orientation,
-      branch:arm,
-      connectedSide:oppositeSide(arm),
-      exposedSide:arm,
-      exposedPip:exposedPipFromOriented(arm,oriented),
-      matchPip:end.value,
-      double:isDouble(oriented),
-      spinner:false
-    };
-    if(isDouble(oriented)){
+    const anchor = previous || {x:0,y:0,orientation:'horizontal',flowSide:arm,exposedSide:arm};
+    const placement = chooseEdgeAwarePlacement(tile,arm,end.value,anchor);
+    if(isDouble(placement.tile)){
       promoteFirstDoubleToSpinner(placement,arm,existingLine);
     }else if(arm === 'left') line.unshift(placement);
     else line.push(placement);
@@ -449,7 +494,9 @@ function placeOnArm(tile,arm){
 }
 
 function commitPlay(playerIndex,tile,arm){
+  const hadSpinner = !!state.board.spinnerTile;
   if(!placeOnArm(tile,arm)) return false;
+  if(!hadSpinner && state.board.spinnerTile) play3dAnnounce('SPINNER','elite');
   removeTile(state.hands[playerIndex],tile);
   state.passes = 0;
   state.pending = null;
@@ -546,6 +593,7 @@ function clonePlacement(item){
     y:item.y || 0,
     orientation:item.orientation || 'horizontal',
     branch:item.branch || 'right',
+    flowSide:item.flowSide || item.exposedSide || item.branch || 'right',
     direction:item.direction ? Object.assign({},item.direction) : undefined,
     connectedSide:item.connectedSide || null,
     exposedSide:item.exposedSide || null,
@@ -592,6 +640,7 @@ function finishHand(winner){
   if(winner === 0 && window.Play3DPoints) window.Play3DPoints.award('dominoes',125,'round_win');
   if(turnTextEl) turnTextEl.textContent = seatName(winner)+' DOMINOES — WASH THE DISHES';
   log('DOMINO! '+seatName(winner)+' played the last domino.');
+  play3dAnnounce('DOMINO','success');
   render();
 }
 
@@ -604,6 +653,7 @@ function finishBlocked(){
   state.nextLeader = null;
   if(turnTextEl) turnTextEl.textContent = 'BLOCKED ROUND ? WASH THE DISHES';
   log('Blocked round. '+seatName(winner)+' wins low count. Next hand starts by highest available double.');
+  play3dAnnounce('BLOCKED','warning');
   render();
 }
 
@@ -681,6 +731,8 @@ function newGame(players){
   state.gameOver = false;
 
   const handLeader = Number.isInteger(state.nextLeader) ? state.nextLeader % state.players : null;
+  play3dAnnounce('NEW_GAME','normal');
+
   if(handLeader !== null){
     state.currentPlayerIndex = handLeader;
     state.nextLeader = null;
@@ -695,6 +747,7 @@ function newGame(players){
     placeOpeningDouble(starter.player,starter.tile);
     state.currentPlayerIndex = (starter.player + 1) % state.players;
     log(seatName(starter.player)+' opened with highest double '+starter.tile[0]+'-'+starter.tile[1]+'.');
+    play3dAnnounce('SPINNER','elite');
     scoreBoardCount(starter.player,'opening_double');
     if(state.gameOver){ render(); return; }
   }else{
