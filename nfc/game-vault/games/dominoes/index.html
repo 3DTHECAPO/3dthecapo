@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PLAY 3D — Chess Fixed Board</title>
+<title>PLAY 3D — Dominoes AAA</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="../shared/mode-bar.css">
 </head>
@@ -11,52 +11,75 @@
 <div class="bg"></div>
 
 <main class="app">
-  <header class="top">
-    <a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a>
-    <nav>
-      <a href="../../index.html">Game Vault</a>
-      <a href="../../../index.html">Vault</a>
-    </nav>
-  </header>
+<header class="top">
+<a class="brand" href="../../index.html">
+<span>3D</span>
+<b>PLAY 3D</b>
+</a>
 
-  <section class="hero">
-    <div>
-      <div class="kicker">FIXED FULL-SQUARE BOARD</div>
-      <h1>Vault Chess</h1>
-      <p>All 64 squares stay full size before and after every move.</p>
-    </div>
-    <div class="score">
-      <span>Turn</span>
-      <b id="turnText">WHITE</b>
-      <small id="stateText">READY</small>
-    </div>
-  </section>
+<nav>
+<a href="../../index.html">Vault</a>
+<a href="../../../index.html">Main</a>
+</nav>
+</header>
 
-  <section class="chess-layout" aria-label="Chess table layout">
-    <section class="casino-table chess-table" aria-label="Chess board table">
-      <div class="table-logo">CHESS</div>
-      <div class="chess-stage">
-        <div class="board-wrap">
-          <div id="board" class="chessboard"></div>
-        </div>
-      </div>
-    </section>
+<section class="hero">
+<div>
+<div class="kicker">AAA DOMINO LOUNGE</div>
+<h1>DOMINOES</h1>
+<p>Luxury multiplayer-ready domino table rebuilt for stable gameplay and responsive scaling.</p>
+</div>
 
-    <aside class="chess-rail" aria-label="Chess controls and status">
-      <section class="controls panel">
-        <button id="resetBtn">Reset</button>
-        <button id="flipBtn">Flip Board</button>
-      </section>
-      <section class="panel chess-status-card">
-        <h2>Board</h2>
-        <p>Full-square board with controls kept off the playfield.</p>
-      </section>
-    </aside>
-  </section>
+<div class="status">
+<span>SCORE</span>
+<b id="scoreText">0 - 0</b>
+<small id="turnText">YOUR TURN</small>
+</div>
+</section>
+
+<section class="dominoes-layout" aria-label="Dominoes table layout">
+<aside class="table-rail left-rail" aria-label="Game log rail">
+<section class="panel log-panel">
+<h2>GAME LOG</h2>
+<ol id="log"></ol>
+</section>
+</aside>
+
+<section class="casino-table" aria-label="Dominoes table">
+<div class="table-logo">PLAY 3D</div>
+
+<div class="seat top-seat">FAN / CPU</div>
+<div class="seat left-seat">CPU 2</div>
+<div class="seat right-seat">CPU 3</div>
+<div class="seat bottom-seat">YOU</div>
+
+<div class="table-center">
+<div id="chain" class="chain"></div>
+</div>
+</section>
+
+<aside class="table-rail right-rail" aria-label="Dominoes controls rail">
+<section class="controls panel">
+<button id="newBtn">NEW GAME</button>
+<button class="playerCountBtn" data-count="2">2 Players</button>
+<button class="playerCountBtn" data-count="3">3 Players</button>
+<button class="playerCountBtn" data-count="4">4 Players</button>
+<button id="drawBtn">DRAW</button>
+<button id="passBtn">PASS</button>
+<div id="armChooser" class="arm-chooser" hidden></div>
+</section>
+</aside>
+</section>
+
+<section class="panel hand-dock" aria-label="Fixed player hand dock">
+<h2>YOUR HAND</h2>
+<div id="hand" class="hand"></div>
+</section>
+
 </main>
 
 <script src="../shared/mode-bar.js"></script>
-<script src="../shared/game-points.js"></script><script src="../shared/chess-engine.js"></script><script src="./script.js"></script><script>/* CPU SAFE FAN LOADER */
+<script src="../shared/game-points.js"></script><script src="./script.js"></script><script>/* CPU SAFE FAN LOADER */
 (function(){
   var p = new URLSearchParams(location.search);
   if(p.get('mode') !== 'fan' || !p.get('room')) return;
