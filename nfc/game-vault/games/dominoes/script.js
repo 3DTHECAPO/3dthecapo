@@ -375,10 +375,37 @@ function updateOpenEndDebug(){
 
 function legalArms(tile){
   const ends = refreshOpenEnds();
+
   if(!hasBoardTiles()) return ['open'];
-  return ends
+
+  let legal = ends
     .filter(end=>tile[0] === end.value || tile[1] === end.value)
     .map(end=>end.arm);
+
+  // SPINNER SIDE LOCK RULE
+  // top/bottom stay locked until BOTH left and right
+  // have at least one domino every hand
+
+  if(state.board.spinnerTile){
+
+    const leftFilled =
+      state.board.spinnerArms.left &&
+      state.board.spinnerArms.left.length > 0;
+
+    const rightFilled =
+      state.board.spinnerArms.right &&
+      state.board.spinnerArms.right.length > 0;
+
+    const sideLockActive = !(leftFilled && rightFilled);
+
+    if(sideLockActive){
+      legal = legal.filter(
+        arm => arm !== 'top' && arm !== 'bottom'
+      );
+    }
+  }
+
+  return legal;
 }
 function legal(tile){ return legalArms(tile).length > 0; }
 function validPlaySummary(playerIndex){
