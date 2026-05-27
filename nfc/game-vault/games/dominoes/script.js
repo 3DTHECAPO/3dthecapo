@@ -731,7 +731,7 @@ function newGame(players){
   state.gameOver = false;
 
   const handLeader = Number.isInteger(state.nextLeader) ? state.nextLeader % state.players : null;
-  play3dAnnounce('NEW_GAME','normal');
+  play3dAnnounce('NEW_GAME','normal','DOMINOES TABLE OPEN.');
 
   if(handLeader !== null){
     state.currentPlayerIndex = handLeader;
