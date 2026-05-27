@@ -25,6 +25,7 @@
   let betVal = 25;
   let spinning = false;
   const cells = [];
+  const payListEl = document.getElementById('payList');
 
   function save(){
     if(bank) bank.setCredits(creditsVal);
@@ -65,6 +66,22 @@
     spinBtn.disabled = spinning || creditsVal < betVal;
     betDownBtn.disabled = spinning || betVal <= 25;
     betUpBtn.disabled = spinning || betVal >= 250 || betVal + 25 > creditsVal;
+    renderPayList();
+  }
+
+  function symbolLabel(id){
+    return id.replaceAll('-', ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function renderPayList(){
+    if(!payListEl) return;
+    const rows = regularSymbols.map(symbol => {
+      const payout = betVal * symbol.pay;
+      return '<div><span>3 ' + symbolLabel(symbol.id) + '</span><b>' + symbol.pay + 'x / ' + payout + '</b></div>';
+    });
+    rows.push('<div><span>3 Vault Pass Covers</span><b>25x / ' + (betVal * 25) + '</b></div>');
+    rows.push('<div><span>Vault Jackpot Line</span><b>Jackpot + line</b></div>');
+    payListEl.innerHTML = rows.join('');
   }
 
   function lineScore(board){
@@ -76,15 +93,20 @@
     let total = 0;
     let jackpotHit = false;
     const pays = Object.fromEntries(regularSymbols.map(s => [s.id, s.pay]));
+    const lineNames = ['Top row','Middle row','Bottom row','Left column','Center column','Right column','Diagonal down','Diagonal up'];
+    const hits = [];
 
-    for(const line of lines){
+    for(let i = 0; i < lines.length; i++){
+      const line = lines[i];
       const ids = line.map(i => board[i].id);
       if(ids[0] === ids[1] && ids[1] === ids[2] && pays[ids[0]]){
-        total += betVal * pays[ids[0]];
+        const payout = betVal * pays[ids[0]];
+        total += payout;
+        hits.push({line:lineNames[i], combo:'3 ' + symbolLabel(ids[0]), payout});
         if(ids[0] === 'vault') jackpotHit = true;
       }
     }
-    return {total, jackpotHit};
+    return {total, jackpotHit, hits};
   }
 
   function vaultPassCount(board){
@@ -122,7 +144,7 @@
     resultLine.textContent = passCount >= 3
       ? 'Vault Pass unlocked. Claim button is ready.'
       : win
-        ? label + ' pays ' + win + ' credits.'
+        ? label + ' pays ' + win + ' credits. ' + (scored.hits && scored.hits.length ? scored.hits.map(hit => hit.line + ': ' + hit.combo + ' = ' + hit.payout).join(' | ') : '')
         : 'No win. Pull again.';
     if(points && win > 0) points.award('slot-machine-custom', Math.min(300, Math.max(25, Math.floor(win / 8))), label.toLowerCase().replaceAll(' ','_'));
     spinning = false;

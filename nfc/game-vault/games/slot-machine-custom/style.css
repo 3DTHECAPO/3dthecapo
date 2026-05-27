@@ -44,6 +44,9 @@ p{color:var(--muted);line-height:1.45}
 .lever.pulled:after{transform:translateY(22px)}
 #playAgainBtn{grid-column:1 / -1}
 .result-line{margin:14px 4px 0;text-align:center;color:#f7df9a;font-weight:800}
+.pay-list{margin-top:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;position:relative;z-index:2}
+.pay-list div{border:1px solid rgba(242,210,123,.24);border-radius:14px;background:rgba(0,0,0,.42);padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--muted);font-size:12px;font-weight:900;text-transform:uppercase}
+.pay-list b{color:var(--gold2);white-space:nowrap}
 .vault-pass-overlay{position:fixed;inset:0;z-index:10;display:grid;place-items:center;padding:22px;background:rgba(0,0,0,.72);backdrop-filter:blur(10px)}
 .vault-pass-overlay[hidden]{display:none}
 .vault-pass-card{width:min(520px,94vw);border:1px solid rgba(242,210,123,.42);border-radius:24px;background:linear-gradient(180deg,#1b1308,#050403);box-shadow:0 32px 90px rgba(0,0,0,.72);padding:24px;text-align:center}
