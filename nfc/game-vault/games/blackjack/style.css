@@ -1,4 +1,4 @@
-:root{
+﻿:root{
 --gold:#caa24a;
 --gold2:#f2d27b;
 --cream:#f5efe3;
@@ -406,4 +406,13 @@ grid-template-columns:1fr;
 
 /* CONSUMER LAYOUT REPAIR - BLACKJACK */
 body{overflow:auto}.app{width:min(1800px,98vw);min-height:100vh;display:flex;flex-direction:column;gap:6px;padding:6px 8px 8px}.top{height:34px;max-height:34px;margin:0}.brand span{width:32px;height:32px;border-radius:10px;font-size:15px}.brand b{font-size:13px}.hero{height:46px;max-height:46px;min-height:46px;margin:0;padding:6px 10px;border-radius:14px;align-items:center}.hero p{display:none}.kicker{font-size:9px}h1{font-size:clamp(24px,2.8vw,40px);margin:0}.status{min-width:160px;padding:6px 10px;border-radius:12px}.status b{font-size:20px}.blackjack-layout{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:10px;height:calc(100vh - 108px);min-height:660px}.casino-table{height:100%;min-height:660px;margin:0;border-width:10px;border-radius:46px}.blackjack-rail{display:flex;flex-direction:column;gap:10px;min-height:0}.blackjack-rail .panel{margin:0;padding:10px;border-radius:18px}.controls{display:grid;grid-template-columns:1fr;gap:8px}.controls button{min-height:42px;font-size:13px;padding:9px 10px;width:100%}.bank-grid{grid-template-columns:1fr;gap:8px}.bank-grid div{min-height:54px;padding:9px;border-radius:13px}.dealer-zone,.player-zone{left:50%;transform:translateX(-50%);width:min(860px,82%);min-height:170px}.dealer-zone{top:76px}.player-zone{bottom:54px}.hand{min-height:116px}.chip-stack,.chip{display:none!important}@media(max-width:980px){.app{display:block}.top,.hero{height:auto;max-height:none}.blackjack-layout{grid-template-columns:1fr;height:auto;min-height:0}.casino-table{height:72vh;min-height:560px}.blackjack-rail{margin-top:10px}.controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* TARGETED HEADER / STATUS OVERLAP FIX */
+.top{height:auto!important;max-height:none!important;min-height:44px!important;margin:0 0 8px!important;position:relative!important;z-index:30!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;flex-wrap:wrap!important;}
+.top nav,nav{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;flex-wrap:wrap!important;}
+.top nav a,nav a{min-height:38px!important;font-size:12px!important;line-height:1.1!important;padding:9px 12px!important;}
+.hero{height:auto!important;max-height:none!important;min-height:66px!important;margin:0 0 10px!important;position:relative!important;z-index:20!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:12px!important;}
+.hero .status{align-self:center!important;min-width:180px!important;max-width:260px!important;overflow-wrap:anywhere!important;}
+.blackjack-layout{height:calc(100vh - 138px)!important;}
+.bank-grid b{font-size:clamp(17px,1.5vw,24px)!important;line-height:1.05!important;overflow-wrap:anywhere!important;}
 
