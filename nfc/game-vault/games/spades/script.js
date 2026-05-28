@@ -1,10 +1,6 @@
 (()=>{
   'use strict';
 
-  function play3dAnnounce(event, type, message){
-    window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'spades', event:event, type:type, message:message } }));
-  }
-
   const suits = ['S','H','D','C'];
   const ranks = ['A','K','Q','J','10','9','8','7','6','5','4','3','2'];
   const seats = ['south','west','north','east'];
@@ -16,6 +12,8 @@
     score:{ NS:0, EW:0 }, bags:{ NS:0, EW:0 }, bids:{}, taken:{}
   };
   let mode = window.Play3DModeBar ? window.Play3DModeBar.getMode() : 'cpu';
+  const scoreText = document.getElementById('scoreText');
+  const turnText = document.getElementById('turnText');
   function thinkDelay(){ return 400 + Math.floor(Math.random() * 1000); }
 
   function buildDeck(){
@@ -36,7 +34,7 @@
     state.hands = { south:[], west:[], north:[], east:[] };
     for(let i = 0; i < 52; i++) state.hands[seats[i % 4]].push(deck[i]);
     for(const seat of seats) state.hands[seat].sort(sortCards);
-    state.turn = 'south';
+    state.turn = seats[(seats.indexOf(state.dealer) + 1) % 4];
     state.trick = [];
     state.spadesBroken = false;
     state.phase = 'bid';
@@ -44,6 +42,7 @@
     state.taken = { south:0, west:0, north:0, east:0 };
     log(mode === 'fan' ? 'Fan room opened with guarded table state.' : 'New 52-card spades hand dealt. Bid first.');
     render();
+    if(mode === 'cpu' && state.turn !== 'south') scheduleBidBot();
   }
 
   function estimateBid(seat){
@@ -53,21 +52,39 @@
     return Math.max(1, Math.min(5, bid));
   }
 
+  
+  function runCpuBids(){
+    if(state.phase !== 'bid' || mode !== 'cpu') return;
+    for(const cpu of seats.filter(s => s !== 'south')){
+      if(state.bids[cpu] === null){
+        const bid = estimateBid(cpu);
+        state.bids[cpu] = bid;
+        log(seatName(cpu) + ' bid ' + (Number(bid) === 0 ? 'nil' : bid) + '.');
+        play3dAnnounce(Number(bid) === 0 ? 'NIL' : 'BID', 'casino', seatName(cpu).toUpperCase() + ' BID ' + bid);
+      }
+    }
+  }
+
   function placeBid(seat, bid){
-    if(state.phase !== 'bid' || state.bids[seat] !== null) return;
+    if(state.phase !== 'bid' || state.bids[seat] !== null || seat !== state.turn) return;
     state.bids[seat] = Number(bid);
     log(seatName(seat) + ' bid ' + (Number(bid) === 0 ? 'nil' : bid) + '.');
-    play3dAnnounce(Number(bid) === 0 ? 'NIL' : 'BID', 'casino');
-    for(const cpu of seats.filter(s => s !== 'south')){
-      if(state.bids[cpu] === null) state.bids[cpu] = estimateBid(cpu);
-    }
     if(seats.every(s => state.bids[s] !== null)){
       state.phase = 'play';
       state.turn = 'south';
       log('Contracts set. North/South ' + teamBid('NS') + ', East/West ' + teamBid('EW') + '.');
       if(mode === 'cpu' && state.turn !== 'south') scheduleBot();
+    } else {
+      state.turn = seats[(seats.indexOf(state.turn) + 1) % 4];
+      if(mode === 'cpu' && state.turn !== 'south') scheduleBidBot();
     }
     render();
+  }
+  function scheduleBidBot(){
+    turnText.textContent = 'OPPONENT THINKING...';
+    window.setTimeout(()=>{
+      if(mode === 'cpu' && state.phase === 'bid' && state.turn !== 'south') placeBid(state.turn, estimateBid(state.turn));
+    }, thinkDelay());
   }
 
   function teamBid(t){ return seats.filter(s => team[s] === t).reduce((sum,s)=>sum + Number(state.bids[s] || 0), 0); }
@@ -139,7 +156,6 @@
     const win = trickWinnerCard().seat;
     state.taken[win]++;
     log(seatName(win) + ' won the trick.');
-    play3dAnnounce('TRICK','boss');
     state.turn = win;
     state.trick = [];
     if((state.hands.south || []).length === 0){ finishHand(); return; }
@@ -153,7 +169,6 @@
     state.phase = 'over';
     if(window.Play3DPoints && state.score.NS >= state.score.EW) window.Play3DPoints.award('spades', 175, 'contract_hand');
     log('Hand scored. Bags: NS ' + state.bags.NS + ', EW ' + state.bags.EW + '.');
-    play3dAnnounce('WIN','success');
     render();
   }
 
@@ -177,6 +192,7 @@
   }
 
   function activeSeat(){ return mode === 'local' ? state.turn : 'south'; }
+  function activeBidSeat(){ return mode === 'local' ? state.turn : 'south'; }
 
   function cardHTML(card,index,disabled){
     const red = card.s === 'H' || card.s === 'D';
@@ -204,16 +220,21 @@
   function renderSeats(){
     for(const seat of seats){
       const el = document.querySelector('.' + ({south:'bottom', north:'top', west:'left', east:'right'}[seat]) + '-seat');
-      if(el) el.innerHTML = seatName(seat).toUpperCase() + '<br><small>Bid ' + (state.bids[seat] ?? '-') + ' / Tricks ' + (state.taken[seat] || 0) + '</small>';
+      if(el) el.innerHTML = seatName(seat).toUpperCase() + '<br><small>Bid ' + (state.bids[seat] ?? '-') + ' / Tricks ' + (state.taken[seat] || 0) + '</small>' + (seat === 'south' ? '' : '<div class="seat-cards">' + backs(Math.min(6, (state.hands[seat] || []).length)) + '</div>');
     }
   }
+  function backs(count){ return Array.from({length:count},()=>'<span class="card back"></span>').join(''); }
 
   function render(){
     renderHand();
     renderTrick();
     renderSeats();
     scoreText.textContent = state.score.NS + ' - ' + state.score.EW;
-    const label = state.phase === 'bid' ? 'BID PHASE' : state.phase === 'over' ? 'HAND OVER' : (mode === 'local' ? seatName(state.turn).toUpperCase() + ' TURN' : (state.turn === 'south' ? 'YOUR TURN' : seatName(state.turn).toUpperCase() + ' TURN'));
+    const label = state.phase === 'bid'
+      ? (mode === 'local' ? seatName(state.turn).toUpperCase() + ' BID' : (state.turn === 'south' ? 'YOUR BID' : seatName(state.turn).toUpperCase() + ' BID'))
+      : state.phase === 'over'
+        ? 'HAND OVER'
+        : (mode === 'local' ? seatName(state.turn).toUpperCase() + ' TURN' : (state.turn === 'south' ? 'YOUR TURN' : seatName(state.turn).toUpperCase() + ' TURN'));
     turnText.textContent = label + (state.spadesBroken ? ' / SPADES BROKEN' : '');
   }
 
@@ -222,14 +243,17 @@
 
   document.getElementById('newBtn').onclick = deal;
   document.getElementById('autoBtn').onclick = ()=>{
-    if(state.phase === 'bid') placeBid('south', estimateBid('south'));
+    if(state.phase === 'bid'){
+      const seat = activeBidSeat();
+      placeBid(seat, estimateBid(seat));
+    }
     else {
       const seat = activeSeat();
       const card = legalCards(seat)[0];
       if(card) play(seat, card);
     }
   };
-  document.querySelectorAll('.bidBtn').forEach(btn => btn.onclick = () => placeBid('south', btn.dataset.bid));
+  document.querySelectorAll('.bidBtn').forEach(btn => btn.onclick = () => placeBid(activeBidSeat(), btn.dataset.bid));
   window.addEventListener('play3d:modechange', event=>{ mode = event.detail.mode; deal(); });
   deal();
 })();

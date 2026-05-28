@@ -1,13 +1,11 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PLAY 3D â€” Spades AAA</title>
+<title>PLAY 3D — Spades AAA</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./style.css">
-<link rel="stylesheet" href="../shared/superior/superior-events.css">
-<link rel="stylesheet" href="../shared/mode-bar.css">
+<link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="../shared/mode-bar.css">
 </head>
 <body>
 <div class="bg"></div>
@@ -30,47 +28,41 @@
   </div>
 </section>
 
-<section class="spades-layout" aria-label="Spades table layout">
-  <aside class="spades-rail left-rail" aria-label="Spades game log">
-    <section class="panel log-panel">
-      <h2>Game Log</h2>
-      <ol id="log"></ol>
-    </section>
-  </aside>
+<section class="casino-table">
+  <div class="table-logo">SPADES</div>
 
-  <section class="casino-table" aria-label="Spades table">
-    <div class="table-logo">SPADES</div>
+  <div class="seat top-seat">NORTH<br><small>Partner</small></div>
+  <div class="seat left-seat">WEST</div>
+  <div class="seat right-seat">EAST</div>
+  <div class="seat bottom-seat">YOU</div>
 
-    <div class="seat top-seat">NORTH<br><small>Partner</small></div>
-    <div class="seat left-seat">WEST</div>
-    <div class="seat right-seat">EAST</div>
-    <div class="seat bottom-seat">YOU</div>
+  <div class="table-center">
+    <h2>Current Trick</h2>
+    <div id="trickArea" class="trick-area"></div>
+  </div>
 
-    <div class="table-center">
-      <h2>Current Trick</h2>
-      <div id="trickArea" class="trick-area"></div>
-    </div>
-  </section>
-
-  <aside class="spades-rail right-rail" aria-label="Spades controls">
-    <section class="controls panel">
-      <button id="newBtn">Deal</button>
-      <button class="bidBtn" data-bid="0">Bid Nil</button>
-      <button class="bidBtn" data-bid="2">Bid 2</button>
-      <button class="bidBtn" data-bid="3">Bid 3</button>
-      <button class="bidBtn" data-bid="4">Bid 4</button>
-      <button id="autoBtn">Auto Play</button>
-    </section>
-  </aside>
+  <div class="chip-stack"><div class="chip"></div><div class="chip"></div><div class="chip"></div></div>
 </section>
 
-<section class="panel hand-dock">
+<section class="controls panel">
+  <button id="newBtn">Deal</button>
+  <button class="bidBtn" data-bid="0">Bid Nil</button>
+  <button class="bidBtn" data-bid="2">Bid 2</button>
+  <button class="bidBtn" data-bid="3">Bid 3</button>
+  <button class="bidBtn" data-bid="4">Bid 4</button>
+  <button id="autoBtn">Auto Play</button>
+</section>
+
+<section class="panel">
   <h2>Your Hand</h2>
   <div id="hand" class="hand"></div>
 </section>
+
+<section class="panel">
+  <h2>Game Log</h2>
+  <ol id="log"></ol>
+</section>
 </main>
-<script src="../shared/superior/superior-lines.js"></script>
-<script src="../shared/superior/superior-events.js"></script>
 <script src="../shared/mode-bar.js"></script>
 <script src="../shared/game-points.js"></script><script src="./script.js"></script><script>/* CPU SAFE FAN LOADER */
 (function(){
@@ -89,5 +81,3 @@
 </script>
 </body>
 </html>
-
-
