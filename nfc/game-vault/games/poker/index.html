@@ -1,12 +1,11 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PLAY 3D - Poker</title>
+<title>PLAY 3D - Rummy</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
-<link rel="stylesheet" href="../shared/superior/superior-events.css">
 <link rel="stylesheet" href="../shared/mode-bar.css">
 </head>
 <body>
@@ -17,42 +16,39 @@
     <nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav>
   </header>
   <section class="hero">
-    <div><div class="kicker">CARD TABLE</div><h1>Poker</h1><p>Playable video poker with hold, draw, shared credits, and responsive table layout.</p></div>
-    <div class="score"><span>Status</span><b id="mainScore">0</b><small id="stateText">READY</small></div>
+    <div><div class="kicker">CARD TABLE</div><h1>Rummy</h1><p>Draw, meld sets or runs, discard, and race the CPU opponent.</p></div>
+    <div class="score"><span>Points</span><b id="mainScore">0</b><small id="stateText">READY</small></div>
   </section>
-  <section class="table poker-shell">
-    <div class="poker-layout" aria-label="Poker table layout">
-      <aside class="poker-rail" aria-label="Poker controls and status">
-        <div class="row poker-controls">
+  <section class="table rummy-shell">
+    <div class="rummy-layout" aria-label="Rummy table layout">
+      <aside class="rummy-rail" aria-label="Rummy controls">
+        <div class="row rummy-controls">
           <button id="dealBtn">Deal</button>
-          <button id="drawBtn">Draw</button>
-          <button id="betDown">Bet -</button>
-          <button id="betUp">Bet +</button>
-          <button id="playAgainBtn">Play Again</button>
+          <button id="drawStockBtn">Draw Stock</button>
+          <button id="drawDiscardBtn">Draw Discard</button>
+          <button id="meldBtn">Meld Selected</button>
+          <button id="discardBtn">Discard Selected</button>
         </div>
-        <section class="rail-zone poker-status">
-          <h2>Status</h2>
-          <p>Credits: <b id="credits">1000</b></p>
-          <p>Bet: <b id="bet">25</b></p>
-          <p>Hand: <b id="rankName">Ready</b></p>
-          <p>Click cards to hold, then Draw.</p>
+        <section class="rail-zone rummy-status">
+          <h2>Table</h2>
+          <p>Draw, meld, discard. Keep the center table clear.</p>
         </section>
       </aside>
 
       <div class="casino-table">
-        <div class="table-logo">POKER</div>
-        <div class="table-content poker-center">
-          <div id="hand" class="hand"></div>
+        <div class="table-logo">RUMMY</div>
+        <div class="table-content rummy-zones">
+          <section class="rummy-zone opponent-zone"><h2>CPU Opponent</h2><div id="opponentHand" class="hand"></div></section>
+          <section class="rummy-zone table-zone"><h2>Stock / Discard</h2><div id="tableCards" class="hand"></div></section>
+          <section class="rummy-zone meld-zone"><h2>Melds</h2><div id="meldArea" class="hand"></div></section>
+          <section class="rummy-zone player-zone"><h2>Your Hand</h2><div id="playerHand" class="hand"></div></section>
         </div>
       </div>
     </div>
   </section>
 </main>
-<script src="../shared/game-bank.js"></script>
-<script src="../shared/game-points.js"></script>
-<script src="../shared/superior/superior-lines.js"></script>
-<script src="../shared/superior/superior-events.js"></script>
 <script src="../shared/mode-bar.js"></script>
+<script src="../shared/game-points.js"></script>
 <script src="./script.js"></script>
 <script>
 (function(){
@@ -65,5 +61,3 @@
 </script>
 </body>
 </html>
-
-

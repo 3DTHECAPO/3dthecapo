@@ -1,141 +1,167 @@
 (()=>{
   'use strict';
-
-  function play3dAnnounce(event, type, message){
-    window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'poker', event:event, type:type, message:message } }));
-  }
-
   const suits = ['S','H','D','C'];
-  const ranks = ['A','K','Q','J','10','9','8','7','6','5','4','3','2'];
-  const order = {'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'J':11,'Q':12,'K':13,'A':14};
+  const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+  const order = Object.fromEntries(ranks.map((r,i)=>[r,i + 1]));
   const suitIcon = {S:'\u2660', H:'\u2665', D:'\u2666', C:'\u2663'};
-  const bank = window.Play3DGameBank;
-  let deck = [];
-  let hand = [];
-  let hold = [];
-  let creditsVal = bank ? bank.getCredits() : 1000;
-  let betVal = 25;
-  let phase = 'deal';
-  const handEl = document.getElementById('hand');
+  const HAND_SIZE = 10;
+  const state = { deck:[], stock:[], discard:[], hands:[], playerMelds:[], cpuMelds:[], selected:new Set(), phase:'idle', score:0, turn:0, playerCount:2, nextId:1 };
+  const els = {
+    opponent:document.getElementById('opponentHand'),
+    table:document.getElementById('tableCards'),
+    melds:document.getElementById('meldArea'),
+    player:document.getElementById('playerHand'),
+    score:document.getElementById('mainScore'),
+    text:document.getElementById('stateText')
+  };
 
-  function mk(){
-    deck = [];
-    for(const s of suits){
-      for(const r of ranks) deck.push({r,s});
+  function thinkDelay(){ return 400 + Math.floor(Math.random() * 1000); }
+  function shuffle(cards){ for(let i = cards.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [cards[i], cards[j]] = [cards[j], cards[i]]; } return cards; }
+  function buildDeck(){ return shuffle(suits.flatMap(s => ranks.map(r => ({ id:'r'+(state.nextId++), r, s })))); }
+  function sortHand(hand){ hand.sort((a,b)=>a.s.localeCompare(b.s) || order[a.r] - order[b.r]); }
+  function isRed(c){ return c.s === 'H' || c.s === 'D'; }
+  function card(c){
+    const on = state.selected.has(c.id);
+    return '<button class="card ' + (isRed(c) ? 'red ' : '') + (on ? 'selected' : '') + '" data-id="' + c.id + '"><span>' + c.r + '</span><b>' + suitIcon[c.s] + '</b><small>' + c.r + '</small></button>';
+  }
+  function back(count){ return Array.from({ length:count }, (_,i)=>'<div class="card back">PLAY<br>' + (i + 1) + '</div>').join(''); }
+  function isSet(cards){ return cards.length >= 3 && cards.every(c => c.r === cards[0].r); }
+  function isRun(cards){
+    if(cards.length < 3 || !cards.every(c => c.s === cards[0].s)) return false;
+    const nums = [...new Set(cards.map(c => order[c.r]))].sort((a,b)=>a-b);
+    return nums.length === cards.length && nums.every((n,i)=>i === 0 || n === nums[i - 1] + 1);
+  }
+  function isMeld(cards){ return isSet(cards) || isRun(cards); }
+  function cardValue(c){ if(c.r === 'A') return 15; if(['K','Q','J'].includes(c.r)) return 10; return Number(c.r); }
+  function deadwood(hand){ return hand.reduce((sum,c)=>sum + cardValue(c), 0); }
+  function removeByIds(hand, ids){ const picked = hand.filter(card => ids.includes(card.id)); ids.forEach(id => { const idx = hand.findIndex(card => card.id === id); if(idx >= 0) hand.splice(idx, 1); }); return picked; }
+  function combinations(items, size){ const out = []; function walk(start, bag){ if(bag.length === size){ out.push([...bag]); return; } for(let i = start; i < items.length; i++){ bag.push(items[i]); walk(i + 1, bag); bag.pop(); } } walk(0, []); return out; }
+  function findMeldIndexes(hand){
+    for(let size = Math.min(5, hand.length); size >= 3; size--){
+      const found = combinations(hand.map((_,i)=>i), size).find(combo => isMeld(combo.map(i => hand[i])));
+      if(found) return found;
     }
-    deck.sort(()=>Math.random() - 0.5);
+    return null;
   }
-
-  function straight(vals){
-    const v = [...new Set(vals)].sort((a,b)=>a-b);
-    if(v.length !== 5) return false;
-    if(v.join(',') === '2,3,4,5,14') return true;
-    return v[4] - v[0] === 4;
-  }
-
-  function evaluate(){
-    const counts = {};
-    hand.forEach(c=>counts[c.r] = (counts[c.r] || 0) + 1);
-    const groups = Object.values(counts).sort((a,b)=>b-a).join(',');
-    const nums = hand.map(c=>order[c.r]);
-    const flush = hand.length === 5 && hand.every(c=>c.s === hand[0].s);
-    const st = straight(nums);
-    const high = new Set(hand.map(c=>c.r));
-    if(flush && st && ['10','J','Q','K','A'].every(x=>high.has(x))) return {name:'Royal Flush',pay:250};
-    if(flush && st) return {name:'Straight Flush',pay:50};
-    if(groups === '4,1') return {name:'Four Of A Kind',pay:25};
-    if(groups === '3,2') return {name:'Full House',pay:9};
-    if(flush) return {name:'Flush',pay:6};
-    if(st) return {name:'Straight',pay:4};
-    if(groups === '3,1,1') return {name:'Three Of A Kind',pay:3};
-    if(groups === '2,2,1') return {name:'Two Pair',pay:2};
-    if(groups.startsWith('2')){
-      const pair = Object.keys(counts).find(r=>counts[r] === 2);
-      return order[pair] >= 11 ? {name:'Jacks Or Better',pay:1} : {name:'Low Pair',pay:0};
-    }
-    return {name:'No Win',pay:0};
-  }
-
-  function card(c,i){
-    const red = c.s === 'H' || c.s === 'D';
-    const held = hold.includes(i);
-    return '<button class="card ' + (red ? 'red ' : '') + (held ? 'hold' : '') + '" data-i="' + i + '"><span>' + c.r + '</span><b>' + suitIcon[c.s] + '</b><small>' + (held ? 'HOLD' : c.r) + '</small></button>';
-  }
-
-  function saveBank(){
-    if(bank) bank.setCredits(creditsVal);
-  }
+  function scoreMeld(cards){ return cards.reduce((sum,c)=>sum + cardValue(c), 0); }
 
   function render(){
-    handEl.innerHTML = hand.map(card).join('');
-    credits.textContent = creditsVal;
-    bet.textContent = betVal;
-    mainScore.textContent = creditsVal;
-    stateText.textContent = phase.toUpperCase();
-    drawBtn.disabled = phase !== 'draw';
-    dealBtn.disabled = phase === 'draw' || creditsVal < betVal;
-    playAgainBtn.disabled = phase === 'draw' || creditsVal < betVal;
-    betDown.disabled = phase === 'draw';
-    betUp.disabled = phase === 'draw';
-    document.querySelectorAll('#hand .card').forEach(button=>{
-      button.onclick = ()=>{
-        const i = Number(button.dataset.i);
-        if(phase !== 'draw') return;
-        hold = hold.includes(i) ? hold.filter(x=>x !== i) : hold.concat(i);
-        play3dAnnounce('HOLD','normal');
-        render();
-      };
-    });
+    const player = state.hands[0] || [];
+    const opponentCards = state.hands.slice(1).reduce((sum, hand)=>sum + hand.length, 0);
+    els.opponent.innerHTML = '<div class="opponent-stack">' + back(opponentCards) + '</div><div class="count-card">2 Players</div>';
+    const topDiscard = state.discard[state.discard.length - 1];
+    els.table.innerHTML = '<div class="count-card">Stock<br>' + state.stock.length + '</div>' + (topDiscard ? card(topDiscard) : '<div class="count-card">Discard<br>Empty</div>');
+    els.melds.innerHTML = state.playerMelds.map(m => '<div class="meld-set">' + m.map(card).join('') + '</div>').join('') || '<div class="count-card">No melds yet</div>';
+    els.player.innerHTML = player.map(card).join('');
+    els.score.textContent = state.score;
+    if(els.text.textContent !== 'OPPONENT THINKING...') els.text.textContent = state.phase.toUpperCase();
   }
 
   function deal(){
-    if(phase === 'draw') return;
-    creditsVal = bank ? bank.getCredits() : creditsVal;
-    if(creditsVal < betVal){
-      rankName.textContent = 'NOT ENOUGH CREDITS';
-      stateText.textContent = 'NO CREDITS';
-      render();
-      return;
+    state.playerCount = 2;
+    state.nextId = 1;
+    state.deck = buildDeck();
+    state.hands = Array.from({length:state.playerCount}, () => {
+      const hand = state.deck.splice(0, HAND_SIZE);
+      sortHand(hand);
+      return hand;
+    });
+    state.discard = [state.deck.pop()];
+    state.stock = state.deck;
+    state.playerMelds = [];
+    state.cpuMelds = [];
+    state.selected.clear();
+    state.lastDrawnDiscardId = null;
+    state.score = 0;
+    state.turn = 0;
+    state.phase = 'draw';
+    render();
+  }
+  function recycleDiscard(){ const top = state.discard.pop(); state.stock = shuffle(state.discard); state.discard = top ? [top] : []; }
+  function drawFromStock(){ if(state.phase !== 'draw') return; if(!state.stock.length) recycleDiscard(); const drawn = state.stock.pop(); if(!drawn){ els.text.textContent = 'NO STOCK AVAILABLE'; render(); return; } state.hands[0].push(drawn); sortHand(state.hands[0]); state.phase = 'meld'; render(); }
+  function drawFromDiscard(){ if(state.phase !== 'draw') return; const drawn = state.discard.pop(); if(!drawn){ els.text.textContent = 'DISCARD EMPTY'; render(); return; } state.hands[0].push(drawn); sortHand(state.hands[0]); state.phase = 'meld'; render(); }
+  function meldSelected(){
+    if(state.phase !== 'meld') return;
+    const ids = [...state.selected];
+    const picked = state.hands[0].filter(card => ids.includes(card.id));
+    if(!isMeld(picked)){ els.text.textContent = 'SELECT A SET OR RUN'; return; }
+    removeByIds(state.hands[0], ids);
+    state.playerMelds.push(picked);
+    state.score += scoreMeld(picked);
+    state.selected.clear();
+    if(window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(10, scoreMeld(picked)), 'meld');
+    checkRound();
+    render();
+  }
+  function discardSelected(){
+    if(state.phase !== 'meld') return;
+    const ids = [...state.selected];
+    if(ids.length !== 1){ els.text.textContent = 'SELECT ONE DISCARD'; return; }
+    const [discarded] = removeByIds(state.hands[0], ids);
+    state.discard.push(discarded);
+    state.selected.clear();
+    checkRound();
+    if(state.phase !== 'over'){ state.phase = 'cpu'; state.turn = 1; scheduleCpu(); render(); }
+  }
+  function scheduleCpu(){ els.text.textContent = 'OPPONENT THINKING...'; window.setTimeout(cpuTurn, thinkDelay()); }
+  function cpuTurn(){
+    if(state.phase !== 'cpu') return;
+    const hand = state.hands[state.turn] || [];
+    const discard = state.discard[state.discard.length - 1];
+    const drawDiscard = discard && findMeldIndexes([...hand, discard]);
+    const drawnFromDiscard = !!drawDiscard;
+    const drawn = drawnFromDiscard ? state.discard.pop() : (state.stock.pop() || (recycleDiscard(), state.stock.pop()));
+    const drawnId = drawn && drawn.id;
+    if(drawn) hand.push(drawn);
+    const meld = findMeldIndexes(hand);
+    if(meld) state.cpuMelds.push(removeByIds(hand, meld.map(index => hand[index].id)));
+    if(hand.length){
+      hand.sort((a,b)=>cardValue(b) - cardValue(a));
+      let discardIndex = 0;
+      if(drawnFromDiscard && drawnId && hand.length > 1 && hand[0] && hand[0].id === drawnId){
+        const alt = hand.findIndex(c=>c.id !== drawnId);
+        if(alt >= 0) discardIndex = alt;
+      }
+      state.discard.push(hand.splice(discardIndex,1)[0]);
     }
-    creditsVal -= betVal;
-    saveBank();
-    mk();
-    hand = deck.splice(0,5);
-    hold = [];
-    phase = 'draw';
-    rankName.textContent = 'Pick Holds';
-    play3dAnnounce('DEAL','casino');
+    checkRound();
+    if(state.phase !== 'over'){
+      state.turn = (state.turn + 1) % state.playerCount;
+      if(state.turn === 0) state.phase = 'draw';
+      else { render(); scheduleCpu(); return; }
+    }
     render();
   }
-
-  function draw(){
-    if(phase !== 'draw') return;
-    hand = hand.map((c,i)=>hold.includes(i) ? c : deck.pop());
-    const res = evaluate();
-    const pay = res.pay * betVal;
-    creditsVal += pay;
-    if(window.Play3DPoints && pay > 0) window.Play3DPoints.award('poker', Math.min(250, Math.max(25, Math.floor(pay / 3))), res.name.toLowerCase().replaceAll(' ','_'));
-    saveBank();
-    rankName.textContent = res.name + ' +' + pay;
-    play3dAnnounce('DRAW','casino');
-    if(pay > 0) play3dAnnounce('WIN','success',res.name + ' pays ' + pay);
-    phase = 'deal';
-    render();
+  function checkRound(){
+    const player = state.hands[0] || [];
+    const opponents = state.hands.slice(1);
+    if(!player.length || opponents.some(hand => !hand.length)){
+      const playerNet = opponents.reduce((sum, hand)=>sum + deadwood(hand), 0);
+      const cpuNet = deadwood(player);
+      if(!player.length || playerNet <= cpuNet){
+        state.score += playerNet;
+        if(window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(50, playerNet), 'round_win');
+        state.phase = 'over';
+        els.text.textContent = 'PLAYER WINS';
+      } else {
+        state.phase = 'over';
+        els.text.textContent = 'CPU WINS';
+      }
+    }
   }
-
-  dealBtn.onclick = deal;
-  playAgainBtn.onclick = deal;
-  drawBtn.onclick = draw;
-  betDown.onclick = ()=>{
-    if(phase === 'draw') return;
-    betVal = Math.max(25, betVal - 25);
+  els.player.addEventListener('click', e => {
+    const btn = e.target.closest('[data-id]');
+    if(!btn || state.phase === 'cpu') return;
+    const id = btn.dataset.id;
+    if(!id || !(state.hands[0] || []).some(card => card.id === id)) return;
+    if(state.selected.has(id)) state.selected.delete(id); else state.selected.add(id);
     render();
-  };
-  betUp.onclick = ()=>{
-    if(phase === 'draw') return;
-    betVal = betVal >= 500 ? 25 : betVal + 25;
-    render();
-  };
-
-  render();
+  });
+  document.getElementById('dealBtn').onclick = deal;
+  document.getElementById('drawStockBtn').onclick = drawFromStock;
+  document.getElementById('drawDiscardBtn').onclick = drawFromDiscard;
+  document.getElementById('meldBtn').onclick = meldSelected;
+  document.getElementById('discardBtn').onclick = discardSelected;
+  window.addEventListener('play3d:modechange', deal);
+  deal();
 })();
