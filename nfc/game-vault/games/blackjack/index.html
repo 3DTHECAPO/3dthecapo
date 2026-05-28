@@ -1,13 +1,11 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PLAY 3D â€” Blackjack AAA</title>
+<title>PLAY 3D — Blackjack AAA</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./style.css">
-<link rel="stylesheet" href="../shared/superior/superior-events.css">
-<link rel="stylesheet" href="../shared/mode-bar.css">
+<link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="../shared/mode-bar.css">
 </head>
 <body>
 <div class="bg"></div>
@@ -61,6 +59,8 @@
   <aside class="blackjack-rail" aria-label="Blackjack controls and bank">
     <section class="controls panel">
       <button id="dealBtn">Deal</button>
+      <button id="betMinusBtn">Bet -</button>
+      <button id="betPlusBtn">Bet +</button>
       <button id="hitBtn">Hit</button>
       <button id="standBtn">Stand</button>
       <button id="doubleBtn">Double</button>
@@ -80,9 +80,7 @@
 </main>
 
 <script src="../shared/game-bank.js"></script>
-<script src="../shared/game-points.js"></script><script src="../shared/superior/superior-lines.js"></script>
-<script src="../shared/superior/superior-events.js"></script>
-<script src="../shared/mode-bar.js"></script><script src="./script.js"></script><script>/* CPU SAFE FAN LOADER */
+<script src="../shared/game-points.js"></script><script src="../shared/mode-bar.js"></script><script src="./script.js"></script><script>/* CPU SAFE FAN LOADER */
 (function(){
   var p = new URLSearchParams(location.search);
   if(p.get('mode') !== 'fan' || !p.get('room')) return;
@@ -99,5 +97,3 @@
 </script>
 </body>
 </html>
-
-
