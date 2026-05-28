@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -6,6 +6,7 @@
 <title>PLAY 3D - Rummy</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="../shared/superior/superior-events.css">
 <link rel="stylesheet" href="../shared/mode-bar.css">
 </head>
 <body>
@@ -27,6 +28,7 @@
           <button id="drawStockBtn">Draw Stock</button>
           <button id="drawDiscardBtn">Draw Discard</button>
           <button id="meldBtn">Meld Selected</button>
+          <button id="layoffBtn">Add Selected To Existing Meld</button>
           <button id="discardBtn">Discard Selected</button>
         </div>
         <section class="rail-zone rummy-status">
@@ -47,6 +49,8 @@
     </div>
   </section>
 </main>
+<script src="../shared/superior/superior-lines.js"></script>
+<script src="../shared/superior/superior-events.js"></script>
 <script src="../shared/mode-bar.js"></script>
 <script src="../shared/game-points.js"></script>
 <script src="./script.js"></script>
@@ -61,3 +65,5 @@
 </script>
 </body>
 </html>
+
+
