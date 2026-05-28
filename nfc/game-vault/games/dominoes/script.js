@@ -26,6 +26,42 @@ const BRANCH_DIRS = {
   bottom:{x:0,y:1}
 };
 
+const L_SHAPE_LIMIT = { x:360, y:245 };
+const L_SHAPE_TURN = {
+  left:'top',
+  right:'bottom',
+  top:'right',
+  bottom:'left'
+};
+const L_SHAPE_ALT_TURN = {
+  left:'bottom',
+  right:'top',
+  top:'left',
+  bottom:'right'
+};
+
+function exceedsTableEdge(placement){
+  if(!placement) return false;
+  const size = TILE_SIZE[placement.orientation || 'horizontal'] || TILE_SIZE.horizontal;
+  const pad = 18;
+  return Math.abs(placement.x || 0) + size.w / 2 + pad > L_SHAPE_LIMIT.x ||
+         Math.abs(placement.y || 0) + size.h / 2 + pad > L_SHAPE_LIMIT.y;
+}
+
+function chooseCornerFlow(logicalArm, anchor, rawTile, match){
+  const currentFlow = anchor && (anchor.flowSide || anchor.exposedSide || logicalArm);
+  const firstChoice = L_SHAPE_TURN[currentFlow] || L_SHAPE_TURN[logicalArm] || currentFlow;
+  const secondChoice = L_SHAPE_ALT_TURN[currentFlow] || L_SHAPE_ALT_TURN[logicalArm] || currentFlow;
+
+  const first = buildBranchPlacement(rawTile, logicalArm, match, anchor, firstChoice);
+  if(!exceedsTableEdge(first)) return firstChoice;
+
+  const second = buildBranchPlacement(rawTile, logicalArm, match, anchor, secondChoice);
+  if(!exceedsTableEdge(second)) return secondChoice;
+
+  return firstChoice;
+}
+
 const state = {
   players:2,
   hands:[],
@@ -216,7 +252,19 @@ function makeSpinnerPlacement(tile){
 function makeBranchPlacement(rawTile,arm,match){
   const branch = state.board.spinnerArms[arm] || [];
   const anchor = branch.length ? branch[branch.length-1] : state.board.spinnerTile;
-  return buildBranchPlacement(rawTile,arm,match,anchor,arm);
+  let flowSide = branch.length ? (anchor.flowSide || anchor.exposedSide || arm) : arm;
+  let placement = buildBranchPlacement(rawTile,arm,match,anchor,flowSide);
+
+  // L-SHAPE VISIBILITY RULE:
+  // Keep the same arm/matching logic, but when the visual branch reaches
+  // the table edge, turn the flow 90 degrees so the end numbers stay visible.
+  if(branch.length && exceedsTableEdge(placement)){
+    flowSide = chooseCornerFlow(arm, anchor, rawTile, match);
+    placement = buildBranchPlacement(rawTile,arm,match,anchor,flowSide);
+    placement.corner = true;
+  }
+
+  return placement;
 }
 
 function rebranchPlacement(item,branch){
