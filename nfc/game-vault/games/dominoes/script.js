@@ -26,7 +26,7 @@ const BRANCH_DIRS = {
   bottom:{x:0,y:1}
 };
 
-const L_SHAPE_LIMIT = { x:360, y:245 };
+const L_SHAPE_LIMIT = { x:442, y:333 }; // one-more-domino buffer before L turn
 const L_SHAPE_TURN = {
   left:'top',
   right:'bottom',
