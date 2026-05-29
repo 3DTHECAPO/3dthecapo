@@ -48,11 +48,65 @@
   function playCheckSound(){ playSound(checkSound); }
 
   function squareName(row, col){ return files[col] + (8 - row); }
+
+  function boardPieceAt(square){ return game.get(square); }
+  function kingSquare(color){
+    for(const square of allSquares()){
+      const piece = boardPieceAt(square);
+      if(piece && piece.color === color && piece.type === 'k') return square;
+    }
+    return null;
+  }
+  function inBoundsCoord(coord){
+    return coord.file >= 0 && coord.file < 8 && coord.rank >= 1 && coord.rank <= 8;
+  }
+  function strictClearPath(from,to){
+    const a=squareCoord(from), b=squareCoord(to);
+    const df=Math.sign(b.file-a.file), dr=Math.sign(b.rank-a.rank);
+    let file=a.file+df, rank=a.rank+dr;
+    while(file!==b.file || rank!==b.rank){
+      if(!inBoundsCoord({file,rank})) return false;
+      if(boardPieceAt(files[file]+rank)) return false;
+      file+=df; rank+=dr;
+    }
+    return true;
+  }
+  function strictAttacks(piece, from, to){
+    if(!piece || from===to) return false;
+    const a=squareCoord(from), b=squareCoord(to);
+    const df=b.file-a.file, dr=b.rank-a.rank;
+    const adf=Math.abs(df), adr=Math.abs(dr);
+
+    if(piece.type==='p') return adf===1 && dr===(piece.color==='w'?1:-1);
+    if(piece.type==='n') return (adf===1&&adr===2)||(adf===2&&adr===1);
+    if(piece.type==='b') return adf===adr && adf>0 && strictClearPath(from,to);
+    if(piece.type==='r') return ((df===0) !== (dr===0)) && strictClearPath(from,to);
+    if(piece.type==='q') return ((adf===adr && adf>0) || ((df===0) !== (dr===0))) && strictClearPath(from,to);
+    if(piece.type==='k') return adf<=1 && adr<=1;
+    return false;
+  }
+  function strictAttackers(attackerColor, square){
+    if(!square) return [];
+    return allSquares().filter(from=>{
+      const piece=boardPieceAt(from);
+      return piece && piece.color===attackerColor && strictAttacks(piece,from,square);
+    });
+  }
+  function verifiedCheck(){
+    const defender = game.turn();
+    const attacker = defender === 'w' ? 'b' : 'w';
+    const king = kingSquare(defender);
+    return !!king && game.isCheck() && strictAttackers(attacker, king).length > 0;
+  }
+  function verifiedCheckmate(){
+    return game.isCheckmate() && verifiedCheck() && game.moves().length === 0;
+  }
+
   function statusText(label){
-    if(game.isCheckmate()) return 'CHECKMATE';
+    if(verifiedCheckmate()) return 'CHECKMATE';
     if(game.isStalemate()) return 'STALEMATE';
     if(game.isDraw()) return 'DRAW';
-    if(game.isCheck()) return 'CHECK';
+    if(verifiedCheck()) return 'CHECK';
     return label || (mode === 'fan' ? 'FAN ROOM' : 'READY');
   }
   function legalTargets(square){
@@ -83,6 +137,8 @@
     }
     const turn = game.turn() === 'w' ? 'WHITE' : 'BLACK';
     turnText.textContent = mode === 'cpu' && game.turn() === 'b' ? 'CPU' : turn;
+    if(label && String(label).includes('#') && !verifiedCheckmate()) label = String(label).replace(/#/g,'');
+    if(label && String(label).includes('+') && !verifiedCheck()) label = String(label).replace(/\+/g,'');
     stateText.textContent = statusText(label);
   }
 
@@ -95,16 +151,16 @@
     render(move.san);
     playMoveSound();
     if(move.captured) play3dAnnounce('CAPTURE','boss');
-    if(game.isCheckmate()){
+    if(verifiedCheckmate()){
       playCheckSound();
       play3dAnnounce('CHECKMATE','success');
     }
-    else if(game.isCheck()){
+    else if(verifiedCheck()){
       playCheckSound();
       play3dAnnounce('CHECK','warning');
     }
     if(window.Play3DGameSync) window.Play3DGameSync.sendMove({game:'chess', san:move.san, fen:game.fen()});
-    if(window.Play3DPoints && game.isCheckmate()) window.Play3DPoints.award('chess', 350, 'checkmate');
+    if(window.Play3DPoints && verifiedCheckmate()) window.Play3DPoints.award('chess', 350, 'checkmate');
     if(mode === 'cpu' && game.turn() === 'b' && !game.isGameOver()){
       render('OPPONENT THINKING...');
       window.setTimeout(cpuMove, thinkDelay());
@@ -142,24 +198,11 @@
   }
 
   function attacks(piece, from, to){
-    if(!piece || from===to) return false;
-    const a=squareCoord(from), b=squareCoord(to);
-    const df=b.file-a.file, dr=b.rank-a.rank;
-    const adf=Math.abs(df), adr=Math.abs(dr);
-    if(piece.type==='p') return adr===1 && adf===1 && dr===(piece.color==='w'?1:-1);
-    if(piece.type==='n') return (adf===1&&adr===2)||(adf===2&&adr===1);
-    if(piece.type==='b') return adf===adr && clearPath(from,to);
-    if(piece.type==='r') return (df===0||dr===0) && clearPath(from,to);
-    if(piece.type==='q') return ((adf===adr)||(df===0||dr===0)) && clearPath(from,to);
-    if(piece.type==='k') return adf<=1 && adr<=1;
-    return false;
+    return strictAttacks(piece, from, to);
   }
 
   function isAttackedBy(color, square){
-    return allSquares().some(from=>{
-      const piece=game.get(from);
-      return piece && piece.color===color && attacks(piece,from,square);
-    });
+    return strictAttackers(color, square).length > 0;
   }
 
   function pstValue(piece, square){
@@ -170,7 +213,7 @@
   }
 
   function evaluateBoard(){
-    if(game.isCheckmate()) return game.turn()==='b' ? -999999 : 999999;
+    if(verifiedCheckmate()) return game.turn()==='b' ? -999999 : 999999;
     if(game.isDraw() || game.isStalemate()) return 0;
     let score = 0;
     for(const square of allSquares()){
@@ -185,14 +228,14 @@
       if(piece.type!=='k' && attacked && !defended) score -= sign * Math.floor((pieceValue[piece.type] || 0) * 0.42);
       if(piece.type==='q' && attacked) score -= sign * (defended ? 80 : 260);
     }
-    if(game.isCheck()) score += game.turn()==='w' ? 70 : -70;
+    if(verifiedCheck()) score += game.turn()==='w' ? 70 : -70;
     return score;
   }
 
   function moveOrderScore(move){
     let score = 0;
-    if(move.san.includes('#')) score += 1000000;
-    else if(move.san.includes('+')) score += 9000;
+    // Do not trust SAN symbols alone for check/checkmate bonuses.
+    // Verified check/checkmate is handled after the move is applied.
     if(move.captured) score += (pieceValue[move.captured] || 0) * 10 - (pieceValue[move.piece] || 0);
     if(move.promotion) score += pieceValue[move.promotion] || 900;
     if(['d4','d5','e4','e5'].includes(move.to)) score += 40;
@@ -229,7 +272,9 @@
 
   function scoreMove(move){
     game.move({from:move.from, to:move.to, promotion:move.promotion || 'q'});
-    const score = search(cpuDepth()-1, -Infinity, Infinity);
+    let score = search(cpuDepth()-1, -Infinity, Infinity);
+    if(verifiedCheckmate()) score += 1000000;
+    else if(verifiedCheck()) score += 9000;
     game.undo();
     return score + moveOrderScore(move) / 1000;
   }
@@ -247,11 +292,11 @@
     render(move ? move.san : 'CPU PASS');
     if(move) playMoveSound();
     if(move && move.captured) play3dAnnounce('CAPTURE','boss');
-    if(game.isCheckmate()){
+    if(verifiedCheckmate()){
       playCheckSound();
       play3dAnnounce('CHECKMATE','success');
     }
-    else if(game.isCheck()){
+    else if(verifiedCheck()){
       playCheckSound();
       play3dAnnounce('CHECK','warning');
     }
