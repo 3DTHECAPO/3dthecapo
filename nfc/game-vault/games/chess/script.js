@@ -31,6 +31,22 @@
   const turnText = document.getElementById('turnText');
   const stateText = document.getElementById('stateText');
 
+  const moveSound = new Audio('./sounds/chess-move.wav');
+  const checkSound = new Audio('./sounds/check.wav');
+
+  function playSound(sound){
+    if(!sound) return;
+    try{
+      sound.pause();
+      sound.currentTime = 0;
+      const played = sound.play();
+      if(played && typeof played.catch === 'function') played.catch(()=>{});
+    }catch(e){}
+  }
+
+  function playMoveSound(){ playSound(moveSound); }
+  function playCheckSound(){ playSound(checkSound); }
+
   function squareName(row, col){ return files[col] + (8 - row); }
   function statusText(label){
     if(game.isCheckmate()) return 'CHECKMATE';
@@ -77,9 +93,16 @@
     selected = null;
     if(!move){ render('ILLEGAL'); return; }
     render(move.san);
+    playMoveSound();
     if(move.captured) play3dAnnounce('CAPTURE','boss');
-    if(game.isCheckmate()) play3dAnnounce('CHECKMATE','success');
-    else if(game.isCheck()) play3dAnnounce('CHECK','warning');
+    if(game.isCheckmate()){
+      playCheckSound();
+      play3dAnnounce('CHECKMATE','success');
+    }
+    else if(game.isCheck()){
+      playCheckSound();
+      play3dAnnounce('CHECK','warning');
+    }
     if(window.Play3DGameSync) window.Play3DGameSync.sendMove({game:'chess', san:move.san, fen:game.fen()});
     if(window.Play3DPoints && game.isCheckmate()) window.Play3DPoints.award('chess', 350, 'checkmate');
     if(mode === 'cpu' && game.turn() === 'b' && !game.isGameOver()){
@@ -222,9 +245,16 @@
     const picked = tied[Math.floor(Math.random() * tied.length)];
     const move = game.move({from:picked.from, to:picked.to, promotion:picked.promotion || 'q'});
     render(move ? move.san : 'CPU PASS');
+    if(move) playMoveSound();
     if(move && move.captured) play3dAnnounce('CAPTURE','boss');
-    if(game.isCheckmate()) play3dAnnounce('CHECKMATE','success');
-    else if(game.isCheck()) play3dAnnounce('CHECK','warning');
+    if(game.isCheckmate()){
+      playCheckSound();
+      play3dAnnounce('CHECKMATE','success');
+    }
+    else if(game.isCheck()){
+      playCheckSound();
+      play3dAnnounce('CHECK','warning');
+    }
   }
 
   function clickSquare(square){
