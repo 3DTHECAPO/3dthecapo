@@ -5,6 +5,20 @@
     window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'pinochle', event:event, type:type, message:message } }));
   }
 
+
+  const shuffleSound = new Audio('./sounds/card-shuffle.mp3');
+  const playCardSound = new Audio('./sounds/card-play.wav');
+
+  function playShuffle(){
+    shuffleSound.currentTime = 0;
+    shuffleSound.play().catch(()=>{});
+  }
+
+  function playCardSoundFx(){
+    playCardSound.currentTime = 0;
+    playCardSound.play().catch(()=>{});
+  }
+
   const suits=['S','H','D','C'];
   const ranks=['A','10','K','Q','J'];
   const order={A:5,'10':4,K:3,Q:2,J:1};
@@ -174,6 +188,7 @@
     state.handToken++;
     if(state.handNumber>0)state.dealer=(state.dealer+1)%4;
     state.handNumber++;
+    playShuffle();
     const deck=buildDeck();
     state.hands=Array.from({length:4},()=>deck.splice(0,20));
     state.captured=[[],[]]; state.trick=[]; state.handScores=[0,0]; state.meldScores=[0,0]; state.trickScores=[0,0];
@@ -319,7 +334,7 @@ function takeMeld(auto){
     if(player!==state.currentPlayerIndex||state.phase!=='play')return;
     const hand=state.hands[player], card=hand[index]; if(!card)return;
     if(!legalCards(player).some(c=>c.id===card.id)){render('MUST FOLLOW / BEAT / TRUMP');return}
-    hand.splice(index,1); state.trick.push({player,card});
+    hand.splice(index,1); playCardSoundFx(); state.trick.push({player,card});
     if(state.trick.length===4)finishTrick(); else{state.currentPlayerIndex=(player+1)%4; render('TRICK LIVE'); if(state.currentPlayerIndex!==0)scheduleCpu();}
   }
   function scheduleCpu(){
