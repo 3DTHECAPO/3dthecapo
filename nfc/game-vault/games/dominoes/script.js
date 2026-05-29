@@ -5,6 +5,19 @@ function play3dAnnounce(event, type, message){
   window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'dominoes', event:event, type:type, message:message } }));
 }
 
+const pullSound = new Audio('./sounds/pull.wav');
+const washSound = new Audio('./sounds/wash.wav');
+
+function playPullSound(){
+  pullSound.currentTime = 0;
+  pullSound.play().catch(()=>{});
+}
+
+function playWashSound(){
+  washSound.currentTime = 0;
+  washSound.play().catch(()=>{});
+}
+
 /* PLAY 3D DOMINOES — SCORE-ON-PLAY COUNTING FIVES
    Scope: Dominoes script only.
    Rules kept: score every scoring play, first score must be 10+ to get in, game to 150.
@@ -476,6 +489,7 @@ function placeOnArm(tile,arm){
 function commitPlay(playerIndex,tile,arm){
   const hadSpinner = !!state.board.spinnerTile;
   if(!placeOnArm(tile,arm)) return false;
+  playPullSound();
   if(!hadSpinner && state.board.spinnerTile) play3dAnnounce('SPINNER','elite');
   removeTile(state.hands[playerIndex],tile);
   state.passes = 0;
@@ -695,6 +709,7 @@ function passTurn(){
 }
 
 function washDishes(){
+  playWashSound();
   if(state.gameOver){ newGame(state.players); return; }
   newGame(state.players);
 }
