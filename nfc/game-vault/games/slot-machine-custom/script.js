@@ -5,6 +5,34 @@
     window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'slots', event:event, type:type, message:message } }));
   }
 
+  const slotWheelSound = new Audio('./sounds/slot-wheel.wav');
+  const smallHitSound = new Audio('./sounds/small-hit.wav');
+  const bigWinSound = new Audio('./sounds/slot-machine-big-win.wav');
+
+  function playSound(sound, loop=false){
+    if(!sound) return;
+    try{
+      sound.pause();
+      sound.currentTime = 0;
+      sound.loop = !!loop;
+      sound.play().catch(()=>{});
+    }catch(e){}
+  }
+
+  function stopSound(sound){
+    if(!sound) return;
+    try{
+      sound.pause();
+      sound.currentTime = 0;
+      sound.loop = false;
+    }catch(e){}
+  }
+
+  function playSpinSound(){ playSound(slotWheelSound, true); }
+  function stopSpinSound(){ stopSound(slotWheelSound); }
+  function playSmallHit(){ playSound(smallHitSound); }
+  function playBigWin(){ playSound(bigWinSound); }
+
   const bank = window.Play3DGameBank;
   const points = window.Play3DPoints;
   const regularSymbols = [
@@ -149,6 +177,7 @@
   }
 
   function finishSpin(board){
+    stopSpinSound();
     board.forEach((symbol, i)=>setCell(cells[i], symbol));
     cells.forEach(cell => cell.classList.remove('spinning'));
     const passCount = vaultPassCount(board);
@@ -158,19 +187,18 @@
     let win = scored.total;
     let label = win ? 'ASSET LINE WIN' : 'NO WIN';
 
-    if(scored.hits && scored.hits.length) play3dAnnounce('COMBO_HIT','casino');
-
     if(scored.jackpotHit && bank){
       win += bank.claimJackpot();
       label = 'VAULT JACKPOT';
-      play3dAnnounce('JACKPOT','elite');
+      playBigWin();
     }
-    if(win > 0) play3dAnnounce('WIN','success');
+    if(win > 0 && !scored.jackpotHit) playSmallHit();
 
     if(passCount >= 3){
       label = 'VAULT PASS';
       win += betVal * 25;
       showVaultPass();
+      playBigWin();
     }
 
     creditsVal += win;
@@ -198,7 +226,7 @@
       return;
     }
     spinning = true;
-    play3dAnnounce('SPIN','casino','SPINNING.');
+    playSpinSound();
     creditsVal -= betVal;
     if(bank) bank.addJackpot(Math.ceil(betVal * 0.08));
     lastWin.textContent = '0';
