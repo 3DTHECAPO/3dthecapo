@@ -4,6 +4,19 @@
   function play3dAnnounce(event, type, message){
     window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'rummy', event:event, type:type, message:message } }));
   }
+
+  const shuffleSound = new Audio('./sounds/card-shuffle.mp3');
+  const playSound = new Audio('./sounds/card-play.wav');
+
+  function playShuffle(){
+    shuffleSound.currentTime = 0;
+    shuffleSound.play().catch(()=>{});
+  }
+
+  function playCard(){
+    playSound.currentTime = 0;
+    playSound.play().catch(()=>{});
+  }
   const suits = ['S','H','D','C'];
   const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
   const order = Object.fromEntries(ranks.map((r,i)=>[r,i + 1]));
@@ -80,6 +93,7 @@
   }
 
   function deal(){
+    playShuffle();
     const gameMode = window.Play3DModeBar ? window.Play3DModeBar.getMode() : 'cpu';
     state.playerCount = 2;
     state.deck = buildDeck();
@@ -95,14 +109,15 @@
     render();
   }
   function recycleDiscard(){ const top = state.discard.pop(); state.stock = shuffle(state.discard); state.discard = top ? [top] : []; }
-  function drawFromStock(){ if(state.phase !== 'draw') return; if(!state.stock.length) recycleDiscard(); const drawn = state.stock.pop(); if(drawn) state.hands[0].push(drawn); state.phase = 'meld'; render(); }
-  function drawFromDiscard(){ if(state.phase !== 'draw') return; const drawn = state.discard.pop(); if(drawn) state.hands[0].push(drawn); state.phase = 'meld'; render(); }
+  function drawFromStock(){ if(state.phase !== 'draw') return; if(!state.stock.length) recycleDiscard(); const drawn = state.stock.pop(); if(drawn){ playCard(); state.hands[0].push(drawn); } state.phase = 'meld'; render(); }
+  function drawFromDiscard(){ if(state.phase !== 'draw') return; const drawn = state.discard.pop(); if(drawn){ playCard(); state.hands[0].push(drawn); } state.phase = 'meld'; render(); }
   function meldSelected(){
     if(state.phase !== 'meld') return;
     const indexes = [...state.selected].sort((a,b)=>a-b);
     const picked = indexes.map(i => state.hands[0][i]).filter(Boolean);
     if(!isMeld(picked)){ els.text.textContent = 'SELECT A SET OR RUN'; return; }
     removeIndexes(state.hands[0], indexes);
+    playCard();
     state.playerMelds.push(picked);
     state.score += scoreMeld(picked);
     play3dAnnounce('MELD','success');
@@ -122,6 +137,7 @@
       const nextMeld = extendedMeld(state.playerMelds[i], cardToAdd);
       if(nextMeld){
         removeIndexes(state.hands[0], [index]);
+        playCard();
         state.playerMelds[i] = nextMeld;
         state.score += cardValue(cardToAdd);
         state.selected.clear();
@@ -140,6 +156,7 @@
     const indexes = [...state.selected];
     if(indexes.length !== 1){ els.text.textContent = 'SELECT ONE DISCARD'; return; }
     const [discarded] = removeIndexes(state.hands[0], indexes);
+    playCard();
     state.discard.push(discarded);
     state.selected.clear();
     checkRound();
@@ -152,10 +169,10 @@
     const discard = state.discard[state.discard.length - 1];
     const drawDiscard = discard && findMeldIndexes([...hand, discard]);
     const drawn = drawDiscard ? state.discard.pop() : (state.stock.pop() || (recycleDiscard(), state.stock.pop()));
-    if(drawn) hand.push(drawn);
+    if(drawn){ playCard(); hand.push(drawn); }
     const meld = findMeldIndexes(hand);
-    if(meld) state.cpuMelds.push(removeIndexes(hand, meld));
-    if(hand.length){ hand.sort((a,b)=>cardValue(b) - cardValue(a)); state.discard.push(hand.shift()); }
+    if(meld){ playCard(); state.cpuMelds.push(removeIndexes(hand, meld)); }
+    if(hand.length){ hand.sort((a,b)=>cardValue(b) - cardValue(a)); playCard(); state.discard.push(hand.shift()); }
     checkRound();
     if(state.phase !== 'over'){
       state.turn = (state.turn + 1) % state.playerCount;
