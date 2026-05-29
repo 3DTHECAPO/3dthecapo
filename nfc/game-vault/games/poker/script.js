@@ -5,6 +5,20 @@
     window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'poker', event:event, type:type, message:message } }));
   }
 
+
+  const shuffleSound = new Audio('./sounds/card-shuffle.mp3');
+  const playSound = new Audio('./sounds/card-play.wav');
+
+  function playShuffle(){
+    shuffleSound.currentTime = 0;
+    shuffleSound.play().catch(()=>{});
+  }
+
+  function playCard(){
+    playSound.currentTime = 0;
+    playSound.play().catch(()=>{});
+  }
+
   const suits = ['S','H','D','C'];
   const ranks = ['A','K','Q','J','10','9','8','7','6','5','4','3','2'];
   const order = {'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'J':11,'Q':12,'K':13,'A':14};
@@ -99,8 +113,10 @@
     }
     creditsVal -= betVal;
     saveBank();
+    playShuffle();
     mk();
     hand = deck.splice(0,5);
+    playCard();
     hold = [];
     phase = 'draw';
     rankName.textContent = 'Pick Holds';
@@ -110,6 +126,7 @@
 
   function draw(){
     if(phase !== 'draw') return;
+    playCard();
     hand = hand.map((c,i)=>hold.includes(i) ? c : deck.pop());
     const res = evaluate();
     const pay = res.pay * betVal;
