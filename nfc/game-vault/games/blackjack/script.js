@@ -5,6 +5,20 @@
     window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'blackjack', event:event, type:type, message:message } }));
   }
 
+
+  const shuffleSound = new Audio('./sounds/card-shuffel.wav');
+  const flipSound = new Audio('./sounds/card-flip.wav');
+
+  function playShuffle(){
+    shuffleSound.currentTime = 0;
+    shuffleSound.play().catch(()=>{});
+  }
+
+  function playFlip(){
+    flipSound.currentTime = 0;
+    flipSound.play().catch(()=>{});
+  }
+
   let deck = [];
   let player = [];
   let dealer = [];
@@ -87,21 +101,23 @@
     if(live) return;
     credits = bank ? bank.getCredits() : credits;
     if(credits < betAmount){ setResult('Not enough credits'); render(true); return; }
+    playShuffle();
     makeDeck();
     currentBet = betAmount;
     credits -= currentBet;
     player = [deck.pop(), deck.pop()];
     dealer = [deck.pop(), deck.pop()];
+    playFlip();
     live = true;
     saveBank();
     setResult('Hand started');
-    play3dAnnounce('DEAL','casino','CARDS DEALT.');
     if(value(player) === 21) finish('Blackjack', Math.floor(currentBet * 2.5));
     else render(false);
   }
 
   function hit(){
     if(!live) return;
+    playFlip();
     player.push(deck.pop());
     if(value(player) > 21) finish('Bust', 0);
     else render(false);
@@ -121,6 +137,7 @@
       stateText.textContent = 'OPPONENT THINKING...';
       render(true);
       window.setTimeout(()=>{
+        playFlip();
         dealer.push(deck.pop());
         render(true);
         dealerStep();
