@@ -5,6 +5,19 @@
     window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'spades', event:event, type:type, message:message } }));
   }
 
+  const shuffleSound = new Audio('./sounds/card-shuffle.mp3');
+  const playSound = new Audio('./sounds/card-play.wav');
+
+  function playShuffle(){
+    shuffleSound.currentTime = 0;
+    shuffleSound.play().catch(()=>{});
+  }
+
+  function playCard(){
+    playSound.currentTime = 0;
+    playSound.play().catch(()=>{});
+  }
+
   const suits = ['S','H','D','C'];
   const ranks = ['A','K','Q','J','10','9','8','7','6','5','4','3','2'];
   const seats = ['south','west','north','east'];
@@ -32,6 +45,7 @@
   function sortCards(a,b){ return suits.indexOf(a.s) - suits.indexOf(b.s) || ranks.indexOf(a.r) - ranks.indexOf(b.r); }
 
   function deal(){
+    playShuffle();
     const deck = buildDeck();
     state.hands = { south:[], west:[], north:[], east:[] };
     for(let i = 0; i < 52; i++) state.hands[seats[i % 4]].push(deck[i]);
@@ -91,6 +105,7 @@
     if(state.phase !== 'play' || seat !== state.turn || !card) return;
     const legal = legalCards(seat);
     if(!legal.some(item => item.id === card.id)){ log('Follow suit if you can.'); return; }
+    playCard();
     state.hands[seat] = state.hands[seat].filter(item => item.id !== card.id);
     state.trick.push({ seat, card });
     if(card.s === 'S') state.spadesBroken = true;
