@@ -27,6 +27,7 @@
   }
 
   function renderList(node, items, fallback){
+    if(!node) return;
     node.innerHTML = items.length ? items.map(textRow).join('') : textRow(fallback);
   }
 
@@ -49,26 +50,52 @@
     };
   }
 
+  function getPaidMemberAccess(){
+    return !!(window.Play3DMemberSystem && typeof window.Play3DMemberSystem.isMember === 'function' && window.Play3DMemberSystem.isMember());
+  }
+
+  function getCredits(){
+    if(window.Play3DMemberSystem && typeof window.Play3DMemberSystem.getCreditBank === 'function'){
+      return Play3DMemberSystem.getCreditBank();
+    }
+    const globalBank = Number(localStorage.getItem('play3d_global_bank_v1') || 0);
+    const legacyBank = Number(localStorage.getItem('play3d_game_bank_v1') || 0);
+    return Math.max(0, Math.floor(globalBank || 0), Math.floor(legacyBank || 0));
+  }
+
+  function getPoints(profile){
+    if(window.Play3DMemberSystem && typeof window.Play3DMemberSystem.getPoints === 'function'){
+      return Play3DMemberSystem.getPoints();
+    }
+    return Math.max(0, Number(localStorage.getItem('play3d_game_points_v1') || profile.totalPoints || 0));
+  }
+
   function render(){
-    const hasAccess = !!(window.Play3DMemberSystem && typeof window.Play3DMemberSystem.isMember === 'function' && window.Play3DMemberSystem.isMember());
-    els.locked.hidden = hasAccess;
-    els.dashboard.hidden = !hasAccess;
-    els.refresh.disabled = !hasAccess;
-    if(!hasAccess) return;
+    const hasAccess = getPaidMemberAccess();
+    if(els.locked) els.locked.hidden = hasAccess;
+    if(els.dashboard) els.dashboard.hidden = !hasAccess;
+    if(els.refresh) els.refresh.disabled = !hasAccess;
+    if(!hasAccess){
+      if(els.locked){
+        const p = els.locked.querySelector('p');
+        if(p) p.textContent = 'Paid registration is required to view and claim rewards. Entry passes are visitor access only.';
+      }
+      return;
+    }
 
     const profile = readJSON('play3d_player_profile_v1', {});
-    const points = Math.max(0, Number(localStorage.getItem('play3d_game_points_v1') || profile.totalPoints || 0));
-    const credits = Math.max(0, Number(localStorage.getItem('play3d_game_bank_v1') || profile.credits || 0));
+    const points = getPoints(profile);
+    const credits = getCredits();
     const claims = loadClaims();
 
-    els.points.textContent = points.toLocaleString();
-    els.credits.textContent = credits.toLocaleString();
+    if(els.points) els.points.textContent = points.toLocaleString();
+    if(els.credits) els.credits.textContent = credits.toLocaleString();
     renderList(els.events, loadRewardEvents(), 'No reward events yet.');
     renderList(els.pending, claims.pending, 'No pending claims.');
     renderList(els.approved, claims.approved, 'No approved claims.');
     renderList(els.fulfilled, claims.fulfilled, 'No fulfilled claims.');
   }
 
-  els.refresh.addEventListener('click', render);
+  if(els.refresh) els.refresh.addEventListener('click', render);
   render();
 })();
