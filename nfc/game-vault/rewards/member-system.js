@@ -1,4 +1,8 @@
 (function(){
+  const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
+  const MEMBERS_TABLE = 'members';
+
   const MEMBER_KEY = 'play3d_member_v1';
   const PAID_MEMBER_KEY = 'play3d_paid_member_v1';
   const MEMBER_ID_KEY = 'play3d_member_id_v1';
@@ -45,6 +49,80 @@
     return !!(window.Play3DAccess && window.Play3DAccess.hasMasterSession && window.Play3DAccess.hasMasterSession());
   }
 
+  function statusIsActive(status){
+    const value = String(status || '').trim().toUpperCase();
+    return ['ACTIVE','PAID','MEMBER','APPROVED','CURRENT'].includes(value);
+  }
+
+  function normalizeMemberRow(row){
+    if(!row || typeof row !== 'object') return null;
+    return {
+      id: row.id || row.ID || row.member_id || row.MEMBER_ID || '',
+      email: normalizeEmail(row.email || row.EMAIL || ''),
+      name: row.name || row.NAME || '',
+      member_status: row.member_status || row.MEMBER_STATUS || '',
+      tier: row.tier || row.TIER || 'MEMBER',
+      source: row.source || row.SOURCE || 'members_table',
+      created_at: row.created_at || row.CREATED_AT || '',
+      last_seen_at: row.last_seen_at || row.LAST_SEEN_AT || ''
+    };
+  }
+
+  async function fetchMemberByEmail(email){
+    const clean = normalizeEmail(email);
+    if(!clean) return null;
+
+    const tries = [
+      `${SUPABASE_URL}/rest/v1/${MEMBERS_TABLE}?email=ilike.${encodeURIComponent(clean)}&select=*&limit=1`,
+      `${SUPABASE_URL}/rest/v1/${MEMBERS_TABLE}?EMAIL=ilike.${encodeURIComponent(clean)}&select=*&limit=1`
+    ];
+
+    for(const url of tries){
+      try{
+        const res = await fetch(url, {
+          headers:{
+            'apikey':SUPABASE_ANON,
+            'Authorization':`Bearer ${SUPABASE_ANON}`
+          }
+        });
+        if(!res.ok) continue;
+        const rows = await res.json().catch(()=>[]);
+        if(Array.isArray(rows) && rows[0]) return normalizeMemberRow(rows[0]);
+      }catch(e){}
+    }
+
+    return null;
+  }
+
+  async function updateLastSeen(email){
+    const clean = normalizeEmail(email);
+    if(!clean) return false;
+    const now = new Date().toISOString();
+
+    const attempts = [
+      { filter:'email', body:{ last_seen_at: now } },
+      { filter:'EMAIL', body:{ LAST_SEEN_AT: now } }
+    ];
+
+    for(const attempt of attempts){
+      try{
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${MEMBERS_TABLE}?${attempt.filter}=ilike.${encodeURIComponent(clean)}`, {
+          method:'PATCH',
+          headers:{
+            'apikey':SUPABASE_ANON,
+            'Authorization':`Bearer ${SUPABASE_ANON}`,
+            'Content-Type':'application/json',
+            'Prefer':'return=minimal'
+          },
+          body:JSON.stringify(attempt.body)
+        });
+        if(res.ok) return true;
+      }catch(e){}
+    }
+
+    return false;
+  }
+
   function makeMemberId(){
     const existing = localStorage.getItem(MEMBER_ID_KEY);
     if(existing) return existing;
@@ -71,7 +149,6 @@
   }
 
   function isMember(){
-    // Master session can view/admin rewards, but normal ENTRY vault passes are visitor access only.
     if(hasMasterSession()) return true;
     return isPaidMember();
   }
@@ -81,19 +158,22 @@
   }
 
   function setMember(val, profile){
-    // This is now PAID REGISTRATION ONLY. Do not call this from 1-hour ENTRY access.
+    // Paid registration only. Do not call this from 1-hour ENTRY access.
     const enabled = !!val;
     localStorage.setItem(MEMBER_KEY, enabled ? '1' : '0');
     localStorage.setItem(PAID_MEMBER_KEY, enabled ? '1' : '0');
+
     if(enabled){
       const pass = readVaultPass() || {};
-      const memberId = (profile && profile.member_id) || localStorage.getItem(MEMBER_ID_KEY) || makeMemberId();
+      const memberId = (profile && (profile.member_id || profile.id)) || localStorage.getItem(MEMBER_ID_KEY) || makeMemberId();
       const email = normalizeEmail((profile && profile.email) || localStorage.getItem(MEMBER_EMAIL_KEY) || pass.email || pass.recipient_email || pass.recipientEmail || '');
       saveMemberProfile({
         member_id: memberId,
         email,
-        tier: (profile && profile.tier) || pass.tier || 'member',
+        name: (profile && profile.name) || '',
+        tier: (profile && profile.tier) || pass.tier || 'MEMBER',
         source: (profile && profile.source) || 'paid_registration',
+        member_status: (profile && profile.member_status) || 'ACTIVE',
         paid_registration:true,
         activated_at: (profile && profile.activated_at) || new Date().toISOString()
       });
@@ -101,13 +181,51 @@
   }
 
   function activatePaidMember(profile){
-    setMember(true, Object.assign({source:'paid_registration'}, profile || {}));
+    setMember(true, Object.assign({source:'paid_registration', member_status:'ACTIVE'}, profile || {}));
     return getMemberProfile();
   }
 
   function deactivateMember(){
     localStorage.setItem(MEMBER_KEY, '0');
     localStorage.setItem(PAID_MEMBER_KEY, '0');
+  }
+
+  async function syncMemberFromSupabase(email){
+    const clean = normalizeEmail(email || localStorage.getItem(MEMBER_EMAIL_KEY) || (readVaultPass() || {}).email || (readVaultPass() || {}).recipient_email || '');
+    if(!clean) return { ok:false, reason:'missing_email' };
+
+    const row = await fetchMemberByEmail(clean);
+    if(!row) {
+      deactivateMember();
+      return { ok:false, reason:'not_found' };
+    }
+
+    if(!statusIsActive(row.member_status)){
+      deactivateMember();
+      saveMemberProfile({
+        member_id: row.id,
+        email: row.email,
+        name: row.name,
+        tier: row.tier,
+        source: row.source,
+        member_status: row.member_status,
+        paid_registration:false
+      });
+      return { ok:false, reason:'not_active', member:row };
+    }
+
+    activatePaidMember({
+      member_id: row.id,
+      email: row.email,
+      name: row.name,
+      tier: row.tier,
+      source: row.source,
+      member_status: row.member_status,
+      paid_registration:true
+    });
+
+    updateLastSeen(row.email).catch(()=>{});
+    return { ok:true, member:row };
   }
 
   function getCreditBank(){
@@ -150,19 +268,22 @@
       email: normalizeEmail(profile.email || localStorage.getItem(MEMBER_EMAIL_KEY) || pass.email || pass.recipient_email || pass.recipientEmail || ''),
       code: pass.code || '',
       tier: profile.tier || pass.tier || '',
+      memberStatus: profile.member_status || '',
       paidRegistration: !!profile.paid_registration || isPaidMember()
     };
   }
 
   function tierInfo(){
     const id = identity();
-    if(isMember()){
-      return { rewardsEnabled:true, label:'PAID MEMBER', identity:id };
-    }
-    if(hasActivePass()){
-      return { rewardsEnabled:false, label:'Visitor Access — paid registration required for rewards.', identity:id };
-    }
+    if(isMember()) return { rewardsEnabled:true, label:'PAID MEMBER', identity:id };
+    if(hasActivePass()) return { rewardsEnabled:false, label:'Visitor Access — paid registration required for rewards.', identity:id };
     return { rewardsEnabled:false, label:'Free Play — paid registration required for rewards.', identity:id };
+  }
+
+  function bootstrap(){
+    const pass = readVaultPass() || {};
+    const email = normalizeEmail(localStorage.getItem(MEMBER_EMAIL_KEY) || pass.email || pass.recipient_email || pass.recipientEmail || '');
+    if(email) syncMemberFromSupabase(email).catch(()=>{});
   }
 
   window.Play3DMemberSystem = {
@@ -173,6 +294,9 @@
     setMember,
     activatePaidMember,
     deactivateMember,
+    syncMemberFromSupabase,
+    fetchMemberByEmail,
+    updateLastSeen,
     getMemberProfile,
     saveMemberProfile,
     identity,
@@ -193,4 +317,6 @@
       PASS_KEY
     }
   };
+
+  bootstrap();
 })();
