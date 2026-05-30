@@ -1,4 +1,4 @@
-﻿(function(){
+(function(){
   const PASS_KEY = 'play3d_vault_pass_v1';
   const tierRank = { entry:1, gold:2, elite:3, drop:3, merch:3, master:4 };
 
@@ -7,39 +7,39 @@
   // Then set image:'./assets/exhibits/your-file.jpg'
   const museumExhibits = [
     {
-      title:'First Door Archive',
+      title:'Album Cover Archive',
       image:'',
-      description:'Opening vault door visuals, early scans, and first-room access moments.',
+      description:'Awaiting upload. Reserved for future album cover artwork and official project visuals.',
       type:'cover art',
       year:'2026',
-      tag:'ENTRY',
+      tag:'COVER',
       unlockTier:'entry',
       section:'gallery'
     },
     {
-      title:'Capo Audio Lane',
+      title:'Music Snippet Archive',
       image:'',
-      description:'Private audio previews, drops, voice notes, and coded listening-session artwork.',
-      type:'photo',
+      description:'Awaiting audio upload. Future WAV or MP3 snippets will be connected to this archive slot.',
+      type:'audio',
       year:'2026',
-      tag:'3D',
+      tag:'AUDIO',
       unlockTier:'entry',
       section:'gallery'
     },
     {
-      title:'Starter Relic',
+      title:'Music Milestone',
       image:'',
-      description:'Entry-tier archive card for early supporters and first scans from NFC sales.',
-      type:'award',
+      description:'Awaiting milestone details. Reserved for future music achievements and release markers.',
+      type:'milestone',
       year:'2026',
-      tag:'VAULT',
+      tag:'MILESTONE',
       unlockTier:'entry',
       section:'trophy'
     },
     {
-      title:'Gold Chamber Cover',
+      title:'Premium Cover Archive',
       image:'',
-      description:'Premium placeholder for album chambers, coded covers, and private rollout material.',
+      description:'Awaiting upload. Reserved for premium cover art, alternate artwork, and rollout visuals.',
       type:'cover art',
       year:'2026',
       tag:'GOLD',
@@ -47,61 +47,61 @@
       section:'gallery'
     },
     {
-      title:'Hidden Interface Study',
+      title:'Studio Session Archive',
       image:'',
-      description:'Gold-tier interface moments, access panels, and member-only screens.',
-      type:'poster',
+      description:'Awaiting upload. Reserved for studio photos, behind-the-scenes visuals, and session moments.',
+      type:'photo',
       year:'2026',
-      tag:'UI',
+      tag:'STUDIO',
       unlockTier:'gold',
       section:'gallery'
     },
     {
-      title:'Drop Route Map',
+      title:'Project Timeline Archive',
       image:'',
-      description:'Cinematic map for future drop routes, merch windows, and private code paths.',
-      type:'poster',
+      description:'Awaiting timeline details. Reserved for future project dates, releases, and rollout history.',
+      type:'timeline',
       year:'2026',
-      tag:'MAP',
+      tag:'TIMELINE',
       unlockTier:'gold',
       section:'timeline'
     },
     {
-      title:'Elite Merch Vault',
+      title:'Exclusive Merch Archive',
       image:'',
-      description:'Exclusive merch previews, premium bundles, and claimable collector pieces.',
+      description:'Awaiting merch upload. Reserved for future apparel designs, drops, bundles, and product previews.',
       type:'merch',
       year:'2026',
-      tag:'ELITE',
+      tag:'MERCH',
       unlockTier:'elite',
       section:'gallery'
     },
     {
-      title:'Private Film Wall',
+      title:'Unreleased Video Archive',
       image:'',
-      description:'Unreleased visuals, behind-the-scenes clips, and premium vault cinema.',
+      description:'Awaiting video upload. Reserved for future music videos, trailers, interviews, and vault footage.',
       type:'video',
       year:'2026',
-      tag:'FILM',
+      tag:'VIDEO',
       unlockTier:'elite',
       section:'video',
       video:''
     },
     {
-      title:'Holder Relic',
+      title:'Founder Collection Archive',
       image:'',
-      description:'High-value holder perks, archive drops, and luxury museum moments.',
-      type:'rare collectible',
+      description:'Awaiting upload. Reserved for future elite collectibles, founder items, and high-tier archive pieces.',
+      type:'collector archive',
       year:'2026',
-      tag:'RARE',
+      tag:'FOUNDER',
       unlockTier:'elite',
       section:'trophy'
     },
     {
-      title:'Fan Wall Feature',
+      title:'Future Fan Showcase',
       image:'',
-      description:'Featured fan art, tagged moments, and community highlights will appear here.',
-      type:'fan submission',
+      description:'Awaiting fan submissions. Future fan art, tagged photos, and community highlights will appear here.',
+      type:'fan showcase',
       year:'2026',
       tag:'FAN',
       unlockTier:'entry',
@@ -191,7 +191,7 @@
   function renderImageWall(tier){
     const grid = document.getElementById('imageWallGrid');
     if(!grid) return;
-    const items = museumExhibits.filter(item => ['cover art','photo','poster','merch','award','rare collectible'].includes(String(item.type).toLowerCase()));
+    const items = museumExhibits.filter(item => ['cover art','photo','poster','merch','award','rare collectible','audio','milestone','timeline','collector archive'].includes(String(item.type).toLowerCase()));
     grid.innerHTML = items.map(item => cardMarkup(item, museumExhibits.indexOf(item), canOpenTier(item.unlockTier,tier), item.unlockTier, 'museum-frame-card')).join('');
   }
 
@@ -204,13 +204,13 @@
       const idx = museumExhibits.indexOf(item);
       const embed = item.video && open ? `<iframe src="${item.video}" title="${item.title}" loading="lazy" allowfullscreen></iframe>` : `<button class="video-placeholder" data-exhibit-index="${idx}" ${open ? '' : 'disabled'}>${open ? 'Open Video Exhibit' : 'Locked Video Exhibit'}</button>`;
       return `<article class="video-card ${open ? '' : 'is-locked'}">${embed}<h4>${item.title}</h4><p>${item.description}</p></article>`;
-    }).join('') || '<div class="empty-museum-slot">Add YouTube, MP4, trailer, or interview exhibits in script.js.</div>';
+    }).join('') || '<div class="empty-museum-slot">Awaiting video uploads. Add YouTube, MP4, trailers, interviews, or music videos in script.js.</div>';
   }
 
   function renderTrophyShelf(tier){
     const shelf = document.getElementById('trophyShelf');
     if(!shelf) return;
-    const items = museumExhibits.filter(item => item.section === 'trophy' || /award|collectible|plaque|record/i.test(item.type));
+    const items = museumExhibits.filter(item => item.section === 'trophy' || /award|collectible|collector|plaque|record|milestone|founder/i.test(item.type));
     shelf.innerHTML = items.map(item => {
       const open = canOpenTier(item.unlockTier,tier);
       return `<button class="trophy-plaque ${open ? '' : 'is-locked'}" data-exhibit-index="${museumExhibits.indexOf(item)}" ${open ? '' : 'disabled'}><span>${item.tag}</span><b>${item.title}</b><small>${open ? item.year : 'LOCKED'}</small></button>`;
