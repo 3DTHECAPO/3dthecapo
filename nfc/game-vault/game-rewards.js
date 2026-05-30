@@ -3,16 +3,18 @@
   const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
   const REWARD_EVENTS_TABLE = 'reward_events';
   const PASS_KEY = 'play3d_vault_pass_v1';
-  const MEMBER_KEY = 'play3d_member_v1';
-  const LAST_CODE_KEY = 'play3d_last_code';
+
+  function readJSON(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){
+      return fallback;
+    }
+  }
 
   function readVaultPass(){
-    try{
-      const raw = localStorage.getItem(PASS_KEY);
-      return raw ? JSON.parse(raw) : null;
-    }catch(e){
-      return null;
-    }
+    return readJSON(PASS_KEY, null) || {};
   }
 
   function hasActivePass(pass){
@@ -23,15 +25,21 @@
 
   function getRewardIdentity(){
     const pass = readVaultPass();
+    const sys = window.Play3DMemberSystem;
+    const id = sys && sys.identity ? sys.identity() : {};
     const activePass = hasActivePass(pass);
 
     return {
-      memberLocal: localStorage.getItem(MEMBER_KEY) === '1',
+      paidMember: !!id.paidMember,
+      memberLocal: !!id.member,
       hasVaultPass: activePass,
-      memberId: pass && (pass.member_id || pass.memberId || pass.user_id || pass.userId) || null,
-      email: pass && (pass.email || pass.recipient_email || pass.recipientEmail) || null,
-      code: pass && pass.code || localStorage.getItem(LAST_CODE_KEY) || '',
-      tier: pass && pass.tier || ''
+      visitorAccess: activePass && !id.paidMember,
+      memberId: id.memberId || null,
+      email: id.email || pass.email || pass.recipient_email || pass.recipientEmail || null,
+      code: pass.code || localStorage.getItem('play3d_last_code') || '',
+      tier: id.tier || pass.tier || '',
+      memberStatus: id.memberStatus || '',
+      paidRegistration: !!id.paidRegistration
     };
   }
 
@@ -63,7 +71,10 @@
       metadata: {
         client_event_id: clientEventId,
         bank_after: bank,
-        member_local: identity.memberLocal,
+        paid_member: identity.paidMember,
+        paid_registration: identity.paidRegistration,
+        visitor_access: identity.visitorAccess,
+        member_status: identity.memberStatus,
         has_vault_pass: identity.hasVaultPass,
         href: window.location.href
       }
@@ -125,22 +136,35 @@
 
   function addCredits(amount, game){
     if(!window.Play3DMemberSystem){
-      return { free:true, unlocked:false, bank:0 };
+      return { free:true, unlocked:false, bank:0, reason:'member_system_missing' };
     }
+
+    // ENTRY / 1-hour vault pass is visitor access only.
+    // Only paid members from the members table can earn claimable credits.
     if(!Play3DMemberSystem.isMember()){
-      return { free:true, unlocked:false, bank:Play3DMemberSystem.getCreditBank() };
+      return {
+        free:true,
+        unlocked:false,
+        bank:Play3DMemberSystem.getCreditBank(),
+        reason: Play3DMemberSystem.hasActivePass && Play3DMemberSystem.hasActivePass()
+          ? 'visitor_access_paid_registration_required'
+          : 'paid_registration_required'
+      };
     }
+
     const bank = Play3DMemberSystem.addCredits(amount);
     logRewardEvent(amount, game, bank);
     return {
       free:false,
       unlocked: bank >= 50000,
-      bank
+      bank,
+      reason:'paid_member_reward_credit'
     };
   }
 
   window.Play3DGameRewards = {
     addCredits,
-    updateBadge(){ /* optional no-op */ }
+    updateBadge(){ /* optional no-op */ },
+    getRewardIdentity
   };
 })();
