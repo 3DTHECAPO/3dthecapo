@@ -548,8 +548,8 @@ body.buy-page .pill.gold:hover{
         <div>
           <span class="tag">Entry</span>
           <h2>Entry Access</h2>
-          <p class="price">$TBA</p>
-          <p class="duration"> Vault Access</p>
+          <p class="price">$5</p>
+          <p class="duration">Entry Vault Access — 1 Day</p>
           <ul>
             <li>Vault entry code</li>
             <li>Access starts when code is used</li>
@@ -557,8 +557,8 @@ body.buy-page .pill.gold:hover{
           </ul>
         </div>
         <div class="pay-row">
-          <button class="cash-btn pay-start" type="button" data-tier="ENTRY" data-price="5" data-method="cashapp">Pay With Cash App</button>
-          <button class="stripe-btn pay-start" type="button" data-tier="ENTRY" data-price="5" data-method="stripe">Pay With Card</button>
+          <button class="cash-btn pay-start" type="button" data-tier="ENTRY" data-code-type="ENTRY" data-duration="1d" data-price="5" data-method="cashapp">Pay With Cash App</button>
+          <button class="stripe-btn pay-start" type="button" data-tier="ENTRY" data-code-type="ENTRY" data-duration="1d" data-price="5" data-method="stripe">Pay With Card</button>
           <p class="pay-note">Enter your info first, then complete payment.</p>
         </div>
       </article>
@@ -567,8 +567,8 @@ body.buy-page .pill.gold:hover{
         <div>
           <span class="tag">Gold</span>
           <h2>Gold Access</h2>
-          <p class="price">$TBA</p>
-          <p class="duration"> Vault Access</p>
+          <p class="price">$15</p>
+          <p class="duration">Gold Vault Access — 7 Days</p>
           <ul>
             <li>Longer vault window</li>
             <li>Better for full content access</li>
@@ -576,8 +576,8 @@ body.buy-page .pill.gold:hover{
           </ul>
         </div>
         <div class="pay-row">
-          <button class="cash-btn pay-start" type="button" data-tier="GOLD" data-price="15" data-method="cashapp">Pay With Cash App</button>
-          <button class="stripe-btn pay-start" type="button" data-tier="GOLD" data-price="15" data-method="stripe">Pay With Card</button>
+          <button class="cash-btn pay-start" type="button" data-tier="GOLD" data-code-type="GOLD" data-duration="7d" data-price="15" data-method="cashapp">Pay With Cash App</button>
+          <button class="stripe-btn pay-start" type="button" data-tier="GOLD" data-code-type="GOLD" data-duration="7d" data-price="15" data-method="stripe">Pay With Card</button>
           <p class="pay-note">Enter your info first, then complete payment.</p>
         </div>
       </article>
@@ -586,8 +586,8 @@ body.buy-page .pill.gold:hover{
         <div>
           <span class="tag">Elite</span>
           <h2>Elite Access</h2>
-          <p class="price">$TBA</p>
-          <p class="duration"> Vault Access</p>
+          <p class="price">$25</p>
+          <p class="duration">Elite Vault Access — 30 Days</p>
           <ul>
             <li>Premium vault window</li>
             <li>Best for exclusive drops</li>
@@ -595,8 +595,8 @@ body.buy-page .pill.gold:hover{
           </ul>
         </div>
         <div class="pay-row">
-          <button class="cash-btn pay-start" type="button" data-tier="ELITE" data-price="25" data-method="cashapp">Pay With Cash App</button>
-          <button class="stripe-btn pay-start" type="button" data-tier="ELITE" data-price="25" data-method="stripe">Pay With Card</button>
+          <button class="cash-btn pay-start" type="button" data-tier="ELITE" data-code-type="ELITE" data-duration="30d" data-price="25" data-method="cashapp">Pay With Cash App</button>
+          <button class="stripe-btn pay-start" type="button" data-tier="ELITE" data-code-type="ELITE" data-duration="30d" data-price="25" data-method="stripe">Pay With Card</button>
           <p class="pay-note">Enter your info first, then complete payment.</p>
         </div>
       </article>
@@ -609,7 +609,7 @@ body.buy-page .pill.gold:hover{
         <li>Enter your name and email.</li>
         <li>Pay through Cash App or card.</li>
         <li>Submit your payment information for verification.</li>
-        <li>Receive your vault access code.</li>
+        <li>Receive the access code that matches your purchased tier.</li>
         <li>Enter your code to unlock the vault. Access begins when the code is used.</li>
       </ol>
     </section>
@@ -630,9 +630,9 @@ body.buy-page .pill.gold:hover{
         <div>
           <label for="payTier">Tier</label>
           <select id="payTier">
-            <option value="ENTRY">Entry Access - $5</option>
-            <option value="GOLD">Gold Access - $15</option>
-            <option value="ELITE">Elite Access - $25</option>
+            <option value="ENTRY" data-code-type="ENTRY" data-duration="1d" data-amount="5">Entry Access - $5 / 1 Day</option>
+            <option value="GOLD" data-code-type="GOLD" data-duration="7d" data-amount="15">Gold Access - $15 / 7 Days</option>
+            <option value="ELITE" data-code-type="ELITE" data-duration="30d" data-amount="25">Elite Access - $25 / 30 Days</option>
           </select>
         </div>
         <div>
@@ -677,7 +677,7 @@ body.buy-page .pill.gold:hover{
     </div>
   </main>
 
-<script src="./zoho-lead-router.js?v=zoho-routes-1"></script>
+<script src="./zoho-lead-router.js?v=buy-tier-router-2"></script>
 <script>
 (function(){
   'use strict';
@@ -730,6 +730,8 @@ body.buy-page .pill.gold:hover{
   function openModal(btn){
     selected = {
       tier: btn.getAttribute('data-tier') || 'ENTRY',
+      code_type: btn.getAttribute('data-code-type') || btn.getAttribute('data-tier') || 'ENTRY',
+      duration: btn.getAttribute('data-duration') || '1d',
       price: btn.getAttribute('data-price') || '5',
       method: btn.getAttribute('data-method') || 'cashapp'
     };
@@ -773,8 +775,11 @@ body.buy-page .pill.gold:hover{
       name:name,
       email:email,
       tier:selected.tier,
+      code_type:selected.code_type,
+      duration:selected.duration,
       amount:Number(selected.price),
       method:selected.method,
+      auto_code:false,
       created_at:new Date().toISOString(),
       source:'buy_page_payment_start'
     });
@@ -787,11 +792,12 @@ body.buy-page .pill.gold:hover{
       status:'payment_started',
       lead_status:'payment_verification',
       tier:selected.tier,
-      code_type:selected.tier,
+      code_type:selected.code_type,
+      duration:selected.duration,
       amount:Number(selected.price),
       method:selected.method,
       auto_code:false,
-      notes:'Buyer started payment from buy page.'
+      notes:'Buyer started '+selected.tier+' purchase from buy page.'
     });
 
     byId('payName').value = name;
@@ -813,7 +819,10 @@ body.buy-page .pill.gold:hover{
     var tier = byId('payTier').value || 'ENTRY';
     var method = byId('payMethod').value || 'cashapp';
     var receipt = String(byId('payReceipt').value || '').trim();
-    var amount = tier === 'ELITE' ? 25 : tier === 'GOLD' ? 15 : 5;
+    var opt = byId('payTier').options[byId('payTier').selectedIndex];
+    var codeType = opt ? (opt.getAttribute('data-code-type') || tier) : tier;
+    var duration = opt ? (opt.getAttribute('data-duration') || '1d') : '1d';
+    var amount = opt ? Number(opt.getAttribute('data-amount') || 5) : (tier === 'ELITE' ? 25 : tier === 'GOLD' ? 15 : 5);
 
     if(!email){
       setStatus(byId('paymentStatus'), 'Enter email first.', false);
@@ -821,14 +830,17 @@ body.buy-page .pill.gold:hover{
     }
 
     var record = saveRecord({
-      id:'RECEIPT-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
+      id:'PAYINFO-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
       status:'information_submitted',
       name:name,
       email:email,
       tier:tier,
+      code_type:codeType,
+      duration:duration,
       amount:amount,
       method:method,
       payment_information:receipt,
+      auto_code:false,
       created_at:new Date().toISOString(),
       source:'buy_page_payment_information'
     });
@@ -841,7 +853,8 @@ body.buy-page .pill.gold:hover{
       status:'information_submitted',
       lead_status:'payment_verification',
       tier:tier,
-      code_type:tier,
+      code_type:codeType,
+      duration:duration,
       amount:amount,
       method:method,
       auto_code:false,
