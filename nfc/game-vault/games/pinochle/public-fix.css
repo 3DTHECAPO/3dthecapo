@@ -1,28 +1,11 @@
-/* PLAY 3D Dominoes public cleanup patch
-   Drop this next to dominoes/index.html and load after style.css. */
-#openEndDebug,
-.open-end-debug{
-  display:none!important;
-  visibility:hidden!important;
-  pointer-events:none!important;
-}
-.dominoes-layout{
-  grid-template-columns:190px minmax(0,1fr) 210px!important;
-}
-.center-table .table-logo{
-  z-index:0!important;
-}
-.center-table .table-center{
-  z-index:2!important;
-}
-#chain.tree-board,
-.chain.tree-board{
-  z-index:4!important;
-}
-.bottom-hand{
-  z-index:45!important;
-}
-@media(max-width:980px){
-  .dominoes-layout{grid-template-columns:1fr!important;}
-  .center-table,.casino-table{min-height:600px!important;}
-}
+/* PLAY 3D Pinochle public table patch */
+.opponent-zone{display:none!important;}
+.center-stage{grid-template-rows:minmax(300px,1fr) 142px!important;}
+.trick-zone{position:relative!important;}
+.trick-pile{display:grid!important;grid-template-columns:repeat(4,minmax(70px,1fr))!important;gap:14px!important;align-items:center!important;justify-items:center!important;width:min(760px,92%)!important;margin:auto!important;}
+.trick-play-card{display:grid!important;gap:6px!important;place-items:center!important;text-align:center!important;}
+.trick-play-card small{font-weight:900!important;color:#f2d27b!important;letter-spacing:.08em!important;text-transform:uppercase!important;}
+.trick-play-card.winner .card{outline:4px solid rgba(242,210,123,.95)!important;box-shadow:0 0 30px rgba(242,210,123,.75),0 14px 24px rgba(0,0,0,.5)!important;transform:translateY(-8px)!important;}
+.trick-result-banner{position:absolute!important;left:50%!important;bottom:14px!important;transform:translateX(-50%)!important;z-index:20!important;padding:8px 14px!important;border-radius:999px!important;border:1px solid rgba(242,210,123,.55)!important;background:rgba(0,0,0,.72)!important;color:#f2d27b!important;font-family:"Black Ops One",Oswald,sans-serif!important;font-size:13px!important;letter-spacing:.08em!important;text-align:center!important;white-space:nowrap!important;}
+.pinochle-right-rail .seat{max-width:none!important;width:100%!important;}
+@media(max-width:980px){.trick-pile{grid-template-columns:repeat(2,minmax(70px,1fr))!important}.trick-result-banner{white-space:normal!important;width:90%!important}.center-stage{grid-template-rows:minmax(360px,1fr) 136px!important}}
