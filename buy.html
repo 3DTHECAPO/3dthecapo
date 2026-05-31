@@ -602,6 +602,71 @@ body.buy-page .pill.gold:hover{
       </article>
     </section>
 
+    <section class="hero">
+      <div class="kicker">Rewards Only</div>
+      <h1>Buy Reward Credits</h1>
+      <p class="sub">Reward credit packs are separate from vault access. Buying credits does not issue an access code.</p>
+    </section>
+
+    <section class="grid" aria-label="Reward credit packs">
+      <article class="card">
+        <div>
+          <span class="tag">Rewards</span>
+          <h2>Starter Rewards Pack</h2>
+          <p class="price">$5</p>
+          <p class="duration">1,000 Credits</p>
+          <ul>
+            <li>Reward credits only</li>
+            <li>No vault access code issued</li>
+            <li>Payment verification required</li>
+          </ul>
+        </div>
+        <div class="pay-row">
+          <button class="cash-btn pay-start" type="button" data-tier="REWARD_STARTER" data-label="Starter Rewards Pack" data-credits="1000" data-price="5" data-method="cashapp" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false">Pay With Cash App</button>
+          <button class="stripe-btn pay-start" type="button" data-tier="REWARD_STARTER" data-label="Starter Rewards Pack" data-credits="1000" data-price="5" data-method="stripe" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false">Pay With Card</button>
+          <p class="pay-note">Credits are reviewed after payment. No access code is issued.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div>
+          <span class="tag">Rewards</span>
+          <h2>Gold Rewards Pack</h2>
+          <p class="price">$15</p>
+          <p class="duration">5,000 Credits</p>
+          <ul>
+            <li>Reward credits only</li>
+            <li>No vault access code issued</li>
+            <li>Payment verification required</li>
+          </ul>
+        </div>
+        <div class="pay-row">
+          <button class="cash-btn pay-start" type="button" data-tier="REWARD_GOLD" data-label="Gold Rewards Pack" data-credits="5000" data-price="15" data-method="cashapp" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false">Pay With Cash App</button>
+          <button class="stripe-btn pay-start" type="button" data-tier="REWARD_GOLD" data-label="Gold Rewards Pack" data-credits="5000" data-price="15" data-method="stripe" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false">Pay With Card</button>
+          <p class="pay-note">Credits are reviewed after payment. No access code is issued.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div>
+          <span class="tag">Rewards</span>
+          <h2>Elite Rewards Pack</h2>
+          <p class="price">$25</p>
+          <p class="duration">10,000 Credits</p>
+          <ul>
+            <li>Reward credits only</li>
+            <li>No vault access code issued</li>
+            <li>Payment verification required</li>
+          </ul>
+        </div>
+        <div class="pay-row">
+          <button class="cash-btn pay-start" type="button" data-tier="REWARD_ELITE" data-label="Elite Rewards Pack" data-credits="10000" data-price="25" data-method="cashapp" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false">Pay With Cash App</button>
+          <button class="stripe-btn pay-start" type="button" data-tier="REWARD_ELITE" data-label="Elite Rewards Pack" data-credits="10000" data-price="25" data-method="stripe" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false">Pay With Card</button>
+          <p class="pay-note">Credits are reviewed after payment. No access code is issued.</p>
+        </div>
+      </article>
+    </section>
+
     <section class="steps">
       <h3>How it works</h3>
       <ol>
@@ -633,6 +698,9 @@ body.buy-page .pill.gold:hover{
             <option value="ENTRY" data-code-type="ENTRY" data-duration="30d" data-amount="5">Entry Access - $5 / 30 Days</option>
             <option value="GOLD" data-code-type="GOLD" data-duration="30d" data-amount="15">Gold Access - $15 / 30 Days</option>
             <option value="ELITE" data-code-type="ELITE" data-duration="30d" data-amount="25">Elite Access - $25 / 30 Days</option>
+            <option value="REWARD_STARTER" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false" data-credits="1000" data-amount="5">Starter Rewards Pack - $5 / 1,000 Credits</option>
+            <option value="REWARD_GOLD" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false" data-credits="5000" data-amount="15">Gold Rewards Pack - $15 / 5,000 Credits</option>
+            <option value="REWARD_ELITE" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false" data-credits="10000" data-amount="25">Elite Rewards Pack - $25 / 10,000 Credits</option>
           </select>
         </div>
         <div>
@@ -733,10 +801,15 @@ body.buy-page .pill.gold:hover{
       code_type: btn.getAttribute('data-code-type') || btn.getAttribute('data-tier') || 'ENTRY',
       duration: btn.getAttribute('data-duration') || '30d',
       price: btn.getAttribute('data-price') || '5',
-      method: btn.getAttribute('data-method') || 'cashapp'
+      method: btn.getAttribute('data-method') || 'cashapp',
+      label: btn.getAttribute('data-label') || '',
+      credits: Number(btn.getAttribute('data-credits') || 0),
+      source: btn.getAttribute('data-source') || 'buy_access',
+      status: btn.getAttribute('data-status') || 'payment_started',
+      issue_code: btn.getAttribute('data-issue-code') === 'true'
     };
 
-    byId('payFlowTitle').textContent = selected.tier + ' ACCESS - $' + selected.price;
+    byId('payFlowTitle').textContent = (selected.label || selected.tier + ' ACCESS') + ' - $' + selected.price;
     byId('payFlowCopy').textContent = selected.method === 'cashapp'
       ? 'Enter buyer info, then continue to Cash App.'
       : 'Enter buyer info, then continue to card checkout.';
@@ -769,9 +842,10 @@ body.buy-page .pill.gold:hover{
     localStorage.setItem('play3d_last_buyer_name_v1', name);
     localStorage.setItem('play3d_last_buyer_email_v1', email);
 
+    var rewardPurchase = selected.source === 'buy_rewards';
     var record = saveRecord({
       id:'PAY-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
-      status:'payment_started',
+      status:rewardPurchase ? 'reward_payment_verification' : 'payment_started',
       name:name,
       email:email,
       tier:selected.tier,
@@ -780,25 +854,32 @@ body.buy-page .pill.gold:hover{
       amount:Number(selected.price),
       method:selected.method,
       auto_code:false,
+      issue_code:rewardPurchase ? false : undefined,
+      credits:rewardPurchase ? selected.credits : undefined,
       created_at:new Date().toISOString(),
-      source:'buy_page_payment_start'
+      source:rewardPurchase ? 'buy_rewards' : 'buy_page_payment_start'
     });
 
-    sendZohoLeadSafe({
+    var zohoStartPayload = {
       name:name,
       email:email,
-      source:'buy_access',
+      source:rewardPurchase ? 'buy_rewards' : 'buy_access',
       form:'buy_page_payment_start',
-      status:'payment_started',
-      lead_status:'payment_verification',
+      status:rewardPurchase ? 'reward_payment_verification' : 'payment_started',
+      lead_status:rewardPurchase ? 'reward_payment_verification' : 'payment_verification',
       tier:selected.tier,
       code_type:selected.code_type,
       duration:selected.duration,
       amount:Number(selected.price),
       method:selected.method,
       auto_code:false,
-      notes:'Buyer started '+selected.tier+' 30-day access purchase.'
-    });
+      notes:rewardPurchase ? 'Buyer started '+selected.credits+' reward credits purchase. No vault access code requested.' : 'Buyer started '+selected.tier+' 30-day access purchase.'
+    };
+    if(rewardPurchase){
+      zohoStartPayload.credits = selected.credits;
+      zohoStartPayload.issue_code = false;
+    }
+    sendZohoLeadSafe(zohoStartPayload);
 
     byId('payName').value = name;
     byId('payEmail').value = email;
@@ -823,6 +904,9 @@ body.buy-page .pill.gold:hover{
     var codeType = opt ? (opt.getAttribute('data-code-type') || tier) : tier;
     var duration = opt ? (opt.getAttribute('data-duration') || '30d') : '30d';
     var amount = opt ? Number(opt.getAttribute('data-amount') || 5) : (tier === 'ELITE' ? 25 : tier === 'GOLD' ? 15 : 5);
+    var source = opt ? (opt.getAttribute('data-source') || 'buy_access') : 'buy_access';
+    var rewardPurchase = source === 'buy_rewards';
+    var credits = opt ? Number(opt.getAttribute('data-credits') || 0) : 0;
 
     if(!email){
       setStatus(byId('paymentStatus'), 'Enter email first.', false);
@@ -831,7 +915,7 @@ body.buy-page .pill.gold:hover{
 
     var record = saveRecord({
       id:'PAYINFO-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
-      status:'information_submitted',
+      status:rewardPurchase ? 'reward_payment_verification' : 'information_submitted',
       name:name,
       email:email,
       tier:tier,
@@ -841,17 +925,19 @@ body.buy-page .pill.gold:hover{
       method:method,
       payment_information:receipt,
       auto_code:false,
+      issue_code:rewardPurchase ? false : undefined,
+      credits:rewardPurchase ? credits : undefined,
       created_at:new Date().toISOString(),
-      source:'buy_page_payment_information'
+      source:rewardPurchase ? 'buy_rewards' : 'buy_page_payment_information'
     });
 
-    sendZohoLeadSafe({
+    var zohoInformationPayload = {
       name:name,
       email:email,
-      source:'buy_access',
+      source:rewardPurchase ? 'buy_rewards' : 'buy_access',
       form:'buy_page_payment_information',
-      status:'information_submitted',
-      lead_status:'payment_verification',
+      status:rewardPurchase ? 'reward_payment_verification' : 'information_submitted',
+      lead_status:rewardPurchase ? 'reward_payment_verification' : 'payment_verification',
       tier:tier,
       code_type:codeType,
       duration:duration,
@@ -859,13 +945,20 @@ body.buy-page .pill.gold:hover{
       method:method,
       auto_code:false,
       notes:receipt
-    });
+    };
+    if(rewardPurchase){
+      zohoInformationPayload.credits = credits;
+      zohoInformationPayload.issue_code = false;
+    }
+    sendZohoLeadSafe(zohoInformationPayload);
 
     localStorage.setItem('play3d_last_buyer_name_v1', name);
     localStorage.setItem('play3d_last_buyer_email_v1', email);
 
     byId('payReceipt').value = '';
-    setStatus(byId('paymentStatus'), 'Payment information received for ' + email + '. Your access request will be reviewed and activated after verification.', true);
+    setStatus(byId('paymentStatus'), rewardPurchase
+      ? 'Reward payment information received for ' + email + '. Your credits request will be reviewed after verification. No vault access code will be issued.'
+      : 'Payment information received for ' + email + '. Your access request will be reviewed and activated after verification.', true);
     renderLedger();
     console.log('[PLAY3D PAYMENT REQUEST]', record);
   }
