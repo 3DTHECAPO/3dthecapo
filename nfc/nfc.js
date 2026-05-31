@@ -4,12 +4,13 @@
 const byId = (id)=>document.getElementById(id);
 const params = new URLSearchParams(window.location.search);
 const code = (params.get('code')||'').toUpperCase().trim();
-const target = (params.get('target')||'').trim();
 
 const statusPill=byId('statusPill');
 const vaultState=byId('vaultState');
 const lockedActions=byId('lockedActions');
 const lockedRoom=byId('lockedRoom');
+const publicNav=byId('publicNav');
+const privateNav=byId('privateNav');
 const vaultSequence=byId('vaultSequence');
 const accessOverlay=byId('accessOverlay');
 const sessionDivider=byId('sessionDivider');
@@ -20,69 +21,11 @@ const connect=byId('connect');
 const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
 const TABLE = 'vault_codes';
-const PASS_KEY = 'play3d_vault_pass_v1';
-const MASTER_KEY = 'CAPO_MASTER_SESSION';
-
-function sessionLog(message){
-  try{ console.log('[PLAY3D ACCESS]', message); }catch(e){}
-}
-
-function readJSON(key){
-  try{
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : null;
-  }catch(e){
-    return null;
-  }
-}
-
-function writeJSON(key, value){
-  try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
-}
-
-function removeKey(key){
-  try{ localStorage.removeItem(key); }catch(e){}
-}
-
-function passIsValid(pass){
-  if(!pass || !pass.expires_at) return false;
-  const expiry = new Date(pass.expires_at).getTime();
-  return Number.isFinite(expiry) && expiry > Date.now();
-}
-
-function getActiveMasterSession(){
-  const session = readJSON(MASTER_KEY);
-  if(!session || session.active !== true) return null;
-  if(session.expires_at && Number(session.expires_at) <= Date.now()){
-    removeKey(MASTER_KEY);
-    sessionLog('SESSION EXPIRED');
-    return null;
-  }
-  sessionLog('MASTER SESSION ACTIVE');
-  return session;
-}
-
-function saveMasterSession(record){
-  const existing = getActiveMasterSession();
-  if(existing) return existing;
-  const expires = record && record.expires_at ? new Date(record.expires_at).getTime() : Date.now() + (1000 * 60 * 60 * 12);
-  const session = {
-    active:true,
-    tier:'master',
-    code:record && record.code || code || '',
-    started_at:Date.now(),
-    expires_at:expires
-  };
-  writeJSON(MASTER_KEY, session);
-  sessionLog('MASTER SESSION ACTIVE');
-  return session;
-}
 
 const ROOM_MAP = {
   entry: 'room-entry',
   gold: 'room-gold',
   elite: 'room-elite',
-  master: 'room-elite',
   drop: 'room-elite',
   merch: 'room-elite'
 };
@@ -111,34 +54,6 @@ async function logEvent(codeValue, tier, type){
 }
 
 
-async function patchCodeHit(codeValue){
-  const cleanCode = String(codeValue || '').toUpperCase().trim();
-  if(!cleanCode) return false;
-
-  try{
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(cleanCode)}`,{
-      method:'PATCH',
-      headers:{
-        apikey:SUPABASE_ANON,
-        Authorization:`Bearer ${SUPABASE_ANON}`,
-        'Content-Type':'application/json',
-        'Prefer':'return=minimal'
-      },
-      body:JSON.stringify({ used:true, used_at:new Date().toISOString() })
-    });
-
-    if(!res.ok){
-      console.error('[PLAY3D ACCESS] used_at patch failed', await res.text());
-      return false;
-    }
-
-    return true;
-  }catch(e){
-    console.error('[PLAY3D ACCESS] used_at patch failed', e);
-    return false;
-  }
-}
-
 function fireBrevoSafe(codeValue, tier){
   // Keeps Brevo-compatible hooks non-blocking. If your Brevo script is loaded anywhere,
   // these events give it something to catch without freezing the vault flow.
@@ -155,6 +70,8 @@ function showLocked(msg){
   if(vaultState) vaultState.textContent = msg || 'Access code required';
   show(lockedActions);
   show(lockedRoom);
+  show(publicNav);
+  hide(privateNav);
   hide(sessionDivider);
   hide(sessionLane);
   hide(connectDivider);
@@ -205,95 +122,28 @@ function playAccessSequence(){
   }, 5300);
 }
 
-function safeTargetUrl(){
-  if(!target) return '';
-  try{
-    const url = new URL(target, window.location.href);
-    if(url.origin !== window.location.origin) return '';
-    return url.pathname + url.search + url.hash;
-  }catch(e){
-    return '';
-  }
-}
-
-function routeTargetIfPresent(){
-  const destination = safeTargetUrl();
-  if(!destination) return false;
-  window.location.replace(destination);
-  return true;
-}
-
-function routeLinksForTier(rawTier){
-  const tier = String(rawTier || 'entry').toLowerCase();
-  const entry = [
-    ['Entry Room','./entry-backdrop.html'],
-    ['Game Vault','./game-vault/index.html']
-  ];
-  const gold = [
-    ['Album Chamber','./album-chamber.html'],
-    ['Vault Interface','./vault-interface.html']
-  ];
-  const elite = [
-    ['Exclusive Room','./secret-page.html'],
-    ['Merch Room','./merch-drop-room.html']
-  ];
-  const master = [
-    ['Master Room','./rooms/master/index.html'],
-    ['Rewards','./game-vault/rewards/index.html']
-  ];
-
-  if(tier === 'master') return entry.concat(gold, elite, master);
-  if(tier === 'elite') return entry.concat(gold, elite);
-  if(tier === 'gold') return entry.concat(gold);
-  return entry;
-}
-
-function renderSessionRoutes(rawTier){
-  if(!sessionLane) return;
-  sessionLane.innerHTML = '';
-  routeLinksForTier(rawTier).forEach(([label, href])=>{
-    const link = document.createElement('a');
-    link.href = href;
-    link.textContent = label;
-    sessionLane.appendChild(link);
-  });
-}
-
-function unlockUI(rawTier, options){
-  const opts = options || {};
+function unlockUI(rawTier){
   const tier = String(rawTier || 'entry').toLowerCase();
   document.body.classList.remove('locked');
 
-  // The NFC page stays a scan/unlock page. Room sections remain hidden;
-  // navigation goes through real room pages instead of scrolling into inline panels.
   ['entry','gold','elite'].forEach(t=>hide(byId('room-'+t)));
-  renderSessionRoutes(tier);
+
+  const roomId = ROOM_MAP[tier] || 'room-entry';
+  show(byId(roomId));
 
   if(statusPill) statusPill.textContent = tier.toUpperCase();
-  if(vaultState) vaultState.textContent = tier === 'master' ? 'Master Vault Pass' : tier.charAt(0).toUpperCase()+tier.slice(1)+' Access';
+  if(vaultState) vaultState.textContent = tier.charAt(0).toUpperCase()+tier.slice(1)+' Room';
 
   hide(lockedActions);
   hide(lockedRoom);
+  hide(publicNav);
+  show(privateNav);
   show(sessionDivider);
   show(sessionLane);
   show(connectDivider);
   show(connect);
 
-  if(tier === 'master') addMasterRoomLinks();
-  if(!opts.skipCinematic) playAccessSequence();
-}
-
-function addMasterRoomLinks(){
-  const targets = [sessionLane].filter(Boolean);
-  targets.forEach((target)=>{
-    if(target.querySelector('[data-master-room-link]')) return;
-    const link = document.createElement('a');
-    link.href = '/nfc/rooms/master/';
-    link.textContent = 'Master';
-    link.setAttribute('data-master-room-link','1');
-    if(target === sessionLane) link.textContent = 'Master Room';
-    target.appendChild(link);
-  });
+  playAccessSequence();
 }
 
 async function getCode(codeValue){
@@ -309,10 +159,51 @@ async function getCode(codeValue){
 }
 
 
-async function startTimerIfNeeded(record){
-  // NFC validation must never create or update expiration values.
-  // The generator/send pipeline is the only owner of expires_at.
-  return record;
+function durationToMs(duration){
+  const map = {
+    "1h": 1 * 60 * 60 * 1000,
+    "6h": 6 * 60 * 60 * 1000,
+    "12h": 12 * 60 * 60 * 1000,
+    "1d": 24 * 60 * 60 * 1000,
+    "3d": 3 * 24 * 60 * 60 * 1000,
+    "7d": 7 * 24 * 60 * 60 * 1000,
+    "30d": 30 * 24 * 60 * 60 * 1000
+  };
+
+  const key = String(duration || "1h").trim().toLowerCase();
+  return key === "none" ? null : (map[key] || map["1h"]);
+}
+
+async function patchCodeUse(record){
+  if(!record || !record.id) throw new Error('Missing vault code record');
+
+  const usedAt = record.used_at || new Date().toISOString();
+  let expiresAt = record.expires_at || null;
+
+  if(!expiresAt){
+    const durationMs = durationToMs(record.duration);
+    if(durationMs !== null){
+      const usedAtMs = new Date(usedAt).getTime();
+      if(!Number.isFinite(usedAtMs)) throw new Error('Invalid used_at value');
+      expiresAt = new Date(usedAtMs + durationMs).toISOString();
+    }
+  }
+
+  const patch = { used:true, used_at:usedAt, expires_at:expiresAt };
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?id=eq.${encodeURIComponent(record.id)}`,{
+    method:'PATCH',
+    headers:{
+      'apikey':SUPABASE_ANON,
+      'Authorization':`Bearer ${SUPABASE_ANON}`,
+      'Content-Type':'application/json',
+      'Prefer':'return=representation'
+    },
+    body:JSON.stringify(patch)
+  });
+
+  if(!res.ok) throw new Error('Vault code update failed');
+  const rows = await res.json().catch(()=>[]);
+  return Array.isArray(rows) && rows[0] ? rows[0] : Object.assign(record, patch);
 }
 
 function saveVaultPass(record, tier){
@@ -321,140 +212,46 @@ function saveVaultPass(record, tier){
       ? record.expires_at
       : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
-    const normalizedTier = String(tier || record.code_type || 'ENTRY').toLowerCase();
-    const existing = readJSON(PASS_KEY);
-    if(existing && passIsValid(existing) && String(existing.code || '').toUpperCase() === String(record.code || code || '').toUpperCase()){
-      sessionLog('SESSION FOUND');
-      if(normalizedTier === 'master') saveMasterSession(record);
-      return existing;
-    }
-
-    const pass = {
-      active:true,
-      valid:true,
-      unlocked:true,
-      tier: normalizedTier,
+    localStorage.setItem("play3d_vault_pass_v1", JSON.stringify({
+      tier: tier || record.code_type || "ENTRY",
       code: record.code || code,
-      route: record.route || '',
+      route: record.route || "",
       expires_at: expires
-    };
-    writeJSON(PASS_KEY, pass);
-    sessionLog('SESSION FOUND');
-    if(normalizedTier === 'master') saveMasterSession(record);
-    return pass;
-  }catch(e){
-    return null;
-  }
-}
-
-function getSavedPassCode(){
-  try{
-    const raw = localStorage.getItem("play3d_vault_pass_v1");
-    const pass = raw ? JSON.parse(raw) : null;
-    return pass && pass.code ? String(pass.code).toUpperCase().trim() : "";
-  }catch(e){
-    return "";
-  }
-}
-
-function getActiveSavedPass(){
-  try{
-    const pass = readJSON(PASS_KEY);
-    if(!pass) return null;
-    if(!passIsValid(pass)){
-      removeKey(PASS_KEY);
-      sessionLog('SESSION EXPIRED');
-      return null;
-    }
-    sessionLog('SESSION FOUND');
-    return pass;
-  }catch(e){
-    return null;
-  }
-}
-
-function preserveNfcLinks(codeValue){
-  const activePass = getActiveSavedPass();
-  if(activePass || getActiveMasterSession()) return;
-
-  const activeCode = String(codeValue || getSavedPassCode() || '').toUpperCase().trim();
-  if(!activeCode) return;
-
-  const paths = [
-    '/nfc/index.html',
-    '/nfc/entry-backdrop.html',
-    '/nfc/album-chamber.html',
-    '/nfc/vault-interface.html',
-    '/nfc/merch-drop-room.html',
-    '/nfc/exclusive-merch-vault.html',
-    '/nfc/secret-page.html',
-    '/nfc/scan.html',
-    '/nfc/game-vault/index.html',
-    '/nfc/game-vault/rewards/index.html',
-    '/nfc/rooms/master/index.html'
-  ];
-
-  document.querySelectorAll('a[href]').forEach((link)=>{
-    const href = link.getAttribute('href') || '';
-    if(!href || href.charAt(0)==='#' || /^(https?:|mailto:|tel:)/i.test(href)) return;
-
-    try{
-      const url = new URL(href, window.location.href);
-      if(url.origin !== window.location.origin) return;
-      if(!paths.includes(url.pathname)) return;
-      url.searchParams.set('code', activeCode);
-      link.setAttribute('href', url.pathname + url.search + url.hash);
-    }catch(e){}
-  });
+    }));
+  }catch(e){}
 }
 
 async function init(){
   if(!code){
-    const masterSession = getActiveMasterSession();
-    if(masterSession){
-      if(routeTargetIfPresent()) return;
-      unlockUI('master', { skipCinematic:true });
-      return;
-    }
-
-    const activePass = getActiveSavedPass();
-    if(activePass){
-      if(routeTargetIfPresent()) return;
-      const tier = String(activePass.tier || 'ENTRY').toLowerCase();
-      unlockUI(tier, { skipCinematic:true });
-      return;
-    }
-    sessionLog('ACCESS DENIED');
     showLocked('No code provided');
     return;
   }
 
   try{
-    const activePass = getActiveSavedPass();
-    if(activePass && String(activePass.code || '').toUpperCase() === code){
-      if(routeTargetIfPresent()) return;
-      const tier = String(activePass.tier || 'ENTRY').toLowerCase();
-      unlockUI(tier, { skipCinematic:true });
-      return;
-    }
-
     const record = await getCode(code);
 
     if(!record){
       await logEvent(code, '', 'invalid');
-      sessionLog('ACCESS DENIED');
       showLocked('Invalid code');
       return;
     }
-
-    const timedRecord = await startTimerIfNeeded(record);
-    Object.assign(record, timedRecord);
 
     if(record.expires_at){
       const expiry = new Date(record.expires_at).getTime();
       if(Number.isFinite(expiry) && Date.now() > expiry){
         await logEvent(code, record.code_type || '', 'expired');
-        sessionLog('SESSION EXPIRED');
+        showLocked('Code expired');
+        return;
+      }
+    }
+
+    const usedRecord = await patchCodeUse(record);
+    Object.assign(record, usedRecord);
+
+    if(record.expires_at){
+      const expiry = new Date(record.expires_at).getTime();
+      if(Number.isFinite(expiry) && Date.now() > expiry){
+        await logEvent(code, record.code_type || '', 'expired');
         showLocked('Code expired');
         return;
       }
@@ -462,131 +259,86 @@ async function init(){
 
     const tier = String(record.code_type || 'ENTRY').toLowerCase();
     saveVaultPass(record, tier);
-    await patchCodeHit(record.code || code);
     fireBrevoSafe(code, tier);
     logEvent(code, tier, 'success');
-    if(routeTargetIfPresent()) return;
     unlockUI(tier);
-    preserveNfcLinks(code);
-
-    setTimeout(()=>{
-      injectVaultConversionScreen(code, tier);
-    }, 1800);
+    injectEmailCapture(code);
   }catch(err){
     console.error(err);
-    sessionLog('ACCESS DENIED');
     showLocked('Connection error');
   }
 }
-  
-async function upsertBonusMember(email, codeValue, tier){
-  try{
-    const payload = {
-      email,
-      code: codeValue,
-      tier: String(tier || 'entry').toLowerCase(),
-      status: 'active',
-      source: 'bonus_email',
-      last_seen_at: new Date().toISOString()
-    };
+function injectEmailCapture(codeValue){
+  const container = document.createElement("div");
+  container.style.marginTop = "20px";
 
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/members?on_conflict=email`,{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'apikey':SUPABASE_ANON,
-        'Authorization':'Bearer '+SUPABASE_ANON,
-        'Prefer':'resolution=merge-duplicates,return=minimal'
-      },
-      body:JSON.stringify(payload)
-    });
+  container.innerHTML = `
+    <input id="vaultEmailInput" type="email" placeholder="Enter email for bonus rewards" style="padding:10px;width:100%;margin-bottom:10px;">
+    <button id="vaultEmailBtn" style="padding:10px 16px;">Unlock Bonus</button>
+  `;
 
-    if(!res.ok) console.warn('[PLAY3D ACCESS] members upsert failed', await res.text());
-  }catch(e){
-    console.warn('[PLAY3D ACCESS] members upsert failed', e);
-  }
+  document.body.appendChild(container);
+
+  document.getElementById("vaultEmailBtn").onclick = async ()=>{
+    const email = document.getElementById("vaultEmailInput").value.trim().toLowerCase();
+
+    if(!email){
+      alert("Enter email");
+      return;
+    }
+
+    try{
+      await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(codeValue)}`,{
+        method:"PATCH",
+        headers:{
+          "Content-Type":"application/json",
+          "apikey":SUPABASE_ANON,
+          "Authorization":"Bearer " + SUPABASE_ANON
+        },
+        body:JSON.stringify({
+          recipient_email: email,
+          sent: true,
+          sent_at: new Date().toISOString()
+        })
+      });
+
+      container.innerHTML = "<p>Email saved ✔</p>";
+    }catch(e){
+      alert("Save failed");
+    }
+  };
 }
+  function injectEmailCapture(codeValue){
+  if(document.getElementById("vaultEmailCapture")) return;
 
-function injectVaultConversionScreen(codeValue, tier){
-  if(document.getElementById("vaultConversionScreen")) return;
-
-  const box=document.createElement("section");
-  box.id="vaultConversionScreen";
-  box.style.cssText=`
-    width:min(920px,92vw);
-    margin:28px auto;
-    padding:24px;
-    border:1px solid rgba(202,162,74,.36);
-    border-radius:26px;
-    background:linear-gradient(180deg,rgba(12,10,7,.92),rgba(0,0,0,.78));
-    box-shadow:0 28px 80px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.05);
+  const container = document.createElement("div");
+  container.id = "vaultEmailCapture";
+  container.style.cssText = `
+    width:min(720px,92vw);
+    margin:28px auto 0;
+    padding:22px;
+    border:1px solid rgba(202,162,74,.34);
+    border-radius:24px;
+    background:linear-gradient(180deg,rgba(12,10,7,.86),rgba(0,0,0,.72));
+    box-shadow:0 24px 74px rgba(0,0,0,.72), inset 0 1px 0 rgba(255,255,255,.05);
     color:#f4f1ea;
     font-family:Oswald,Arial,sans-serif;
     text-align:center;
-    position:relative;
-    z-index:99999;
-    display:block;
-    visibility:visible;
-    opacity:1;
   `;
 
-  box.innerHTML=`
-    <div style="font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;font-size:26px;letter-spacing:1px;text-transform:uppercase;">
-      Stay Connected
+  container.innerHTML = `
+    <div style="color:#f2d27b;font-family:'Black Ops One',system-ui,sans-serif;letter-spacing:1px;text-transform:uppercase;font-size:22px;margin-bottom:8px;">
+      Unlock Bonus Access
     </div>
-
-    <p style="color:rgba(244,241,234,.72);font-size:15px;letter-spacing:1px;text-transform:uppercase;margin:10px 0 18px;">
-      Enter your email for bonus drops, code updates, and future vault access.
-    </p>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:18px 0;">
-      <div style="border:1px solid rgba(202,162,74,.25);border-radius:18px;padding:14px;background:rgba(0,0,0,.42);">
-        <b style="color:#f2d27b;">Bonus Codes</b><br>
-        <span style="color:rgba(244,241,234,.65);font-size:13px;">Get future access drops.</span>
-      </div>
-      <div style="border:1px solid rgba(202,162,74,.25);border-radius:18px;padding:14px;background:rgba(0,0,0,.42);">
-        <b style="color:#f2d27b;">Early Merch</b><br>
-        <span style="color:rgba(244,241,234,.65);font-size:13px;">First look at vault releases.</span>
-      </div>
-      <div style="border:1px solid rgba(202,162,74,.25);border-radius:18px;padding:14px;background:rgba(0,0,0,.42);">
-        <b style="color:#f2d27b;">Tier Upgrades</b><br>
-        <span style="color:rgba(244,241,234,.65);font-size:13px;">Move from ${String(tier||"ENTRY").toUpperCase()} to higher rooms.</span>
-      </div>
+    <div style="color:rgba(244,241,234,.68);font-size:14px;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;">
+      Enter email for future drops, bonus codes, and vault updates
     </div>
-
-    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0;">
-      <a href="./scan.html" style="
-        text-decoration:none;
-        border-radius:999px;
-        background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);
-        color:#100c05;
-        padding:12px 20px;
-        font-weight:900;
-        letter-spacing:1px;
-        text-transform:uppercase;
-        font-family:Oswald,Arial,sans-serif;
-      ">Enter Gold Code</a>
-
-      <a href="./scan.html" style="
-        text-decoration:none;
-        border-radius:999px;
-        background:rgba(0,0,0,.65);
-        color:#f2d27b;
-        border:1px solid rgba(202,162,74,.45);
-        padding:12px 20px;
-        font-weight:900;
-        letter-spacing:1px;
-        text-transform:uppercase;
-        font-family:Oswald,Arial,sans-serif;
-      ">Enter Elite Code</a>
-    </div>
-
-    <input id="vaultEmailInput" type="email" placeholder="Enter email for bonus access" style="
+    <input id="vaultEmailInput" type="email" placeholder="customer@email.com" style="
       width:100%;
       min-height:48px;
       border-radius:14px;
       border:1px solid rgba(202,162,74,.34);
-      background:rgba(0,0,0,.65);
+      background:rgba(0,0,0,.62);
       color:#f4f1ea;
       padding:0 14px;
       outline:none;
@@ -594,80 +346,71 @@ function injectVaultConversionScreen(codeValue, tier){
       font-size:16px;
       margin-bottom:12px;
     ">
-
     <button id="vaultEmailBtn" style="
       border:0;
       border-radius:999px;
       background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);
       color:#100c05;
-      padding:12px 22px;
+      padding:12px 20px;
       font-weight:900;
       letter-spacing:1px;
       text-transform:uppercase;
       cursor:pointer;
       box-shadow:0 14px 34px rgba(202,162,74,.22);
       font-family:Oswald,Arial,sans-serif;
-    ">Connect My Vault Access</button>
-
+    ">
+      Save Email + Unlock Bonus
+    </button>
     <div id="vaultEmailStatus" style="margin-top:12px;color:rgba(244,241,234,.68);font-size:13px;"></div>
   `;
 
-  const target=document.getElementById("connect")||document.querySelector("main")||document.body;
-  target.parentNode.insertBefore(box,target);
+  const target = document.getElementById("connect") || document.querySelector("main") || document.body;
+  target.parentNode.insertBefore(container, target);
 
-  document.getElementById("vaultEmailBtn").onclick=async()=>{
-    const email=document.getElementById("vaultEmailInput").value.trim().toLowerCase();
-    const status=document.getElementById("vaultEmailStatus");
+  document.getElementById("vaultEmailBtn").onclick = async ()=>{
+    const email = document.getElementById("vaultEmailInput").value.trim().toLowerCase();
+    const status = document.getElementById("vaultEmailStatus");
 
     if(!email){
-      status.textContent="Enter email first.";
+      status.textContent = "Enter email first.";
       return;
     }
 
-    status.textContent="Saving...";
+    status.textContent = "Saving...";
 
     try{
-      const res=await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(codeValue)}`,{
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(codeValue)}`,{
         method:"PATCH",
         headers:{
           "Content-Type":"application/json",
           "apikey":SUPABASE_ANON,
-          "Authorization":"Bearer "+SUPABASE_ANON,
+          "Authorization":"Bearer " + SUPABASE_ANON,
           "Prefer":"return=minimal"
         },
         body:JSON.stringify({
-          recipient_email:email,
-          sent:true,
-          sent_at:new Date().toISOString()
+          recipient_email: email,
+          sent: true,
+          sent_at: new Date().toISOString()
         })
       });
 
-      if(!res.ok) throw new Error(await res.text());
+      if(!res.ok){
+        const text = await res.text();
+        throw new Error(text || "Save failed");
+      }
 
-      await upsertBonusMember(email, codeValue, tier);
-
-      box.innerHTML=`
-        <div style="font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;font-size:26px;text-transform:uppercase;">
-          Vault Connected ✔
+      container.innerHTML = `
+        <div style="color:#f2d27b;font-family:'Black Ops One',system-ui,sans-serif;letter-spacing:1px;text-transform:uppercase;font-size:22px;">
+          Email Saved ✔
         </div>
-        <p style="color:rgba(244,241,234,.72);">Bonus access connected to ${email}.</p>
+        <p style="color:rgba(244,241,234,.72);margin:10px 0 0;">
+          Bonus access connected to ${email}.
+        </p>
       `;
     }catch(e){
-      status.textContent="Save failed. Try again.";
+      status.textContent = "Save failed. Try again.";
     }
   };
 }
 init();
 })();
-
-function hideBrokenVaultImages(){
-  document.querySelectorAll('img[src*="/assets/"], img[src*="./assets/"]').forEach((img)=>{
-    if(img.complete && img.naturalWidth === 0){
-      img.hidden = true;
-    }
-  });
-}
-
-window.addEventListener('load', hideBrokenVaultImages);
-
-
