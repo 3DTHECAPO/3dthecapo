@@ -1,7 +1,8 @@
 /*
 PLAY 3D Zoho Lead Router — safe frontend signal only.
-Buy Access sends selected tier, code_type, and duration with auto_code:false.
-Backend must verify payment before sending a code.
+Paid Buy Access tiers are all 30 days.
+Difference is access level/code_type: ENTRY, GOLD, ELITE.
+Free homepage signup remains separate and should be the only 1-hour ENTRY flow.
 */
 (function(){
   'use strict';
@@ -19,6 +20,7 @@ Backend must verify payment before sending a code.
       form:'buy_page',
       status:'payment_verification',
       lead_status:'payment_verification',
+      duration:'30d',
       auto_code:false,
       destination:'zoho',
       system:'play3d_revenue_email_router'
@@ -26,6 +28,7 @@ Backend must verify payment before sending a code.
 
     data.email = normalizeEmail(data.email);
     data.name = String(data.name || '').trim();
+    data.duration = '30d';
     data.created_at = data.created_at || new Date().toISOString();
 
     if(!data.email) return {ok:false,error:'missing_email'};
