@@ -62,10 +62,7 @@
 
 <section class="casino-table center-table" aria-label="Dominoes table">
 <div class="table-logo">PLAY 3D</div>
-
-<div class="table-center">
-<div id="chain" class="chain"></div>
-</div>
+<div class="table-center"><div id="chain" class="chain"></div></div>
 </section>
 
 <aside class="table-rail right-rail" aria-label="Dominoes controls rail">
@@ -85,7 +82,6 @@
 <h2>YOUR HAND</h2>
 <div id="hand" class="hand"></div>
 </section>
-
 </main>
 
 <script src="../shared/superior/superior-lines.js"></script>
@@ -93,17 +89,12 @@
 <script src="../shared/mode-bar.js"></script>
 <script src="../shared/game-points.js"></script>
 <script src="./script.js"></script>
-<script>/* CPU SAFE FAN LOADER */
+<script src="./public-fix.js"></script>
+<script>
 (function(){
   var p = new URLSearchParams(location.search);
   if(p.get('mode') !== 'fan' || !p.get('room')) return;
-
-  function load(src){
-    var s = document.createElement('script');
-    s.src = src;
-    document.body.appendChild(s);
-  }
-
+  function load(src){ var s = document.createElement('script'); s.src = src; document.body.appendChild(s); }
   load('../shared/supabase-game-bridge.js');
   load('../shared/multiplayer-room-ui.js');
 })();
