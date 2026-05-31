@@ -677,14 +677,24 @@ body.buy-page .pill.gold:hover{
     </div>
   </main>
 
+<script src="./zoho-lead-router.js?v=zoho-routes-1"></script>
 <script>
 (function(){
   'use strict';
 
   var CASH_TAG = '$3dcashin';
   var STRIPE_URL = 'https://buy.stripe.com/fZu3cvbAYcJogX2a5e4ZG00';
-  var STORAGE_KEY = 'play3d_payment_starteds_v1';
+  var STORAGE_KEY = 'play3d_pending_payments_v1';
   var selected = null;
+
+  function sendZohoLeadSafe(payload){
+    try{
+      if(window.Play3DZohoLeadRouter && typeof window.Play3DZohoLeadRouter.submit === 'function'){
+        return window.Play3DZohoLeadRouter.submit(payload);
+      }
+    }catch(e){}
+    return Promise.resolve({ok:false, skipped:true});
+  }
 
   function byId(id){ return document.getElementById(id); }
   function normalizeEmail(email){ return String(email || '').trim().toLowerCase(); }
@@ -769,6 +779,21 @@ body.buy-page .pill.gold:hover{
       source:'buy_page_payment_start'
     });
 
+    sendZohoLeadSafe({
+      name:name,
+      email:email,
+      source:'buy_access',
+      form:'buy_page_payment_start',
+      status:'payment_started',
+      lead_status:'payment_verification',
+      tier:selected.tier,
+      code_type:selected.tier,
+      amount:Number(selected.price),
+      method:selected.method,
+      auto_code:false,
+      notes:'Buyer started payment from buy page.'
+    });
+
     byId('payName').value = name;
     byId('payEmail').value = email;
     byId('payTier').value = selected.tier;
@@ -803,9 +828,24 @@ body.buy-page .pill.gold:hover{
       tier:tier,
       amount:amount,
       method:method,
-      receipt_note:receipt,
+      payment_information:receipt,
       created_at:new Date().toISOString(),
       source:'buy_page_payment_information'
+    });
+
+    sendZohoLeadSafe({
+      name:name,
+      email:email,
+      source:'buy_access',
+      form:'buy_page_payment_information',
+      status:'information_submitted',
+      lead_status:'payment_verification',
+      tier:tier,
+      code_type:tier,
+      amount:amount,
+      method:method,
+      auto_code:false,
+      notes:receipt
     });
 
     localStorage.setItem('play3d_last_buyer_name_v1', name);

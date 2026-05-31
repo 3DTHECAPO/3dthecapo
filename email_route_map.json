@@ -1,0 +1,25 @@
+{
+  "home_updates": {
+    "auto_code": true,
+    "code_type": "ENTRY",
+    "duration": "1h",
+    "status": "auto_entry_code",
+    "zoho_tag": "HOME_UPDATES_AUTO_ENTRY"
+  },
+  "buy_access": {
+    "auto_code": false,
+    "code_type": "chosen tier ENTRY/GOLD/ELITE",
+    "status": "payment_verification",
+    "zoho_tag": "BUY_ACCESS_PAYMENT_VERIFICATION"
+  },
+  "vault_connected": {
+    "auto_code": false,
+    "status": "vault_connected",
+    "zoho_tag": "VAULT_CONNECTED"
+  },
+  "member_rewards": {
+    "auto_code": false,
+    "status": "member_rewards",
+    "zoho_tag": "MEMBER_REWARDS"
+  }
+}
