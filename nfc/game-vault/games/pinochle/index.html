@@ -1,79 +1,112 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PLAY 3D - Pinochle</title>
+<title>PLAY 3D — Dominoes AAA</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./public-fix.css">
 <link rel="stylesheet" href="../shared/superior/superior-events.css">
 <link rel="stylesheet" href="../shared/mode-bar.css">
 </head>
 <body>
 <div class="bg"></div>
+
 <main class="app">
-  <header class="top">
-    <a class="brand" href="../../index.html"><span>3D</span><b>PLAY 3D</b></a>
-    <nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav>
-  </header>
-  <section class="hero">
-    <div><div class="kicker">CARD TABLE</div><h1>Pinochle</h1><p>Double-deck partnership Pinochle: bid, name trump, meld, then take tricks to 500.</p></div>
-  </section>
-  <section class="table pinochle-table-shell">
-    <div class="pinochle-layout" aria-label="Pinochle table layout">
-      <aside class="pinochle-rail" aria-label="Pinochle controls rail">
-        <div class="row action-row"><button id="dealBtn">Deal</button><input id="bidInput" type="number" min="50" step="10" value="50" aria-label="Bid amount"><button id="teamBtn">Bid</button><button id="passBidBtn">Pass</button><button id="meldBtn">Meld</button></div>
-        <div class="row trump-row"><button data-trump="S">Spades</button><button data-trump="H">Hearts</button><button data-trump="D">Diamonds</button><button data-trump="C">Clubs</button></div>
-        <section class="rail-zone meld-zone"><h2>Meld Area</h2><div id="meldArea" class="hand"></div></section>
-        <section class="rail-zone stock-zone"><h2>Stock</h2><div id="stockArea" class="hand"></div></section>
-      </aside>
+<header class="top top-header">
+<a class="brand" href="../../index.html">
+<span>3D</span>
+<b>PLAY 3D</b>
+</a>
 
-      <div class="casino-table">
-        <div class="table-logo">PINOCHLE</div>
-        <div class="table-content">
-          <section class="center-stage">
-            <section class="opponent-zone"><h2>Opponent</h2><div id="opponentHand" class="hand opponent-hand"></div></section>
-            <section class="trick-zone"><h2>Trick Pile</h2><div id="trickPile" class="hand trick-pile"></div></section>
-            <section class="player-zone"><h2>Your Hand</h2><div id="playerHand" class="hand"></div></section>
-          </section>
-        </div>
-      </div>
+<nav>
+<a href="../../index.html">Game Vault</a>
+<a href="../../rewards/index.html">Rewards</a>
+<a href="../../../index.html">Vault</a>
+</nav>
+</header>
 
-      <aside class="pinochle-rail pinochle-right-rail" aria-label="Pinochle score and player rail">
-        <section class="rail-zone rail-score-zone">
-          <h2>Score / Status</h2>
-          <div class="score rail-score"><span>Score</span><b id="mainScore">0 - 0</b><small id="stateText">READY</small></div>
-        </section>
-        <section class="rail-zone player-stats-zone">
-          <h2>Player Stats</h2>
-          <div class="seat top-seat" id="seat1"></div>
-          <div class="seat left-seat" id="seat2"></div>
-          <div class="seat right-seat" id="seat3"></div>
-          <div class="seat bottom-seat" id="seat0"></div>
-        </section>
-        <section class="rail-zone live-action-zone">
-          <h2>Live Action</h2>
-          <div class="live-action-card">Bids, trump, meld, and tricks stay visible on the table.</div>
-        </section>
-      </aside>
-    </div>
-  </section>
+<section class="hero">
+<div class="hero-title">
+<div class="kicker">AAA DOMINO LOUNGE</div>
+<h1>DOMINOES</h1>
+<p>Luxury multiplayer-ready domino table rebuilt for stable gameplay and responsive scaling.</p>
+</div>
+</section>
+
+<section class="dominoes-layout" aria-label="Dominoes table layout">
+<aside class="table-rail left-rail" aria-label="Dominoes players and score rail">
+<section class="panel status-panel">
+<h2>Status</h2>
+<div class="status">
+<span>SCORE</span>
+<b id="scoreText">0 - 0</b>
+<small id="turnText">YOUR TURN</small>
+</div>
+</section>
+
+<section class="panel player-list">
+<h2>Players</h2>
+<div class="seat top-seat">FAN / CPU</div>
+<div class="seat left-seat">CPU 2</div>
+<div class="seat right-seat">CPU 3</div>
+<div class="seat bottom-seat">YOU</div>
+</section>
+
+<section class="panel log-panel">
+<h2>GAME LOG</h2>
+<ol id="log"></ol>
+</section>
+</aside>
+
+<section class="casino-table center-table" aria-label="Dominoes table">
+<div class="table-logo">PLAY 3D</div>
+
+<div class="table-center">
+<div id="chain" class="chain"></div>
+</div>
+</section>
+
+<aside class="table-rail right-rail" aria-label="Dominoes controls rail">
+<section class="controls panel">
+<button id="newBtn">NEW GAME</button>
+<button class="playerCountBtn" data-count="2">2 Players</button>
+<button class="playerCountBtn" data-count="3">3 Players</button>
+<button class="playerCountBtn" data-count="4">4 Players</button>
+<button id="drawBtn">DRAW</button>
+<button id="passBtn">PASS</button>
+<div id="armChooser" class="arm-chooser" hidden></div>
+</section>
+</aside>
+</section>
+
+<section class="panel hand-dock bottom-hand" aria-label="Fixed player hand dock">
+<h2>YOUR HAND</h2>
+<div id="hand" class="hand"></div>
+</section>
+
 </main>
+
 <script src="../shared/superior/superior-lines.js"></script>
 <script src="../shared/superior/superior-events.js"></script>
 <script src="../shared/mode-bar.js"></script>
 <script src="../shared/game-points.js"></script>
 <script src="./script.js"></script>
-<script>
+<script>/* CPU SAFE FAN LOADER */
 (function(){
   var p = new URLSearchParams(location.search);
   if(p.get('mode') !== 'fan' || !p.get('room')) return;
-  function load(src){ var s = document.createElement('script'); s.src = src; document.body.appendChild(s); }
+
+  function load(src){
+    var s = document.createElement('script');
+    s.src = src;
+    document.body.appendChild(s);
+  }
+
   load('../shared/supabase-game-bridge.js');
   load('../shared/multiplayer-room-ui.js');
 })();
 </script>
 </body>
 </html>
-
-
