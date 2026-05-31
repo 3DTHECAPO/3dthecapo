@@ -373,6 +373,154 @@ body.buy-page .pill.gold:hover{
   to{opacity:1; transform:translateY(0);}
 }
 
+
+/* ===== STEP 1 PAYMENT FLOW UPGRADE — BUYER CAPTURE / RECEIPT TRACKING ===== */
+.pay-capture-card{
+  margin-top:18px;
+  border:1px solid rgba(202,162,74,.36);
+  border-radius:22px;
+  background:linear-gradient(180deg,rgba(12,10,7,.86),rgba(0,0,0,.68));
+  box-shadow:0 22px 60px rgba(0,0,0,.64), inset 0 1px 0 rgba(255,255,255,.05);
+  padding:22px;
+}
+.pay-capture-card h3{
+  font-family:"Black Ops One",system-ui,sans-serif;
+  color:#f2d27b;
+  margin:0 0 10px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+.pay-capture-card p{
+  color:rgba(244,241,234,.72);
+  line-height:1.5;
+}
+.pay-form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-top:14px;
+}
+.pay-form-grid label{
+  display:block;
+  color:#f2d27b;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.pay-form-grid input,
+.pay-form-grid select,
+.pay-form-grid textarea{
+  width:100%;
+  min-height:46px;
+  border-radius:14px;
+  border:1px solid rgba(202,162,74,.34);
+  background:rgba(0,0,0,.62);
+  color:#f4f1ea;
+  padding:10px 12px;
+  outline:none;
+  font-family:Oswald,Arial,sans-serif;
+  font-size:16px;
+}
+.pay-form-grid textarea{
+  min-height:92px;
+  resize:vertical;
+}
+.pay-form-grid .full{
+  grid-column:1/-1;
+}
+.pay-flow-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:48px;
+  border-radius:999px;
+  border:1px solid rgba(255,231,153,.70);
+  color:#17130c;
+  background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#8b641e);
+  font-weight:900;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  box-shadow:0 0 28px rgba(242,210,123,.20),0 18px 38px rgba(0,0,0,.55);
+  cursor:pointer;
+  font-family:Oswald,Arial,sans-serif;
+  padding:0 18px;
+}
+.pay-flow-status{
+  margin-top:12px;
+  color:rgba(244,241,234,.72);
+  font-size:14px;
+}
+.pay-flow-status.good{color:#dfffe8}
+.pay-flow-status.bad{color:#ff8b8b}
+.pay-flow-modal{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(0,0,0,.80);
+}
+.pay-flow-modal.show{display:flex}
+.pay-flow-box{
+  width:min(620px,96vw);
+  border:1px solid rgba(242,210,123,.45);
+  border-radius:26px;
+  background:linear-gradient(180deg,#141009,#000);
+  box-shadow:0 32px 100px rgba(0,0,0,.9);
+  padding:22px;
+}
+.pay-flow-box h3{
+  font-family:"Black Ops One",system-ui,sans-serif;
+  color:#f2d27b;
+  margin:0 0 8px;
+  text-transform:uppercase;
+}
+.pay-flow-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:16px;
+}
+.pay-flow-secondary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:48px;
+  border-radius:999px;
+  border:1px solid rgba(202,162,74,.34);
+  background:rgba(0,0,0,.55);
+  color:#f4f1ea;
+  font-weight:900;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  cursor:pointer;
+  font-family:Oswald,Arial,sans-serif;
+  padding:0 18px;
+}
+.payment-ledger{
+  margin-top:14px;
+  display:grid;
+  gap:8px;
+}
+.payment-ledger-row{
+  border:1px solid rgba(202,162,74,.22);
+  border-radius:14px;
+  background:rgba(0,0,0,.38);
+  padding:10px 12px;
+  color:rgba(244,241,234,.76);
+  font-size:14px;
+}
+.payment-ledger-row b{
+  color:#f2d27b;
+}
+@media(max-width:760px){
+  .pay-form-grid{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body class="buy-page">
@@ -392,7 +540,7 @@ body.buy-page .pill.gold:hover{
       
       <h1>Buy Access</h1>
       <p class="sub">.</p>
-      <div class="notice">Pay with Cash App or card. After payment, send your receipt + email/name. Your vault code will be sent manually.</div>
+      <div class="notice">Pay with Cash App or card. Enter buyer info first, then submit your receipt/payment note so your access request can be verified and activated.</div>
     </section>
 
     <section class="grid" aria-label="Pricing">
@@ -409,8 +557,8 @@ body.buy-page .pill.gold:hover{
           </ul>
         </div>
         <div class="pay-row">
-          <a class="cash-btn" href="https://cash.app/$3dcashin/5" target="_blank" rel="noopener">Pay With Cash App</a>
-          <a class="stripe-btn" href="https://buy.stripe.com/fZu3cvbAYcJogX2a5e4ZG00" target="_blank" rel="noopener">Pay With Card</a>
+          <button class="cash-btn pay-start" type="button" data-tier="ENTRY" data-price="5" data-method="cashapp">Pay With Cash App</button>
+          <button class="stripe-btn pay-start" type="button" data-tier="ENTRY" data-price="5" data-method="stripe">Pay With Card</button>
           <p class="pay-note">Cash App or Stripe card checkout — same manual vault-code flow.</p>
         </div>
       </article>
@@ -428,8 +576,8 @@ body.buy-page .pill.gold:hover{
           </ul>
         </div>
         <div class="pay-row">
-          <a class="cash-btn" href="https://cash.app/$3dcashin/15" target="_blank" rel="noopener">Pay With Cash App</a>
-          <a class="stripe-btn" href="https://buy.stripe.com/fZu3cvbAYcJogX2a5e4ZG00" target="_blank" rel="noopener">Pay With Card</a>
+          <button class="cash-btn pay-start" type="button" data-tier="GOLD" data-price="15" data-method="cashapp">Pay With Cash App</button>
+          <button class="stripe-btn pay-start" type="button" data-tier="GOLD" data-price="15" data-method="stripe">Pay With Card</button>
           <p class="pay-note">Cash App or Stripe card checkout — same manual vault-code flow.</p>
         </div>
       </article>
@@ -447,8 +595,8 @@ body.buy-page .pill.gold:hover{
           </ul>
         </div>
         <div class="pay-row">
-          <a class="cash-btn" href="https://cash.app/$3dcashin/25" target="_blank" rel="noopener">Pay With Cash App</a>
-          <a class="stripe-btn" href="https://buy.stripe.com/fZu3cvbAYcJogX2a5e4ZG00" target="_blank" rel="noopener">Pay With Card</a>
+          <button class="cash-btn pay-start" type="button" data-tier="ELITE" data-price="25" data-method="cashapp">Pay With Cash App</button>
+          <button class="stripe-btn pay-start" type="button" data-tier="ELITE" data-price="25" data-method="stripe">Pay With Card</button>
           <p class="pay-note">Cash App or Stripe card checkout — same manual vault-code flow.</p>
         </div>
       </article>
@@ -465,7 +613,245 @@ body.buy-page .pill.gold:hover{
       </ol>
     </section>
 
-    <p class="auto">Cash App and Stripe payments are processed separately. Vault codes are still sent manually after receipt confirmation.</p>
+
+    <section class="pay-capture-card" id="paymentRequest">
+      <h3>Submit Payment Request</h3>
+      <p>After paying, drop the buyer info and receipt note here. This creates a pending payment trail on the buyer device and keeps the revenue flow cleaner until the webhook automation is added.</p>
+      <div class="pay-form-grid">
+        <div>
+          <label for="payName">Name</label>
+          <input id="payName" type="text" placeholder="Buyer name">
+        </div>
+        <div>
+          <label for="payEmail">Email</label>
+          <input id="payEmail" type="email" placeholder="buyer@email.com">
+        </div>
+        <div>
+          <label for="payTier">Tier</label>
+          <select id="payTier">
+            <option value="ENTRY">Entry Access - $5</option>
+            <option value="GOLD">Gold Access - $15</option>
+            <option value="ELITE">Elite Access - $25</option>
+          </select>
+        </div>
+        <div>
+          <label for="payMethod">Payment Method</label>
+          <select id="payMethod">
+            <option value="cashapp">Cash App</option>
+            <option value="stripe">Stripe / Card</option>
+          </select>
+        </div>
+        <div class="full">
+          <label for="payReceipt">Receipt / Payment Note</label>
+          <textarea id="payReceipt" placeholder="Paste receipt note, Cash App name, Stripe confirmation, transaction note, or anything needed to verify payment."></textarea>
+        </div>
+        <div class="full">
+          <button class="pay-flow-btn" id="savePaymentRequest" type="button">Save Pending Payment</button>
+          <div class="pay-flow-status" id="paymentStatus"></div>
+        </div>
+      </div>
+      <div class="payment-ledger" id="paymentLedger"></div>
+    </section>
+
+    <div class="pay-flow-modal" id="payFlowModal" aria-hidden="true">
+      <div class="pay-flow-box">
+        <h3 id="payFlowTitle">Start Payment</h3>
+        <p class="sub" id="payFlowCopy">Enter buyer info before payment.</p>
+        <div class="pay-form-grid">
+          <div>
+            <label for="modalBuyerName">Name</label>
+            <input id="modalBuyerName" type="text" placeholder="Buyer name">
+          </div>
+          <div>
+            <label for="modalBuyerEmail">Email</label>
+            <input id="modalBuyerEmail" type="email" placeholder="buyer@email.com">
+          </div>
+        </div>
+        <div class="pay-flow-actions">
+          <button class="pay-flow-btn" id="continuePayment" type="button">Continue To Pay</button>
+          <button class="pay-flow-secondary" id="cancelPayment" type="button">Cancel</button>
+        </div>
+        <div class="pay-flow-status" id="modalPayStatus"></div>
+      </div>
+    </div>
+
+    <p class="auto">Payment requests are tracked first. Full auto-code delivery will be added after Stripe/Cash App confirmation automation is connected.</p>
   </main>
+
+<script>
+(function(){
+  'use strict';
+
+  var CASH_TAG = '$3dcashin';
+  var STRIPE_URL = 'https://buy.stripe.com/fZu3cvbAYcJogX2a5e4ZG00';
+  var STORAGE_KEY = 'play3d_pending_payments_v1';
+  var selected = null;
+
+  function byId(id){ return document.getElementById(id); }
+  function normalizeEmail(email){ return String(email || '').trim().toLowerCase(); }
+
+  function readList(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+    catch(e){ return []; }
+  }
+
+  function saveRecord(record){
+    var list = readList();
+    list.push(record);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(-100)));
+    localStorage.setItem('play3d_last_payment_request_v1', JSON.stringify(record));
+    return record;
+  }
+
+  function setStatus(node, text, good){
+    if(!node) return;
+    node.textContent = text;
+    node.classList.remove('good','bad');
+    node.classList.add(good ? 'good' : 'bad');
+  }
+
+  function paymentUrl(method, tier, price, email){
+    if(method === 'cashapp') return 'https://cash.app/' + encodeURIComponent(CASH_TAG) + '/' + encodeURIComponent(price);
+    var url = new URL(STRIPE_URL);
+    url.searchParams.set('client_reference_id', 'PLAY3D-' + tier + '-' + Date.now());
+    if(email) url.searchParams.set('prefilled_email', email);
+    return url.toString();
+  }
+
+  function openModal(btn){
+    selected = {
+      tier: btn.getAttribute('data-tier') || 'ENTRY',
+      price: btn.getAttribute('data-price') || '5',
+      method: btn.getAttribute('data-method') || 'cashapp'
+    };
+
+    byId('payFlowTitle').textContent = selected.tier + ' ACCESS - $' + selected.price;
+    byId('payFlowCopy').textContent = selected.method === 'cashapp'
+      ? 'Enter buyer info, then continue to Cash App.'
+      : 'Enter buyer info, then continue to card checkout.';
+
+    byId('modalBuyerName').value = localStorage.getItem('play3d_last_buyer_name_v1') || '';
+    byId('modalBuyerEmail').value = localStorage.getItem('play3d_last_buyer_email_v1') || '';
+    byId('modalPayStatus').textContent = '';
+
+    var modal = byId('payFlowModal');
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden','false');
+  }
+
+  function closeModal(){
+    var modal = byId('payFlowModal');
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden','true');
+  }
+
+  function continuePayment(){
+    if(!selected) return;
+    var name = String(byId('modalBuyerName').value || '').trim();
+    var email = normalizeEmail(byId('modalBuyerEmail').value);
+
+    if(!email){
+      setStatus(byId('modalPayStatus'), 'Enter email first.', false);
+      return;
+    }
+
+    localStorage.setItem('play3d_last_buyer_name_v1', name);
+    localStorage.setItem('play3d_last_buyer_email_v1', email);
+
+    var record = saveRecord({
+      id:'PAY-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
+      status:'pending_payment',
+      name:name,
+      email:email,
+      tier:selected.tier,
+      amount:Number(selected.price),
+      method:selected.method,
+      created_at:new Date().toISOString(),
+      source:'buy_page_start_payment'
+    });
+
+    byId('payName').value = name;
+    byId('payEmail').value = email;
+    byId('payTier').value = selected.tier;
+    byId('payMethod').value = selected.method;
+
+    setStatus(byId('modalPayStatus'), 'Payment request saved. Opening payment...', true);
+    renderLedger();
+
+    setTimeout(function(){
+      window.location.href = paymentUrl(selected.method, selected.tier, selected.price, email);
+    }, 350);
+  }
+
+  function saveManualPayment(){
+    var name = String(byId('payName').value || '').trim();
+    var email = normalizeEmail(byId('payEmail').value);
+    var tier = byId('payTier').value || 'ENTRY';
+    var method = byId('payMethod').value || 'cashapp';
+    var receipt = String(byId('payReceipt').value || '').trim();
+    var amount = tier === 'ELITE' ? 25 : tier === 'GOLD' ? 15 : 5;
+
+    if(!email){
+      setStatus(byId('paymentStatus'), 'Enter email first.', false);
+      return;
+    }
+
+    var record = saveRecord({
+      id:'RECEIPT-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
+      status:'receipt_submitted',
+      name:name,
+      email:email,
+      tier:tier,
+      amount:amount,
+      method:method,
+      receipt_note:receipt,
+      created_at:new Date().toISOString(),
+      source:'buy_page_receipt_submission'
+    });
+
+    localStorage.setItem('play3d_last_buyer_name_v1', name);
+    localStorage.setItem('play3d_last_buyer_email_v1', email);
+
+    byId('payReceipt').value = '';
+    setStatus(byId('paymentStatus'), 'Saved pending payment for ' + email + '. Status: pending verification.', true);
+    renderLedger();
+    console.log('[PLAY3D PAYMENT REQUEST]', record);
+  }
+
+  function renderLedger(){
+    var box = byId('paymentLedger');
+    if(!box) return;
+    var rows = readList().slice(-5).reverse();
+    box.innerHTML = rows.length ? rows.map(function(row){
+      return '<div class="payment-ledger-row"><b>' +
+        String(row.tier || 'TIER') + ' / $' + String(row.amount || '') +
+        '</b><br>' + String(row.email || '') + ' · ' + String(row.method || '') +
+        ' · ' + String(row.status || 'pending') + '</div>';
+    }).join('') : '';
+  }
+
+  document.querySelectorAll('.pay-start').forEach(function(btn){
+    btn.addEventListener('click', function(){ openModal(btn); });
+  });
+
+  if(byId('cancelPayment')) byId('cancelPayment').addEventListener('click', closeModal);
+  if(byId('continuePayment')) byId('continuePayment').addEventListener('click', continuePayment);
+  if(byId('savePaymentRequest')) byId('savePaymentRequest').addEventListener('click', saveManualPayment);
+  if(byId('payFlowModal')) byId('payFlowModal').addEventListener('click', function(e){
+    if(e.target && e.target.id === 'payFlowModal') closeModal();
+  });
+
+  renderLedger();
+
+  window.Play3DPaymentFlow = {
+    storageKey: STORAGE_KEY,
+    readPending: readList,
+    saveRecord: saveRecord,
+    cashTag: CASH_TAG,
+    stripeUrl: STRIPE_URL
+  };
+})();
+</script>
+
 </body>
 </html>
