@@ -259,6 +259,7 @@
   function buildRewardEvent(points, game, reason, total){
     var identity = rewardIdentity();
     var rewardMetadata = {
+      event_name:'game_win',
       member_number:identity.member_number,
       member_table_id:identity.member_table_id,
       email:identity.email,
@@ -279,8 +280,8 @@
     return {
       member_id:identity.member_table_id || undefined,
       email:identity.email || undefined,
-      reward_type:'game_win',
-      reward_label:reason || 'game_win',
+      reward_type:'bonus_content',
+      reward_label:'game_win',
       reward_code:rewardCode,
       source:'game_vault_shared',
       game:String(game || 'game'),
