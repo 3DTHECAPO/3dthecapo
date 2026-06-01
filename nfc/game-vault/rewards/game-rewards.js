@@ -1,4 +1,6 @@
 (function(){
+  const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
   const REWARD_EVENTS_TABLE = 'reward_events';
   const PASS_KEY = 'play3d_vault_pass_v1';
 
@@ -12,7 +14,7 @@
   }
 
   function readVaultPass(){
-    return readJSON(PASS_KEY, null);
+    return readJSON(PASS_KEY, null) || {};
   }
 
   function hasActivePass(pass){
@@ -22,10 +24,10 @@
   }
 
   function getRewardIdentity(){
-    const pass = readVaultPass() || {};
-    const activePass = hasActivePass(pass);
+    const pass = readVaultPass();
     const sys = window.Play3DMemberSystem;
     const id = sys && sys.identity ? sys.identity() : {};
+    const activePass = hasActivePass(pass);
 
     return {
       paidMember: !!id.paidMember,
@@ -33,9 +35,11 @@
       hasVaultPass: activePass,
       visitorAccess: activePass && !id.paidMember,
       memberId: id.memberId || null,
+      memberNumber: id.memberNumber || id.member_number || null,
       email: id.email || pass.email || pass.recipient_email || pass.recipientEmail || null,
-      code: pass.code || '',
+      code: pass.code || localStorage.getItem('play3d_last_code') || '',
       tier: id.tier || pass.tier || '',
+      memberStatus: id.memberStatus || '',
       paidRegistration: !!id.paidRegistration
     };
   }
@@ -52,48 +56,45 @@
       Math.random().toString(36).slice(2, 8)
     ].join('_');
 
-    return {
-      event_type: 'reward_credit',
-      source: 'game_vault',
-      game: String(game || 'unknown'),
-      points,
-      reward_key: 'game_credit',
-      member_id: identity.memberId,
+    const metadata = {
+      member_table_id: identity.memberId,
+      member_number: identity.memberNumber,
       email: identity.email,
       code: identity.code,
       tier: identity.tier,
       page: window.location.pathname,
       user_agent: navigator.userAgent,
+      reward_status: 'earned',
+      credits: points,
+      client_event_id: clientEventId,
+      bank_after: bank,
+      paid_member: identity.paidMember,
+      paid_registration: identity.paidRegistration,
+      visitor_access: identity.visitorAccess,
+      member_status: identity.memberStatus,
+      has_vault_pass: identity.hasVaultPass,
+      href: window.location.href
+    };
+
+    Object.keys(metadata).forEach(key => {
+      if(metadata[key] === null || metadata[key] === undefined || metadata[key] === '') delete metadata[key];
+    });
+
+    return {
+      event_type: 'game_win',
+      source: 'game_vault',
+      game: String(game || 'unknown'),
+      points,
+      reward_key: 'game_credit',
       created_at: now,
-      metadata: {
-        client_event_id: clientEventId,
-        bank_after: bank,
-        paid_member: identity.paidMember,
-        paid_registration: identity.paidRegistration,
-        visitor_access: identity.visitorAccess,
-        has_vault_pass: identity.hasVaultPass,
-        href: window.location.href
-      }
+      metadata
     };
   }
 
   async function postRewardEvent(payload){
-    const cfg = window.PLAY3D_SECURE_CONFIG || {};
-    if(!cfg.supabaseUrl || !cfg.supabaseAnonKey) return false;
+    payload = await resolveRewardMemberContext(payload);
     const attempts = [
       payload,
-      {
-        event_type: payload.event_type,
-        source: payload.source,
-        game: payload.game,
-        points: payload.points,
-        reward_key: payload.reward_key,
-        member_id: payload.member_id,
-        email: payload.email,
-        code: payload.code,
-        tier: payload.tier,
-        created_at: payload.created_at
-      },
       {
         event_type: payload.event_type,
         game: payload.game,
@@ -104,11 +105,11 @@
 
     for(const body of attempts){
       try{
-        const res = await fetch(`${cfg.supabaseUrl}/rest/v1/${REWARD_EVENTS_TABLE}`,{
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${REWARD_EVENTS_TABLE}`,{
           method:'POST',
           headers:{
-            'apikey':cfg.supabaseAnonKey,
-            'Authorization':`Bearer ${cfg.supabaseAnonKey}`,
+            'apikey':SUPABASE_ANON,
+            'Authorization':`Bearer ${SUPABASE_ANON}`,
             'Content-Type':'application/json',
             'Prefer':'return=minimal'
           },
@@ -127,6 +128,46 @@
     return false;
   }
 
+  async function resolveRewardMemberContext(payload){
+    const metadata = Object.assign({}, payload.metadata || {});
+    const memberNumber = String(metadata.member_number || '').trim();
+    const email = String(metadata.email || '').trim().toLowerCase();
+    if(!memberNumber && !email) return payload;
+
+    try{
+      const filter = memberNumber
+        ? `member_number=eq.${encodeURIComponent(memberNumber)}`
+        : `email=eq.${encodeURIComponent(email)}`;
+      let rows = [];
+      try{
+        rows = await readMembers(`${filter}&select=id,member_number,email&limit=1`);
+      }catch(e){
+        if(memberNumber) return payload;
+        rows = await readMembers(`${filter}&select=id,email&limit=1`);
+      }
+      const row = rows[0] || null;
+      if(!row) return payload;
+      metadata.member_table_id = row.id || metadata.member_table_id;
+      metadata.member_number = row.member_number || metadata.member_number;
+      metadata.email = row.email || metadata.email;
+      return Object.assign({}, payload, {metadata});
+    }catch(e){
+      return payload;
+    }
+  }
+
+  async function readMembers(query){
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/members?${query}`,{
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':`Bearer ${SUPABASE_ANON}`
+      }
+    });
+    if(!res.ok) throw new Error('members lookup failed');
+    const rows = await res.json().catch(()=>[]);
+    return Array.isArray(rows) ? rows : [];
+  }
+
   function logRewardEvent(amount, game, bank){
     const payload = buildRewardEvent(amount, game, bank);
     postRewardEvent(payload).catch(()=>{});
@@ -137,8 +178,8 @@
       return { free:true, unlocked:false, bank:0, reason:'member_system_missing' };
     }
 
-    // 1-hour ENTRY / active vault pass is visitor access only.
-    // Paid registration or master/admin session is required before credits become claimable.
+    // ENTRY / 1-hour vault pass is visitor access only.
+    // Only paid members from the members table can earn claimable credits.
     if(!Play3DMemberSystem.isMember()){
       return {
         free:true,
