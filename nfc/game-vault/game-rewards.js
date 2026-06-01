@@ -55,47 +55,43 @@
       Math.random().toString(36).slice(2, 8)
     ].join('_');
 
-    return {
-      event_type: 'reward_credit',
-      source: 'game_vault',
-      game: String(game || 'unknown'),
-      points,
-      reward_key: 'game_credit',
+    const metadata = {
       member_id: identity.memberId,
       email: identity.email,
       code: identity.code,
       tier: identity.tier,
       page: window.location.pathname,
       user_agent: navigator.userAgent,
+      reward_status: 'earned',
+      credits: points,
+      client_event_id: clientEventId,
+      bank_after: bank,
+      paid_member: identity.paidMember,
+      paid_registration: identity.paidRegistration,
+      visitor_access: identity.visitorAccess,
+      member_status: identity.memberStatus,
+      has_vault_pass: identity.hasVaultPass,
+      href: window.location.href
+    };
+
+    Object.keys(metadata).forEach(key => {
+      if(metadata[key] === null || metadata[key] === undefined || metadata[key] === '') delete metadata[key];
+    });
+
+    return {
+      event_type: 'reward_credit',
+      source: 'game_vault',
+      game: String(game || 'unknown'),
+      points,
+      reward_key: 'game_credit',
       created_at: now,
-      metadata: {
-        client_event_id: clientEventId,
-        bank_after: bank,
-        paid_member: identity.paidMember,
-        paid_registration: identity.paidRegistration,
-        visitor_access: identity.visitorAccess,
-        member_status: identity.memberStatus,
-        has_vault_pass: identity.hasVaultPass,
-        href: window.location.href
-      }
+      metadata
     };
   }
 
   async function postRewardEvent(payload){
     const attempts = [
       payload,
-      {
-        event_type: payload.event_type,
-        source: payload.source,
-        game: payload.game,
-        points: payload.points,
-        reward_key: payload.reward_key,
-        member_id: payload.member_id,
-        email: payload.email,
-        code: payload.code,
-        tier: payload.tier,
-        created_at: payload.created_at
-      },
       {
         event_type: payload.event_type,
         game: payload.game,
