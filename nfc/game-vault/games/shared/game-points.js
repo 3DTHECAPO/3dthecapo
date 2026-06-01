@@ -6,6 +6,9 @@
   var PROFILE_KEY = 'play3d_player_profile_v1';
   var AWARD_LOG_KEY = 'play3d_game_points_award_log_v1';
   var SESSION_KEY = 'play3d_game_session_seen_v1';
+  var SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
+  var SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
+  var REWARD_EVENTS_TABLE = 'reward_events';
   var THRESHOLD = 100000;
   var TODAY = new Date().toISOString().slice(0, 10);
 
@@ -236,6 +239,97 @@
     return /win|checkmate|round|contract|clear|jackpot|vault_pass/i.test(reason || '');
   }
 
+  function rewardIdentity(){
+    var pass = getPassSession() || {};
+    var identity = {};
+    try{
+      if(window.Play3DMemberSystem && typeof window.Play3DMemberSystem.identity === 'function'){
+        identity = window.Play3DMemberSystem.identity() || {};
+      }
+    }catch(e){}
+    return {
+      member_number:identity.memberNumber || identity.member_number || pass.member_number || '',
+      member_table_id:identity.memberTableId || identity.member_table_id || identity.memberId || pass.member_table_id || '',
+      email:identity.email || pass.email || pass.recipient_email || pass.recipientEmail || '',
+      code:pass.code || localStorage.getItem('play3d_last_code') || '',
+      tier:identity.tier || pass.tier || pass.code_type || ''
+    };
+  }
+
+  function buildRewardEvent(points, game, reason, total){
+    var identity = rewardIdentity();
+    var metadata = {
+      member_number:identity.member_number,
+      member_table_id:identity.member_table_id,
+      email:identity.email,
+      code:identity.code,
+      tier:identity.tier,
+      page:location.pathname,
+      user_agent:navigator.userAgent,
+      reason:reason || 'valid_win',
+      reward_status:'earned',
+      credits:points,
+      bank_after:total
+    };
+    Object.keys(metadata).forEach(function(key){
+      if(metadata[key] === null || metadata[key] === undefined || metadata[key] === '') delete metadata[key];
+    });
+    return {
+      event_type:'game_win',
+      source:'game_vault_shared',
+      game:String(game || 'game'),
+      points:points,
+      reward_key:['game_win', String(game || 'game'), String(Date.now()), Math.random().toString(36).slice(2, 8)].join(':'),
+      created_at:new Date().toISOString(),
+      metadata:metadata
+    };
+  }
+
+  async function postRewardEvent(payload){
+    var attempts = [
+      payload,
+      {
+        event_type:payload.event_type,
+        game:payload.game,
+        points:payload.points,
+        created_at:payload.created_at
+      }
+    ];
+    for(var i = 0; i < attempts.length; i++){
+      try{
+        var response = await fetch(SUPABASE_URL + '/rest/v1/' + REWARD_EVENTS_TABLE, {
+          method:'POST',
+          headers:{
+            'apikey':SUPABASE_ANON,
+            'Authorization':'Bearer ' + SUPABASE_ANON,
+            'Content-Type':'application/json',
+            'Prefer':'return=minimal'
+          },
+          body:JSON.stringify(attempts[i])
+        });
+        if(response.ok) return true;
+        console.warn('PLAY 3D reward_events insert failed', {
+          attempt:i === 0 ? 'metadata' : 'minimal',
+          payload:attempts[i],
+          error:await response.text().catch(function(){ return ''; })
+        });
+      }catch(error){
+        console.warn('PLAY 3D reward_events request failed', {
+          attempt:i === 0 ? 'metadata' : 'minimal',
+          payload:attempts[i],
+          error:error
+        });
+      }
+    }
+    return false;
+  }
+
+  function logRewardEvent(points, game, reason, total){
+    postRewardEvent(buildRewardEvent(points, game, reason, total)).catch(function(error){
+      console.warn('PLAY 3D reward_events logging failed', error);
+    });
+  }
+
   function award(game, points, reason){
     points = Math.max(0, Math.floor(Number(points) || 0));
     if(!points) return getStatus();
@@ -280,6 +374,7 @@
     var history = readJSON(HISTORY_KEY, []);
     history.push({at:new Date().toISOString(), game:game || 'game', points:points, xp:xpGain, reason:reason || 'valid_win', prizeEligible:isMember()});
     writeJSON(HISTORY_KEY, history.slice(-200));
+    logRewardEvent(points, game, reason, total);
     return getStatus(total);
   }
 
