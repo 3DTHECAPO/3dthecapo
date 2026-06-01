@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -374,7 +374,7 @@ body.buy-page .pill.gold:hover{
 }
 
 
-/* ===== STEP 1 PAYMENT FLOW UPGRADE — BUYER CAPTURE / RECEIPT TRACKING ===== */
+/* ===== STEP 1 PAYMENT FLOW UPGRADE â€” BUYER CAPTURE / RECEIPT TRACKING ===== */
 .pay-capture-card{
   margin-top:18px;
   border:1px solid rgba(202,162,74,.36);
@@ -501,22 +501,6 @@ body.buy-page .pill.gold:hover{
   font-family:Oswald,Arial,sans-serif;
   padding:0 18px;
 }
-.payment-ledger{
-  margin-top:14px;
-  display:grid;
-  gap:8px;
-}
-.payment-ledger-row{
-  border:1px solid rgba(202,162,74,.22);
-  border-radius:14px;
-  background:rgba(0,0,0,.38);
-  padding:10px 12px;
-  color:rgba(244,241,234,.76);
-  font-size:14px;
-}
-.payment-ledger-row b{
-  color:#f2d27b;
-}
 @media(max-width:760px){
   .pay-form-grid{grid-template-columns:1fr}
 }
@@ -549,7 +533,7 @@ body.buy-page .pill.gold:hover{
           <span class="tag">Entry</span>
           <h2>Entry Access</h2>
           <p class="price">$5</p>
-          <p class="duration">Entry Access — 30 Days</p>
+          <p class="duration">Entry Access â€” 30 Days</p>
           <ul>
             <li>30-day Entry access code</li>
             <li>Basic vault access</li>
@@ -568,7 +552,7 @@ body.buy-page .pill.gold:hover{
           <span class="tag">Gold</span>
           <h2>Gold Access</h2>
           <p class="price">$15</p>
-          <p class="duration">Gold Access — 30 Days</p>
+          <p class="duration">Gold Access â€” 30 Days</p>
           <ul>
             <li>30-day Gold access code</li>
             <li>Gold room and stronger vault access</li>
@@ -587,7 +571,7 @@ body.buy-page .pill.gold:hover{
           <span class="tag">Elite</span>
           <h2>Elite Access</h2>
           <p class="price">$25</p>
-          <p class="duration">Elite Access — 30 Days</p>
+          <p class="duration">Elite Access â€” 30 Days</p>
           <ul>
             <li>30-day Elite access code</li>
             <li>Premium vault and exclusive drops</li>
@@ -719,7 +703,6 @@ body.buy-page .pill.gold:hover{
           <div class="pay-flow-status" id="paymentStatus"></div>
         </div>
       </div>
-      <div class="payment-ledger" id="paymentLedger"></div>
     </section>
 
     <div class="pay-flow-modal" id="payFlowModal" aria-hidden="true">
@@ -814,8 +797,8 @@ body.buy-page .pill.gold:hover{
       ? 'Enter buyer info, then continue to Cash App.'
       : 'Enter buyer info, then continue to card checkout.';
 
-    byId('modalBuyerName').value = localStorage.getItem('play3d_last_buyer_name_v1') || '';
-    byId('modalBuyerEmail').value = localStorage.getItem('play3d_last_buyer_email_v1') || '';
+    byId('modalBuyerName').value = '';
+    byId('modalBuyerEmail').value = '';
     byId('modalPayStatus').textContent = '';
 
     var modal = byId('payFlowModal');
@@ -838,9 +821,6 @@ body.buy-page .pill.gold:hover{
       setStatus(byId('modalPayStatus'), 'Enter email first.', false);
       return;
     }
-
-    localStorage.setItem('play3d_last_buyer_name_v1', name);
-    localStorage.setItem('play3d_last_buyer_email_v1', email);
 
     var rewardPurchase = selected.source === 'buy_rewards';
     var record = saveRecord({
@@ -887,8 +867,6 @@ body.buy-page .pill.gold:hover{
     byId('payMethod').value = selected.method;
 
     setStatus(byId('modalPayStatus'), 'Information saved. Opening payment...', true);
-    renderLedger();
-
     setTimeout(function(){
       window.location.href = paymentUrl(selected.method, selected.tier, selected.price, email);
     }, 350);
@@ -952,28 +930,12 @@ body.buy-page .pill.gold:hover{
     }
     sendZohoLeadSafe(zohoInformationPayload);
 
-    localStorage.setItem('play3d_last_buyer_name_v1', name);
-    localStorage.setItem('play3d_last_buyer_email_v1', email);
-
     byId('payReceipt').value = '';
     setStatus(byId('paymentStatus'), rewardPurchase
-      ? 'Reward payment information received for ' + email + '. Your credits request will be reviewed after verification. No vault access code will be issued.'
-      : 'Payment information received for ' + email + '. Your access request will be reviewed and activated after verification.', true);
-    renderLedger();
-    console.log('[PLAY3D PAYMENT REQUEST]', record);
+      ? 'Reward payment information received. Your credits request will be reviewed after verification. No vault access code will be issued.'
+      : 'Payment information received. Your access request will be reviewed and activated after verification.', true);
   }
 
-  function renderLedger(){
-    var box = byId('paymentLedger');
-    if(!box) return;
-    var rows = readList().slice(-5).reverse();
-    box.innerHTML = rows.length ? rows.map(function(row){
-      return '<div class="payment-ledger-row"><b>' +
-        String(row.tier || 'TIER') + ' / $' + String(row.amount || '') +
-        '</b><br>' + String(row.email || '') + ' · ' + String(row.method || '') +
-        ' · ' + String(row.status || 'review') + '</div>';
-    }).join('') : '';
-  }
 
   document.querySelectorAll('.pay-start').forEach(function(btn){
     btn.addEventListener('click', function(){ openModal(btn); });
@@ -986,15 +948,6 @@ body.buy-page .pill.gold:hover{
     if(e.target && e.target.id === 'payFlowModal') closeModal();
   });
 
-  renderLedger();
-
-  window.Play3DPaymentFlow = {
-    storageKey: STORAGE_KEY,
-    readPending: readList,
-    saveRecord: saveRecord,
-    cashTag: CASH_TAG,
-    stripeUrl: STRIPE_URL
-  };
 })();
 </script>
 
