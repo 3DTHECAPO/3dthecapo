@@ -262,23 +262,6 @@ function renderVaultConversionScreen(codeValue, tier){
     status.textContent='Saving...';
 
     try{
-      const res=await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(vaultCode)}`,{
-        method:'PATCH',
-        headers:{
-          'Content-Type':'application/json',
-          'apikey':SUPABASE_ANON,
-          'Authorization':'Bearer '+SUPABASE_ANON,
-          'Prefer':'return=minimal'
-        },
-        body:JSON.stringify({
-          recipient_email:email,
-          sent:true,
-          sent_at:new Date().toISOString()
-        })
-      });
-
-      if(!res.ok) throw new Error(await res.text());
-
       let sidecar = {email:false, member:false};
       try{
         sidecar = await logVaultSidecars(email, vaultCode, displayTier);
