@@ -258,7 +258,7 @@
 
   function buildRewardEvent(points, game, reason, total){
     var identity = rewardIdentity();
-    var metadata = {
+    var rewardMetadata = {
       member_number:identity.member_number,
       member_table_id:identity.member_table_id,
       email:identity.email,
@@ -271,17 +271,22 @@
       credits:points,
       bank_after:total
     };
-    Object.keys(metadata).forEach(function(key){
-      if(metadata[key] === null || metadata[key] === undefined || metadata[key] === '') delete metadata[key];
+    Object.keys(rewardMetadata).forEach(function(key){
+      if(rewardMetadata[key] === null || rewardMetadata[key] === undefined || rewardMetadata[key] === '') delete rewardMetadata[key];
     });
+    var rewardCode = ['game_win', String(game || 'game'), String(Date.now()), Math.random().toString(36).slice(2, 8)].join(':');
+    rewardMetadata.reward_key = rewardCode;
     return {
-      event_type:'game_win',
+      member_id:identity.member_table_id || undefined,
+      email:identity.email || undefined,
+      reward_type:'game_win',
+      reward_label:reason || 'game_win',
+      reward_code:rewardCode,
       source:'game_vault_shared',
       game:String(game || 'game'),
-      points:points,
-      reward_key:['game_win', String(game || 'game'), String(Date.now()), Math.random().toString(36).slice(2, 8)].join(':'),
+      credits:points,
       created_at:new Date().toISOString(),
-      metadata:metadata
+      reward_metadata:rewardMetadata
     };
   }
 
@@ -289,9 +294,24 @@
     var attempts = [
       payload,
       {
-        event_type:payload.event_type,
+        member_id:payload.member_id,
+        email:payload.email,
+        reward_type:payload.reward_type,
+        reward_label:payload.reward_label,
+        reward_code:payload.reward_code,
+        source:payload.source,
         game:payload.game,
-        points:payload.points,
+        credits:payload.credits,
+        created_at:payload.created_at
+      },
+      {
+        member_id:payload.member_id,
+        email:payload.email,
+        reward_type:payload.reward_type,
+        reward_label:payload.reward_label,
+        source:payload.source,
+        game:payload.game,
+        credits:payload.credits,
         created_at:payload.created_at
       }
     ];
@@ -309,13 +329,13 @@
         });
         if(response.ok) return true;
         console.warn('PLAY 3D reward_events insert failed', {
-          attempt:i === 0 ? 'metadata' : 'minimal',
+          attempt:i === 0 ? 'reward_metadata' : i === 1 ? 'without_reward_metadata' : 'without_reward_code',
           payload:attempts[i],
           error:await response.text().catch(function(){ return ''; })
         });
       }catch(error){
         console.warn('PLAY 3D reward_events request failed', {
-          attempt:i === 0 ? 'metadata' : 'minimal',
+          attempt:i === 0 ? 'reward_metadata' : i === 1 ? 'without_reward_metadata' : 'without_reward_code',
           payload:attempts[i],
           error:error
         });
