@@ -12,7 +12,7 @@
     bp:'\u265F', br:'\u265C', bn:'\u265E', bb:'\u265D', bq:'\u265B', bk:'\u265A'
   };
   const pieceValue = {p:100,n:320,b:330,r:500,q:900,k:0};
-  const defaultDifficulty = 'hard';
+  const defaultDifficulty = 'boss';
   const difficultyDepth = {easy:1,normal:2,hard:3,boss:4};
   const pst = {
     p:[0,0,0,0,0,0,0,0,50,50,50,50,50,50,50,50,10,10,20,30,30,20,10,10,5,5,10,25,25,10,5,5,0,0,0,20,20,0,0,0,5,-5,-10,0,0,-10,-5,5,5,10,10,-20,-20,10,10,5,0,0,0,0,0,0,0,0],
@@ -30,6 +30,7 @@
   const boardEl = document.getElementById('board');
   const turnText = document.getElementById('turnText');
   const stateText = document.getElementById('stateText');
+  const difficultySelect = document.getElementById('difficultySelect');
 
   const moveSound = new Audio('./sounds/chess-move.wav');
   const checkSound = new Audio('./sounds/check.wav');
@@ -176,6 +177,16 @@
     }
   }
 
+  function syncDifficultyControl(){
+    if(!difficultySelect) return;
+    try{
+      const saved = String(localStorage.getItem('play3d_chess_difficulty') || defaultDifficulty).toLowerCase();
+      difficultySelect.value = difficultyDepth[saved] ? saved : defaultDifficulty;
+    }catch(e){
+      difficultySelect.value = defaultDifficulty;
+    }
+  }
+
   function allSquares(){
     const out = [];
     for(const file of files) for(let rank=1; rank<=8; rank++) out.push(file + rank);
@@ -229,6 +240,8 @@
       if(piece.type==='q' && attacked) score -= sign * (defended ? 80 : 260);
     }
     if(verifiedCheck()) score += game.turn()==='w' ? 70 : -70;
+    const mobility = game.moves().length;
+    score += game.turn()==='b' ? mobility*2 : -mobility*2;
     return score;
   }
 
@@ -274,7 +287,7 @@
     game.move({from:move.from, to:move.to, promotion:move.promotion || 'q'});
     let score = search(cpuDepth()-1, -Infinity, Infinity);
     if(verifiedCheckmate()) score += 1000000;
-    else if(verifiedCheck()) score += 9000;
+    else if(verifiedCheck()) score += 90;
     game.undo();
     return score + moveOrderScore(move) / 1000;
   }
@@ -324,6 +337,15 @@
 
   document.getElementById('resetBtn').onclick = reset;
   document.getElementById('flipBtn').onclick = ()=>{ flipped = !flipped; render('FLIPPED'); if(mode === 'cpu' && game.turn() === 'b' && !game.isGameOver()) window.setTimeout(cpuMove, 80); };
+  if(difficultySelect){
+    syncDifficultyControl();
+    difficultySelect.onchange=()=>{
+      const value=difficultyDepth[difficultySelect.value] ? difficultySelect.value : defaultDifficulty;
+      try{ localStorage.setItem('play3d_chess_difficulty',value); }catch(e){}
+      difficultySelect.value=value;
+      render('DIFFICULTY '+value.toUpperCase());
+    };
+  }
   window.addEventListener('play3d:modechange', event=>{ mode = event.detail.mode; reset(); });
   window.addEventListener('load', ()=>{
     if(window.Play3DGameSync){

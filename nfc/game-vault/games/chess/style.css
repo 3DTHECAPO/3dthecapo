@@ -250,6 +250,30 @@ justify-content:center;
 margin-top:16px;
 }
 
+.difficulty-control{
+display:flex;
+align-items:center;
+gap:8px;
+border:1px solid var(--line);
+border-radius:999px;
+min-height:42px;
+padding:6px 12px;
+background:rgba(255,255,255,.045);
+color:var(--cream);
+font-weight:900;
+text-transform:uppercase;
+}
+
+.difficulty-control select{
+border:1px solid rgba(242,210,123,.35);
+border-radius:999px;
+padding:7px 10px;
+background:#100c05;
+color:var(--cream);
+font:inherit;
+font-weight:900;
+}
+
 @media(max-width:760px){
 .hero{
 grid-template-columns:1fr;
@@ -277,4 +301,4 @@ height:min(94vw,520px);
 
 /* CHESS MOBILE CONTROL REPAIR */
 .controls button{flex:1 1 180px}
-@media(max-width:760px){.controls{display:grid;grid-template-columns:1fr 1fr}.controls button{width:100%;font-size:12px;padding:10px 8px}.sq{font-size:clamp(24px,10vw,46px)}}
+@media(max-width:760px){.controls{display:grid;grid-template-columns:1fr 1fr}.difficulty-control{grid-column:1/-1;justify-content:space-between}.controls button{width:100%;font-size:12px;padding:10px 8px}.sq{font-size:clamp(24px,10vw,46px)}}
