@@ -741,8 +741,15 @@ function drawTile(){
   if(state.handOver || state.gameOver) return;
   if(canPlay(player)){ log('Play a legal domino if you can.'); return; }
   if(!state.stock.length){ log('Boneyard empty. Pass.'); return; }
-  state.hands[player].push(state.stock.pop());
-  log(seatName(player)+' drew one domino.');
+  const startingStock = state.stock.length;
+  let drew = 0;
+  while(drew < startingStock && state.stock.length && !canPlay(player)){
+    const tile = state.stock.pop();
+    if(!tile) break;
+    state.hands[player].push(tile);
+    drew++;
+  }
+  log(seatName(player)+' drew '+drew+(canPlay(player) ? ' and can play.' : '. Boneyard empty.'));
   render();
 }
 
