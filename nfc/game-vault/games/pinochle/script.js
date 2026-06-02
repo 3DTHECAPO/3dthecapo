@@ -5,20 +5,6 @@
     window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'pinochle', event:event, type:type, message:message } }));
   }
 
-
-  const shuffleSound = new Audio('./sounds/card-shuffle.mp3');
-  const playCardSound = new Audio('./sounds/card-play.wav');
-
-  function playShuffle(){
-    shuffleSound.currentTime = 0;
-    shuffleSound.play().catch(()=>{});
-  }
-
-  function playCardSoundFx(){
-    playCardSound.currentTime = 0;
-    playCardSound.play().catch(()=>{});
-  }
-
   const suits=['S','H','D','C'];
   const ranks=['A','10','K','Q','J'];
   const order={A:5,'10':4,K:3,Q:2,J:1};
@@ -27,7 +13,7 @@
   const state={
     players:4,
     hands:[], captured:[[],[]], trick:[], scores:[0,0], handScores:[0,0], meldScores:[0,0], trickScores:[0,0],
-    currentPlayerIndex:0, dealer:3, currentBidder:0, bidder:null, bidTeam:0, bid:0, trump:'S', phase:'bidding', lastWinner:0, handNumber:0, handToken:0, cpuTimer:null, passed:[false,false,false,false], meldShown:false, trumpMarriageValid:true, lastBidMessage:''
+    currentPlayerIndex:0, dealer:3, currentBidder:0, bidder:null, bidTeam:0, bid:0, trump:'S', phase:'bidding', lastWinner:0, handNumber:0, handToken:0, cpuTimer:null, trickTimer:null, trickResolving:false, passed:[false,false,false,false], meldShown:false, trumpMarriageValid:true, lastBidMessage:''
   };
 
   function thinkDelay(){return 450+Math.floor(Math.random()*850)}
@@ -183,12 +169,19 @@
       state.cpuTimer=null;
     }
   }
+  function clearTrickTimer(){
+    if(state.trickTimer!==null){
+      clearTimeout(state.trickTimer);
+      state.trickTimer=null;
+    }
+    state.trickResolving=false;
+  }
   function deal(){
     clearCpuTimer();
+    clearTrickTimer();
     state.handToken++;
     if(state.handNumber>0)state.dealer=(state.dealer+1)%4;
     state.handNumber++;
-    playShuffle();
     const deck=buildDeck();
     state.hands=Array.from({length:4},()=>deck.splice(0,20));
     state.captured=[[],[]]; state.trick=[]; state.handScores=[0,0]; state.meldScores=[0,0]; state.trickScores=[0,0];
@@ -310,6 +303,7 @@ function takeMeld(auto){
   }
   function trickWinner(){return currentBest().player}
   function finishTrick(){
+    clearTrickTimer();
     const winner=trickWinner(); const team=teamIndex(winner);
     state.captured[team].push(...state.trick.map(p=>p.card));
     const pts=state.trick.reduce((sum,p)=>sum+counters[p.card.rank],0);
@@ -331,11 +325,19 @@ function takeMeld(auto){
     render(winner===null?(made?'BID MADE':'SET - LOSE BID'):'TEAM '+(winner?'B':'A')+' WINS GAME');
   }
   function play(player,index){
-    if(player!==state.currentPlayerIndex||state.phase!=='play')return;
+    if(player!==state.currentPlayerIndex||state.phase!=='play'||state.trickResolving)return;
     const hand=state.hands[player], card=hand[index]; if(!card)return;
     if(!legalCards(player).some(c=>c.id===card.id)){render('MUST FOLLOW / BEAT / TRUMP');return}
-    hand.splice(index,1); playCardSoundFx(); state.trick.push({player,card});
-    if(state.trick.length===4)finishTrick(); else{state.currentPlayerIndex=(player+1)%4; render('TRICK LIVE'); if(state.currentPlayerIndex!==0)scheduleCpu();}
+    hand.splice(index,1); state.trick.push({player,card});
+    if(state.trick.length===4){
+      state.trickResolving=true;
+      render('TRICK COMPLETE');
+      state.trickTimer=setTimeout(finishTrick,900);
+    }else{
+      state.currentPlayerIndex=(player+1)%4;
+      render('TRICK LIVE');
+      if(state.currentPlayerIndex!==0)scheduleCpu();
+    }
   }
   function scheduleCpu(){
     clearCpuTimer();
@@ -377,8 +379,8 @@ function chooseCpuCard(player,legal){
   }
 
   if(!state.trick.length){
-    const lowNonCounter=legalNonCounters.slice().sort((a,b)=>order[a.rank]-order[b.rank])[0];
-    return lowNonCounter||legal.slice().sort((a,b)=>order[b.rank]-order[a.rank])[0];
+    const leadPriority={K:0,'10':1,A:2,Q:3,J:4};
+    return legal.slice().sort((a,b)=>leadPriority[a.rank]-leadPriority[b.rank]||order[b.rank]-order[a.rank])[0];
   }
 
   return (legalNonCounters.length?legalNonCounters:legal).slice().sort((a,b)=>order[a.rank]-order[b.rank])[0];
@@ -398,7 +400,7 @@ if(typeof meldBtn !== 'undefined' && meldBtn) meldBtn.textContent = state.phase=
     updateBidStatusPanel();
     updateBidControls();
     opponentHand.innerHTML=backs((state.hands[1]||[]).length)+'<div class="count-card">Partner '+(state.hands[2]||[]).length+'<br>Right '+(state.hands[3]||[]).length+'</div>';
-    trickPile.innerHTML=state.trick.map(play=>'<div><small>'+seatName(play.player)+'</small>'+cardHTML(play.card,0,false)+'</div>').join('')||'<div class="count-card">Trick Empty</div>';
+    trickPile.innerHTML=state.trick.map(play=>'<div class="trick-play-card"><small>'+seatName(play.player)+'</small>'+cardHTML(play.card,0,false)+'</div>').join('')||'<div class="count-card">Trick Empty</div>';
     meldArea.innerHTML='<div class="count-card">Trump '+state.trump+'</div><div class="count-card">Bid '+state.bid+'</div><div class="count-card">Meld A '+state.meldScores[0]+' / B '+state.meldScores[1]+'</div><div class="count-card">Tricks A '+state.trickScores[0]+' / B '+state.trickScores[1]+'</div>';
     stockArea.innerHTML='<div class="count-card">No Stock<br>80 Card Deck</div>';
     playerHand.innerHTML=(state.hands[0]||[]).map((card,index)=>cardHTML(card,index,state.currentPlayerIndex===0&&legalCards(0).some(c=>c.id===card.id))).join('');
