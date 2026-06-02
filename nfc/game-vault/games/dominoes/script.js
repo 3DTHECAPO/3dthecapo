@@ -190,16 +190,13 @@ function buildBranchPlacement(rawTile,logicalArm,match,anchor,flowSide){
   const anchorStep = axisSpan(anchor.orientation || 'horizontal',anchorFlow);
   const distance = (step / 2) + (anchorStep / 2);
   const turned = anchorFlow !== flowSide;
-  const anchorDir = BRANCH_DIRS[anchorFlow] || dir;
-  const pivotX = (anchor.x || 0) + anchorDir.x * anchorStep / 2;
-  const pivotY = (anchor.y || 0) + anchorDir.y * anchorStep / 2;
-  const turnClearance = turned ? axisSpan(orientation,anchorFlow) / 2 : 0;
+  const turnDistance = (step / 2) + (axisSpan(anchor.orientation || 'horizontal',flowSide) / 2);
 
   return {
     tile:oriented,
     raw:rawTile.slice(),
-    x:turned ? pivotX + dir.x * step / 2 + anchorDir.x * turnClearance : (anchor.x || 0) + dir.x * distance,
-    y:turned ? pivotY + dir.y * step / 2 + anchorDir.y * turnClearance : (anchor.y || 0) + dir.y * distance,
+    x:(anchor.x || 0) + dir.x * (turned ? turnDistance : distance),
+    y:(anchor.y || 0) + dir.y * (turned ? turnDistance : distance),
     orientation,
     branch:logicalArm,
     flowSide,
@@ -253,22 +250,14 @@ function makeFlowingPlacement(rawTile,arm,match,anchor,defaultFlow){
 
 function placementOutsideTable(item){
   const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
-  const reserve = placementTurnReserve(item);
-  return Math.abs(item.x || 0) + size.w / 2 + reserve.x > BOARD_LIMITS.x
-    || Math.abs(item.y || 0) + size.h / 2 + reserve.y > BOARD_LIMITS.y;
-}
-
-function placementTurnReserve(item){
-  if(item.turned) return {x:0,y:0};
-  const horizontal = item.flowSide === 'left' || item.flowSide === 'right';
-  return horizontal ? {x:TILE_SIZE.vertical.w,y:0} : {x:0,y:TILE_SIZE.horizontal.h};
+  return Math.abs(item.x || 0) + size.w / 2 > BOARD_LIMITS.x
+    || Math.abs(item.y || 0) + size.h / 2 > BOARD_LIMITS.y;
 }
 
 function placementPenalty(item,anchor){
   const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
-  const reserve = placementTurnReserve(item);
-  const overflowX = Math.max(0,Math.abs(item.x || 0) + size.w / 2 + reserve.x - BOARD_LIMITS.x);
-  const overflowY = Math.max(0,Math.abs(item.y || 0) + size.h / 2 + reserve.y - BOARD_LIMITS.y);
+  const overflowX = Math.max(0,Math.abs(item.x || 0) + size.w / 2 - BOARD_LIMITS.x);
+  const overflowY = Math.max(0,Math.abs(item.y || 0) + size.h / 2 - BOARD_LIMITS.y);
   return (overflowX+overflowY)*1000 + placementCollisionCount(item,anchor)*100000;
 }
 
