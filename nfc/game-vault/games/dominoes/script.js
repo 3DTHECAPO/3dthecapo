@@ -26,7 +26,8 @@ const BRANCH_DIRS = {
   bottom:{x:0,y:1}
 };
 const BRANCH_TURNS = {right:'bottom',bottom:'left',left:'top',top:'right'};
-const BOARD_LIMITS = {x:330,y:230};
+const BRANCH_REVERSE_TURNS = {right:'top',top:'left',left:'bottom',bottom:'right'};
+const BOARD_LIMITS = {x:340,y:240};
 
 const state = {
   players:2,
@@ -183,12 +184,13 @@ function buildBranchPlacement(rawTile,logicalArm,match,anchor,flowSide){
   const anchorDir = BRANCH_DIRS[anchorFlow] || dir;
   const pivotX = (anchor.x || 0) + anchorDir.x * anchorStep / 2;
   const pivotY = (anchor.y || 0) + anchorDir.y * anchorStep / 2;
+  const turnClearance = turned ? axisSpan(orientation,anchorFlow) / 2 : 0;
 
   return {
     tile:oriented,
     raw:rawTile.slice(),
-    x:turned ? pivotX + dir.x * step / 2 : (anchor.x || 0) + dir.x * distance,
-    y:turned ? pivotY + dir.y * step / 2 : (anchor.y || 0) + dir.y * distance,
+    x:turned ? pivotX + dir.x * step / 2 + anchorDir.x * turnClearance : (anchor.x || 0) + dir.x * distance,
+    y:turned ? pivotY + dir.y * step / 2 + anchorDir.y * turnClearance : (anchor.y || 0) + dir.y * distance,
     orientation,
     branch:logicalArm,
     flowSide,
@@ -227,21 +229,49 @@ function makeBranchPlacement(rawTile,arm,match){
 }
 
 function makeFlowingPlacement(rawTile,arm,match,anchor,defaultFlow){
-  let flowSide = (anchor.flowSide || anchor.exposedSide) === 'all'
+  const flowSide = (anchor.flowSide || anchor.exposedSide) === 'all'
     ? arm
     : (anchor.flowSide || anchor.exposedSide || defaultFlow || arm);
-  let placement = buildBranchPlacement(rawTile,arm,match,anchor,flowSide);
-  for(let turn=0;turn<3 && placementOutsideTable(placement);turn++){
-    flowSide = BRANCH_TURNS[flowSide] || arm;
-    placement = buildBranchPlacement(rawTile,arm,match,anchor,flowSide);
-  }
-  return placement;
+  const clockwise = BRANCH_TURNS[flowSide] || arm;
+  const counterClockwise = BRANCH_REVERSE_TURNS[flowSide] || arm;
+  const reverse = BRANCH_TURNS[clockwise] || arm;
+  const candidates = [flowSide,clockwise,counterClockwise,reverse]
+    .filter((side,index,list)=>list.indexOf(side)===index)
+    .map(side=>buildBranchPlacement(rawTile,arm,match,anchor,side));
+  const clean = candidates.find(item=>!placementOutsideTable(item)&&!placementCollides(item,anchor));
+  return clean || candidates.sort((a,b)=>placementPenalty(a,anchor)-placementPenalty(b,anchor))[0];
 }
 
 function placementOutsideTable(item){
   const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
   return Math.abs(item.x || 0) + size.w / 2 > BOARD_LIMITS.x
     || Math.abs(item.y || 0) + size.h / 2 > BOARD_LIMITS.y;
+}
+
+function placementPenalty(item,anchor){
+  const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
+  const overflowX = Math.max(0,Math.abs(item.x || 0) + size.w / 2 - BOARD_LIMITS.x);
+  const overflowY = Math.max(0,Math.abs(item.y || 0) + size.h / 2 - BOARD_LIMITS.y);
+  return (overflowX+overflowY)*1000 + placementCollisionCount(item,anchor)*100000;
+}
+
+function placementCollisionCount(item,anchor){
+  return (state.board.placements || []).filter(existing=>{
+    if(existing===anchor)return false;
+    return placementsOverlap(item,existing);
+  }).length;
+}
+
+function placementCollides(item,anchor){
+  return placementCollisionCount(item,anchor)>0;
+}
+
+function placementsOverlap(a,b){
+  const aSize=TILE_SIZE[a.orientation || 'horizontal'] || TILE_SIZE.horizontal;
+  const bSize=TILE_SIZE[b.orientation || 'horizontal'] || TILE_SIZE.horizontal;
+  const gap=3;
+  return Math.abs((a.x || 0)-(b.x || 0)) < (aSize.w+bSize.w)/2-gap
+    && Math.abs((a.y || 0)-(b.y || 0)) < (aSize.h+bSize.h)/2-gap;
 }
 
 function rebranchPlacement(item,branch){
