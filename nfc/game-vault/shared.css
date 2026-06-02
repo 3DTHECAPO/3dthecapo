@@ -33,7 +33,7 @@ p{color:var(--muted);line-height:1.45;max-width:720px}
 .toolbar{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;border:1px solid var(--line);border-radius:24px;padding:14px;margin-bottom:18px;background:rgba(0,0,0,.48);backdrop-filter:blur(10px)}
 .search-wrap{display:flex;align-items:center;gap:10px;min-width:min(420px,100%);flex:1}
 .search-wrap span{color:var(--gold2);font-weight:900;text-transform:uppercase;letter-spacing:.1em}
-.search-wrap input{width:100%;border:1px solid rgba(242,210,123,.2);border-radius:999px;background:rgba(0,0,0,.55);color:var(--cream);padding:13px 16px;font:inherit;outline:none}
+.search-wrap input{width:100%;min-width:0;border:1px solid rgba(242,210,123,.2);border-radius:999px;background:rgba(0,0,0,.55);color:var(--cream);padding:13px 16px;font:inherit;outline:none}
 .game-row-wrap{border:1px solid var(--line);border-radius:28px;padding:18px;margin-bottom:18px;background:linear-gradient(180deg,rgba(17,14,9,.75),rgba(0,0,0,.58));backdrop-filter:blur(12px);box-shadow:0 28px 90px rgba(0,0,0,.56)}
 .row-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:14px}
 .row-buttons button{width:52px;font-size:28px;padding:0}
@@ -54,4 +54,28 @@ p{color:var(--muted);line-height:1.45;max-width:720px}
 .quick-panels{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .glass-card{border:1px solid var(--line);border-radius:24px;background:rgba(0,0,0,.58);backdrop-filter:blur(10px);padding:20px;box-shadow:0 22px 70px rgba(0,0,0,.42)}
 @media(max-width:900px){.hero{grid-template-columns:1fr;min-height:230px}.hero-stat{text-align:left}.quick-panels{grid-template-columns:1fr}.row-head{align-items:flex-start;flex-direction:column}.game-card{flex-basis:min(82vw,390px);height:520px}.preview{height:245px}.card-body{height:275px}}
-@media(max-width:560px){.vault-app{width:min(94vw,1480px);padding-top:10px}.hero,.toolbar,.game-row-wrap,.glass-card{border-radius:22px}.game-card{flex-basis:86vw;height:510px}.preview{height:235px}.card-body{height:275px}.card-actions{grid-template-columns:1fr}.vault-nav,.filters{width:100%;display:flex;flex-wrap:wrap;gap:8px}.vault-nav a,.filter{width:auto;flex:1 1 calc(50% - 8px);min-width:130px}}
+@media(max-width:560px){
+  .vault-app{width:94vw;padding-top:10px}
+  .vault-top,.vault-nav,.filters{width:100%;max-width:100%;min-width:0}
+  .vault-top>*,.toolbar>*,.hero>*{max-width:100%;min-width:0}
+  .hero,.toolbar,.game-row-wrap,.glass-card{max-width:100%;border-radius:22px;overflow:hidden}
+  .hero{padding:18px;min-height:0}
+  .hero p{overflow-wrap:anywhere}
+  h1{font-size:clamp(42px,15vw,68px)}
+  .hero-stat{min-width:0;width:100%}
+  .toolbar{padding:10px}
+  .search-wrap{min-width:0;width:100%;flex:1 1 100%}
+  .search-wrap span{font-size:12px}
+  .game-row-wrap{padding:12px}
+  .game-card{flex-basis:min(86vw,360px);height:510px}
+  .preview{height:235px}
+  .card-body{height:275px}
+  .card-actions{grid-template-columns:1fr}
+  .vault-nav,.filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .vault-nav a,.filter{width:100%;min-width:0;padding:10px 8px;font-size:12px;white-space:normal}
+}
+@media(max-width:390px){
+  .seal{width:54px;height:54px;border-radius:17px;font-size:22px}
+  .game-card{flex-basis:min(84vw,332px)}
+  .card-body{padding:15px}
+}
