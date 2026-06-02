@@ -12,7 +12,7 @@ const TILE_SIZE = {horizontal:{w:82,h:42},vertical:{w:50,h:88}};
 const DIRS = {left:{x:-1,y:0},right:{x:1,y:0},top:{x:0,y:-1},bottom:{x:0,y:1}};
 const TURNS = {right:'bottom',bottom:'left',left:'top',top:'right'};
 const REVERSE = {right:'top',top:'left',left:'bottom',bottom:'right'};
-const LIMITS = {x:340,y:240};
+const LIMITS = {x:340,y:340};
 
 function isDouble(tile){ return tile[0] === tile[1]; }
 function axisSpan(orientation,arm){
@@ -152,6 +152,13 @@ const mobile375 = mobileFit(placements,375);
 const mobile430 = mobileFit(placements,430);
 const edgeAnchor = {tile:[5,0],x:-299,y:0,orientation:'horizontal',flowSide:'left',exposedSide:'left'};
 const edgeTurn = flowing([5,2],'left',5,edgeAnchor,[edgeAnchor]);
+const topSpinner = {tile:[5,5],x:0,y:0,orientation:'vertical',flowSide:'all',exposedSide:'all'};
+const topPlacements = [topSpinner];
+const topOne = flowing([5,3],'top',5,topSpinner,topPlacements);
+topPlacements.push(topOne);
+const topTwo = flowing([3,6],'top',3,topOne,topPlacements);
+topPlacements.push(topTwo);
+const topThree = flowing([6,6],'top',6,topTwo,topPlacements);
 const settlementPips = [[5,5],[3,2]].reduce((sum,tile)=>sum+tile[0]+tile[1],0);
 
 const checks = [
@@ -161,6 +168,7 @@ const checks = [
   assert('first 10 moves do not overlap earlier tiles',moves.every(move=>move.overlapCount === 0),moves),
   assert('first 10 moves remain in engine board limits',moves.every(move=>move.insideLimits),moves),
   assert('edge elbow turns only when the next straight move exceeds the boundary',edgeTurn.turned && !outside(edgeTurn) && collisionCount(edgeTurn,edgeAnchor,[edgeAnchor]) === 0,{edgeAnchor,edgeTurn}),
+  assert('5-5 top branch stays straight through 5-3, 3-6, and 6-6 while vertical space exists',[topOne,topTwo,topThree].every(item=>item.flowSide === 'top' && !item.turned && !outside(item)),{topSpinner,topOne,topTwo,topThree}),
   assert('375px board fit',mobile375.fits,mobile375),
   assert('430px board fit',mobile430.fits,mobile430),
   assert('player draw continues until playable or boneyard empty',scriptSource.includes("while(drew < startingStock && state.stock.length && !canPlay(player))") && scriptSource.includes("const tile = state.stock.pop();") && scriptSource.includes("if(!tile) break;"),null),

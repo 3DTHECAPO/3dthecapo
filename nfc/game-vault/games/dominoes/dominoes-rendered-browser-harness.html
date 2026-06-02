@@ -49,6 +49,9 @@ async function clickLocalMode(doc){
 
 async function run(){
   const doc = game.contentDocument;
+  const exactScenario = game.contentWindow.Play3DDominoesRenderTopBranchTest
+    ? game.contentWindow.Play3DDominoesRenderTopBranchTest()
+    : {passed:false,error:'Missing debug-only top-branch test hook'};
   await clickLocalMode(doc);
   doc.getElementById('newBtn').click();
   await pause(150);
@@ -74,10 +77,11 @@ async function run(){
     moves.push({move:moves.length+1,...audit});
     if(!audit.passed) break;
   }
-  const passed = moves.length === 10 && moves.every(move=>move.passed);
+  const passed = exactScenario.passed && moves.length === 10 && moves.every(move=>move.passed);
   result.textContent = JSON.stringify({
     name:'PLAY 3D Dominoes rendered browser harness',
     passed,
+    exactScenario,
     renderedMoves:moves.length,
     moves
   },null,2);
