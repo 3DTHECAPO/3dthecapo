@@ -48,10 +48,16 @@ function touches(a,b){
 }
 function outside(item){
   const size = TILE_SIZE[item.orientation];
-  return Math.abs(item.x)+size.w/2 > LIMITS.x || Math.abs(item.y)+size.h/2 > LIMITS.y;
+  const reserve = turnReserve(item);
+  return Math.abs(item.x)+size.w/2+reserve.x > LIMITS.x || Math.abs(item.y)+size.h/2+reserve.y > LIMITS.y;
+}
+function turnReserve(item){
+  if(item.turned) return {x:0,y:0};
+  const horizontal = item.flowSide === 'left' || item.flowSide === 'right';
+  return horizontal ? {x:TILE_SIZE.vertical.w,y:0} : {x:0,y:TILE_SIZE.horizontal.h};
 }
 function collisionCount(item,anchor,placements){
-  return placements.filter(existing=>existing !== anchor && overlaps(item,existing)).length;
+  return placements.filter(existing=>overlaps(item,existing)).length;
 }
 function candidate(rawTile,logicalArm,match,anchor,flowSide){
   const tile = orient(rawTile,match,flowSide);
@@ -81,8 +87,9 @@ function candidate(rawTile,logicalArm,match,anchor,flowSide){
 }
 function penalty(item,anchor,placements){
   const size = TILE_SIZE[item.orientation];
-  const overflowX = Math.max(0,Math.abs(item.x)+size.w/2-LIMITS.x);
-  const overflowY = Math.max(0,Math.abs(item.y)+size.h/2-LIMITS.y);
+  const reserve = turnReserve(item);
+  const overflowX = Math.max(0,Math.abs(item.x)+size.w/2+reserve.x-LIMITS.x);
+  const overflowY = Math.max(0,Math.abs(item.y)+size.h/2+reserve.y-LIMITS.y);
   return (overflowX+overflowY)*1000+collisionCount(item,anchor,placements)*100000;
 }
 function flowing(rawTile,arm,match,anchor,placements){
@@ -110,7 +117,7 @@ function mobileFit(placements,width){
   });
   const boardWidth = Math.ceil(maxX*2);
   const boardHeight = Math.ceil(maxY*2);
-  const scale = Math.max(.34,Math.min(1,availableWidth/boardWidth,availableHeight/boardHeight));
+  const scale = Math.max(.1,Math.min(1,availableWidth/boardWidth,availableHeight/boardHeight));
   return {
     width,
     scale,
@@ -153,6 +160,8 @@ sequence.forEach((tile,index)=>{
 
 const mobile375 = mobileFit(placements,375);
 const mobile430 = mobileFit(placements,430);
+const edgeAnchor = {tile:[5,0],x:-217,y:0,orientation:'horizontal',flowSide:'left',exposedSide:'left'};
+const edgeTurn = flowing([5,2],'left',5,edgeAnchor,[edgeAnchor]);
 const settlementPips = [[5,5],[3,2]].reduce((sum,tile)=>sum+tile[0]+tile[1],0);
 
 const checks = [
@@ -161,10 +170,11 @@ const checks = [
   assert('first 10 moves touch their anchor',moves.every(move=>move.touchesAnchor),moves),
   assert('first 10 moves do not overlap earlier tiles',moves.every(move=>move.overlapCount === 0),moves),
   assert('first 10 moves remain in engine board limits',moves.every(move=>move.insideLimits),moves),
+  assert('edge elbow turns early, stays inside, and does not overlap its connected anchor',edgeTurn.turned && !outside(edgeTurn) && collisionCount(edgeTurn,edgeAnchor,[edgeAnchor]) === 0,{edgeAnchor,edgeTurn}),
   assert('375px board fit',mobile375.fits,mobile375),
   assert('430px board fit',mobile430.fits,mobile430),
-  assert('player draw is one bone per click',scriptSource.includes("state.hands[player].push(state.stock.pop());") && scriptSource.includes("log(seatName(player)+' drew one domino.');") && !scriptSource.includes("while(state.stock.length && !canPlay(player))"),null),
-  assert('public cosmetic nudge is not loaded',!indexSource.includes('./public-fix.js'),null),
+  assert('player draw continues until playable or boneyard empty',scriptSource.includes("while(drew < startingStock && state.stock.length && !canPlay(player))") && scriptSource.includes("const tile = state.stock.pop();") && scriptSource.includes("if(!tile) break;"),null),
+  assert('missing public cosmetic stylesheet is not loaded',!indexSource.includes('./public-fix.css'),null),
   assert('DOMINO settlement counts remaining pips',settlementPips === 15 && scoreFromCount(settlementPips) === 15,{settlementPips,awarded:scoreFromCount(settlementPips)}),
   assert('five-count scoring accepts multiples of five',[5,10,15,20,25,30,35,40].every(value=>scoreFromCount(value) === value),null),
   assert('five-count scoring rejects non-multiples',[1,4,6,9,11,14,39].every(value=>scoreFromCount(value) === 0),null),

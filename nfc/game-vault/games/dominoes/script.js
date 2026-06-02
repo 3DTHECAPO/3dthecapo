@@ -253,26 +253,33 @@ function makeFlowingPlacement(rawTile,arm,match,anchor,defaultFlow){
 
 function placementOutsideTable(item){
   const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
-  return Math.abs(item.x || 0) + size.w / 2 > BOARD_LIMITS.x
-    || Math.abs(item.y || 0) + size.h / 2 > BOARD_LIMITS.y;
+  const reserve = placementTurnReserve(item);
+  return Math.abs(item.x || 0) + size.w / 2 + reserve.x > BOARD_LIMITS.x
+    || Math.abs(item.y || 0) + size.h / 2 + reserve.y > BOARD_LIMITS.y;
+}
+
+function placementTurnReserve(item){
+  if(item.turned) return {x:0,y:0};
+  const horizontal = item.flowSide === 'left' || item.flowSide === 'right';
+  return horizontal ? {x:TILE_SIZE.vertical.w,y:0} : {x:0,y:TILE_SIZE.horizontal.h};
 }
 
 function placementPenalty(item,anchor){
   const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
-  const overflowX = Math.max(0,Math.abs(item.x || 0) + size.w / 2 - BOARD_LIMITS.x);
-  const overflowY = Math.max(0,Math.abs(item.y || 0) + size.h / 2 - BOARD_LIMITS.y);
+  const reserve = placementTurnReserve(item);
+  const overflowX = Math.max(0,Math.abs(item.x || 0) + size.w / 2 + reserve.x - BOARD_LIMITS.x);
+  const overflowY = Math.max(0,Math.abs(item.y || 0) + size.h / 2 + reserve.y - BOARD_LIMITS.y);
   return (overflowX+overflowY)*1000 + placementCollisionCount(item,anchor)*100000;
 }
 
-function placementCollisionCount(item,anchor){
+function placementCollisionCount(item){
   return (state.board.placements || []).filter(existing=>{
-    if(existing===anchor)return false;
     return placementsOverlap(item,existing);
   }).length;
 }
 
-function placementCollides(item,anchor){
-  return placementCollisionCount(item,anchor)>0;
+function placementCollides(item){
+  return placementCollisionCount(item)>0;
 }
 
 function placementsOverlap(a,b){
@@ -716,8 +723,11 @@ function cpuTurn(){
   if(player === 0 || activeLocal() || state.handOver || state.gameOver) return;
   const hand = state.hands[player];
   let move = chooseCpuMove(hand);
-  if(!move && state.stock.length){
+  const startingStock = state.stock.length;
+  let drew = 0;
+  while(!move && drew < startingStock && state.stock.length){
     hand.push(state.stock.pop());
+    drew++;
     move = chooseCpuMove(hand);
   }
   if(move){
@@ -827,6 +837,43 @@ function fitBoardToPlacements(){
   return { width:Math.ceil(maxX * 2), height:Math.ceil(maxY * 2) };
 }
 
+function inspectRenderedBoard(){
+  const tableCenter = document.querySelector('.table-center');
+  if(!tableCenter) return {passed:false,error:'Missing .table-center'};
+  const table = tableCenter.getBoundingClientRect();
+  const tiles = Array.from(chainEl?.querySelectorAll('.tile.board-tile') || []).map((element,index)=>{
+    const rect = element.getBoundingClientRect();
+    return {
+      index,
+      text:element.textContent.trim().replace(/\s+/g,'-'),
+      x:rect.x,
+      y:rect.y,
+      right:rect.right,
+      bottom:rect.bottom,
+      width:rect.width,
+      height:rect.height
+    };
+  });
+  const overlaps = [];
+  for(let a=0;a<tiles.length;a++){
+    for(let b=a+1;b<tiles.length;b++){
+      const overlapX = Math.min(tiles[a].right,tiles[b].right)-Math.max(tiles[a].x,tiles[b].x);
+      const overlapY = Math.min(tiles[a].bottom,tiles[b].bottom)-Math.max(tiles[a].y,tiles[b].y);
+      if(overlapX > .5 && overlapY > .5) overlaps.push({a,b,overlapX,overlapY});
+    }
+  }
+  const outside = tiles
+    .filter(tile=>tile.x < table.x-.5 || tile.y < table.y-.5 || tile.right > table.right+.5 || tile.bottom > table.bottom+.5)
+    .map(tile=>tile.index);
+  return {
+    passed:overlaps.length === 0 && outside.length === 0,
+    table:{x:table.x,y:table.y,right:table.right,bottom:table.bottom},
+    tiles,
+    overlaps,
+    outside
+  };
+}
+
 function boardTileHTML(placement,index){
   const tile = placementTile(placement);
   const cls = [
@@ -854,13 +901,15 @@ function renderBoard(){
     const availableWidth = Math.max(220,(tableCenter?.clientWidth || 900) - 36);
     const availableHeight = Math.max(180,(tableCenter?.clientHeight || 620) - 36);
     const scale = Math.min(1,availableWidth / bounds.width,availableHeight / bounds.height);
-    chainEl.style.setProperty('--board-scale',String(Math.max(.34,scale)));
+    chainEl.style.setProperty('--board-scale',String(Math.max(.1,scale)));
   }else{
     chainEl.className = 'chain';
     chainEl.removeAttribute('style');
     chainEl.innerHTML = '';
   }
 }
+
+if(DEBUG) window.Play3DDominoesRenderedAudit = inspectRenderedBoard;
 
 function render(){
   refreshOpenEnds();

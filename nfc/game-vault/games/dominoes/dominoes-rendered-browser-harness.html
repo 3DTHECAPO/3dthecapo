@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY 3D Dominoes Rendered Overlap Harness</title>
+<style>
+body{margin:0;padding:18px;background:#090909;color:#f5d77b;font:14px/1.5 Arial,sans-serif}
+button{padding:10px 16px;background:#d5aa46;border:0;border-radius:999px;font-weight:700}
+pre{white-space:pre-wrap;background:#151515;padding:14px;border:1px solid #5d4820;border-radius:12px}
+iframe{display:block;width:430px;max-width:100%;height:780px;margin-top:16px;border:1px solid #d5aa46;background:#000}
+</style>
+</head>
+<body>
+<h1>PLAY 3D Dominoes Rendered Overlap Harness</h1>
+<p>This test reads real rendered tile rectangles. It fails on overlap or table overflow.</p>
+<button id="run" type="button">Run first 10 rendered moves</button>
+<pre id="result">Ready.</pre>
+<iframe id="game" src="./index.html?debug=1" title="Dominoes test frame"></iframe>
+<script>
+const game = document.getElementById('game');
+const result = document.getElementById('result');
+const pause = ms=>new Promise(resolve=>setTimeout(resolve,ms));
+
+function renderedAudit(doc){
+  const table = doc.querySelector('.table-center').getBoundingClientRect();
+  const tiles = Array.from(doc.querySelectorAll('#chain .tile.board-tile')).map((element,index)=>{
+    const rect = element.getBoundingClientRect();
+    return {index,text:element.textContent.trim().replace(/\s+/g,'-'),x:rect.x,y:rect.y,right:rect.right,bottom:rect.bottom};
+  });
+  const overlaps = [];
+  for(let a=0;a<tiles.length;a++){
+    for(let b=a+1;b<tiles.length;b++){
+      const overlapX = Math.min(tiles[a].right,tiles[b].right)-Math.max(tiles[a].x,tiles[b].x);
+      const overlapY = Math.min(tiles[a].bottom,tiles[b].bottom)-Math.max(tiles[a].y,tiles[b].y);
+      if(overlapX > .5 && overlapY > .5) overlaps.push({a,b,overlapX,overlapY});
+    }
+  }
+  const outside = tiles
+    .filter(tile=>tile.x < table.x-.5 || tile.y < table.y-.5 || tile.right > table.right+.5 || tile.bottom > table.bottom+.5)
+    .map(tile=>tile.index);
+  return {passed:overlaps.length === 0 && outside.length === 0,tileCount:tiles.length,overlaps,outside};
+}
+
+async function clickLocalMode(doc){
+  const local = Array.from(doc.querySelectorAll('button')).find(button=>button.textContent.trim() === 'Local 2 Player');
+  if(local){ local.click(); await pause(150); }
+}
+
+async function run(){
+  const doc = game.contentDocument;
+  await clickLocalMode(doc);
+  doc.getElementById('newBtn').click();
+  await pause(150);
+  const moves = [];
+  let guard = 0;
+  while(moves.length < 10 && guard++ < 80){
+    let playable = doc.querySelector('#hand .tile:not(.disabled)');
+    if(!playable){
+      const draw = doc.getElementById('drawBtn');
+      const pass = doc.getElementById('passBtn');
+      if(draw && !draw.disabled) draw.click();
+      else if(pass && !pass.disabled) pass.click();
+      else break;
+      await pause(80);
+      playable = doc.querySelector('#hand .tile:not(.disabled)');
+      if(!playable) continue;
+    }
+    playable.click();
+    await pause(50);
+    const arm = doc.querySelector('#armChooser:not([hidden]) button[data-arm]');
+    if(arm){ arm.click(); await pause(50); }
+    const audit = renderedAudit(doc);
+    moves.push({move:moves.length+1,...audit});
+    if(!audit.passed) break;
+  }
+  const passed = moves.length === 10 && moves.every(move=>move.passed);
+  result.textContent = JSON.stringify({
+    name:'PLAY 3D Dominoes rendered browser harness',
+    passed,
+    renderedMoves:moves.length,
+    moves
+  },null,2);
+}
+
+document.getElementById('run').addEventListener('click',()=>run().catch(error=>{
+  result.textContent = JSON.stringify({passed:false,error:String(error && error.message || error)},null,2);
+}));
+</script>
+</body>
+</html>
