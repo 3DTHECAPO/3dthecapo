@@ -5,19 +5,6 @@ function play3dAnnounce(event, type, message){
   window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'dominoes', event:event, type:type, message:message } }));
 }
 
-const pullSound = new Audio('./sounds/pull.wav');
-const washSound = new Audio('./sounds/wash.wav');
-
-function playPullSound(){
-  pullSound.currentTime = 0;
-  pullSound.play().catch(()=>{});
-}
-
-function playWashSound(){
-  washSound.currentTime = 0;
-  washSound.play().catch(()=>{});
-}
-
 /* PLAY 3D DOMINOES — SCORE-ON-PLAY COUNTING FIVES
    Scope: Dominoes script only.
    Rules kept: score every scoring play, first score must be 10+ to get in, game to 150.
@@ -38,6 +25,8 @@ const BRANCH_DIRS = {
   top:{x:0,y:-1},
   bottom:{x:0,y:1}
 };
+const BRANCH_TURNS = {right:'bottom',bottom:'left',left:'top',top:'right'};
+const BOARD_LIMITS = {x:330,y:230};
 
 const state = {
   players:2,
@@ -190,12 +179,16 @@ function buildBranchPlacement(rawTile,logicalArm,match,anchor,flowSide){
     : (anchor.flowSide || anchor.exposedSide || logicalArm);
   const anchorStep = axisSpan(anchor.orientation || 'horizontal',anchorFlow);
   const distance = (step / 2) + (anchorStep / 2);
+  const turned = anchorFlow !== flowSide;
+  const anchorDir = BRANCH_DIRS[anchorFlow] || dir;
+  const pivotX = (anchor.x || 0) + anchorDir.x * anchorStep / 2;
+  const pivotY = (anchor.y || 0) + anchorDir.y * anchorStep / 2;
 
   return {
     tile:oriented,
     raw:rawTile.slice(),
-    x:(anchor.x || 0) + dir.x * distance,
-    y:(anchor.y || 0) + dir.y * distance,
+    x:turned ? pivotX + dir.x * step / 2 : (anchor.x || 0) + dir.x * distance,
+    y:turned ? pivotY + dir.y * step / 2 : (anchor.y || 0) + dir.y * distance,
     orientation,
     branch:logicalArm,
     flowSide,
@@ -205,7 +198,8 @@ function buildBranchPlacement(rawTile,logicalArm,match,anchor,flowSide){
     exposedPip:exposedPipFromOriented(flowSide,oriented),
     matchPip:match,
     double:isDouble(oriented),
-    spinner:false
+    spinner:false,
+    turned
   };
 }
 
@@ -229,7 +223,25 @@ function makeSpinnerPlacement(tile){
 function makeBranchPlacement(rawTile,arm,match){
   const branch = state.board.spinnerArms[arm] || [];
   const anchor = branch.length ? branch[branch.length-1] : state.board.spinnerTile;
-  return buildBranchPlacement(rawTile,arm,match,anchor,arm);
+  return makeFlowingPlacement(rawTile,arm,match,anchor,arm);
+}
+
+function makeFlowingPlacement(rawTile,arm,match,anchor,defaultFlow){
+  let flowSide = (anchor.flowSide || anchor.exposedSide) === 'all'
+    ? arm
+    : (anchor.flowSide || anchor.exposedSide || defaultFlow || arm);
+  let placement = buildBranchPlacement(rawTile,arm,match,anchor,flowSide);
+  for(let turn=0;turn<3 && placementOutsideTable(placement);turn++){
+    flowSide = BRANCH_TURNS[flowSide] || arm;
+    placement = buildBranchPlacement(rawTile,arm,match,anchor,flowSide);
+  }
+  return placement;
+}
+
+function placementOutsideTable(item){
+  const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
+  return Math.abs(item.x || 0) + size.w / 2 > BOARD_LIMITS.x
+    || Math.abs(item.y || 0) + size.h / 2 > BOARD_LIMITS.y;
 }
 
 function rebranchPlacement(item,branch){
@@ -388,37 +400,10 @@ function updateOpenEndDebug(){
 
 function legalArms(tile){
   const ends = refreshOpenEnds();
-
   if(!hasBoardTiles()) return ['open'];
-
-  let legal = ends
+  return ends
     .filter(end=>tile[0] === end.value || tile[1] === end.value)
     .map(end=>end.arm);
-
-  // SPINNER SIDE LOCK RULE
-  // top/bottom stay locked until BOTH left and right
-  // have at least one domino every hand
-
-  if(state.board.spinnerTile){
-
-    const leftFilled =
-      state.board.spinnerArms.left &&
-      state.board.spinnerArms.left.length > 0;
-
-    const rightFilled =
-      state.board.spinnerArms.right &&
-      state.board.spinnerArms.right.length > 0;
-
-    const sideLockActive = !(leftFilled && rightFilled);
-
-    if(sideLockActive){
-      legal = legal.filter(
-        arm => arm !== 'top' && arm !== 'bottom'
-      );
-    }
-  }
-
-  return legal;
 }
 function legal(tile){ return legalArms(tile).length > 0; }
 function validPlaySummary(playerIndex){
@@ -472,7 +457,7 @@ function placeOnArm(tile,arm){
     const existingLine = line.slice();
     const previous = arm === 'left' ? line[0] : line[line.length-1];
     const anchor = previous || {x:0,y:0,orientation:'horizontal',flowSide:arm,exposedSide:arm};
-    const placement = buildBranchPlacement(tile,arm,end.value,anchor,arm);
+    const placement = makeFlowingPlacement(tile,arm,end.value,anchor,arm);
     if(isDouble(placement.tile)){
       promoteFirstDoubleToSpinner(placement,arm,existingLine);
     }else if(arm === 'left') line.unshift(placement);
@@ -489,7 +474,6 @@ function placeOnArm(tile,arm){
 function commitPlay(playerIndex,tile,arm){
   const hadSpinner = !!state.board.spinnerTile;
   if(!placeOnArm(tile,arm)) return false;
-  playPullSound();
   if(!hadSpinner && state.board.spinnerTile) play3dAnnounce('SPINNER','elite');
   removeTile(state.hands[playerIndex],tile);
   state.passes = 0;
@@ -594,7 +578,8 @@ function clonePlacement(item){
     exposedPip:typeof item.exposedPip === 'number' ? item.exposedPip : exposedPipFromPlacement(item),
     matchPip:typeof item.matchPip === 'number' ? item.matchPip : null,
     double:!!item.double,
-    spinner:!!item.spinner
+    spinner:!!item.spinner,
+    turned:!!item.turned
   };
 }
 
@@ -709,7 +694,6 @@ function passTurn(){
 }
 
 function washDishes(){
-  playWashSound();
   if(state.gameOver){ newGame(state.players); return; }
   newGame(state.players);
 }
@@ -761,8 +745,8 @@ function tileHTML(tile,index,cls=''){
 
 function fitBoardToPlacements(){
   const placements = state.board.placements || [];
-  let maxX = 540;
-  let maxY = 340;
+  let maxX = 120;
+  let maxY = 100;
   placements.forEach(item=>{
     const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
     maxX = Math.max(maxX, Math.abs(item.x || 0) + size.w / 2 + 70);
@@ -777,6 +761,7 @@ function boardTileHTML(placement,index){
     'board-tile',
     placement.orientation || 'horizontal',
     placement.branch ? placement.branch+'-arm' : '',
+    placement.turned ? 'domino-bent-end' : '',
     placement.double ? 'double' : '',
     placement.spinner ? 'spinner' : ''
   ].filter(Boolean).join(' ');
@@ -792,6 +777,12 @@ function renderBoard(){
     chainEl.className = 'chain tree-board';
     chainEl.removeAttribute('style');
     chainEl.innerHTML = state.board.placements.map(boardTileHTML).join('');
+    const bounds = fitBoardToPlacements();
+    const tableCenter = document.querySelector('.table-center');
+    const availableWidth = Math.max(220,(tableCenter?.clientWidth || 900) - 36);
+    const availableHeight = Math.max(180,(tableCenter?.clientHeight || 620) - 36);
+    const scale = Math.min(1,availableWidth / bounds.width,availableHeight / bounds.height);
+    chainEl.style.setProperty('--board-scale',String(Math.max(.34,scale)));
   }else{
     chainEl.className = 'chain';
     chainEl.removeAttribute('style');

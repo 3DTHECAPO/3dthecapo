@@ -476,7 +476,7 @@ body{overflow:auto;}
 .log-panel ol,#log{max-height:calc(100vh - 220px);font-size:11px;overflow:auto;}
 .casino-table{position:relative;height:100%;min-height:680px;margin:0;border-width:10px;border-radius:46px;overflow:hidden;}
 .table-center{position:absolute!important;left:50%!important;top:50%!important;width:96%!important;height:94%!important;min-height:0!important;padding:0!important;transform:translate(-50%,-50%)!important;border-radius:34px;overflow:visible!important;}
-.chain,#chain,.tree-board{position:absolute!important;left:50%!important;top:50%!important;width:0!important;height:0!important;min-width:0!important;min-height:0!important;transform:translate(-50%,-50%)!important;transform-origin:center center!important;overflow:visible!important;}
+.chain,#chain,.tree-board{position:absolute!important;left:50%!important;top:50%!important;width:0!important;height:0!important;min-width:0!important;min-height:0!important;transform:translate(-50%,-50%) scale(var(--board-scale,1))!important;transform-origin:center center!important;overflow:visible!important;transition:transform .18s ease!important;}
 .tile.board-tile{position:absolute!important;left:calc(50% + var(--x,0px))!important;top:calc(50% + var(--y,0px))!important;transform:translate(-50%,-50%)!important;width:82px;height:42px;grid-template-columns:1fr 1px 1fr;grid-template-rows:none;}
 .tile.board-tile.vertical,.tile.board-tile.spinner{width:50px;height:88px;grid-template-columns:1fr;grid-template-rows:1fr 1px 1fr;}
 .tile.board-tile.vertical i,.tile.board-tile.spinner i{width:70%;height:1px;}
