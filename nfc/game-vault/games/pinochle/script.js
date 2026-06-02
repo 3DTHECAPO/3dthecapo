@@ -287,10 +287,17 @@ function takeMeld(auto){
     if(state.currentPlayerIndex!==0)scheduleCpu();
   }
   function leadSuit(){return state.trick[0]?.card.suit}
+  function trickPriority(card){
+    const lead=leadSuit();
+    if(card.suit===state.trump)return 2;
+    if(card.suit===lead)return 1;
+    return 0;
+  }
   function beats(card,best){
-    if(card.suit===best.suit)return order[card.rank]>order[best.rank];
-    if(card.suit===state.trump&&best.suit!==state.trump)return true;
-    return false;
+    const cardPriority=trickPriority(card), bestPriority=trickPriority(best);
+    if(cardPriority!==bestPriority)return cardPriority>bestPriority;
+    if(cardPriority===0)return false;
+    return order[card.rank]>order[best.rank];
   }
   function currentBest(){let best=state.trick[0]; for(const play of state.trick.slice(1))if(beats(play.card,best.card))best=play; return best}
   function legalCards(player){
@@ -332,7 +339,7 @@ function takeMeld(auto){
     if(state.trick.length===4){
       state.trickResolving=true;
       render('TRICK COMPLETE');
-      state.trickTimer=setTimeout(finishTrick,900);
+      state.trickTimer=setTimeout(finishTrick,1600);
     }else{
       state.currentPlayerIndex=(player+1)%4;
       render('TRICK LIVE');
