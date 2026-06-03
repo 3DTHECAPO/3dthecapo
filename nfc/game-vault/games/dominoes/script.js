@@ -28,10 +28,10 @@ const BRANCH_DIRS = {
 const BRANCH_TURNS = {right:'bottom',bottom:'left',left:'top',top:'right'};
 const BRANCH_REVERSE_TURNS = {right:'top',top:'left',left:'bottom',bottom:'right'};
 const BRANCH_TURN_OPTIONS = {
-  top:['right','left'],
+  top:['left','right'],
   bottom:['left','right'],
   left:['bottom','top'],
-  right:['top','bottom']
+  right:['bottom','top']
 };
 const BOARD_LIMITS = {x:340,y:360};
 const DEBUG = new URLSearchParams(window.location.search).get('debug') === '1';
@@ -1144,6 +1144,42 @@ function renderDebugLongRunBranchScenario(){
   });
 }
 
+function renderDebugLeftTurnDirectionScenario(){
+  resetBoard();
+  state.players = 2;
+  state.scores = [0,0];
+  state.gotIn = [true,true];
+  state.currentPlayerIndex = 0;
+  state.gameOver = false;
+  state.handOver = false;
+  state.stock = [];
+  state.hands = [[[1,1]], [[2,2]]];
+  state.board.spinnerTile = makeSpinnerPlacement([5,5]);
+  state.board.spinnerArms.right.push(makeBranchPlacement([5,4],'right',5));
+  refreshOpenEnds();
+
+  const sequence = [[5,1],[1,2],[2,3],[3,4],[4,6],[6,0]];
+  const placements = [];
+  sequence.forEach(tile=>{
+    const end = refreshOpenEnds().find(item=>item.arm === 'left');
+    if(!end) return;
+    const placement = makeBranchPlacement(tile,'left',end.value);
+    state.board.spinnerArms.left.push(placement);
+    placements.push(placement);
+    refreshOpenEnds();
+  });
+
+  renderBoard();
+  const rendered = inspectRenderedBoard();
+  const turn = placements.find(item=>item.turned);
+  return Object.assign(rendered, {
+    flow:placements.map(item=>item.flowSide),
+    turned:placements.map(item=>!!item.turned),
+    firstTurnSide:turn ? turn.flowSide : null,
+    passedLeftTurnsDownFirst:!!turn && turn.flowSide === 'bottom'
+  });
+}
+
 function renderDebugSettlementRoundingTest(){
   return {
     samples:{12:roundSettlementPips(12),13:roundSettlementPips(13),47:roundSettlementPips(47),53:roundSettlementPips(53)},
@@ -1307,6 +1343,7 @@ if(DEBUG){
   window.Play3DDominoesSettlementRoundingTest = renderDebugSettlementRoundingTest;
   window.Play3DDominoesNewHandResetTest = renderDebugNewHandResetScenario;
   window.Play3DDominoesLongRunBranchTest = renderDebugLongRunBranchScenario;
+  window.Play3DDominoesLeftTurnDirectionTest = renderDebugLeftTurnDirectionScenario;
 }
 
 function render(){
