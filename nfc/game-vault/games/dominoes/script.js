@@ -161,6 +161,29 @@ function ensureOpeningDouble(){
   return starter;
 }
 
+function highestDoubleInHand(player){
+  let best = null;
+  (state.hands[player] || []).forEach(tile=>{
+    if(isDouble(tile) && (!best || tile[0] > best[0])) best = tile;
+  });
+  return best;
+}
+
+function highestOpeningTileInHand(player){
+  let best = null;
+  (state.hands[player] || []).forEach(tile=>{
+    if(!best || dominoTotal(tile) > dominoTotal(best) || (dominoTotal(tile) === dominoTotal(best) && isDouble(tile))){
+      best = tile;
+    }
+  });
+  return best;
+}
+
+function chooseLeaderOpening(player){
+  const double = highestDoubleInHand(player);
+  return double || highestOpeningTileInHand(player);
+}
+
 function armOrderForPlay(){
   if(!state.board.spinnerTile) return [];
   const arms = state.board.spinnerArms;
@@ -547,6 +570,17 @@ function placeOpeningDouble(player,tile){
   refreshOpenEnds();
 }
 
+function openHandWithTile(player,tile,reason){
+  if(!tile) return false;
+  const opened = commitPlay(player,tile,'open');
+  if(!opened) return false;
+  state.currentPlayerIndex = (player + 1) % state.players;
+  const label = tile[0]+'-'+tile[1];
+  log(seatName(player)+' opened with '+label+'.');
+  scoreBoardCount(player,reason || 'opening_tile');
+  return true;
+}
+
 function placeOnArm(tile,arm){
   if(arm === 'open'){
     if(isDouble(tile)){
@@ -880,25 +914,28 @@ function newGame(players){
   play3dAnnounce('NEW_GAME','normal','DOMINOES TABLE OPEN.');
 
   if(handLeader !== null){
-    state.currentPlayerIndex = handLeader;
     state.nextLeader = null;
-    log(seatName(handLeader)+' leads this hand and may play any domino.');
-    render();
-    if(state.currentPlayerIndex !== 0 && !activeLocal()) scheduleCpu();
-    return;
-  }
-
-  const starter = ensureOpeningDouble();
-  if(starter){
-    placeOpeningDouble(starter.player,starter.tile);
-    state.currentPlayerIndex = (starter.player + 1) % state.players;
-    log(seatName(starter.player)+' opened with highest double '+starter.tile[0]+'-'+starter.tile[1]+'.');
-    play3dAnnounce('SPINNER','elite');
-    scoreBoardCount(starter.player,'opening_double');
+    const leaderTile = chooseLeaderOpening(handLeader);
+    if(leaderTile){
+      openHandWithTile(handLeader,leaderTile,isDouble(leaderTile) ? 'leader_opening_double' : 'leader_opening_tile');
+      log(seatName(handLeader)+' leads this hand.');
+    }else{
+      state.currentPlayerIndex = handLeader;
+      log(seatName(handLeader)+' leads this hand, but has no tile to open.');
+    }
     if(state.gameOver){ render(); return; }
   }else{
-    state.currentPlayerIndex = 0;
-    log('No double found. Start manually.');
+    const starter = ensureOpeningDouble();
+    if(starter){
+      openHandWithTile(starter.player,starter.tile,'opening_double');
+      log(seatName(starter.player)+' opened with highest double '+starter.tile[0]+'-'+starter.tile[1]+'.');
+    }else{
+      state.currentPlayerIndex = 0;
+      const fallback = highestOpeningTileInHand(0);
+      if(fallback) openHandWithTile(0,fallback,'opening_tile');
+      else log('No tile found. Start manually.');
+    }
+    if(state.gameOver){ render(); return; }
   }
 
   render();
@@ -1297,6 +1334,101 @@ function renderDebugNewHandResetScenario(){
   };
 }
 
+function placementStackAudit(){
+  refreshPlacements();
+  const overlaps = [];
+  for(let a=0; a<state.board.placements.length; a++){
+    for(let b=a+1; b<state.board.placements.length; b++){
+      if(placementsOverlap(state.board.placements[a],state.board.placements[b])){
+        overlaps.push([a,b]);
+      }
+    }
+  }
+  return overlaps;
+}
+
+function playAvailableMoves(limit){
+  const results = [];
+  let guard = 0;
+  while(results.length < limit && guard < 80 && !state.handOver && !state.gameOver){
+    guard++;
+    const player = state.currentPlayerIndex;
+    const move = chooseCpuMove(state.hands[player] || []);
+    if(!move){
+      state.passes++;
+      if(state.passes >= state.players) break;
+      state.currentPlayerIndex = (state.currentPlayerIndex + 1) % state.players;
+      continue;
+    }
+    const ok = commitPlay(player,move.tile,move.arm);
+    if(ok){
+      scoreBoardCount(player,'debug_consistency_play');
+      results.push({
+        move:results.length+1,
+        player,
+        arm:move.arm,
+        placements:refreshPlacements().length,
+        overlaps:placementStackAudit()
+      });
+      if(!state.hands[player].length) break;
+    }
+    state.currentPlayerIndex = (state.currentPlayerIndex + 1) % state.players;
+  }
+  return results;
+}
+
+function handOpeningSnapshot(label,leader){
+  state.nextLeader = Number.isInteger(leader) ? leader : null;
+  newGame(2);
+  refreshOpenEnds();
+  return {
+    label,
+    requestedLeader:Number.isInteger(leader) ? leader : null,
+    boardInitialized:hasBoardTiles(),
+    spinner:state.board.spinnerTile ? state.board.spinnerTile.tile.slice() : null,
+    lineTiles:state.board.spinnerArms.right.length,
+    placements:state.board.placements.length,
+    openEnds:state.board.openEnds.map(end=>({arm:end.arm,value:end.value})),
+    currentPlayerIndex:state.currentPlayerIndex,
+    handOver:state.handOver,
+    gameOver:state.gameOver,
+    overlaps:placementStackAudit()
+  };
+}
+
+function renderDebugHandOpeningConsistencyTest(){
+  const savedMode = mode;
+  mode = 'local';
+  if(cpuTimer){ clearTimeout(cpuTimer); cpuTimer = null; }
+  state.scores = [];
+  state.gotIn = [];
+  state.nextLeader = null;
+
+  const hand1 = handOpeningSnapshot('hand_1',null);
+
+  // Simulate a DOMINO winner for the following hand without changing settlement logic.
+  const hand2 = handOpeningSnapshot('hand_2_after_domino_winner_leads',0);
+  const hand2Moves = playAvailableMoves(10);
+
+  const hand3 = handOpeningSnapshot('hand_3_after_domino_winner_leads',1);
+  const hand4 = handOpeningSnapshot('hand_4_after_domino_winner_leads',0);
+
+  mode = savedMode;
+  const hands = [hand1,hand2,hand3,hand4];
+  return {
+    hands,
+    hand2Moves,
+    allHandsInitialized:hands.every(hand=>hand.boardInitialized && hand.placements > 0 && hand.openEnds.length > 0),
+    noOpeningOverlaps:hands.every(hand=>hand.overlaps.length === 0),
+    hand2UsesNextLeaderButHasBoard:hand2.requestedLeader === 0 && hand2.boardInitialized && hand2.placements > 0,
+    hand2First10NoStack:hand2Moves.every(move=>move.overlaps.length === 0),
+    passed:hands.every(hand=>hand.boardInitialized && hand.placements > 0 && hand.openEnds.length > 0 && hand.overlaps.length === 0)
+      && hand2.requestedLeader === 0
+      && hand2.boardInitialized
+      && hand2Moves.every(move=>move.overlaps.length === 0)
+  };
+}
+
 function boardTileHTML(placement,index){
   const tile = placementTile(placement);
   const cls = [
@@ -1344,6 +1476,7 @@ if(DEBUG){
   window.Play3DDominoesNewHandResetTest = renderDebugNewHandResetScenario;
   window.Play3DDominoesLongRunBranchTest = renderDebugLongRunBranchScenario;
   window.Play3DDominoesLeftTurnDirectionTest = renderDebugLeftTurnDirectionScenario;
+  window.Play3DDominoesHandOpeningConsistencyTest = renderDebugHandOpeningConsistencyTest;
 }
 
 function render(){
