@@ -144,7 +144,9 @@ function ensureOpeningDouble(){
 
 function armOrderForPlay(){
   if(!state.board.spinnerTile) return [];
-  return ['left','right','top','bottom'];
+  const arms = state.board.spinnerArms;
+  const horizontalReady = arms.left.length > 0 && arms.right.length > 0;
+  return horizontalReady ? ['left','right','top','bottom'] : ['left','right'];
 }
 
 function branchOrientation(arm,tile){
@@ -863,16 +865,35 @@ function inspectRenderedBoard(){
   };
 }
 
-function renderDebugTopBranchScenario(){
+function renderDebugSpinnerGateScenario(){
   resetBoard();
   state.board.spinnerTile = makeSpinnerPlacement([5,5]);
-  [[5,3],[3,6],[6,6]].forEach(tile=>{
-    const end = refreshOpenEnds().find(item=>item.arm === 'top');
-    const placement = makeBranchPlacement(tile,'top',end.value);
-    state.board.spinnerArms.top.push(placement);
-  });
+  const initialEnds = refreshOpenEnds().map(end=>end.arm);
+  const topLockedBeforeHorizontal = !legalArms([5,3]).includes('top');
+  const leftPlacement = makeBranchPlacement([5,3],'left',5);
+  state.board.spinnerArms.left.push(leftPlacement);
+  const oneSideEnds = refreshOpenEnds().map(end=>end.arm);
+  const topLockedAfterOneSide = !legalArms([5,4]).includes('top');
+  const rightPlacement = makeBranchPlacement([5,6],'right',5);
+  state.board.spinnerArms.right.push(rightPlacement);
+  const horizontalEnds = refreshOpenEnds().map(end=>end.arm);
+  const topUnlockedAfterHorizontal = legalArms([5,2]).includes('top');
   renderBoard();
-  return inspectRenderedBoard();
+  return Object.assign(inspectRenderedBoard(), {
+    initialEnds,
+    oneSideEnds,
+    horizontalEnds,
+    topLockedBeforeHorizontal,
+    topLockedAfterOneSide,
+    topUnlockedAfterHorizontal,
+    passedSpinnerGate: initialEnds.join(',') === 'left,right'
+      && oneSideEnds.join(',') === 'left,right'
+      && horizontalEnds.includes('top')
+      && horizontalEnds.includes('bottom')
+      && topLockedBeforeHorizontal
+      && topLockedAfterOneSide
+      && topUnlockedAfterHorizontal
+  });
 }
 
 function boardTileHTML(placement,index){
@@ -912,7 +933,7 @@ function renderBoard(){
 
 if(DEBUG){
   window.Play3DDominoesRenderedAudit = inspectRenderedBoard;
-  window.Play3DDominoesRenderTopBranchTest = renderDebugTopBranchScenario;
+  window.Play3DDominoesRenderSpinnerGateTest = renderDebugSpinnerGateScenario;
 }
 
 function render(){
