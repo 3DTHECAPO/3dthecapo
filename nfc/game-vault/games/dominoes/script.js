@@ -27,7 +27,7 @@ const BRANCH_DIRS = {
 };
 const BRANCH_TURNS = {right:'bottom',bottom:'left',left:'top',top:'right'};
 const BRANCH_REVERSE_TURNS = {right:'top',top:'left',left:'bottom',bottom:'right'};
-const BOARD_LIMITS = {x:340,y:340};
+const BOARD_LIMITS = {x:340,y:360};
 const DEBUG = new URLSearchParams(window.location.search).get('debug') === '1';
 
 const state = {
@@ -192,13 +192,16 @@ function buildBranchPlacement(rawTile,logicalArm,match,anchor,flowSide){
   const anchorStep = axisSpan(anchor.orientation || 'horizontal',anchorFlow);
   const distance = (step / 2) + (anchorStep / 2);
   const turned = anchorFlow !== flowSide;
-  const turnDistance = (step / 2) + (axisSpan(anchor.orientation || 'horizontal',flowSide) / 2);
+  const anchorDir = BRANCH_DIRS[anchorFlow] || dir;
+  const pivotX = (anchor.x || 0) + anchorDir.x * anchorStep / 2;
+  const pivotY = (anchor.y || 0) + anchorDir.y * anchorStep / 2;
+  const turnClearance = axisSpan(orientation,anchorFlow) / 2;
 
   return {
     tile:oriented,
     raw:rawTile.slice(),
-    x:(anchor.x || 0) + dir.x * (turned ? turnDistance : distance),
-    y:(anchor.y || 0) + dir.y * (turned ? turnDistance : distance),
+    x:turned ? pivotX + dir.x * step / 2 + anchorDir.x * turnClearance : (anchor.x || 0) + dir.x * distance,
+    y:turned ? pivotY + dir.y * step / 2 + anchorDir.y * turnClearance : (anchor.y || 0) + dir.y * distance,
     orientation,
     branch:logicalArm,
     flowSide,
@@ -240,8 +243,8 @@ function makeFlowingPlacement(rawTile,arm,match,anchor,defaultFlow){
   const flowSide = (anchor.flowSide || anchor.exposedSide) === 'all'
     ? arm
     : (anchor.flowSide || anchor.exposedSide || defaultFlow || arm);
-  const clockwise = BRANCH_TURNS[flowSide] || arm;
-  const counterClockwise = BRANCH_REVERSE_TURNS[flowSide] || arm;
+  const clockwise = flowSide === 'bottom' ? 'right' : (BRANCH_TURNS[flowSide] || arm);
+  const counterClockwise = flowSide === 'bottom' ? 'left' : (BRANCH_REVERSE_TURNS[flowSide] || arm);
   const reverse = BRANCH_TURNS[clockwise] || arm;
   const candidates = [flowSide,clockwise,counterClockwise,reverse]
     .filter((side,index,list)=>list.indexOf(side)===index)
@@ -250,16 +253,29 @@ function makeFlowingPlacement(rawTile,arm,match,anchor,defaultFlow){
   return clean || candidates.sort((a,b)=>placementPenalty(a,anchor)-placementPenalty(b,anchor))[0];
 }
 
+function currentBoardLimits(){
+  const tableCenter = document.querySelector('.table-center');
+  if(!tableCenter) return BOARD_LIMITS;
+  const rect = tableCenter.getBoundingClientRect();
+  if(!rect.width || !rect.height) return BOARD_LIMITS;
+  return {
+    x:Math.max(180,Math.min(BOARD_LIMITS.x,rect.width / 2 - 18)),
+    y:Math.max(180,Math.min(BOARD_LIMITS.y,rect.height / 2 - 18))
+  };
+}
+
 function placementOutsideTable(item){
   const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
-  return Math.abs(item.x || 0) + size.w / 2 > BOARD_LIMITS.x
-    || Math.abs(item.y || 0) + size.h / 2 > BOARD_LIMITS.y;
+  const limits = currentBoardLimits();
+  return Math.abs(item.x || 0) + size.w / 2 > limits.x
+    || Math.abs(item.y || 0) + size.h / 2 > limits.y;
 }
 
 function placementPenalty(item,anchor){
   const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
-  const overflowX = Math.max(0,Math.abs(item.x || 0) + size.w / 2 - BOARD_LIMITS.x);
-  const overflowY = Math.max(0,Math.abs(item.y || 0) + size.h / 2 - BOARD_LIMITS.y);
+  const limits = currentBoardLimits();
+  const overflowX = Math.max(0,Math.abs(item.x || 0) + size.w / 2 - limits.x);
+  const overflowY = Math.max(0,Math.abs(item.y || 0) + size.h / 2 - limits.y);
   return (overflowX+overflowY)*1000 + placementCollisionCount(item,anchor)*100000;
 }
 
@@ -414,6 +430,11 @@ function boardCount(){
 }
 
 function scoreFromCount(count){ return count > 0 && count % 5 === 0 ? count : 0; }
+function roundSettlementPips(pips){
+  const remainder = pips % 5;
+  if(remainder === 0) return pips;
+  return remainder <= 2 ? pips - remainder : pips + (5 - remainder);
+}
 
 function debugArmValues(){
   const values = {left:0,right:0,top:0,bottom:0};
@@ -559,7 +580,7 @@ function scoreBoardCount(player,reason='play'){
 
 function awardSettlement(player,pips,reason){
   const bucket = scoreBucket(player);
-  const points = scoreFromCount(pips);
+  const points = roundSettlementPips(pips);
   if(!points){
     log(reason+' counted '+pips+' pips. No five-count award.');
     return 0;
@@ -570,7 +591,7 @@ function awardSettlement(player,pips,reason){
   }
   state.gotIn[bucket] = true;
   state.scores[bucket] += points;
-  log(scoreBucketName(bucket)+' scored '+points+' from '+reason+'.');
+  log(scoreBucketName(bucket)+' scored '+points+' from '+reason+' after rounding '+pips+' pips.');
   if(state.scores[bucket] >= SCORE_TARGET) finishGame(bucket);
   return points;
 }
@@ -696,9 +717,15 @@ function finishBlocked(){
     const total = handTotal(index);
     return total < best.total ? {index,total} : best;
   },{index:0,total:Infinity}).index;
+  const winnerBucket = scoreBucket(winner);
+  const excluded = new Set(scoreBucketPlayers(winnerBucket));
+  const pips = state.hands.reduce((sum,hand,index)=>{
+    return excluded.has(index) ? sum : sum + hand.reduce((total,tile)=>total+dominoTotal(tile),0);
+  },0);
+  const settlement = awardSettlement(winner,pips,'BLOCKED');
   state.nextLeader = null;
-  if(turnTextEl) turnTextEl.textContent = 'BLOCKED ROUND ? WASH THE DISHES';
-  log('Blocked round. '+seatName(winner)+' wins low count. Next hand starts by highest available double.');
+  if(turnTextEl) turnTextEl.textContent = 'BLOCKED ROUND — '+scoreBucketName(winnerBucket)+' +'+settlement;
+  log('Blocked round. '+seatName(winner)+' wins low count. Remaining pips: '+pips+'.');
   play3dAnnounce('BLOCKED','warning');
   render();
 }
@@ -944,6 +971,72 @@ function renderDebugFinalBoneDominoScenario(){
   };
 }
 
+function renderDebugBottomTurnScenario(){
+  resetBoard();
+  state.players = 2;
+  state.scores = [0,0];
+  state.gotIn = [true,true];
+  state.currentPlayerIndex = 0;
+  state.gameOver = false;
+  state.handOver = false;
+  state.stock = [];
+  state.hands = [[[1,1]], [[2,2]]];
+  state.board.spinnerTile = makeSpinnerPlacement([5,5]);
+  state.board.spinnerArms.left.push(makeBranchPlacement([5,3],'left',5));
+  state.board.spinnerArms.right.push(makeBranchPlacement([5,4],'right',5));
+  refreshOpenEnds();
+
+  const sequence = [[5,6],[6,2],[2,1],[1,0],[0,3]];
+  const placements = [];
+  sequence.forEach(tile=>{
+    const end = refreshOpenEnds().find(item=>item.arm === 'bottom');
+    if(!end) return;
+    const placement = makeBranchPlacement(tile,'bottom',end.value);
+    state.board.spinnerArms.bottom.push(placement);
+    placements.push(placement);
+    refreshOpenEnds();
+  });
+  renderBoard();
+  const rendered = inspectRenderedBoard();
+  const turnIndex = placements.findIndex(item=>item.turned);
+  const turn = turnIndex >= 0 ? placements[turnIndex] : null;
+  const afterTurn = turnIndex >= 0 ? placements[turnIndex+1] : null;
+  return Object.assign(rendered, {
+    placementSummary:placements.map(item=>({
+      tile:item.tile,
+      x:item.x,
+      y:item.y,
+      flowSide:item.flowSide,
+      turned:item.turned,
+      exposedPip:item.exposedPip
+    })),
+    bottomRanStraight:placements.slice(0,Math.max(0,turnIndex)).every(item=>item.flowSide === 'bottom' && !item.turned),
+    turnIndex,
+    turnSide:turn ? turn.flowSide : null,
+    turnIsSideways:!!turn && (turn.flowSide === 'right' || turn.flowSide === 'left'),
+    afterTurnContinuesSideways:!afterTurn || (afterTurn.flowSide === (turn && turn.flowSide)),
+    passedBottomTurn:rendered.passed
+      && turnIndex > 0
+      && !!turn
+      && (turn.flowSide === 'right' || turn.flowSide === 'left')
+      && placements.slice(0,turnIndex).every(item=>item.flowSide === 'bottom' && !item.turned)
+      && (!afterTurn || afterTurn.flowSide === turn.flowSide)
+  });
+}
+
+function renderDebugSettlementRoundingTest(){
+  return {
+    samples:{12:roundSettlementPips(12),13:roundSettlementPips(13),47:roundSettlementPips(47),53:roundSettlementPips(53)},
+    exactOpenEndStillExact: scoreFromCount(13) === 0 && scoreFromCount(15) === 15,
+    passed: roundSettlementPips(12) === 10
+      && roundSettlementPips(13) === 15
+      && roundSettlementPips(47) === 45
+      && roundSettlementPips(53) === 55
+      && scoreFromCount(13) === 0
+      && scoreFromCount(15) === 15
+  };
+}
+
 function boardTileHTML(placement,index){
   const tile = placementTile(placement);
   const cls = [
@@ -971,7 +1064,10 @@ function renderBoard(){
     const availableWidth = Math.max(220,(tableCenter?.clientWidth || 900) - 36);
     const availableHeight = Math.max(180,(tableCenter?.clientHeight || 620) - 36);
     const scale = Math.min(1,availableWidth / bounds.width,availableHeight / bounds.height);
-    chainEl.style.setProperty('--board-scale',String(Math.max(.1,scale)));
+    const boardScale = Math.max(.1,scale);
+    chainEl.style.setProperty('--board-scale',String(boardScale));
+    chainEl.style.setProperty('transform','translate(-50%,-50%) scale('+boardScale+')','important');
+    chainEl.style.setProperty('transform-origin','center center','important');
   }else{
     chainEl.className = 'chain';
     chainEl.removeAttribute('style');
@@ -983,6 +1079,8 @@ if(DEBUG){
   window.Play3DDominoesRenderedAudit = inspectRenderedBoard;
   window.Play3DDominoesRenderSpinnerGateTest = renderDebugSpinnerGateScenario;
   window.Play3DDominoesFinalBoneTest = renderDebugFinalBoneDominoScenario;
+  window.Play3DDominoesBottomTurnTest = renderDebugBottomTurnScenario;
+  window.Play3DDominoesSettlementRoundingTest = renderDebugSettlementRoundingTest;
 }
 
 function render(){
