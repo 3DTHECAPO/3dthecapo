@@ -27,6 +27,12 @@ const BRANCH_DIRS = {
 };
 const BRANCH_TURNS = {right:'bottom',bottom:'left',left:'top',top:'right'};
 const BRANCH_REVERSE_TURNS = {right:'top',top:'left',left:'bottom',bottom:'right'};
+const BRANCH_TURN_OPTIONS = {
+  top:['right','left'],
+  bottom:['left','right'],
+  left:['bottom','top'],
+  right:['top','bottom']
+};
 const BOARD_LIMITS = {x:340,y:360};
 const DEBUG = new URLSearchParams(window.location.search).get('debug') === '1';
 
@@ -256,14 +262,16 @@ function makeFlowingPlacement(rawTile,arm,match,anchor,defaultFlow){
   const flowSide = (anchor.flowSide || anchor.exposedSide) === 'all'
     ? arm
     : (anchor.flowSide || anchor.exposedSide || defaultFlow || arm);
-  const clockwise = flowSide === 'bottom' ? 'right' : (BRANCH_TURNS[flowSide] || arm);
-  const counterClockwise = flowSide === 'bottom' ? 'left' : (BRANCH_REVERSE_TURNS[flowSide] || arm);
-  const reverse = BRANCH_TURNS[clockwise] || arm;
-  const candidates = [flowSide,clockwise,counterClockwise,reverse]
+  const turnOptions = BRANCH_TURN_OPTIONS[flowSide] || [BRANCH_TURNS[flowSide] || arm, BRANCH_REVERSE_TURNS[flowSide] || arm];
+  const reverse = BRANCH_TURNS[turnOptions[0]] || arm;
+  const candidates = [flowSide].concat(turnOptions,reverse)
     .filter((side,index,list)=>list.indexOf(side)===index)
     .map(side=>buildBranchPlacement(rawTile,arm,match,anchor,side));
-  const clean = candidates.find(item=>!placementOutsideTable(item)&&!placementCollides(item,anchor));
-  return clean || candidates.sort((a,b)=>placementPenalty(a,anchor)-placementPenalty(b,anchor))[0];
+  const straight = candidates.find(item=>item.flowSide === flowSide);
+  if(straight && !placementOutsideTable(straight) && !placementCollides(straight,anchor)){
+    return straight;
+  }
+  return candidates.sort((a,b)=>placementPenalty(a,anchor,flowSide,arm)-placementPenalty(b,anchor,flowSide,arm))[0];
 }
 
 function currentBoardLimits(){
@@ -272,8 +280,8 @@ function currentBoardLimits(){
   const rect = tableCenter.getBoundingClientRect();
   if(!rect.width || !rect.height) return BOARD_LIMITS;
   return {
-    x:Math.max(180,Math.min(BOARD_LIMITS.x,rect.width / 2 - 18)),
-    y:Math.max(180,Math.min(BOARD_LIMITS.y,rect.height / 2 - 18))
+    x:Math.max(180,rect.width / 2),
+    y:Math.max(180,rect.height / 2)
   };
 }
 
@@ -284,22 +292,63 @@ function placementOutsideTable(item){
     || Math.abs(item.y || 0) + size.h / 2 > limits.y;
 }
 
-function placementPenalty(item,anchor){
+function distanceToBoundary(item){
+  const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
+  const limits = currentBoardLimits();
+  const xLeft = limits.x - (Math.abs(item.x || 0) + size.w / 2);
+  const yLeft = limits.y - (Math.abs(item.y || 0) + size.h / 2);
+  return (item.flowSide === 'left' || item.flowSide === 'right') ? xLeft : yLeft;
+}
+
+function branchCompactnessPenalty(item,logicalArm){
+  const branch = state.board.spinnerArms[logicalArm] || [];
+  if(!branch.length) return 0;
+  const nearCenter = Math.abs(item.x || 0) + Math.abs(item.y || 0);
+  const originalAxis = logicalArm === 'left' || logicalArm === 'right' ? Math.abs(item.x || 0) : Math.abs(item.y || 0);
+  const awayFromSpinnerBonus = Math.min(originalAxis,420);
+  const boxyNearCenterPenalty = nearCenter < 260 ? 40000 : 0;
+  return boxyNearCenterPenalty - awayFromSpinnerBonus * 35;
+}
+
+function futureRunwayPenalty(item,logicalArm,turned){
+  if(!turned) return 0;
+  const exposed = typeof item.exposedPip === 'number' ? item.exposedPip : exposedPipFromPlacement(item);
+  const probeTile = [exposed,(exposed + 1) % 7];
+  const probe = buildBranchPlacement(probeTile,logicalArm,exposed,item,item.flowSide);
+  const blockedNextStep = placementOutsideTable(probe) || placementCollides(probe,item);
+  return blockedNextStep ? 95000 : -30000;
+}
+
+function placementPenalty(item,anchor,previousFlow,logicalArm){
   const size = TILE_SIZE[item.orientation || 'horizontal'] || TILE_SIZE.horizontal;
   const limits = currentBoardLimits();
   const overflowX = Math.max(0,Math.abs(item.x || 0) + size.w / 2 - limits.x);
   const overflowY = Math.max(0,Math.abs(item.y || 0) + size.h / 2 - limits.y);
-  return (overflowX+overflowY)*1000 + placementCollisionCount(item,anchor)*100000;
+  const collisionPenalty = placementCollisionCount(item,anchor)*100000;
+  const overflowPenalty = (overflowX+overflowY)*1000000;
+  const turned = item.flowSide !== previousFlow;
+  const consecutiveTurn = turned && anchor && anchor.turned;
+  const singleTurnPenalty = turned ? 25000 : 0;
+  const consecutiveTurnPenalty = consecutiveTurn ? 125000 : 0;
+  const straightReward = !turned ? -200000 : 0;
+  return overflowPenalty
+    + collisionPenalty
+    + singleTurnPenalty
+    + consecutiveTurnPenalty
+    + futureRunwayPenalty(item,logicalArm,turned)
+    + branchCompactnessPenalty(item,logicalArm)
+    + straightReward;
 }
 
-function placementCollisionCount(item){
+function placementCollisionCount(item,ignore){
   return (state.board.placements || []).filter(existing=>{
+    if(ignore && existing === ignore) return false;
     return placementsOverlap(item,existing);
   }).length;
 }
 
-function placementCollides(item){
-  return placementCollisionCount(item)>0;
+function placementCollides(item,ignore){
+  return placementCollisionCount(item,ignore)>0;
 }
 
 function placementsOverlap(a,b){
@@ -1037,6 +1086,64 @@ function renderDebugBottomTurnScenario(){
   });
 }
 
+function renderDebugLongRunBranchScenario(){
+  resetBoard();
+  state.players = 2;
+  state.scores = [0,0];
+  state.gotIn = [true,true];
+  state.currentPlayerIndex = 0;
+  state.gameOver = false;
+  state.handOver = false;
+  state.stock = [];
+  state.hands = [[[1,1]], [[2,2]]];
+  state.board.spinnerTile = makeSpinnerPlacement([5,5]);
+  state.board.spinnerArms.left.push(makeBranchPlacement([5,1],'left',5));
+  state.board.spinnerArms.right.push(makeBranchPlacement([5,2],'right',5));
+  refreshOpenEnds();
+
+  const sequences = {
+    top:[[5,3],[3,4],[4,6],[6,1],[1,2],[2,0]],
+    bottom:[[5,6],[6,2],[2,1],[1,0],[0,3],[3,5]],
+    left:[[1,3],[3,2],[2,4],[4,0],[0,6],[6,3]],
+    right:[[2,4],[4,1],[1,6],[6,0],[0,5],[5,3]]
+  };
+  const results = {};
+
+  Object.keys(sequences).forEach(arm=>{
+    const placements = [];
+    sequences[arm].forEach(tile=>{
+      const end = refreshOpenEnds().find(item=>item.arm === arm);
+      if(!end) return;
+      const placement = makeBranchPlacement(tile,arm,end.value);
+      state.board.spinnerArms[arm].push(placement);
+      placements.push(placement);
+      refreshOpenEnds();
+    });
+    const firstTurnIndex = placements.findIndex(item=>item.turned);
+    const consecutiveTurns = placements
+      .map((item,index)=>({item,index,previous:placements[index-1]}))
+      .filter(entry=>entry.item.turned && entry.previous && entry.previous.turned);
+    results[arm] = {
+      flow:placements.map(item=>item.flowSide),
+      turned:placements.map(item=>!!item.turned),
+      points:placements.map(item=>({x:Math.round(item.x || 0),y:Math.round(item.y || 0),flowSide:item.flowSide,turned:!!item.turned})),
+      firstTurnIndex,
+      consecutiveTurnCount:consecutiveTurns.length,
+      longRunBeforeTurn:firstTurnIndex < 0 || firstTurnIndex >= 3,
+      noBoxFormation:consecutiveTurns.length === 0
+    };
+  });
+
+  renderBoard();
+  const rendered = inspectRenderedBoard();
+  return Object.assign(rendered, {
+    results,
+    passedLongRun:rendered.passed && Object.keys(results).every(arm=>{
+      return results[arm].longRunBeforeTurn && results[arm].noBoxFormation;
+    })
+  });
+}
+
 function renderDebugSettlementRoundingTest(){
   return {
     samples:{12:roundSettlementPips(12),13:roundSettlementPips(13),47:roundSettlementPips(47),53:roundSettlementPips(53)},
@@ -1199,6 +1306,7 @@ if(DEBUG){
   window.Play3DDominoesBottomTurnTest = renderDebugBottomTurnScenario;
   window.Play3DDominoesSettlementRoundingTest = renderDebugSettlementRoundingTest;
   window.Play3DDominoesNewHandResetTest = renderDebugNewHandResetScenario;
+  window.Play3DDominoesLongRunBranchTest = renderDebugLongRunBranchScenario;
 }
 
 function render(){
