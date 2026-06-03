@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>3D Defender</title>
+<style>
+    body { margin:0; background:#000; display:flex; justify-content:center; align-items:center; height:100vh; font-family:Consolas; overflow:hidden; }
+    canvas {
+        image-rendering: pixelated;
+        border: 4px solid #0ff;
+        box-shadow: 0 0 50px #0ff;
+        max-width: calc(100vw - 16px);
+        max-height: calc(100vh - 16px);
+        width: min(800px, calc(100vw - 16px));
+        height: auto;
+        touch-action: none;
+    }
+    @media (max-width: 700px) {
+        body { align-items: flex-start; padding-top: 60px; height: 100dvh; }
+        #ui { top: 8px; left: 10px; font-size: 14px; }
+        canvas { border-width: 2px; box-shadow: 0 0 24px #0ff; }
+    }
+    #ui { position:absolute; top:15px; left:15px; color:#0f0; font-size:18px; pointer-events:none; }
+    button {
+        padding: 15px 40px;
+        font-size: 24px;
+        background: transparent;
+        color: #0ff;
+        border: 3px solid #0ff;
+        cursor: pointer;
+        font-family: Consolas;
+        box-shadow: 0 0 20px #0ff;
+    }
+    button:hover { background: #0ff; color: #000; }
+</style>
+</head>
+<body>
+
+<div id="ui">
+    <div>SCORE: <span id="score">0</span></div>
+    <div>WAVE: <span id="wave">1</span></div>
+    <div id="lives">❤❤❤</div>
+</div>
+
+<canvas id="game" width="800" height="600"></canvas>
+
+<script>
+// =============== DEFENDER - ULTIMATE EDITION ===============
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const scoreEl = document.getElementById("score");
+const waveEl = document.getElementById("wave");
+const livesEl = document.getElementById("lives");
+
+let score = 0, wave = 1, lives = 3;
+let gameState = "menu"; // menu, playing, gameover
+let player = { x: 400, y: 400, size: 28, speed: 6, angle: 0 };
+
+let bullets = [], enemies = [], particles = [];
+let keys = {}, mouseX = 400, mouseY = 300, lastShot = 0;
+
+let audioCtx = null;
+function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    return audioCtx;
+}
+
+function playSound(freq, duration, type="sine", vol=0.3) {
+    const ctxAudio = getAudioCtx();
+    const o = ctxAudio.createOscillator();
+    const g = ctxAudio.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.value = vol;
+    o.connect(g).connect(ctxAudio.destination);
+    o.start(); o.stop(ctxAudio.currentTime + duration);
+}
+
+canvas.addEventListener("mousemove", e => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+    mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+});
+
+canvas.addEventListener("touchmove", e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    if (!t) return;
+    const rect = canvas.getBoundingClientRect();
+    mouseX = (t.clientX - rect.left) * (canvas.width / rect.width);
+    mouseY = (t.clientY - rect.top) * (canvas.height / rect.height);
+}, { passive:false });
+
+canvas.addEventListener("touchstart", e => {
+    e.preventDefault();
+    if (gameState === "menu" || gameState === "gameover") startGame();
+    keys[' '] = true;
+}, { passive:false });
+
+canvas.addEventListener("touchend", e => {
+    keys[' '] = false;
+}, { passive:false });
+
+
+canvas.addEventListener("click", () => {
+    if (gameState === "menu" || gameState === "gameover") startGame();
+});
+
+window.addEventListener("keydown", e => keys[e.key.toLowerCase()] = true);
+window.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
+
+function createExplosion(x, y, intensity=1) {
+    for(let i = 0; i < 25*intensity; i++) {
+        particles.push({ x, y, vx: Math.random()*12-6, vy: Math.random()*12-6, life: 35, color: ["#0ff","#f0f","#ff0"][Math.floor(Math.random()*3)] });
+    }
+    playSound(60 + Math.random()*100, 0.4, "sawtooth", 0.5);
+}
+
+function spawnEnemy() {
+    const side = Math.floor(Math.random()*4);
+    let x, y;
+    if (side === 0) { x = Math.random()*800; y = -40; }
+    else if (side === 1) { x = 840; y = Math.random()*600; }
+    else if (side === 2) { x = Math.random()*800; y = 640; }
+    else { x = -40; y = Math.random()*600; }
+
+    enemies.push({ x, y, size: 22, speed: 1.8 + wave*0.35, health: 1 + Math.floor(wave/4) });
+}
+
+function startGame() {
+    score = 0; wave = 1; lives = 3;
+    bullets = []; enemies = []; particles = [];
+    player.x = 400; player.y = 400;
+    scoreEl.textContent = 0;
+    waveEl.textContent = 1;
+    livesEl.textContent = "❤❤❤";
+    gameState = "playing";
+}
+
+function update() {
+    if (gameState !== "playing") return;
+
+    // Movement
+    if (keys['w'] || keys['arrowup']) player.y -= player.speed;
+    if (keys['s'] || keys['arrowdown']) player.y += player.speed;
+    if (keys['a'] || keys['arrowleft']) player.x -= player.speed;
+    if (keys['d'] || keys['arrowright']) player.x += player.speed;
+
+    player.x = Math.max(20, Math.min(780, player.x));
+    player.y = Math.max(20, Math.min(580, player.y));
+
+    // Shooting
+    player.angle = Math.atan2(mouseY - player.y, mouseX - player.x);
+    if (keys[' '] && Date.now() - lastShot > 160) {
+        bullets.push({
+            x: player.x + Math.cos(player.angle)*25,
+            y: player.y + Math.sin(player.angle)*25,
+            vx: Math.cos(player.angle)*18,
+            vy: Math.sin(player.angle)*18
+        });
+        lastShot = Date.now();
+        playSound(900, 0.08, "square", 0.25);
+    }
+
+    // Update bullets + enemies (same logic as before - shortened for space)
+    for(let i = bullets.length-1; i >= 0; i--) {
+        let b = bullets[i];
+        b.x += b.vx; b.y += b.vy;
+        if (b.x < 0 || b.x > 800 || b.y < 0 || b.y > 600) bullets.splice(i,1);
+    }
+
+    if (Math.random() < 0.045 + wave*0.008) spawnEnemy();
+
+    for(let i = enemies.length-1; i >= 0; i--) {
+        let e = enemies[i];
+        const dx = player.x - e.x;
+        const dy = player.y - e.y;
+        const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+        e.x += (dx/dist) * e.speed;
+        e.y += (dy/dist) * e.speed;
+
+        if (dist < 35) {
+            lives--;
+            livesEl.textContent = "❤".repeat(lives);
+            createExplosion(player.x, player.y);
+            enemies.splice(i,1);
+            if (lives <= 0) gameState = "gameover";
+        }
+    }
+
+    for(let i = bullets.length-1; i >= 0; i--) {
+        for(let j = enemies.length-1; j >= 0; j--) {
+            let b = bullets[i], e = enemies[j];
+            if (Math.hypot(b.x - e.x, b.y - e.y) < e.size + 8) {
+                bullets.splice(i,1);
+                e.health--;
+                if (e.health <= 0) {
+                    enemies.splice(j,1);
+                    score += 20;
+                    scoreEl.textContent = score;
+                    createExplosion(e.x, e.y);
+                }
+                break;
+            }
+        }
+    }
+
+    if (score > wave * 400) wave++;
+    waveEl.textContent = wave;
+}
+
+function draw() {
+    ctx.fillStyle = "#05050f";
+    ctx.fillRect(0, 0, 800, 600);
+
+    // Grid
+    ctx.strokeStyle = "#112233";
+    for(let x=0; x<800; x+=40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,600); ctx.stroke(); }
+    for(let y=0; y<600; y+=40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(800,y); ctx.stroke(); }
+
+    if (gameState === "playing") {
+        // Player
+        ctx.save();
+        ctx.translate(player.x, player.y);
+        ctx.rotate(player.angle + Math.PI/2);
+        ctx.fillStyle = "#0ff";
+        ctx.beginPath();
+        ctx.moveTo(0, -18); ctx.lineTo(-14, 18); ctx.lineTo(14, 18); ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = "#f0f";
+        ctx.fillRect(-4, 8, 8, 12);
+        ctx.restore();
+
+        // Bullets & Enemies
+        ctx.fillStyle = "#ff0";
+        for(let b of bullets) ctx.fillRect(b.x-3, b.y-3, 6, 6);
+
+        for(let e of enemies) {
+            ctx.fillStyle = "#f0f";
+            ctx.fillRect(e.x - e.size/2, e.y - e.size/2, e.size, e.size);
+        }
+    }
+
+    // Particles
+    for(let i = particles.length-1; i >= 0; i--) {
+        let p = particles[i];
+        ctx.globalAlpha = p.life / 35;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, 6, 6);
+        p.x += p.vx; p.y += p.vy; p.life--;
+        if (p.life <= 0) particles.splice(i,1);
+    }
+    ctx.globalAlpha = 1;
+
+    // MENU
+    if (gameState === "menu") {
+        ctx.fillStyle = "#0ff";
+        ctx.font = "bold 70px Consolas";
+        ctx.textAlign = "center";
+        ctx.fillText("3D DEFENDER", 400, 220);
+        ctx.font = "30px Consolas";
+        ctx.fillStyle = "#fff";
+        ctx.fillText("Click anywhere or press button to start", 400, 340);
+    }
+
+    // GAME OVER
+    if (gameState === "gameover") {
+        ctx.fillStyle = "rgba(0,0,0,0.9)";
+        ctx.fillRect(0,0,800,600);
+        ctx.fillStyle = "#f0f";
+        ctx.font = "bold 60px Consolas";
+        ctx.fillText("GAME OVER", 400, 240);
+        ctx.fillStyle = "#0f0";
+        ctx.font = "30px Consolas";
+        ctx.fillText(`FINAL SCORE: ${score}`, 400, 310);
+        
+        ctx.fillStyle = "#0ff";
+        ctx.font = "24px Consolas";
+        ctx.fillText("CLICK TO PLAY AGAIN", 400, 380);
+    }
+}
+
+function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+</body>
+</html>
