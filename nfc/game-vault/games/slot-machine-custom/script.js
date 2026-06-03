@@ -5,18 +5,68 @@
     window.dispatchEvent(new CustomEvent('superior:event', { detail:{ category:'slots', event:event, type:type, message:message } }));
   }
 
-  const slotWheelSound = new Audio('./sounds/slot-wheel.wav');
-  const smallHitSound = new Audio('./sounds/small-hit.wav');
-  const bigWinSound = new Audio('./sounds/slot-machine-big-win.wav');
+  const soundStatus = Object.create(null);
+  const slotWheelSound = createSound('slot-wheel', './sounds/slot-wheel.wav');
+  const smallHitSound = createSound('small-hit', './sounds/small-hit.wav');
+  const bigWinSound = createSound('slot-machine-big-win', './sounds/slot-machine-big-win.wav');
+
+  function reportSoundIssue(name, message, extra){
+    const detail = extra ? ' ' + JSON.stringify(extra) : '';
+    console.warn('[PLAY 3D SLOTS SOUND] ' + name + ': ' + message + detail);
+    const line = document.getElementById('resultLine');
+    if(line && !line.dataset.soundWarningShown){
+      line.dataset.soundWarningShown = '1';
+      line.textContent = 'Sound warning: ' + name + ' ' + message + '. Spin still works.';
+    }
+  }
+
+  function createSound(name, src){
+    const sound = new Audio(src);
+    sound.preload = 'auto';
+    sound.dataset.soundName = name;
+    soundStatus[name] = {src, loaded:false, error:null};
+    sound.addEventListener('canplaythrough', ()=>{
+      soundStatus[name].loaded = true;
+    }, {once:true});
+    sound.addEventListener('error', ()=>{
+      const mediaError = sound.error ? {
+        code:sound.error.code,
+        message:sound.error.message || ''
+      } : null;
+      soundStatus[name].error = mediaError || 'unknown media error';
+      reportSoundIssue(name, 'failed to load ' + src, mediaError);
+    });
+    sound.load();
+    return sound;
+  }
+
+  window.Play3DSlotsSoundStatus = function(){
+    return JSON.parse(JSON.stringify(soundStatus));
+  };
 
   function playSound(sound, loop=false){
     if(!sound) return;
+    const name = sound.dataset.soundName || sound.src || 'unknown';
     try{
+      if(sound.error){
+        reportSoundIssue(name, 'cannot play because the audio file has a media error', {code:sound.error.code, message:sound.error.message || ''});
+        return;
+      }
+      if(sound.readyState === 0){
+        reportSoundIssue(name, 'has not loaded yet; verify the file is not empty or blocked', {src:sound.currentSrc || sound.src});
+      }
       sound.pause();
       sound.currentTime = 0;
       sound.loop = !!loop;
-      sound.play().catch(()=>{});
-    }catch(e){}
+      const attempt = sound.play();
+      if(attempt && typeof attempt.catch === 'function'){
+        attempt.catch(err=>{
+          reportSoundIssue(name, 'playback failed', {name:err && err.name, message:err && err.message});
+        });
+      }
+    }catch(e){
+      reportSoundIssue(name, 'playback threw', {name:e && e.name, message:e && e.message});
+    }
   }
 
   function stopSound(sound){
@@ -25,7 +75,9 @@
       sound.pause();
       sound.currentTime = 0;
       sound.loop = false;
-    }catch(e){}
+    }catch(e){
+      reportSoundIssue(sound.dataset.soundName || 'unknown', 'stop threw', {name:e && e.name, message:e && e.message});
+    }
   }
 
   function playSpinSound(){ playSound(slotWheelSound, true); }
