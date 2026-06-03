@@ -27,7 +27,7 @@ const BRANCH_DIRS = {
 };
 const BRANCH_TURNS = {right:'bottom',bottom:'left',left:'top',top:'right'};
 const BRANCH_REVERSE_TURNS = {right:'top',top:'left',left:'bottom',bottom:'right'};
-const BOARD_LIMITS = {x:340,y:240};
+const BOARD_LIMITS = {x:340,y:340};
 const DEBUG = new URLSearchParams(window.location.search).get('debug') === '1';
 
 const state = {
@@ -863,6 +863,18 @@ function inspectRenderedBoard(){
   };
 }
 
+function renderDebugTopBranchScenario(){
+  resetBoard();
+  state.board.spinnerTile = makeSpinnerPlacement([5,5]);
+  [[5,3],[3,6],[6,6]].forEach(tile=>{
+    const end = refreshOpenEnds().find(item=>item.arm === 'top');
+    const placement = makeBranchPlacement(tile,'top',end.value);
+    state.board.spinnerArms.top.push(placement);
+  });
+  renderBoard();
+  return inspectRenderedBoard();
+}
+
 function boardTileHTML(placement,index){
   const tile = placementTile(placement);
   const cls = [
@@ -898,7 +910,10 @@ function renderBoard(){
   }
 }
 
-if(DEBUG) window.Play3DDominoesRenderedAudit = inspectRenderedBoard;
+if(DEBUG){
+  window.Play3DDominoesRenderedAudit = inspectRenderedBoard;
+  window.Play3DDominoesRenderTopBranchTest = renderDebugTopBranchScenario;
+}
 
 function render(){
   refreshOpenEnds();
