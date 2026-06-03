@@ -1,0 +1,120 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(0, 255, 255, .16), transparent 28%),
+    radial-gradient(circle at 78% 76%, rgba(255, 0, 255, .14), transparent 30%),
+    #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Consolas, monospace;
+  overflow: hidden;
+  position: relative;
+  touch-action: none;
+}
+
+canvas {
+  width: min(100vw, 900px);
+  height: auto;
+  max-height: calc(100vh - 24px);
+  aspect-ratio: 4 / 3;
+  border: 4px solid #00ffff;
+  box-shadow: 0 0 60px #00ffff, 0 0 90px rgba(255, 0, 255, .28);
+  image-rendering: pixelated;
+  background: #05050f;
+}
+
+#ui {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #00ff00;
+  font-size: 22px;
+  text-shadow: 0 0 10px #00ff00;
+  pointer-events: none;
+  z-index: 100;
+}
+
+#mobileControls {
+  position: fixed;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  z-index: 110;
+  display: none;
+  justify-content: space-between;
+  align-items: end;
+  pointer-events: none;
+}
+
+#movePad {
+  width: 126px;
+  height: 126px;
+  border: 2px solid rgba(0, 255, 255, .7);
+  border-radius: 50%;
+  background: rgba(0, 18, 24, .64);
+  box-shadow: 0 0 24px rgba(0, 255, 255, .32);
+  position: relative;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+#moveStick {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #00ffff;
+  box-shadow: 0 0 22px #00ffff;
+  transform: translate(-50%, -50%);
+}
+
+#fireBtn {
+  width: 112px;
+  height: 112px;
+  border: 3px solid #ffff00;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffff00 0 24%, #ff00ff 25% 64%, #210020 65%);
+  color: #000;
+  font: 900 20px Consolas, monospace;
+  box-shadow: 0 0 28px rgba(255, 0, 255, .52), 0 0 18px rgba(255, 255, 0, .6);
+  pointer-events: auto;
+  touch-action: none;
+}
+
+@media (max-width: 760px), (pointer: coarse) {
+  body {
+    align-items: start;
+    padding-top: 8px;
+  }
+
+  canvas {
+    width: 100vw;
+    max-height: calc(100vh - 150px);
+    border-width: 2px;
+  }
+
+  #ui {
+    top: 12px;
+    left: 12px;
+    font-size: 15px;
+  }
+
+  #mobileControls {
+    display: flex;
+  }
+}
