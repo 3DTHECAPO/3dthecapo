@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-label="3D Defender neon arcade shooter preview">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="72%">
+      <stop offset="0" stop-color="#17243a"/>
+      <stop offset=".42" stop-color="#090b18"/>
+      <stop offset="1" stop-color="#020203"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#fff0a6"/>
+      <stop offset=".55" stop-color="#caa24a"/>
+      <stop offset="1" stop-color="#765219"/>
+    </linearGradient>
+    <filter id="cyanGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.15 0 0 0 0 0.95 0 0 0 0 1 0 0 0 .82 0"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="magentaGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 1 0 0 0 0 .12 0 0 0 0 .95 0 0 0 .8 0"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="goldGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 .95 0 0 0 0 .72 0 0 0 0 .18 0 0 0 .82 0"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="900" height="560" fill="url(#bg)"/>
+  <rect width="900" height="560" fill="none" stroke="#caa24a" stroke-width="8"/>
+
+  <g opacity=".52" stroke="#1ff8ff" stroke-width="2">
+    <path d="M0 424h900M0 366h900M0 308h900M0 250h900M0 192h900"/>
+    <path d="M90 560 374 98M210 560 420 90M330 560 456 86M570 560 504 86M690 560 548 90M810 560 596 98"/>
+  </g>
+
+  <g filter="url(#cyanGlow)" opacity=".95">
+    <circle cx="450" cy="258" r="120" fill="none" stroke="#41f7ff" stroke-width="5"/>
+    <circle cx="450" cy="258" r="62" fill="none" stroke="#41f7ff" stroke-width="3"/>
+    <path d="M450 106v62M450 320v78M298 258h70M532 258h70" stroke="#41f7ff" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <g filter="url(#goldGlow)">
+    <path d="M450 312 500 438 450 412 400 438Z" fill="url(#gold)" stroke="#fff0a6" stroke-width="5"/>
+    <path d="M450 330 470 398 450 388 430 398Z" fill="#41f7ff" opacity=".9"/>
+    <path d="M422 426h56l-28 46Z" fill="#ff3df2"/>
+  </g>
+
+  <g filter="url(#magentaGlow)" fill="#ff3df2" stroke="#ffd5fb" stroke-width="3">
+    <path d="M185 172h42l24 36-24 36h-42l-24-36Z"/>
+    <path d="M665 142h46l26 39-26 39h-46l-26-39Z"/>
+    <path d="M694 345h38l22 33-22 33h-38l-22-33Z"/>
+  </g>
+
+  <g filter="url(#cyanGlow)" stroke="#41f7ff" stroke-width="6" stroke-linecap="round">
+    <path d="M440 300 306 228"/>
+    <path d="M462 286 624 196"/>
+    <path d="M478 326 642 362"/>
+  </g>
+
+  <g>
+    <rect x="42" y="38" width="268" height="58" rx="18" fill="rgba(0,0,0,.62)" stroke="#caa24a" stroke-width="2"/>
+    <text x="66" y="76" fill="#f2d27b" font-family="Arial Black, Arial, sans-serif" font-size="28" letter-spacing="3">3D DEFENDER</text>
+    <text x="66" y="116" fill="#41f7ff" font-family="Arial, sans-serif" font-size="18" letter-spacing="5">NEON ARCADE SHOOTER</text>
+  </g>
+</svg>
