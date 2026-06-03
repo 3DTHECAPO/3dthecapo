@@ -97,12 +97,25 @@ function popCount(text, good=false){
   setTimeout(()=>el.classList.remove('show'),1500);
 }
 
+function clearRenderedBoard(){
+  if(chainEl){
+    chainEl.className = 'chain';
+    chainEl.removeAttribute('style');
+    chainEl.innerHTML = '';
+  }
+  if(armChooser){
+    armChooser.hidden = true;
+    armChooser.innerHTML = '';
+  }
+  document.getElementById('openEndDebug')?.remove();
+}
+
 function resetBoard(){
   state.board = {spinnerTile:null, spinnerArms:{left:[],right:[],top:[],bottom:[]}, openEnds:[], placements:[]};
   state.passes = 0;
   state.pending = null;
   state.handOver = false;
-  if(armChooser){ armChooser.hidden = true; armChooser.innerHTML = ''; }
+  clearRenderedBoard();
 }
 
 function buildStock(){
@@ -1037,6 +1050,110 @@ function renderDebugSettlementRoundingTest(){
   };
 }
 
+function renderedTileCount(){
+  return chainEl ? chainEl.querySelectorAll('.tile.board-tile').length : 0;
+}
+
+function renderDebugNewHandResetScenario(){
+  const savedMode = mode;
+  mode = 'local';
+  if(cpuTimer){ clearTimeout(cpuTimer); cpuTimer = null; }
+
+  resetBoard();
+  state.players = 2;
+  state.scores = [25,35];
+  state.gotIn = [true,true];
+  state.currentPlayerIndex = 0;
+  state.gameOver = false;
+  state.handOver = false;
+  state.stock = [];
+  state.hands = [[[0,0]], [[1,1]]];
+  state.board.spinnerTile = makeSpinnerPlacement([6,6]);
+  state.board.spinnerArms.left.push(makeBranchPlacement([6,1],'left',6));
+  state.board.spinnerArms.right.push(makeBranchPlacement([6,2],'right',6));
+  state.board.spinnerArms.top.push(makeBranchPlacement([6,3],'top',6));
+  state.board.spinnerArms.bottom.push(makeBranchPlacement([6,4],'bottom',6));
+  refreshOpenEnds();
+  renderBoard();
+
+  const staleTileCount = renderedTileCount();
+  const stalePlacementCount = state.board.placements.length;
+  const scoresBefore = state.scores.slice();
+
+  state.nextLeader = 0;
+  newGame(2);
+
+  const afterNewHandTileCount = renderedTileCount();
+  const afterNewHandBoardClear = !state.board.spinnerTile
+    && !state.board.openEnds.length
+    && !state.board.placements.length
+    && Object.keys(state.board.spinnerArms).every(arm=>!state.board.spinnerArms[arm].length);
+  const scoresKept = state.scores[0] === scoresBefore[0] && state.scores[1] === scoresBefore[1];
+
+  state.currentPlayerIndex = 0;
+  state.handOver = false;
+  state.gameOver = false;
+  state.passes = 0;
+  state.pending = null;
+  state.stock = [];
+  state.hands = [
+    [[5,5],[5,3],[5,4],[5,6],[6,2],[2,1],[1,0],[0,3],[3,2],[2,4],[4,1]],
+    [[0,0]]
+  ];
+
+  const firstTile = state.hands[0][0];
+  const firstPlayOk = commitPlay(0,firstTile,'open');
+  renderBoard();
+  const firstTileCount = renderedTileCount();
+  const firstTileRendered = inspectRenderedBoard();
+
+  const arms = ['left','right','bottom','bottom','bottom','bottom','bottom','bottom','bottom','bottom'];
+  const moveResults = [];
+  arms.forEach((arm,index)=>{
+    const tile = state.hands[0][0];
+    if(!tile) return;
+    const ok = commitPlay(0,tile,arm);
+    renderBoard();
+    const rendered = inspectRenderedBoard();
+    moveResults.push({
+      move:index+1,
+      arm,
+      ok,
+      tileCount:renderedTileCount(),
+      passed:rendered.passed,
+      overlaps:rendered.overlaps.length,
+      outside:rendered.outside.slice()
+    });
+  });
+
+  mode = savedMode;
+  return {
+    staleTileCount,
+    stalePlacementCount,
+    afterNewHandTileCount,
+    afterNewHandBoardClear,
+    scoresBefore,
+    scoresAfter:state.scores.slice(),
+    scoresKept,
+    firstPlayOk,
+    firstTileCount,
+    firstTileAlone:firstTileCount === 1,
+    firstTileRenderedPassed:firstTileRendered.passed,
+    moveResults,
+    noSecondHandOverlap:moveResults.every(result=>result.passed && result.overlaps === 0 && result.outside.length === 0),
+    noStaleCoordinates:afterNewHandTileCount === 0 && afterNewHandBoardClear,
+    passed:staleTileCount > 0
+      && stalePlacementCount > 0
+      && afterNewHandTileCount === 0
+      && afterNewHandBoardClear
+      && scoresKept
+      && firstPlayOk
+      && firstTileCount === 1
+      && firstTileRendered.passed
+      && moveResults.every(result=>result.passed && result.overlaps === 0 && result.outside.length === 0)
+  };
+}
+
 function boardTileHTML(placement,index){
   const tile = placementTile(placement);
   const cls = [
@@ -1081,6 +1198,7 @@ if(DEBUG){
   window.Play3DDominoesFinalBoneTest = renderDebugFinalBoneDominoScenario;
   window.Play3DDominoesBottomTurnTest = renderDebugBottomTurnScenario;
   window.Play3DDominoesSettlementRoundingTest = renderDebugSettlementRoundingTest;
+  window.Play3DDominoesNewHandResetTest = renderDebugNewHandResetScenario;
 }
 
 function render(){
