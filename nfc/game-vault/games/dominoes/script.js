@@ -740,7 +740,12 @@ function drawTile(){
   const player = state.currentPlayerIndex;
   if(player !== 0 && !activeLocal()) return;
   if(state.handOver || state.gameOver) return;
-  if(canPlay(player)){ log('Play a legal domino if you can.'); return; }
+  const playableBeforeDraw = validPlaySummary(player);
+  if(playableBeforeDraw.length){
+    log('Play a legal domino if you can.');
+    render();
+    return;
+  }
   if(!state.stock.length){ log('Boneyard empty. Pass.'); return; }
   const startingStock = state.stock.length;
   let drew = 0;
@@ -896,6 +901,49 @@ function renderDebugSpinnerGateScenario(){
   });
 }
 
+function renderDebugFinalBoneDominoScenario(){
+  resetBoard();
+  state.players = 2;
+  state.scores = [0,0];
+  state.gotIn = [true,true];
+  state.currentPlayerIndex = 0;
+  state.gameOver = false;
+  state.handOver = false;
+  state.stock = [[0,0],[1,1],[2,2]];
+  state.hands = [
+    [[2,1]],
+    [[2,3],[4,5]]
+  ];
+  state.board.spinnerTile = makeSpinnerPlacement([6,6]);
+  state.board.spinnerArms.left.push(makeBranchPlacement([6,2],'left',6));
+  state.board.spinnerArms.right.push(makeBranchPlacement([6,4],'right',6));
+  refreshOpenEnds();
+
+  const stockBefore = state.stock.length;
+  const handBefore = state.hands[0].length;
+  const playableBefore = validPlaySummary(0);
+  drawTile();
+  const stockAfterBlockedDraw = state.stock.length;
+  const handAfterBlockedDraw = state.hands[0].length;
+  const blockedDraw = stockAfterBlockedDraw === stockBefore && handAfterBlockedDraw === handBefore;
+  const played = playTile(state.hands[0][0],'left');
+
+  return {
+    playableBefore: playableBefore.map(item=>({tile:item.tile,arms:item.arms})),
+    blockedDraw,
+    stockBefore,
+    stockAfterBlockedDraw,
+    handBefore,
+    handAfterBlockedDraw,
+    playReturn: played,
+    finalHandLength: state.hands[0].length,
+    handOver: state.handOver,
+    turnText: turnTextEl ? turnTextEl.textContent : '',
+    dominoDisplayed: state.handOver && state.hands[0].length === 0,
+    noExtraBoneAdded: state.stock.length === stockBefore
+  };
+}
+
 function boardTileHTML(placement,index){
   const tile = placementTile(placement);
   const cls = [
@@ -934,6 +982,7 @@ function renderBoard(){
 if(DEBUG){
   window.Play3DDominoesRenderedAudit = inspectRenderedBoard;
   window.Play3DDominoesRenderSpinnerGateTest = renderDebugSpinnerGateScenario;
+  window.Play3DDominoesFinalBoneTest = renderDebugFinalBoneDominoScenario;
 }
 
 function render(){
@@ -976,6 +1025,11 @@ function render(){
     passBtnEl.parentElement.appendChild(washBtn);
   }
   if(washBtn) washBtn.disabled = !state.handOver && !state.gameOver;
+  if(drawBtnEl){
+    const drawPlayer = state.currentPlayerIndex;
+    const drawAllowedForTurn = drawPlayer === 0 || activeLocal();
+    drawBtnEl.disabled = !drawAllowedForTurn || state.handOver || state.gameOver || !state.stock.length || canPlay(drawPlayer);
+  }
 }
 
 if(armChooser){
