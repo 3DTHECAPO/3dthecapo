@@ -505,9 +505,140 @@ body.buy-page .pill.gold:hover{
   .pay-form-grid{grid-template-columns:1fr}
 }
 
+/* ===== COMING SOON CONSTRUCTION TAPE LOCK ===== */
+.coming-soon-tape-layer{
+  position:fixed;
+  inset:0;
+  z-index:99990;
+  pointer-events:none;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+}
+
+.coming-soon-tape{
+  width:160vw;
+  min-height:118px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  transform:rotate(-18deg);
+  border-top:8px solid #060606;
+  border-bottom:8px solid #060606;
+  background:
+    repeating-linear-gradient(135deg,rgba(0,0,0,.95) 0 22px,transparent 22px 46px),
+    linear-gradient(180deg,#ffe35a,#ffc400 52%,#d89400);
+  color:#080704;
+  box-shadow:
+    0 26px 70px rgba(0,0,0,.72),
+    inset 0 3px 0 rgba(255,255,255,.48),
+    inset 0 -7px 0 rgba(0,0,0,.22);
+  font-family:"Black Ops One",Oswald,Arial,sans-serif;
+  font-size:clamp(28px,5vw,74px);
+  line-height:1;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  text-shadow:0 2px 0 rgba(255,255,255,.28),0 5px 0 rgba(0,0,0,.20);
+}
+
+.coming-soon-tape span{
+  display:inline-flex;
+  align-items:center;
+  white-space:nowrap;
+  padding:0 16px;
+  background:rgba(255,214,0,.90);
+  border:3px solid rgba(0,0,0,.82);
+  box-shadow:0 7px 0 rgba(0,0,0,.34);
+}
+
+.coming-soon-tape-note{
+  position:fixed;
+  left:50%;
+  bottom:22px;
+  z-index:99991;
+  transform:translateX(-50%);
+  width:min(720px,92vw);
+  padding:14px 18px;
+  border:1px solid rgba(255,227,90,.68);
+  border-radius:18px;
+  background:rgba(0,0,0,.82);
+  color:#ffe35a;
+  text-align:center;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  box-shadow:0 18px 44px rgba(0,0,0,.72),0 0 24px rgba(255,196,0,.20);
+}
+
+body.store-coming-soon .pay-start,
+body.store-coming-soon #savePaymentRequest,
+body.store-coming-soon .cash-btn,
+body.store-coming-soon .stripe-btn,
+body.store-coming-soon a[href*="cash.app"],
+body.store-coming-soon a[href*="stripe.com"]{
+  filter:grayscale(.8) brightness(.68);
+  opacity:.62;
+  cursor:not-allowed !important;
+}
+
+body.store-coming-soon .card{
+  position:relative;
+}
+
+body.store-coming-soon .card::after{
+  content:"STORE COMING SOON";
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:18px;
+  min-height:38px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,227,90,.72);
+  border-radius:999px;
+  background:rgba(0,0,0,.76);
+  color:#ffe35a;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+@media(max-width:760px){
+  .coming-soon-tape{
+    width:180vw;
+    min-height:82px;
+    gap:16px;
+    transform:rotate(-24deg);
+    border-top-width:6px;
+    border-bottom-width:6px;
+  }
+
+  .coming-soon-tape span{
+    padding:0 10px;
+    border-width:2px;
+  }
+
+  .coming-soon-tape-note{
+    bottom:14px;
+    font-size:12px;
+    line-height:1.35;
+  }
+}
+
 </style>
 </head>
-<body class="buy-page">
+<body class="buy-page store-coming-soon">
+  <div class="coming-soon-tape-layer" aria-hidden="true">
+    <div class="coming-soon-tape">
+      <span>COMING SOON</span>
+      <span>UNDER CONSTRUCTION</span>
+      <span>STEP LOUD STORE COMING SOON</span>
+      <span>COMING SOON</span>
+    </div>
+  </div>
+  <div class="coming-soon-tape-note" role="status">STEP LOUD STORE COMING SOON — checkout is temporarily locked.</div>
   <main class="wrap">
     <header class="top">
       <a href="./">
@@ -736,6 +867,7 @@ body.buy-page .pill.gold:hover{
   var CASH_TAG = '$3dcashin';
   var STRIPE_URL = 'https://buy.stripe.com/fZu3cvbAYcJogX2a5e4ZG00';
   var STORAGE_KEY = 'play3d_pending_payments_v1';
+  var STORE_COMING_SOON = true;
   var selected = null;
 
   function sendZohoLeadSafe(payload){
@@ -770,6 +902,13 @@ body.buy-page .pill.gold:hover{
     node.classList.add(good ? 'good' : 'bad');
   }
 
+  function blockCheckout(message){
+    var text = message || 'STEP LOUD STORE COMING SOON. Checkout is temporarily locked.';
+    setStatus(byId('paymentStatus'), text, false);
+    setStatus(byId('modalPayStatus'), text, false);
+    return true;
+  }
+
   function paymentUrl(method, tier, price, email){
     if(method === 'cashapp') return 'https://cash.app/' + encodeURIComponent(CASH_TAG) + '/' + encodeURIComponent(price);
     var url = new URL(STRIPE_URL);
@@ -779,6 +918,11 @@ body.buy-page .pill.gold:hover{
   }
 
   function openModal(btn){
+    if(STORE_COMING_SOON){
+      blockCheckout();
+      return;
+    }
+
     selected = {
       tier: btn.getAttribute('data-tier') || 'ENTRY',
       code_type: btn.getAttribute('data-code-type') || btn.getAttribute('data-tier') || 'ENTRY',
@@ -813,6 +957,11 @@ body.buy-page .pill.gold:hover{
   }
 
   function continuePayment(){
+    if(STORE_COMING_SOON){
+      blockCheckout();
+      return;
+    }
+
     if(!selected) return;
     var name = String(byId('modalBuyerName').value || '').trim();
     var email = normalizeEmail(byId('modalBuyerEmail').value);
@@ -873,6 +1022,11 @@ body.buy-page .pill.gold:hover{
   }
 
   function saveManualPayment(){
+    if(STORE_COMING_SOON){
+      blockCheckout();
+      return;
+    }
+
     var name = String(byId('payName').value || '').trim();
     var email = normalizeEmail(byId('payEmail').value);
     var tier = byId('payTier').value || 'ENTRY';
@@ -939,6 +1093,16 @@ body.buy-page .pill.gold:hover{
 
   document.querySelectorAll('.pay-start').forEach(function(btn){
     btn.addEventListener('click', function(){ openModal(btn); });
+    btn.setAttribute('aria-disabled','true');
+  });
+
+  document.querySelectorAll('a[href*="cash.app"], a[href*="stripe.com"], a[href*="buy.stripe.com"]').forEach(function(link){
+    link.setAttribute('aria-disabled','true');
+    link.addEventListener('click', function(event){
+      if(!STORE_COMING_SOON) return;
+      event.preventDefault();
+      blockCheckout();
+    });
   });
 
   if(byId('cancelPayment')) byId('cancelPayment').addEventListener('click', closeModal);
