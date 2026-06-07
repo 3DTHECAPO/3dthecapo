@@ -298,9 +298,13 @@
 
   
  <!-- PLAY 3D DRAGGABLE iPOD MUSIC PLAYER (SMALL) -->
-<button type="button" id="p3dMusicToggle" class="p3d-music-toggle" aria-controls="play3dIpodPlayer" aria-expanded="false">
-  <span>♪</span>
-  <b>Music</b>
+<button type="button" id="p3dSubwooferToggle" class="p3d-subwoofer-toggle" aria-controls="play3dIpodPlayer" aria-expanded="false" aria-label="Open STEP LOUD music player">
+  <span class="subwoofer-cabinet" aria-hidden="true">
+    <span class="subwoofer-led"></span>
+    <span class="subwoofer-cone"></span>
+    <span class="subwoofer-logo">STEP<br>LOUD</span>
+    <span class="subwoofer-bars"><i></i><i></i><i></i><i></i></span>
+  </span>
 </button>
 <div id="play3dIpodPlayer" class="p3d-ipod">
   <div class="p3d-ipod-handle" id="p3dIpodHandle">
@@ -334,66 +338,5 @@
 
 <!-- your main script loads AFTER the player -->
 <script src="./script.js?v=email-lock-1"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  var player = document.getElementById('play3dIpodPlayer');
-  var toggle = document.getElementById('p3dMusicToggle');
-  var minBtn = document.getElementById('p3dIpodMin');
-  var key = 'PLAY3D_IPOD_MOBILE_OPEN';
-  var mobileQuery = window.matchMedia ? window.matchMedia('(max-width: 640px)') : null;
-
-  if(!player || !toggle) return;
-
-  function isMobile(){
-    return mobileQuery ? mobileQuery.matches : window.innerWidth <= 640;
-  }
-
-  function setOpen(open, persist){
-    if(open){
-      document.body.classList.add('p3d-player-open');
-      toggle.setAttribute('aria-expanded','true');
-    }else{
-      document.body.classList.remove('p3d-player-open');
-      toggle.setAttribute('aria-expanded','false');
-    }
-
-    if(persist){
-      try{ localStorage.setItem(key, open ? '1' : '0'); }catch(err){}
-    }
-  }
-
-  function restorePreference(){
-    if(!isMobile()){
-      setOpen(true, false);
-      return;
-    }
-
-    var saved = '0';
-    try{ saved = localStorage.getItem(key) || '0'; }catch(err){}
-    setOpen(saved === '1', false);
-  }
-
-  toggle.addEventListener('click', function(){
-    setOpen(true, true);
-  });
-
-  if(minBtn){
-    minBtn.addEventListener('click', function(event){
-      if(!isMobile()) return;
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      setOpen(false, true);
-    }, true);
-  }
-
-  if(mobileQuery && mobileQuery.addEventListener){
-    mobileQuery.addEventListener('change', restorePreference);
-  }else{
-    window.addEventListener('resize', restorePreference);
-  }
-
-  restorePreference();
-});
-</script>
 </body>
 </html>

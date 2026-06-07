@@ -906,3 +906,197 @@ body.buy-page .pill.gold {
     font-size:7px !important;
   }
 }
+
+/* STEP LOUD SUBWOOFER PLAYER MODE */
+.p3d-subwoofer-toggle{
+  position:fixed;
+  left:14px;
+  bottom:14px;
+  z-index:99998;
+  width:92px;
+  height:92px;
+  padding:0;
+  border:0;
+  border-radius:22px;
+  background:transparent;
+  cursor:pointer;
+  touch-action:none;
+  filter:drop-shadow(0 18px 34px rgba(0,0,0,.78));
+}
+
+.subwoofer-cabinet{
+  position:relative;
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  border-radius:22px;
+  border:1px solid rgba(242,210,123,.54);
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.12),transparent 18%),
+    radial-gradient(circle at 50% 48%,#181818 0 33%,#060606 59%,#000 100%);
+  box-shadow:
+    inset 0 0 0 3px rgba(255,255,255,.04),
+    inset 0 0 0 6px rgba(202,162,74,.11),
+    0 0 18px rgba(202,162,74,.24);
+  overflow:hidden;
+  animation:stepCabinetBump 1.05s ease-in-out infinite;
+}
+
+.subwoofer-cabinet::before{
+  content:"";
+  position:absolute;
+  inset:6px;
+  border-radius:18px;
+  border:2px solid rgba(220,220,220,.24);
+  box-shadow:inset 0 0 10px rgba(255,255,255,.14),0 0 8px rgba(255,255,255,.08);
+}
+
+.subwoofer-led{
+  position:absolute;
+  inset:18px;
+  border-radius:50%;
+  border:3px solid rgba(242,210,123,.82);
+  box-shadow:
+    0 0 10px rgba(242,210,123,.72),
+    0 0 28px rgba(202,162,74,.34),
+    inset 0 0 18px rgba(242,210,123,.28);
+  animation:stepLedPulse 1.05s ease-in-out infinite;
+}
+
+.subwoofer-cone{
+  position:absolute;
+  inset:25px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 50% 50%,#f2d27b 0 8%,#322511 9% 20%,#050505 21% 58%,#161616 59% 100%);
+  border:1px solid rgba(242,210,123,.35);
+  box-shadow:inset 0 0 18px rgba(0,0,0,.88),0 0 12px rgba(202,162,74,.18);
+  animation:stepConePulse .52s ease-in-out infinite;
+}
+
+.subwoofer-logo{
+  position:absolute;
+  inset:auto 0 15px;
+  z-index:3;
+  color:#f2d27b;
+  font-family:"Black Ops One",Oswald,Arial,sans-serif;
+  font-size:9px;
+  line-height:.86;
+  letter-spacing:.08em;
+  text-align:center;
+  text-shadow:0 0 8px rgba(242,210,123,.7),0 2px 6px rgba(0,0,0,.9);
+}
+
+.subwoofer-bars{
+  position:absolute;
+  left:9px;
+  right:9px;
+  top:8px;
+  z-index:3;
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  gap:3px;
+  height:16px;
+}
+
+.subwoofer-bars i{
+  width:4px;
+  height:7px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#f2d27b,#caa24a);
+  box-shadow:0 0 8px rgba(242,210,123,.55);
+  animation:stepBars .72s ease-in-out infinite;
+}
+
+.subwoofer-bars i:nth-child(2){animation-delay:.12s}
+.subwoofer-bars i:nth-child(3){animation-delay:.24s}
+.subwoofer-bars i:nth-child(4){animation-delay:.36s}
+
+.p3d-subwoofer-toggle:hover .subwoofer-cabinet{
+  box-shadow:
+    inset 0 0 0 3px rgba(255,255,255,.05),
+    inset 0 0 0 6px rgba(202,162,74,.16),
+    0 0 26px rgba(242,210,123,.34);
+}
+
+.p3d-ipod{
+  display:none !important;
+}
+
+body.p3d-player-open .p3d-ipod{
+  display:block !important;
+}
+
+body.p3d-player-open .p3d-subwoofer-toggle{
+  display:none !important;
+}
+
+.p3d-music-toggle{
+  display:none !important;
+}
+
+@keyframes stepConePulse{
+  0%,100%{transform:scale(.94)}
+  48%{transform:scale(1.08)}
+}
+
+@keyframes stepLedPulse{
+  0%,100%{opacity:.72;transform:scale(.98)}
+  50%{opacity:1;transform:scale(1.06)}
+}
+
+@keyframes stepCabinetBump{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  18%{transform:translate3d(.7px,-.5px,0) scale(1.012)}
+  36%{transform:translate3d(-.6px,.6px,0) scale(1.004)}
+  54%{transform:translate3d(.4px,.5px,0) scale(1.014)}
+}
+
+@keyframes stepBars{
+  0%,100%{height:6px;opacity:.62}
+  50%{height:16px;opacity:1}
+}
+
+@media (max-width:640px){
+  .p3d-subwoofer-toggle{
+    width:68px;
+    height:68px;
+    left:10px;
+    bottom:10px;
+    border-radius:18px;
+  }
+
+  .subwoofer-cabinet{
+    border-radius:18px;
+  }
+
+  .subwoofer-cabinet::before{
+    inset:5px;
+    border-radius:15px;
+  }
+
+  .subwoofer-led{
+    inset:13px;
+    border-width:2px;
+  }
+
+  .subwoofer-cone{
+    inset:20px;
+  }
+
+  .subwoofer-logo{
+    bottom:10px;
+    font-size:7px;
+  }
+
+  .subwoofer-bars{
+    top:6px;
+    height:12px;
+  }
+
+  .subwoofer-bars i{
+    width:3px;
+  }
+}

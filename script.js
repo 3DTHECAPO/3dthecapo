@@ -312,6 +312,8 @@ document.addEventListener("DOMContentLoaded", function(){
   let warnedMissingAudio = false;
 
   const minBtn = document.getElementById("p3dIpodMin");
+  const subwooferToggle = document.getElementById("p3dSubwooferToggle");
+  const playerModeKey = "PLAY3D_STEP_LOUD_PLAYER_OPEN";
   const cover = document.getElementById("p3dIpodCover");
   const title = document.getElementById("p3dIpodTitle");
   const artist = document.getElementById("p3dIpodArtist");
@@ -523,11 +525,37 @@ document.addEventListener("DOMContentLoaded", function(){
 
   audio.addEventListener('ended', function(){ loadTrack(index + 1, true); });
 
+  function setPlayerOpen(open, persist){
+    document.body.classList.toggle('p3d-player-open', !!open);
+    player.classList.toggle('minimized', !open);
+    if(subwooferToggle) subwooferToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if(minBtn) minBtn.textContent = open ? '—' : '+';
+    if(persist){
+      try{ localStorage.setItem(playerModeKey, open ? '1' : '0'); }catch(err){}
+    }
+  }
+
+  function restorePlayerMode(){
+    let saved = '0';
+    try{ saved = localStorage.getItem(playerModeKey) || '0'; }catch(err){}
+    setPlayerOpen(saved === '1', false);
+  }
+
+  if(subwooferToggle){
+    subwooferToggle.addEventListener('click', function(){
+      if(subwooferToggle.dataset.dragged === '1'){
+        subwooferToggle.dataset.dragged = '0';
+        return;
+      }
+      setPlayerOpen(true, true);
+    });
+  }
+
   if(minBtn){
     minBtn.addEventListener('click', function(e){
       e.stopPropagation();
-      player.classList.toggle('minimized');
-      minBtn.textContent = player.classList.contains('minimized') ? '+' : '-';
+      e.preventDefault();
+      setPlayerOpen(false, true);
     });
   }
 
@@ -639,7 +667,61 @@ document.addEventListener("DOMContentLoaded", function(){
     document.addEventListener('touchcancel', stopDrag);
   }
 
+  if(subwooferToggle && window.PointerEvent){
+    let subDragging = false;
+    let subStartX = 0;
+    let subStartY = 0;
+    let subStartLeft = 0;
+    let subStartRight = 0;
+    let subStartTop = 0;
+    let subStartBottom = 0;
+    let subTranslateX = 0;
+    let subTranslateY = 0;
+
+    subwooferToggle.addEventListener('pointerdown', function(e){
+      subDragging = true;
+      subStartX = e.clientX;
+      subStartY = e.clientY;
+      const rect = subwooferToggle.getBoundingClientRect();
+      subStartLeft = rect.left;
+      subStartRight = rect.right;
+      subStartTop = rect.top;
+      subStartBottom = rect.bottom;
+      try{ subwooferToggle.setPointerCapture(e.pointerId); }catch(err){}
+    });
+
+    subwooferToggle.addEventListener('pointermove', function(e){
+      if(!subDragging) return;
+      const minDeltaX = -subStartLeft;
+      const maxDeltaX = window.innerWidth - subStartRight;
+      const minDeltaY = -subStartTop;
+      const maxDeltaY = window.innerHeight - subStartBottom;
+      let deltaX = e.clientX - subStartX;
+      let deltaY = e.clientY - subStartY;
+      if(Math.abs(deltaX) + Math.abs(deltaY) > 8) subwooferToggle.dataset.dragged = '1';
+      deltaX = Math.max(minDeltaX, Math.min(maxDeltaX, deltaX));
+      deltaY = Math.max(minDeltaY, Math.min(maxDeltaY, deltaY));
+      subTranslateX += deltaX;
+      subTranslateY += deltaY;
+      subStartX = e.clientX;
+      subStartY = e.clientY;
+      subwooferToggle.style.transform = 'translate3d(' + subTranslateX + 'px, ' + subTranslateY + 'px, 0)';
+    });
+
+    subwooferToggle.addEventListener('pointerup', function(){
+      subDragging = false;
+      setTimeout(function(){ subwooferToggle.dataset.dragged = '0'; }, 80);
+    });
+
+    subwooferToggle.addEventListener('pointercancel', function(){
+      subDragging = false;
+      setTimeout(function(){ subwooferToggle.dataset.dragged = '0'; }, 80);
+    });
+  }
+
   loadMusicLibrary().then(function(){
     loadTrack(0, false);
   });
+
+  restorePlayerMode();
 });
