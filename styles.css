@@ -720,31 +720,3 @@ body.buy-page .pill.gold {
 .wheel-btn:hover{
   color:#f2d27b !important;
 }
-
-/* VALLEJO HERO BACKGROUND RESTORE — lightweight approved local identity asset */
-.hero-media{
-  position: relative !important;
-  overflow: hidden !important;
-  background:
-    linear-gradient(135deg, rgba(0,0,0,.54), rgba(202,162,74,.16) 42%, rgba(0,0,0,.78)),
-    url("./nfc/assets/nfc_vallejo_night.jpg") center/cover no-repeat !important;
-}
-
-.hero-media::after{
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 18% 16%, rgba(242,210,123,.20), transparent 30%),
-    linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.42));
-  mix-blend-mode: screen;
-}
-
-.hero-media>img:first-child{
-  position: relative;
-  z-index: 1;
-  opacity: .78;
-  mix-blend-mode: screen;
-}
