@@ -1,4 +1,4 @@
-body{margin:0;color:#f4f1ea;font-family:Oswald,Arial,sans-serif;background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.86)),url("./vallejo_bg.png") center/cover fixed #050505;background-size:cover;background-position:center;background-attachment:fixed}
+body{margin:0;color:#f4f1ea;font-family:Oswald,Arial,sans-serif;background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.86)),url("./vallejo_bg.png") center/cover fixed #050505;background-repeat:no-repeat;background-size:cover;background-position:center;background-attachment:fixed}
 .page{position:relative;z-index:1;width:min(1120px,92vw);margin:0 auto;padding:18px 0 54px}
 .noise{position:fixed;inset:0;pointer-events:none;opacity:.18;mix-blend-mode:overlay;z-index:0}
 .card{background:rgba(0,0,0,.58);border:1px solid rgba(255,255,255,.14);border-radius:18px;box-shadow:0 26px 76px rgba(0,0,0,.8);overflow:hidden}
@@ -721,13 +721,12 @@ body.buy-page .pill.gold {
   color:#f2d27b !important;
 }
 
-/* VALLEJO HERO BACKGROUND RESTORE — approved full website background asset */
+/* WEBSITE BACKGROUND / HEADER FIX — body owns Vallejo map, speakers stay inside hero box */
 .hero-media{
   position: relative !important;
   overflow: hidden !important;
-  background:
-    linear-gradient(135deg, rgba(0,0,0,.54), rgba(202,162,74,.16) 42%, rgba(0,0,0,.78)),
-    url("./vallejo_bg.png") center/cover no-repeat !important;
+  isolation: isolate !important;
+  background: linear-gradient(135deg, rgba(0,0,0,.82), rgba(202,162,74,.13) 42%, rgba(0,0,0,.88)) !important;
 }
 
 .hero-media::after{
@@ -745,6 +744,15 @@ body.buy-page .pill.gold {
 .hero-media>img:first-child{
   position: relative;
   z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   opacity: .78;
   mix-blend-mode: screen;
+}
+
+@media (max-width:640px){
+  body{
+    background-attachment: scroll;
+  }
 }
