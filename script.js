@@ -206,8 +206,8 @@
     });
   }
 
-  const shareButton = byId('siteShareButton');
-  const shareFeedback = byId('siteShareFeedback');
+  const shareButton = byId('putMeOnShareButton');
+  const shareFeedback = byId('putMeOnShareFeedback');
 
   function showShareFeedback(message){
     if(!shareFeedback) return;
@@ -240,24 +240,24 @@
     shareButton.addEventListener('click', async function(){
       const payload = {
         title: '3D THE CAPO',
-        text: 'Tap in with 3D THE CAPO — music, merch, games, rewards, and vault access.',
+        text: 'Yo, check this out.\n\nMusic, merch, games, rewards and exclusive drops.',
         url: 'https://3dthecapo.com'
       };
 
       try{
         if(navigator.share){
           await navigator.share(payload);
-          showShareFeedback('Shared');
+          showShareFeedback('🔥 Appreciate you putting somebody on.');
           return;
         }
 
         await copyShareLink(payload.url);
-        showShareFeedback('Link copied');
+        showShareFeedback('🔥 Link copied. Put somebody on.');
       }catch(err){
         if(err && err.name === 'AbortError') return;
         try{
           await copyShareLink(payload.url);
-          showShareFeedback('Link copied');
+          showShareFeedback('🔥 Link copied. Put somebody on.');
         }catch(copyErr){
           showShareFeedback('Copy failed');
         }

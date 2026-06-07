@@ -1101,9 +1101,21 @@ body.p3d-player-open .p3d-subwoofer-toggle{
   }
 }
 
-/* HOMEPAGE SHARE BUTTON */
-.share-btn{
+/* PUT ME ON SHARE BUTTON */
+.put-me-on-btn{
   font-family:Oswald,Arial,sans-serif;
+  border-color:rgba(242,210,123,.62) !important;
+  background:
+    radial-gradient(circle at 20% 0%,rgba(255,255,255,.28),transparent 24%),
+    linear-gradient(180deg,#f2d27b,#caa24a 58%,#7c5518) !important;
+  color:#120c04 !important;
+  box-shadow:0 0 18px rgba(202,162,74,.22), inset 0 1px 0 rgba(255,255,255,.32);
+  animation:putMeOnPulse 2.4s ease-in-out infinite;
+}
+
+.put-me-on-btn:hover{
+  box-shadow:0 0 28px rgba(242,210,123,.48),0 10px 28px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.45) !important;
+  transform:translateY(-3px) scale(1.015);
 }
 
 .share-feedback{
@@ -1131,4 +1143,9 @@ body.p3d-player-open .p3d-subwoofer-toggle{
     min-height:24px;
     width:100%;
   }
+}
+
+@keyframes putMeOnPulse{
+  0%,100%{filter:brightness(1);box-shadow:0 0 16px rgba(202,162,74,.22), inset 0 1px 0 rgba(255,255,255,.32)}
+  50%{filter:brightness(1.07);box-shadow:0 0 26px rgba(242,210,123,.42), inset 0 1px 0 rgba(255,255,255,.42)}
 }
