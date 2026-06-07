@@ -1,4 +1,4 @@
-body{margin:0;color:#f4f1ea;font-family:Oswald,Arial,sans-serif;background:radial-gradient(circle at 50% 0%,rgba(202,162,74,.18),transparent 32%),linear-gradient(180deg,#090807 0%,#030303 58%,#000 100%);background-size:cover;background-position:center;background-attachment:scroll}
+body{margin:0;color:#f4f1ea;font-family:Oswald,Arial,sans-serif;background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.86)),url("./vallejo_bg.png") center/cover fixed #050505;background-size:cover;background-position:center;background-attachment:fixed}
 .page{position:relative;z-index:1;width:min(1120px,92vw);margin:0 auto;padding:18px 0 54px}
 .noise{position:fixed;inset:0;pointer-events:none;opacity:.18;mix-blend-mode:overlay;z-index:0}
 .card{background:rgba(0,0,0,.58);border:1px solid rgba(255,255,255,.14);border-radius:18px;box-shadow:0 26px 76px rgba(0,0,0,.8);overflow:hidden}
@@ -490,8 +490,8 @@ body.buy-page .top-logo {
 /* BUY PAGE CINEMATIC MODE */
 body.buy-page {
   background:
-    radial-gradient(circle at top, rgba(202,162,74,.18), transparent 35%),
-    linear-gradient(180deg, rgba(0,0,0,.72), rgba(0,0,0,.94)) !important;
+    linear-gradient(180deg, rgba(0,0,0,.58), rgba(0,0,0,.92)),
+    url("./vallejo_bg.png") center/cover fixed #050505 !important;
 }
 
 body.buy-page .hero,
@@ -719,4 +719,32 @@ body.buy-page .pill.gold {
 
 .wheel-btn:hover{
   color:#f2d27b !important;
+}
+
+/* VALLEJO HERO BACKGROUND RESTORE — approved full website background asset */
+.hero-media{
+  position: relative !important;
+  overflow: hidden !important;
+  background:
+    linear-gradient(135deg, rgba(0,0,0,.54), rgba(202,162,74,.16) 42%, rgba(0,0,0,.78)),
+    url("./vallejo_bg.png") center/cover no-repeat !important;
+}
+
+.hero-media::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 16%, rgba(242,210,123,.20), transparent 30%),
+    linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.42));
+  mix-blend-mode: screen;
+}
+
+.hero-media>img:first-child{
+  position: relative;
+  z-index: 1;
+  opacity: .78;
+  mix-blend-mode: screen;
 }
