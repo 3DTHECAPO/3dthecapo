@@ -1100,3 +1100,35 @@ body.p3d-player-open .p3d-subwoofer-toggle{
     width:3px;
   }
 }
+
+/* HOMEPAGE SHARE BUTTON */
+.share-btn{
+  font-family:Oswald,Arial,sans-serif;
+}
+
+.share-feedback{
+  display:inline-flex;
+  align-items:center;
+  min-height:40px;
+  color:#f2d27b;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  text-shadow:0 0 12px rgba(242,210,123,.32);
+  opacity:0;
+  transform:translateY(2px);
+  transition:opacity .18s ease,transform .18s ease;
+}
+
+.share-feedback.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+@media (max-width:640px){
+  .share-feedback{
+    min-height:24px;
+    width:100%;
+  }
+}

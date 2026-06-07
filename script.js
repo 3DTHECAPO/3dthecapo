@@ -206,6 +206,65 @@
     });
   }
 
+  const shareButton = byId('siteShareButton');
+  const shareFeedback = byId('siteShareFeedback');
+
+  function showShareFeedback(message){
+    if(!shareFeedback) return;
+    shareFeedback.textContent = message;
+    shareFeedback.classList.add('visible');
+    clearTimeout(showShareFeedback.timer);
+    showShareFeedback.timer = setTimeout(function(){
+      shareFeedback.classList.remove('visible');
+    }, 2200);
+  }
+
+  async function copyShareLink(url){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      await navigator.clipboard.writeText(url);
+      return;
+    }
+
+    const input = document.createElement('input');
+    input.value = url;
+    input.setAttribute('readonly','readonly');
+    input.style.position = 'fixed';
+    input.style.left = '-9999px';
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    document.body.removeChild(input);
+  }
+
+  if(shareButton){
+    shareButton.addEventListener('click', async function(){
+      const payload = {
+        title: '3D THE CAPO',
+        text: 'Tap in with 3D THE CAPO — music, merch, games, rewards, and vault access.',
+        url: 'https://3dthecapo.com'
+      };
+
+      try{
+        if(navigator.share){
+          await navigator.share(payload);
+          showShareFeedback('Shared');
+          return;
+        }
+
+        await copyShareLink(payload.url);
+        showShareFeedback('Link copied');
+      }catch(err){
+        if(err && err.name === 'AbortError') return;
+        try{
+          await copyShareLink(payload.url);
+          showShareFeedback('Link copied');
+        }catch(copyErr){
+          showShareFeedback('Copy failed');
+        }
+      }
+    });
+  }
+
 })();
 
 (function(){
