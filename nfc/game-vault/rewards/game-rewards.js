@@ -34,7 +34,7 @@
       memberLocal: !!id.member,
       hasVaultPass: activePass,
       visitorAccess: activePass && !id.paidMember,
-      memberId: id.memberId || null,
+      memberId: id.memberTableId || id.member_table_id || id.memberId || id.member_id || null,
       memberNumber: id.memberNumber || id.member_number || null,
       email: id.email || pass.email || pass.recipient_email || pass.recipientEmail || null,
       code: pass.code || localStorage.getItem('play3d_last_code') || '',
@@ -80,14 +80,20 @@
       if(metadata[key] === null || metadata[key] === undefined || metadata[key] === '') delete metadata[key];
     });
 
+    metadata.event_name = 'game_win';
+    metadata.reward_key = clientEventId;
+
     return {
-      event_type: 'game_win',
+      member_id: identity.memberId || undefined,
+      email: identity.email || undefined,
+      reward_type: 'bonus_content',
+      reward_label: 'game_win',
+      reward_code: clientEventId,
+      credits: points,
       source: 'game_vault',
       game: String(game || 'unknown'),
-      points,
-      reward_key: 'game_credit',
       created_at: now,
-      metadata
+      reward_metadata: metadata
     };
   }
 
@@ -96,9 +102,24 @@
     const attempts = [
       payload,
       {
-        event_type: payload.event_type,
+        member_id: payload.member_id,
+        email: payload.email,
+        reward_type: payload.reward_type,
+        reward_label: payload.reward_label,
+        reward_code: payload.reward_code,
+        credits: payload.credits,
+        source: payload.source,
         game: payload.game,
-        points: payload.points,
+        created_at: payload.created_at
+      },
+      {
+        member_id: payload.member_id,
+        email: payload.email,
+        reward_type: payload.reward_type,
+        reward_label: payload.reward_label,
+        credits: payload.credits,
+        source: payload.source,
+        game: payload.game,
         created_at: payload.created_at
       }
     ];
@@ -129,7 +150,7 @@
   }
 
   async function resolveRewardMemberContext(payload){
-    const metadata = Object.assign({}, payload.metadata || {});
+    const metadata = Object.assign({}, payload.reward_metadata || {});
     const memberNumber = String(metadata.member_number || '').trim();
     const email = String(metadata.email || '').trim().toLowerCase();
     if(!memberNumber && !email) return payload;
@@ -150,7 +171,11 @@
       metadata.member_table_id = row.id || metadata.member_table_id;
       metadata.member_number = row.member_number || metadata.member_number;
       metadata.email = row.email || metadata.email;
-      return Object.assign({}, payload, {metadata});
+      return Object.assign({}, payload, {
+        member_id: row.id || payload.member_id,
+        email: row.email || payload.email,
+        reward_metadata: metadata
+      });
     }catch(e){
       return payload;
     }
