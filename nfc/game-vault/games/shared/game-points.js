@@ -5,6 +5,7 @@
   var HISTORY_KEY = 'play3d_game_points_history_v1';
   var PROFILE_KEY = 'play3d_player_profile_v1';
   var AWARD_LOG_KEY = 'play3d_game_points_award_log_v1';
+  var MILESTONE_LOG_KEY = 'play3d_milestone_event_log_v1';
   var SESSION_KEY = 'play3d_game_session_seen_v1';
   var SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
   var SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
@@ -197,11 +198,113 @@
     else profile.inventory.push(Object.assign({count:1, rarity:'common'}, item));
   }
 
+  function currentGameName(){
+    var match = location.pathname.replace(/\\/g, '/').match(/\/games\/([^\/]+)/);
+    return match && match[1] ? match[1] : 'global';
+  }
+
+  function cleanObject(obj){
+    Object.keys(obj).forEach(function(key){
+      if(obj[key] === null || obj[key] === undefined || obj[key] === '') delete obj[key];
+    });
+    return obj;
+  }
+
+  function fanRoomContext(){
+    var params = new URLSearchParams(location.search);
+    var mode = params.get('mode') || '';
+    var room = params.get('room') || '';
+    if(mode !== 'fan' && !room) return {};
+    return cleanObject({
+      mode:mode || 'fan',
+      room_code:room,
+      player_id:localStorage.getItem('play3d_player_id') || ''
+    });
+  }
+
+  function milestoneEventKey(identity, milestone){
+    var id = milestone && milestone.id ? String(milestone.id) : '';
+    if(!id) return '';
+    if(identity.member_number) return 'milestone:' + identity.member_number + ':' + id;
+    if(identity.email) return 'milestone:' + identity.email + ':' + id;
+    return '';
+  }
+
+  async function rewardEventExists(rewardCode){
+    if(!rewardCode) return false;
+    try{
+      var response = await fetch(SUPABASE_URL + '/rest/v1/' + REWARD_EVENTS_TABLE + '?reward_code=eq.' + encodeURIComponent(rewardCode) + '&select=id&limit=1', {
+        headers:{
+          'apikey':SUPABASE_ANON,
+          'Authorization':'Bearer ' + SUPABASE_ANON
+        }
+      });
+      if(!response.ok) return false;
+      var rows = await response.json().catch(function(){ return []; });
+      return Array.isArray(rows) && rows.length > 0;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function buildMilestoneEvent(milestone, profile){
+    var identity = rewardIdentity();
+    var rewardCode = milestoneEventKey(identity, milestone);
+    if(!rewardCode) return null;
+    var metadata = cleanObject(Object.assign({
+      event_name:'milestone_unlock',
+      milestone_key:milestone.id,
+      milestone_label:milestone.name,
+      member_number:identity.member_number,
+      member_table_id:identity.member_table_id,
+      email:identity.email,
+      game:currentGameName(),
+      page:location.pathname,
+      rank:profile && profile.rank,
+      total_points:profile && profile.totalPoints,
+      total_wins:profile && profile.totalWins,
+      jackpot_count:profile && profile.jackpotCount
+    }, fanRoomContext()));
+
+    return {
+      member_id:identity.member_table_id || undefined,
+      email:identity.email || undefined,
+      reward_type:'bonus_content',
+      reward_label:'milestone_unlock',
+      reward_code:rewardCode,
+      source:'game_vault_milestones',
+      game:currentGameName(),
+      credits:0,
+      created_at:new Date().toISOString(),
+      reward_metadata:metadata
+    };
+  }
+
+  function logMilestoneUnlock(milestone, profile){
+    var payload = buildMilestoneEvent(milestone, profile);
+    if(!payload) return false;
+    var localLog = readJSON(MILESTONE_LOG_KEY, {});
+    if(localLog[payload.reward_code]) return false;
+    localLog[payload.reward_code] = {at:new Date().toISOString(), milestone:milestone.id};
+    writeJSON(MILESTONE_LOG_KEY, localLog);
+    Promise.resolve()
+      .then(function(){ return rewardEventExists(payload.reward_code); })
+      .then(function(exists){
+        if(exists) return false;
+        return postRewardEvent(payload);
+      })
+      .catch(function(error){
+        console.warn('PLAY 3D milestone reward_events logging failed', {payload:payload, error:error});
+      });
+    return true;
+  }
+
   function evaluateAchievements(profile){
     ACHIEVEMENTS.forEach(function(a){
       if(!profile.achievements[a.id] && a.test(profile)){
         profile.achievements[a.id] = {name:a.name, at:new Date().toISOString()};
         addInventoryItem(profile, {id:'badge_' + a.id, name:a.name + ' Badge', type:'badge', rarity:a.id.indexOf('jackpot') >= 0 ? 'legendary' : 'rare', count:1});
+        logMilestoneUnlock(a, profile);
       }
     });
   }
@@ -241,6 +344,7 @@
 
   function rewardIdentity(){
     var pass = getPassSession() || {};
+    var memberProfile = readJSON('play3d_member_profile_v1', {});
     var identity = {};
     try{
       if(window.Play3DMemberSystem && typeof window.Play3DMemberSystem.identity === 'function'){
@@ -248,11 +352,11 @@
       }
     }catch(e){}
     return {
-      member_number:identity.memberNumber || identity.member_number || pass.member_number || '',
-      member_table_id:identity.memberTableId || identity.member_table_id || identity.memberId || pass.member_table_id || '',
-      email:identity.email || pass.email || pass.recipient_email || pass.recipientEmail || '',
+      member_number:identity.memberNumber || identity.member_number || memberProfile.member_number || pass.member_number || '',
+      member_table_id:identity.memberTableId || identity.member_table_id || identity.memberId || identity.member_id || memberProfile.member_id || memberProfile.id || pass.member_table_id || pass.member_id || '',
+      email:identity.email || memberProfile.email || pass.email || pass.recipient_email || pass.recipientEmail || '',
       code:pass.code || localStorage.getItem('play3d_last_code') || '',
-      tier:identity.tier || pass.tier || pass.code_type || ''
+      tier:identity.tier || memberProfile.tier || pass.tier || pass.code_type || ''
     };
   }
 
@@ -272,9 +376,7 @@
       credits:points,
       bank_after:total
     };
-    Object.keys(rewardMetadata).forEach(function(key){
-      if(rewardMetadata[key] === null || rewardMetadata[key] === undefined || rewardMetadata[key] === '') delete rewardMetadata[key];
-    });
+    cleanObject(rewardMetadata);
     var rewardCode = ['game_win', String(game || 'game'), String(Date.now()), Math.random().toString(36).slice(2, 8)].join(':');
     rewardMetadata.reward_key = rewardCode;
     return {
