@@ -23,6 +23,23 @@ let lastShot = 0;
 let mobileVector = { x: 0, y: 0 };
 let mobileFire = false;
 let audioCtx = null;
+let awardedDefenderMilestones = {};
+
+function awardDefenderPoints(key, points) {
+  if (awardedDefenderMilestones[key]) return;
+  awardedDefenderMilestones[key] = true;
+  if (!window.Play3DPoints || typeof window.Play3DPoints.award !== "function") return;
+  window.Play3DPoints.award("3d-defender", points, key);
+}
+
+function checkDefenderPointMilestones() {
+  if (score >= 100) awardDefenderPoints("score_100", 25);
+  if (score >= 500) awardDefenderPoints("score_500", 75);
+  if (score >= 1000) awardDefenderPoints("score_1000", 150);
+  if (wave >= 2) awardDefenderPoints("wave_2", 40);
+  if (wave >= 5) awardDefenderPoints("wave_5", 125);
+  if (wave >= 10) awardDefenderPoints("wave_10", 300);
+}
 
 function getAudioCtx() {
   if (!audioCtx) {
@@ -118,6 +135,7 @@ function startGame() {
   bullets = [];
   enemies = [];
   particles = [];
+  awardedDefenderMilestones = {};
   player.x = 400;
   player.y = 400;
   scoreEl.textContent = "0";
@@ -253,6 +271,7 @@ function update() {
           enemies.splice(j, 1);
           score += 20;
           scoreEl.textContent = String(score);
+          checkDefenderPointMilestones();
           createExplosion(enemy.x, enemy.y);
         }
         break;
@@ -260,7 +279,10 @@ function update() {
     }
   }
 
-  if (score > wave * 400) wave++;
+  if (score > wave * 400) {
+    wave++;
+    checkDefenderPointMilestones();
+  }
   waveEl.textContent = String(wave);
 }
 
