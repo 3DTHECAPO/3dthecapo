@@ -33,12 +33,12 @@ function awardDefenderPoints(key, points) {
 }
 
 function checkDefenderPointMilestones() {
-  if (score >= 100) awardDefenderPoints("score_100", 25);
-  if (score >= 500) awardDefenderPoints("score_500", 75);
-  if (score >= 1000) awardDefenderPoints("score_1000", 150);
-  if (wave >= 2) awardDefenderPoints("wave_2", 40);
-  if (wave >= 5) awardDefenderPoints("wave_5", 125);
-  if (wave >= 10) awardDefenderPoints("wave_10", 300);
+  if (score >= 500) awardDefenderPoints("score_500", 25);
+  if (score >= 1500) awardDefenderPoints("score_1500", 50);
+  if (score >= 3000) awardDefenderPoints("score_3000", 75);
+  if (wave >= 5) awardDefenderPoints("wave_5", 25);
+  if (wave >= 10) awardDefenderPoints("wave_10", 50);
+  if (wave >= 20) awardDefenderPoints("wave_20", 100);
 }
 
 function getAudioCtx() {

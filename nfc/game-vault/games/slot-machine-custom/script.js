@@ -228,6 +228,14 @@
     vaultPassOverlay.hidden = false;
   }
 
+  function rewardCreditsForSpin(win, label, scored, passCount){
+    if(!win || win <= 0) return 0;
+    if(label === 'VAULT JACKPOT') return Math.min(750, Math.max(500, Math.floor(win / 25)));
+    if(passCount >= 3) return 500;
+    if(!scored || !scored.hits || !scored.hits.length) return 0;
+    return Math.min(125, Math.max(25, Math.floor(win / 20)));
+  }
+
   function finishSpin(board){
     stopSpinSound();
     board.forEach((symbol, i)=>setCell(cells[i], symbol));
@@ -261,7 +269,8 @@
       : win
         ? label + ' pays ' + win + ' credits. ' + (scored.hits && scored.hits.length ? scored.hits.map(hit => hit.line + ': ' + hit.combo + ' = ' + hit.payout).join(' | ') : '')
         : 'No win. Pull again.';
-    if(points && win > 0) points.award('slot-machine-custom', Math.min(300, Math.max(25, Math.floor(win / 8))), label.toLowerCase().replaceAll(' ','_'));
+    const rewardCredits = rewardCreditsForSpin(win, label, scored, passCount);
+    if(points && rewardCredits > 0) points.award('slot-machine-custom', rewardCredits, label.toLowerCase().replaceAll(' ','_'));
     spinning = false;
     playAgainBtn.hidden = false;
     save();

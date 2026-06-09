@@ -306,7 +306,7 @@ function showMeld(){
     state.meldShown=true;
     announce('MELD','elite','MELD IS ON THE TABLE.');
     if(window.Play3DPoints&&state.meldScores[0]>0){
-      window.Play3DPoints.award('pinochle',Math.min(150,state.meldScores[0]*5),'meld_score');
+      window.Play3DPoints.award('pinochle',Math.min(75,Math.max(25,state.meldScores[0]*2)),'meld_score');
     }
     render('MELD: TEAM A '+state.meldScores[0]+' / TEAM B '+state.meldScores[1]+' - PRESS START PLAY');
     return;
@@ -522,7 +522,7 @@ function finishHand(){
 
   const winner=state.scores[0]>=500||state.scores[1]>=500?(state.scores[0]>=state.scores[1]?0:1):null;
   state.phase=winner===null?'over':'gameover';
-  if(window.Play3DPoints&&winner===0)window.Play3DPoints.award('pinochle',300,'round_win');
+  if(window.Play3DPoints&&winner===0)window.Play3DPoints.award('pinochle',175,'round_win');
   announce('WIN','success',winner===null?(made?'BID MADE':'BID SET'):teamName(winner)+' WINS GAME');
   render(winner===null?(made?'BID MADE':'SET - LOSE BID'):teamName(winner)+' WINS GAME');
 }

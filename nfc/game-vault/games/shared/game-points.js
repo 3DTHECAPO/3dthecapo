@@ -6,12 +6,15 @@
   var PROFILE_KEY = 'play3d_player_profile_v1';
   var AWARD_LOG_KEY = 'play3d_game_points_award_log_v1';
   var MILESTONE_LOG_KEY = 'play3d_milestone_event_log_v1';
+  var DAILY_EARN_KEY = 'play3d_game_points_daily_earn_v1';
   var SESSION_KEY = 'play3d_game_session_seen_v1';
   var SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
   var SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
   var REWARD_EVENTS_TABLE = 'reward_events';
   var THRESHOLD = 100000;
   var TODAY = new Date().toISOString().slice(0, 10);
+  var DAILY_REWARD_CAP = 2500;
+  var DAILY_GAME_CAP = 1000;
 
   var RANKS = [
     {name:'BEGINNER', xp:0, points:0, wins:0, jackpots:0},
@@ -342,6 +345,31 @@
     return /win|checkmate|round|contract|clear|jackpot|vault_pass/i.test(reason || '');
   }
 
+  function dailyEarnState(){
+    var state = readJSON(DAILY_EARN_KEY, null);
+    if(!state || state.date !== TODAY){
+      state = {date:TODAY, total:0, games:{}};
+    }
+    state.games = state.games || {};
+    state.total = Math.max(0, Math.floor(Number(state.total) || 0));
+    return state;
+  }
+
+  function applyDailyCaps(game, points){
+    var state = dailyEarnState();
+    var key = game || 'game';
+    var gameTotal = Math.max(0, Math.floor(Number(state.games[key]) || 0));
+    var totalLeft = Math.max(0, DAILY_REWARD_CAP - state.total);
+    var gameLeft = Math.max(0, DAILY_GAME_CAP - gameTotal);
+    var allowed = Math.max(0, Math.min(points, totalLeft, gameLeft));
+    if(allowed > 0){
+      state.total += allowed;
+      state.games[key] = gameTotal + allowed;
+      writeJSON(DAILY_EARN_KEY, state);
+    }
+    return allowed;
+  }
+
   function rewardIdentity(){
     var pass = getPassSession() || {};
     var memberProfile = readJSON('play3d_member_profile_v1', {});
@@ -462,6 +490,8 @@
     var recent = (awardLog[key] || []).filter(function(t){ return now - t < 10 * 60 * 1000; });
     var factor = recent.length >= 6 ? 0.25 : recent.length >= 3 ? 0.5 : 1;
     points = Math.max(1, Math.floor(points * factor));
+    points = applyDailyCaps(game || 'game', points);
+    if(!points) return getStatus();
     recent.push(now);
     awardLog[key] = recent.slice(-10);
     writeJSON(AWARD_LOG_KEY, awardLog);

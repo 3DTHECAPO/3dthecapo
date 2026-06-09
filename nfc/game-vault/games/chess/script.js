@@ -131,6 +131,9 @@
     }
   }
   function cpuSettings(){ return difficultySettings[cpuDifficultyName()] || difficultySettings[defaultDifficulty]; }
+  function checkmateReward(){
+    return {easy:0, normal:75, hard:175, boss:300}[cpuDifficultyName()] || 300;
+  }
   function thinkDelay(){
     const delay = cpuSettings().delay;
     return delay[0] + Math.floor(Math.random() * Math.max(1,delay[1]-delay[0]));
@@ -182,7 +185,7 @@
       play3dAnnounce('CHECK','warning');
     }
     if(window.Play3DGameSync) window.Play3DGameSync.sendMove({game:'chess', san:move.san, fen:game.fen()});
-    if(window.Play3DPoints && verifiedCheckmate()) window.Play3DPoints.award('chess', 350, 'checkmate');
+    if(window.Play3DPoints && verifiedCheckmate() && checkmateReward() > 0) window.Play3DPoints.award('chess', checkmateReward(), 'checkmate_' + cpuDifficultyName());
     if(mode === 'cpu' && game.turn() === 'b' && !game.isGameOver()){
       render('OPPONENT THINKING...');
       window.setTimeout(cpuMove, thinkDelay());
