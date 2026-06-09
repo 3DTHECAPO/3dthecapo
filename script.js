@@ -247,17 +247,17 @@
       try{
         if(navigator.share){
           await navigator.share(payload);
-          showShareFeedback('🔥 Appreciate you putting somebody on.');
+          showShareFeedback('🔥 TELL A FRIEND 2 TELL A FRIEND .');
           return;
         }
 
         await copyShareLink(payload.url);
-        showShareFeedback('🔥 Link copied. Put somebody on.');
+        showShareFeedback('🔥 LINK LOADED.');
       }catch(err){
         if(err && err.name === 'AbortError') return;
         try{
           await copyShareLink(payload.url);
-          showShareFeedback('🔥 Link copied. Put somebody on.');
+          showShareFeedback('🔥 PASTE DAT SHIT YEE.');
         }catch(copyErr){
           showShareFeedback('Copy failed');
         }
