@@ -58,6 +58,7 @@
     if(!row || typeof row !== 'object') return null;
     return {
       id: row.id || row.ID || row.member_id || row.MEMBER_ID || '',
+      member_number: row.member_number || row.MEMBER_NUMBER || '',
       email: normalizeEmail(row.email || row.EMAIL || ''),
       name: row.name || row.NAME || '',
       member_status: row.member_status || row.MEMBER_STATUS || '',
@@ -169,6 +170,7 @@
       const email = normalizeEmail((profile && profile.email) || localStorage.getItem(MEMBER_EMAIL_KEY) || pass.email || pass.recipient_email || pass.recipientEmail || '');
       saveMemberProfile({
         member_id: memberId,
+        member_number: (profile && profile.member_number) || pass.member_number || '',
         email,
         name: (profile && profile.name) || '',
         tier: (profile && profile.tier) || pass.tier || 'MEMBER',
@@ -204,6 +206,7 @@
       deactivateMember();
       saveMemberProfile({
         member_id: row.id,
+        member_number: row.member_number,
         email: row.email,
         name: row.name,
         tier: row.tier,
@@ -216,6 +219,7 @@
 
     activatePaidMember({
       member_id: row.id,
+      member_number: row.member_number,
       email: row.email,
       name: row.name,
       tier: row.tier,
@@ -265,6 +269,11 @@
       visitorAccess:hasActivePass() && !isPaidMember(),
       hasVaultPass:hasActivePass(),
       memberId: profile.member_id || localStorage.getItem(MEMBER_ID_KEY) || null,
+      member_id: profile.member_id || localStorage.getItem(MEMBER_ID_KEY) || null,
+      memberTableId: profile.member_id || localStorage.getItem(MEMBER_ID_KEY) || null,
+      member_table_id: profile.member_id || localStorage.getItem(MEMBER_ID_KEY) || null,
+      memberNumber: profile.member_number || pass.member_number || null,
+      member_number: profile.member_number || pass.member_number || null,
       email: normalizeEmail(profile.email || localStorage.getItem(MEMBER_EMAIL_KEY) || pass.email || pass.recipient_email || pass.recipientEmail || ''),
       code: pass.code || '',
       tier: profile.tier || pass.tier || '',
