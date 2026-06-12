@@ -384,14 +384,18 @@
       member_table_id:identity.memberTableId || identity.member_table_id || identity.memberId || identity.member_id || memberProfile.member_id || memberProfile.id || pass.member_table_id || pass.member_id || '',
       email:identity.email || memberProfile.email || pass.email || pass.recipient_email || pass.recipientEmail || '',
       code:pass.code || localStorage.getItem('play3d_last_code') || '',
-      tier:identity.tier || memberProfile.tier || pass.tier || pass.code_type || ''
+      tier:identity.tier || memberProfile.tier || pass.tier || pass.code_type || '',
+      paidMember:!!(identity.paidMember || identity.paid_member || memberProfile.paid_registration),
+      memberStatus:identity.memberStatus || identity.member_status || memberProfile.member_status || ''
     };
   }
 
   function displayMemberNumber(){
     var identity = rewardIdentity();
     var real = String(identity.real_member_number || identity.realMemberNumber || identity.member_number || '').trim();
-    if(/^MEM-\d{6,}$/i.test(real)) return real.toUpperCase();
+    var status = String(identity.memberStatus || '').trim().toUpperCase();
+    var activeStatus = ['ACTIVE','PAID','MEMBER','APPROVED','CURRENT'].indexOf(status) !== -1;
+    if((identity.paidMember || activeStatus) && /^MEM-\d{6,}$/i.test(real)) return real.toUpperCase();
     return 'Member Pending';
   }
 
