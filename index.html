@@ -338,9 +338,9 @@
               <button class="pill small" type="button" data-size="3XL">3XL</button>
             </div>
             <div class="mini-actions">
-              <a class="pill gold small" id="modalBuyButton" href="https://cash.app/$3dcashin" target="_blank" rel="noopener">Buy Now</a>
+              <a class="pill gold small" id="modalBuyButton" href="./buy.html" target="_blank" rel="noopener">Buy Now</a>
             </div>
-            <p class="note" id="modalNote">$25. Pick color and size, then tap Buy Now. Add product/color/size in the Cash App note.</p>
+            <p class="note" id="modalNote">$25. Pick color and size, then tap Buy Now to continue checkout.</p>
           </div>
         </div>
       </div>
@@ -397,11 +397,12 @@
 
 <script>
 (function () {
+  const MERCH_BUY_URL = './buy.html';
   const merchProducts = {
     alien: {
       name: 'Fly & Legendary Alien TEE',
       price: '$25',
-      buyUrl: 'https://cash.app/$3dcashin',
+      buyUrl: MERCH_BUY_URL,
       variants: [
         { label: 'Black Tee', img: './fly-legendary-alien-black-tee.png?v=2' }
       ]
@@ -409,7 +410,7 @@
     fly: {
       name: 'Fly & Legendary TEE',
       price: '$25',
-      buyUrl: 'https://cash.app/$3dcashin',
+      buyUrl: MERCH_BUY_URL,
       variants: [
         { label: 'White Tee', img: './fly-legendary-white-tee.png?v=2' }
       ]
@@ -417,7 +418,7 @@
     smokin: {
       name: 'Smokin Budz Coupon TEE',
       price: '$25',
-      buyUrl: 'https://cash.app/$3dcashin',
+      buyUrl: MERCH_BUY_URL,
       variants: [
         { label: 'Blue on White', img: './smokin-budz-blue-white-tee.png?v=2' },
         { label: 'Red on White', img: './smokin-budz-red-white-tee.png?v=2' },
@@ -428,7 +429,7 @@
     coming1: {
       name: 'ROYAL ETIQUETTE Tee',
       price: '$25',
-      buyUrl: 'https://cash.app/$3dcashin',
+      buyUrl: MERCH_BUY_URL,
       variants: [
         { label: 'White Tee', img: './royals-etiquette-black.png?v=1' },
         { label: 'Black Tee', img: './royals-etiquette-white.png?v=1' }
@@ -437,7 +438,7 @@
     coming2: {
       name: 'STAY IN MY BAG TEE',
       price: '$25',
-      buyUrl: 'https://cash.app/$3dcashin',
+      buyUrl: MERCH_BUY_URL,
       variants: [
         { label: 'White Tee', img: './stay-in-my-bag-white.png?v=1' },
         { label: 'Black Tee', img: './stay-in-my-bag-black.png?v=1' }
@@ -488,7 +489,7 @@
           modalBuyButton.href = '#merch';
         } else {
           modalBuyButton.textContent = 'Buy Now';
-          modalBuyButton.href = product.buyUrl;
+          modalBuyButton.href = product.buyUrl || MERCH_BUY_URL;
         }
       }
       if (modalSizes) {
