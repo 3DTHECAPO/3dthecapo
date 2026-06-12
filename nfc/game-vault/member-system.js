@@ -30,6 +30,17 @@
     return String(email || '').trim().toLowerCase();
   }
 
+  function isRealMemberNumber(value){
+    return /^MEM-\d{6,}$/i.test(String(value || '').trim());
+  }
+
+  function publicMemberNumber(profile, pass){
+    const real = (profile && profile.member_number) || (pass && pass.member_number) || '';
+    if(isRealMemberNumber(real)) return String(real).trim().toUpperCase();
+    const local = (profile && profile.member_id) || localStorage.getItem(MEMBER_ID_KEY) || '';
+    return local || null;
+  }
+
   function readVaultPass(){
     return readJSON(PASS_KEY, null);
   }
@@ -142,6 +153,9 @@
     writeJSON(MEMBER_PROFILE_KEY, next);
     if(next.member_id) localStorage.setItem(MEMBER_ID_KEY, String(next.member_id));
     if(next.email) localStorage.setItem(MEMBER_EMAIL_KEY, normalizeEmail(next.email));
+    try{
+      window.dispatchEvent(new CustomEvent('play3d:member-sync', { detail: next }));
+    }catch(e){}
     return next;
   }
 
@@ -263,6 +277,10 @@
   function identity(){
     const pass = readVaultPass() || {};
     const profile = getMemberProfile();
+    const visibleNumber = publicMemberNumber(profile, pass);
+    const realNumber = isRealMemberNumber(profile.member_number) ? String(profile.member_number).trim().toUpperCase()
+      : isRealMemberNumber(pass.member_number) ? String(pass.member_number).trim().toUpperCase()
+      : null;
     return {
       paidMember:isPaidMember(),
       member:isMember(),
@@ -272,8 +290,10 @@
       member_id: profile.member_id || localStorage.getItem(MEMBER_ID_KEY) || null,
       memberTableId: profile.member_id || localStorage.getItem(MEMBER_ID_KEY) || null,
       member_table_id: profile.member_id || localStorage.getItem(MEMBER_ID_KEY) || null,
-      memberNumber: profile.member_number || pass.member_number || null,
-      member_number: profile.member_number || pass.member_number || null,
+      memberNumber: realNumber || visibleNumber,
+      member_number: realNumber || visibleNumber,
+      realMemberNumber: realNumber,
+      real_member_number: realNumber,
       email: normalizeEmail(profile.email || localStorage.getItem(MEMBER_EMAIL_KEY) || pass.email || pass.recipient_email || pass.recipientEmail || ''),
       code: pass.code || '',
       tier: profile.tier || pass.tier || '',
@@ -309,6 +329,7 @@
     getMemberProfile,
     saveMemberProfile,
     identity,
+    isRealMemberNumber,
     getCreditBank,
     addCredits,
     getPoints,
