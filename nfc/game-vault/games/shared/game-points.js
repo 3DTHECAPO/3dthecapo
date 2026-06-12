@@ -388,6 +388,13 @@
     };
   }
 
+  function displayMemberNumber(){
+    var identity = rewardIdentity();
+    var real = String(identity.real_member_number || identity.realMemberNumber || identity.member_number || '').trim();
+    if(/^MEM-\d{6,}$/i.test(real)) return real.toUpperCase();
+    return 'Member Pending';
+  }
+
   function buildRewardEvent(points, game, reason, total){
     var identity = rewardIdentity();
     var rewardMetadata = {
@@ -552,6 +559,7 @@
       '.play3d-profile-panel b,.play3d-points-panel b{display:block;color:#f5efe3;font-size:18px}' +
       '.play3d-profile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}' +
       '.play3d-profile-stat{border:1px solid rgba(242,210,123,.18);border-radius:12px;background:rgba(0,0,0,.34);padding:8px}' +
+      '.play3d-profile-stat.member-number{grid-column:span 2;border-color:rgba(242,210,123,.36);background:linear-gradient(180deg,rgba(242,210,123,.12),rgba(0,0,0,.38))}.play3d-profile-stat.member-number b{color:#f2d27b;letter-spacing:.08em}' +
       '.play3d-xp-track{height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin:8px 0}.play3d-xp-fill{height:100%;background:linear-gradient(90deg,#caa24a,#f2d27b);width:0%}' +
       '.play3d-inventory{display:flex;gap:6px;flex-wrap:wrap}.play3d-item{border:1px solid rgba(242,210,123,.22);border-radius:999px;padding:6px 8px;font-size:11px;font-weight:900;background:rgba(0,0,0,.35)}' +
       '.rarity-common{color:#f5efe3}.rarity-rare{color:#8fd7ff}.rarity-epic{color:#d7a1ff}.rarity-legendary{color:#f2d27b;text-shadow:0 0 12px rgba(242,210,123,.45)}.rarity-vault{color:#fff;text-shadow:0 0 14px rgba(242,210,123,.85)}' +
@@ -568,7 +576,7 @@
     panel.className = 'play3d-profile-panel';
     panel.innerHTML =
       '<div>' +
-        '<div class="play3d-profile-name"><span>Player Profile</span><input data-p3d-name maxlength="24" aria-label="Player name"></div>' +
+        '<div class="play3d-profile-name"><span data-p3d-profile-label>Player Profile • Member Pending</span><input data-p3d-name maxlength="24" aria-label="Player name"></div>' +
         '<b data-p3d-rank>BEGINNER</b>' +
         '<div class="play3d-xp-track"><div class="play3d-xp-fill" data-p3d-xp-fill></div></div>' +
         '<small data-p3d-next-rank></small>' +
@@ -577,6 +585,7 @@
         '<div class="play3d-profile-stat"><span>Level</span><b data-p3d-level>1</b></div>' +
         '<div class="play3d-profile-stat"><span>Wins</span><b data-p3d-wins>0</b></div>' +
         '<div class="play3d-profile-stat"><span>Streak</span><b data-p3d-streak>0</b></div>' +
+        '<div class="play3d-profile-stat member-number"><span>Member #</span><b data-p3d-member-number>NOT SYNCED</b></div>' +
         '<div class="play3d-profile-stat"><span>Tier</span><b data-p3d-tier>FREE PLAY</b></div>' +
         '<div class="play3d-profile-stat"><span>Jackpots</span><b data-p3d-jackpots>0</b></div>' +
         '<div class="play3d-profile-stat"><span>Login</span><b data-p3d-login>0</b></div>' +
@@ -603,6 +612,8 @@
     var level = document.querySelector('[data-p3d-level]');
     var wins = document.querySelector('[data-p3d-wins]');
     var streak = document.querySelector('[data-p3d-streak]');
+    var profileLabel = document.querySelector('[data-p3d-profile-label]');
+    var memberNumber = document.querySelector('[data-p3d-member-number]');
     var tier = document.querySelector('[data-p3d-tier]');
     var jackpots = document.querySelector('[data-p3d-jackpots]');
     var login = document.querySelector('[data-p3d-login]');
@@ -613,6 +624,9 @@
     if(level) level.textContent = profile.level + ' / ' + target.toLocaleString() + ' XP';
     if(wins) wins.textContent = profile.totalWins.toLocaleString();
     if(streak) streak.textContent = profile.streaks.win.toLocaleString();
+    var memberDisplay = displayMemberNumber();
+    if(profileLabel) profileLabel.textContent = 'Player Profile • ' + memberDisplay;
+    if(memberNumber) memberNumber.textContent = memberDisplay;
     if(tier) tier.textContent = profile.vaultTier;
     if(jackpots) jackpots.textContent = profile.jackpotCount.toLocaleString();
     if(login) login.textContent = profile.streaks.login.toLocaleString();
@@ -669,6 +683,7 @@
 
   window.addEventListener('play3d:pointschange', function(){ updatePanel(); updateProfilePanel(); });
   window.addEventListener('play3d:profilechange', updateProfilePanel);
+  window.addEventListener('play3d:member-sync', updateProfilePanel);
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 
