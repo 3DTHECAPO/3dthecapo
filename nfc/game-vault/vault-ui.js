@@ -65,7 +65,6 @@ function card(game){
         </div>
         <div class="card-actions">
           <a class="cta gold" href="${href}" data-play="${game.id}">PLAY</a>
-          <a class="cta ghost" href="${href}">Open</a>
         </div>
       </div>
     </article>
