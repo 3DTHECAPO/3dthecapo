@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>JOIN PLAY 3D</title>
+  <meta name="description" content="Join PLAY 3D and get your member number.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css?v=4">
+  <style>
+    .join-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px 16px}
+    .join-card{width:min(760px,100%);border:1px solid rgba(202,162,74,.38);border-radius:28px;background:linear-gradient(180deg,rgba(10,10,10,.94),rgba(0,0,0,.82));box-shadow:0 30px 90px rgba(0,0,0,.7);padding:26px}
+    .join-card h1{font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;text-transform:uppercase;letter-spacing:1px;margin:0 0 10px;font-size:clamp(34px,8vw,72px);line-height:.95}
+    .join-card p{color:rgba(244,241,234,.76);font-size:18px;line-height:1.55;margin:0 0 20px}
+    .join-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .join-grid .full{grid-column:1/-1}
+    .join-card label{display:grid;gap:6px;color:#f2d27b;text-transform:uppercase;letter-spacing:1px;font-weight:700;font-size:13px}
+    .join-card input{min-height:48px;border-radius:14px;border:1px solid rgba(202,162,74,.34);background:rgba(0,0,0,.68);color:#f4f1ea;padding:0 14px;font-family:Oswald,Arial,sans-serif;font-size:16px;outline:none}
+    .join-card input:focus{border-color:#f2d27b;box-shadow:0 0 0 3px rgba(242,210,123,.12)}
+    .join-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
+    .join-result{margin-top:18px;border:1px solid rgba(202,162,74,.32);border-radius:20px;padding:18px;background:rgba(0,0,0,.48);color:#f4f1ea;display:none}
+    .join-result.show{display:block}
+    .join-result b{color:#f2d27b}
+    .join-note{font-size:13px!important;color:rgba(244,241,234,.58)!important;margin-top:14px!important}
+    @media(max-width:680px){.join-grid{grid-template-columns:1fr}.join-card{padding:20px}.join-actions .pill{width:100%;justify-content:center;text-align:center}}
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <main class="page">
+    <section class="join-wrap">
+      <article class="join-card">
+        <div class="kicker">Free member identity</div>
+        <h1>JOIN PLAY 3D</h1>
+        <p>Create your PLAY 3D member profile. This gives you a member number only. It does not issue a vault code or unlock paid access.</p>
+
+        <form id="joinForm" class="join-grid">
+          <label class="full">Name
+            <input id="joinName" name="name" type="text" autocomplete="name" required>
+          </label>
+          <label class="full">Email
+            <input id="joinEmail" name="email" type="email" autocomplete="email" required>
+          </label>
+          <label>Phone optional
+            <input id="joinPhone" name="phone" type="tel" autocomplete="tel">
+          </label>
+          <label>City optional
+            <input id="joinCity" name="city" type="text" autocomplete="address-level2">
+          </label>
+          <label>Birthday optional
+            <input id="joinBirthday" name="birthday" type="date">
+          </label>
+          <label>Username optional
+            <input id="joinUsername" name="username" type="text" autocomplete="username">
+          </label>
+          <div class="join-actions full">
+            <button class="pill gold" type="submit">JOIN PLAY 3D</button>
+            <a class="pill" href="./buy.html">Upgrade Access</a>
+            <a class="pill" href="./index.html">Back Home</a>
+          </div>
+        </form>
+
+        <div id="joinResult" class="join-result" aria-live="polite"></div>
+        <p class="join-note">Member number is identity only. Vault access still requires a valid promo or paid access code.</p>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (function(){
+      const ENDPOINT = "https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint";
+      const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1cG9lZHJvdmZsb3VkZWZ5em5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzU2NjEsImV4cCI6MjA5MjM1MTY2MX0.CGgOxXXSXWMjNPcnQR_zMBHk8WkWSb0lhcNlTfCR4xo";
+      const form = document.getElementById("joinForm");
+      const result = document.getElementById("joinResult");
+
+      function value(id){
+        return String((document.getElementById(id) || {}).value || "").trim();
+      }
+
+      function show(html){
+        result.innerHTML = html;
+        result.classList.add("show");
+      }
+
+      form.addEventListener("submit", async function(event){
+        event.preventDefault();
+        const payload = {
+          source: "member_signup",
+          name: value("joinName"),
+          email: value("joinEmail").toLowerCase(),
+          phone: value("joinPhone"),
+          city: value("joinCity"),
+          birthday: value("joinBirthday"),
+          username: value("joinUsername")
+        };
+
+        if(!payload.email){
+          show("<b>Enter email first.</b>");
+          return;
+        }
+
+        show("Creating member profile...");
+
+        try{
+          const res = await fetch(ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + SUPABASE_KEY
+            },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json().catch(function(){ return {}; });
+          if(!res.ok || !data.success){
+            show("<b>Signup failed.</b><br>" + (data.error || "Try again."));
+            return;
+          }
+          const memberNumber = data.member_number || (data.member && data.member.member_number) || "Member Pending";
+          show(
+            "<h2 style='margin:0 0 8px;color:#f2d27b;font-family:Black Ops One,system-ui,sans-serif;'>WELCOME TO PLAY 3D</h2>" +
+            "<p style='margin:0 0 8px;'>Member Status: <b>Pending</b></p>" +
+            "<p style='margin:0 0 8px;'>Member Number: <b>" + memberNumber + "</b></p>" +
+            "<p style='margin:0;'>Upgrade to activate full access.</p>"
+          );
+        }catch(error){
+          show("<b>Signup failed.</b><br>" + (error.message || "Network error."));
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
