@@ -131,7 +131,7 @@ async function logVaultSidecars(email, codeValue, tier){
   };
   const memberPayload = {
     email:cleanEmail,
-    member_status:'active',
+    member_status:'pending',
     tier:cleanTier,
     source:'nfc_vault_capture',
     last_seen_at:now
