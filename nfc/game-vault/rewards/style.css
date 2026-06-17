@@ -22,13 +22,3 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .placeholder-list{display:grid;gap:8px}
 .placeholder-row{border:1px solid rgba(242,210,123,.16);border-radius:14px;background:rgba(0,0,0,.28);padding:12px;color:var(--cream)}
 @media(max-width:760px){.topbar{flex-direction:column}.header-actions,.back-link,button{width:100%}.summary-grid,.claims-grid{grid-template-columns:1fr}}
-
-
-/* Rewards bonus / claim patch */
-.summary-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
-.bonus-panel{margin-bottom:14px;display:grid;gap:12px}
-.bonus-actions{display:flex;flex-wrap:wrap;gap:10px}
-.bonus-actions button{flex:1 1 220px;background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);color:#100c05;border-color:rgba(242,210,123,.5)}
-.bonus-actions button:disabled{background:rgba(255,255,255,.06);color:rgba(245,239,227,.48)}
-@media(max-width:980px){.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:760px){.summary-grid{grid-template-columns:1fr}.bonus-actions{display:grid}.bonus-actions button{width:100%}}
