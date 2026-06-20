@@ -27,6 +27,22 @@ function markUsed(code){
   }
 }
 
+async function rewardCodeAlreadyRedeemed(code){
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/reward_events?reward_code=eq.${encodeURIComponent(code)}&select=id&limit=1`,{
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':`Bearer ${SUPABASE_ANON}`
+      }
+    });
+    if(!res.ok) throw new Error('redemption lookup failed');
+    const rows = await res.json().catch(()=>[]);
+    return Array.isArray(rows) && rows.length > 0;
+  }catch(e){
+    throw new Error('Unable to verify claim code. Try again.');
+  }
+}
+
 function parse(code){
   const upper = code.toUpperCase().trim();
 
@@ -139,21 +155,26 @@ btn.onclick = async () => {
     return;
   }
 
-  if(used(raw)){
-    statusBox.textContent = 'USED';
+  try{
+    if(used(p.raw) || await rewardCodeAlreadyRedeemed(p.raw)){
+      statusBox.textContent = 'USED';
+      return;
+    }
+  }catch(error){
+    statusBox.textContent = error.message;
     return;
   }
 
-  if(p.type === 'member' && window.Play3DMemberSystem){
-    Play3DMemberSystem.setMember(true);
+  const tracked = await postRewardEvent(p);
+  if(!tracked){
+    statusBox.textContent = 'TRACKING ERROR - TRY AGAIN';
+    return;
   }
-
   Play3DBankroll.queueBoost(p.amount);
-  markUsed(raw);
-  postRewardEvent(p).catch(()=>{});
+  markUsed(p.raw);
 
   statusBox.textContent = p.type === 'member'
-    ? 'MEMBER ACTIVE +' + p.amount
+    ? 'MEMBER CLAIM RECORDED +' + p.amount
     : 'ADDED +' + p.amount;
   playBtn.style.display = 'block';
 };
