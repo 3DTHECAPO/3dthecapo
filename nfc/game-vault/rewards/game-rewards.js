@@ -3,6 +3,7 @@
   const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
   const REWARD_EVENTS_TABLE = 'reward_events';
   const PASS_KEY = 'play3d_vault_pass_v1';
+  const FIRST_REWARD_THRESHOLD = 100000;
 
   function readJSON(key, fallback){
     try{
@@ -11,6 +12,10 @@
     }catch(e){
       return fallback;
     }
+  }
+
+  function normalizeEmail(email){
+    return String(email || '').trim().toLowerCase();
   }
 
   function readVaultPass(){
@@ -36,7 +41,7 @@
       visitorAccess: activePass && !id.paidMember,
       memberId: id.memberTableId || id.member_table_id || id.memberId || id.member_id || null,
       memberNumber: id.memberNumber || id.member_number || null,
-      email: id.email || pass.email || pass.recipient_email || pass.recipientEmail || null,
+      email: normalizeEmail(id.email || pass.email || pass.recipient_email || pass.recipientEmail || ''),
       code: pass.code || localStorage.getItem('play3d_last_code') || '',
       tier: id.tier || pass.tier || '',
       memberStatus: id.memberStatus || '',
@@ -45,18 +50,20 @@
   }
 
   function buildRewardEvent(amount, game, bank){
-    const points = Math.max(0, Math.floor(Number(amount) || 0));
+    const credits = Math.max(0, Math.floor(Number(amount) || 0));
     const identity = getRewardIdentity();
     const now = new Date().toISOString();
     const clientEventId = [
       'reward',
       String(game || 'game'),
-      String(points),
+      String(credits),
       String(Date.now()),
       Math.random().toString(36).slice(2, 8)
     ].join('_');
 
     const metadata = {
+      event_name: 'game_win',
+      reward_key: clientEventId,
       member_table_id: identity.memberId,
       member_number: identity.memberNumber,
       email: identity.email,
@@ -65,7 +72,7 @@
       page: window.location.pathname,
       user_agent: navigator.userAgent,
       reward_status: 'earned',
-      credits: points,
+      credits: credits,
       client_event_id: clientEventId,
       bank_after: bank,
       paid_member: identity.paidMember,
@@ -80,21 +87,62 @@
       if(metadata[key] === null || metadata[key] === undefined || metadata[key] === '') delete metadata[key];
     });
 
-    metadata.event_name = 'game_win';
-    metadata.reward_key = clientEventId;
-
     return {
       member_id: identity.memberId || undefined,
       email: identity.email || undefined,
       reward_type: 'bonus_content',
       reward_label: 'game_win',
       reward_code: clientEventId,
-      credits: points,
+      credits: credits,
       source: 'game_vault',
       game: String(game || 'unknown'),
       created_at: now,
       reward_metadata: metadata
     };
+  }
+
+  async function readMembers(query){
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/members?${query}`,{
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':`Bearer ${SUPABASE_ANON}`
+      }
+    });
+    if(!res.ok) throw new Error('members lookup failed');
+    const rows = await res.json().catch(()=>[]);
+    return Array.isArray(rows) ? rows : [];
+  }
+
+  async function resolveRewardMemberContext(payload){
+    const metadata = Object.assign({}, payload.reward_metadata || {});
+    const memberNumber = String(metadata.member_number || '').trim();
+    const email = String(metadata.email || '').trim().toLowerCase();
+    if(!memberNumber && !email) return payload;
+
+    try{
+      const filter = memberNumber
+        ? `member_number=eq.${encodeURIComponent(memberNumber)}`
+        : `email=eq.${encodeURIComponent(email)}`;
+      let rows = [];
+      try{
+        rows = await readMembers(`${filter}&select=id,member_number,email&limit=1`);
+      }catch(e){
+        if(memberNumber) return payload;
+        rows = await readMembers(`${filter}&select=id,email&limit=1`);
+      }
+      const row = rows[0] || null;
+      if(!row) return payload;
+      metadata.member_table_id = row.id || metadata.member_table_id;
+      metadata.member_number = row.member_number || metadata.member_number;
+      metadata.email = row.email || metadata.email;
+      return Object.assign({}, payload, {
+        member_id: row.id || payload.member_id,
+        email: row.email || payload.email,
+        reward_metadata: metadata
+      });
+    }catch(e){
+      return payload;
+    }
   }
 
   async function postRewardEvent(payload){
@@ -149,50 +197,6 @@
     return false;
   }
 
-  async function resolveRewardMemberContext(payload){
-    const metadata = Object.assign({}, payload.reward_metadata || {});
-    const memberNumber = String(metadata.member_number || '').trim();
-    const email = String(metadata.email || '').trim().toLowerCase();
-    if(!memberNumber && !email) return payload;
-
-    try{
-      const filter = memberNumber
-        ? `member_number=eq.${encodeURIComponent(memberNumber)}`
-        : `email=eq.${encodeURIComponent(email)}`;
-      let rows = [];
-      try{
-        rows = await readMembers(`${filter}&select=id,member_number,email&limit=1`);
-      }catch(e){
-        if(memberNumber) return payload;
-        rows = await readMembers(`${filter}&select=id,email&limit=1`);
-      }
-      const row = rows[0] || null;
-      if(!row) return payload;
-      metadata.member_table_id = row.id || metadata.member_table_id;
-      metadata.member_number = row.member_number || metadata.member_number;
-      metadata.email = row.email || metadata.email;
-      return Object.assign({}, payload, {
-        member_id: row.id || payload.member_id,
-        email: row.email || payload.email,
-        reward_metadata: metadata
-      });
-    }catch(e){
-      return payload;
-    }
-  }
-
-  async function readMembers(query){
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/members?${query}`,{
-      headers:{
-        'apikey':SUPABASE_ANON,
-        'Authorization':`Bearer ${SUPABASE_ANON}`
-      }
-    });
-    if(!res.ok) throw new Error('members lookup failed');
-    const rows = await res.json().catch(()=>[]);
-    return Array.isArray(rows) ? rows : [];
-  }
-
   function logRewardEvent(amount, game, bank){
     const payload = buildRewardEvent(amount, game, bank);
     postRewardEvent(payload).catch(()=>{});
@@ -203,8 +207,6 @@
       return { free:true, unlocked:false, bank:0, reason:'member_system_missing' };
     }
 
-    // ENTRY / 1-hour vault pass is visitor access only.
-    // Only paid members from the members table can earn claimable credits.
     if(!Play3DMemberSystem.isMember()){
       return {
         free:true,
@@ -220,7 +222,7 @@
     logRewardEvent(amount, game, bank);
     return {
       free:false,
-      unlocked: bank >= 50000,
+      unlocked: bank >= FIRST_REWARD_THRESHOLD,
       bank,
       reason:'paid_member_reward_credit'
     };
