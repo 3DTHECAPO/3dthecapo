@@ -127,12 +127,7 @@
   <script src="../shared/access-bridge.js"></script>
   <script>
     if(window.Play3DAccess){
-      const memberAccess = !!(window.Play3DMemberSystem &&
-        typeof window.Play3DMemberSystem.hasAccess === 'function' &&
-        window.Play3DMemberSystem.hasAccess());
-      if(!memberAccess){
-        window.Play3DAccess.requireAccess({ redirect:true });
-      }
+      window.Play3DAccess.requireAccess({ redirect:false });
       if(window.Play3DAccess.hasMasterFlag() || window.Play3DAccess.hasMasterSession()){
         const collectorsWingLink = document.querySelector('a[href="./collectors-wing/index.html"]');
         if(collectorsWingLink){
