@@ -99,21 +99,31 @@
 
   async function loadLiveRewardEvents(){
     const id = identityFilters();
-    const filters = [];
-    if(id.email) filters.push(`email=eq.${encodeURIComponent(id.email)}`);
-    if(id.memberId) filters.push(`member_id=eq.${encodeURIComponent(id.memberId)}`);
-    if(!filters.length) return [];
-    return await supabaseRead(REWARD_EVENTS_TABLE, `${filters.join('&')}&select=*&order=created_at.desc&limit=50`);
+    const queries = [];
+    if(id.email) queries.push(`email=eq.${encodeURIComponent(id.email)}&select=*&order=created_at.desc&limit=50`);
+    if(id.memberId) queries.push(`member_id=eq.${encodeURIComponent(id.memberId)}&select=*&order=created_at.desc&limit=50`);
+    return await loadMemberRows(REWARD_EVENTS_TABLE, queries);
   }
 
   async function loadLiveClaims(){
     const id = identityFilters();
-    const filters = [];
-    if(id.email) filters.push(`email=eq.${encodeURIComponent(id.email)}`);
-    if(id.memberNumber) filters.push(`member_number=eq.${encodeURIComponent(id.memberNumber)}`);
-    if(id.memberId) filters.push(`member_id=eq.${encodeURIComponent(id.memberId)}`);
-    if(!filters.length) return [];
-    return await supabaseRead(REWARD_CLAIMS_TABLE, `${filters.join('&')}&select=*&order=created_at.desc&limit=100`);
+    const queries = [];
+    if(id.email) queries.push(`email=eq.${encodeURIComponent(id.email)}&select=*&order=created_at.desc&limit=100`);
+    if(id.memberNumber) queries.push(`member_number=eq.${encodeURIComponent(id.memberNumber)}&select=*&order=created_at.desc&limit=100`);
+    if(id.memberId) queries.push(`member_id=eq.${encodeURIComponent(id.memberId)}&select=*&order=created_at.desc&limit=100`);
+    return await loadMemberRows(REWARD_CLAIMS_TABLE, queries);
+  }
+
+  async function loadMemberRows(table, queries){
+    if(!queries.length) return [];
+    const results = await Promise.all(queries.map(query=>supabaseRead(table, query).catch(()=>[])));
+    const seen = new Set();
+    return results.flat().filter(row=>{
+      const key = String(row.id || row.reward_code || row.claim_id || JSON.stringify(row));
+      if(seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).sort((a,b)=>new Date(b.created_at || 0).getTime()-new Date(a.created_at || 0).getTime());
   }
 
   function loadLocalRewardEvents(){
@@ -178,7 +188,7 @@
 
       renderList(
         els.pending,
-        claims.filter(row=>['pending','open','requested','new'].includes(claimStatus(row))).map(row=>claimLabel(row)),
+        claims.filter(row=>['pending','pending_review','open','requested','new'].includes(claimStatus(row))).map(row=>claimLabel(row)),
         'No pending claims.'
       );
       renderList(
@@ -191,6 +201,10 @@
         claims.filter(row=>['fulfilled','complete','completed','shipped'].includes(claimStatus(row))).map(row=>claimLabel(row)),
         'No fulfilled claims.'
       );
+      const denied = claims.filter(row=>claimStatus(row)==='denied');
+      if(denied.length && els.pending){
+        els.pending.insertAdjacentHTML('beforeend', denied.map(row=>textRow('Denied - '+claimLabel(row))).join(''));
+      }
     }catch(error){
       renderList(els.events, loadLocalRewardEvents(), 'No reward events yet.');
       renderList(els.pending, [], 'No pending claims. Live rewards unavailable: '+error.message);
