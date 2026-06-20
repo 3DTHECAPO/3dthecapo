@@ -12,6 +12,7 @@
   var SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
   var REWARD_EVENTS_TABLE = 'reward_events';
   var THRESHOLD = 100000;
+  var REWARD_MILESTONES = [100000,250000,400000,550000,700000,850000,1000000];
   var TODAY = new Date().toISOString().slice(0, 10);
   var DAILY_REWARD_CAP = 2500;
   var DAILY_GAME_CAP = 1000;
@@ -107,13 +108,41 @@
 
   function isMember(){
     if(localStorage.getItem('play3d_member_v1') === '1') return true;
-    if(localStorage.getItem('play3d_member_access_v1') === '1') return true;
-    if(getPassSession()) return true;
+    if(localStorage.getItem('play3d_paid_member_v1') === '1') return true;
     try{
-      if(window.Play3DAccess && typeof window.Play3DAccess.current === 'function') return !!window.Play3DAccess.current();
+      if(window.Play3DMemberSystem && typeof window.Play3DMemberSystem.isPaidMember === 'function'){
+        return !!window.Play3DMemberSystem.isPaidMember();
+      }
     }catch(e){}
     return false;
   }
+
+  function hasMasterSession(){
+    try{
+      if(window.Play3DAccess && typeof window.Play3DAccess.hasMasterSession === 'function'){
+        return !!window.Play3DAccess.hasMasterSession();
+      }
+      var session = readJSON('CAPO_MASTER_SESSION', null);
+      return !!(session && session.active === true && (!session.expires_at || Number(session.expires_at) > Date.now()));
+    }catch(e){
+      return false;
+    }
+  }
+
+  function hasGameAccess(){
+    return isMember() || !!getPassSession() || hasMasterSession();
+  }
+
+  function enforceGameAccess(){
+    if(!/\/game-vault\/games\//.test(location.pathname.replace(/\\/g, '/'))) return true;
+    if(hasGameAccess()) return true;
+    document.documentElement.style.visibility = 'hidden';
+    var target = location.pathname + location.search + location.hash;
+    location.replace('/nfc/index.html?target=' + encodeURIComponent(target));
+    return false;
+  }
+
+  var GAME_ACCESS_ALLOWED = enforceGameAccess();
 
   function defaultProfile(){
     return {
@@ -284,6 +313,7 @@
   }
 
   function logMilestoneUnlock(milestone, profile){
+    if(!isMember()) return false;
     var payload = buildMilestoneEvent(milestone, profile);
     if(!payload) return false;
     var localLog = readJSON(MILESTONE_LOG_KEY, {});
@@ -487,9 +517,13 @@
   }
 
   function logRewardEvent(points, game, reason, total){
+    var identity = rewardIdentity();
+    if(!isMember()) return false;
+    if(!identity.member_table_id && !identity.member_number && !identity.email) return false;
     postRewardEvent(buildRewardEvent(points, game, reason, total)).catch(function(error){
       console.warn('PLAY 3D reward_events logging failed', error);
     });
+    return true;
   }
 
   function award(game, points, reason){
@@ -679,6 +713,7 @@
   }
 
   function boot(){
+    if(!GAME_ACCESS_ALLOWED) return;
     claimDaily();
     renderProfilePanel();
     renderPanel();
@@ -707,6 +742,7 @@
 
   window.Play3DPoints = {
     threshold:THRESHOLD,
+    milestones:REWARD_MILESTONES.slice(),
     getPoints:getPoints,
     setPoints:setPoints,
     award:award,
