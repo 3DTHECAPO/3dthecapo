@@ -882,6 +882,52 @@ body.store-coming-soon .card::after{
   function byId(id){ return document.getElementById(id); }
   function normalizeEmail(email){ return String(email || '').trim().toLowerCase(); }
 
+  function postRewardPurchaseEvent(record){
+    if(!record || record.source !== 'buy_rewards') return Promise.resolve(false);
+    var now = new Date().toISOString();
+    var cleanEmail = normalizeEmail(record.email);
+    var payload = {
+      email: cleanEmail,
+      reward_type: 'bonus_content',
+      reward_label: 'Credit Purchase',
+      reward_code: 'credit:' + cleanEmail + ':' + (record.id || Date.now()),
+      credits: Number(record.credits || 0),
+      source: 'buy_page',
+      game: 'buy_rewards',
+      created_at: now,
+      reward_metadata: {
+        event_name: 'credit_purchase_request',
+        source: 'buy_rewards',
+        payment_status: record.status || 'reward_payment_verification',
+        purchase_id: record.id || '',
+        buyer_name: record.name || '',
+        email: cleanEmail,
+        tier: record.tier || '',
+        quantity: Number(record.credits || 0),
+        credits: Number(record.credits || 0),
+        amount: Number(record.amount || 0),
+        payment_method: record.method || '',
+        payment_information: record.payment_information || '',
+        issue_code: false,
+        timestamp: now
+      }
+    };
+    Object.keys(payload.reward_metadata).forEach(function(k){
+      if(payload.reward_metadata[k] === null || payload.reward_metadata[k] === undefined || payload.reward_metadata[k] === '') delete payload.reward_metadata[k];
+    });
+    return fetch('https://fupoedrovfloudefyzna.supabase.co/rest/v1/reward_events',{
+      method:'POST',
+      headers:{
+        'apikey':'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1',
+        'Authorization':'Bearer sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1',
+        'Content-Type':'application/json',
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify(payload)
+    }).then(function(res){ return res.ok; }).catch(function(){ return false; });
+  }
+
+
   function readList(){
     try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
     catch(e){ return []; }
@@ -1009,6 +1055,7 @@ body.store-coming-soon .card::after{
       zohoStartPayload.issue_code = false;
     }
     sendZohoLeadSafe(zohoStartPayload);
+    if(rewardPurchase) postRewardPurchaseEvent(record);
 
     byId('payName').value = name;
     byId('payEmail').value = email;
@@ -1083,6 +1130,7 @@ body.store-coming-soon .card::after{
       zohoInformationPayload.issue_code = false;
     }
     sendZohoLeadSafe(zohoInformationPayload);
+    if(rewardPurchase) postRewardPurchaseEvent(record);
 
     byId('payReceipt').value = '';
     setStatus(byId('paymentStatus'), rewardPurchase
