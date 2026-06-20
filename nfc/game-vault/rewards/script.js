@@ -1,6 +1,11 @@
 (()=>{
   'use strict';
 
+  const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
+  const REWARD_EVENTS_TABLE = 'reward_events';
+  const REWARD_CLAIMS_TABLE = 'reward_claims';
+
   const els = {
     refresh: document.getElementById('refreshBtn'),
     locked: document.getElementById('lockedState'),
@@ -22,8 +27,23 @@
     }
   }
 
+  function esc(value){
+    return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function normalizeEmail(email){
+    return String(email || '').trim().toLowerCase();
+  }
+
+  function identity(){
+    if(window.Play3DMemberSystem && typeof Play3DMemberSystem.identity === 'function'){
+      return Play3DMemberSystem.identity() || {};
+    }
+    return {};
+  }
+
   function textRow(message){
-    return '<div class="placeholder-row">'+message+'</div>';
+    return '<div class="placeholder-row">'+esc(message)+'</div>';
   }
 
   function renderList(node, items, fallback){
@@ -31,23 +51,78 @@
     node.innerHTML = items.length ? items.map(textRow).join('') : textRow(fallback);
   }
 
-  function loadRewardEvents(){
+  async function supabaseRead(table, query){
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`,{
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':`Bearer ${SUPABASE_ANON}`
+      }
+    });
+    const data = await res.json().catch(()=>[]);
+    if(!res.ok) throw new Error(`${table}: ${JSON.stringify(data)}`);
+    return Array.isArray(data) ? data : [];
+  }
+
+  function eventMetadata(row){
+    return row && typeof row.reward_metadata === 'object' && row.reward_metadata
+      ? row.reward_metadata
+      : row && typeof row.metadata === 'object' && row.metadata
+        ? row.metadata
+        : {};
+  }
+
+  function eventCredits(row){
+    const meta = eventMetadata(row);
+    return Number(row.credits ?? row.points ?? meta.credits ?? meta.points ?? 0) || 0;
+  }
+
+  function eventLabel(row){
+    const meta = eventMetadata(row);
+    return row.reward_label || row.event_type || row.reward_type || meta.event_name || meta.reward_key || 'Reward Event';
+  }
+
+  function claimStatus(row){
+    return String(row.claim_status || row.status || 'pending').toLowerCase();
+  }
+
+  function claimLabel(row){
+    return row.reward_label || row.reward_key || row.claim_type || row.reward_name || 'Reward Claim';
+  }
+
+  function identityFilters(){
+    const id = identity();
+    const email = normalizeEmail(id.email);
+    const memberId = String(id.memberId || id.member_id || id.memberTableId || id.member_table_id || '').trim();
+    const memberNumber = String(id.memberNumber || id.member_number || '').trim();
+    return { email, memberId, memberNumber };
+  }
+
+  async function loadLiveRewardEvents(){
+    const id = identityFilters();
+    const filters = [];
+    if(id.email) filters.push(`email=eq.${encodeURIComponent(id.email)}`);
+    if(id.memberId) filters.push(`member_id=eq.${encodeURIComponent(id.memberId)}`);
+    if(!filters.length) return [];
+    return await supabaseRead(REWARD_EVENTS_TABLE, `${filters.join('&')}&select=*&order=created_at.desc&limit=50`);
+  }
+
+  async function loadLiveClaims(){
+    const id = identityFilters();
+    const filters = [];
+    if(id.email) filters.push(`email=eq.${encodeURIComponent(id.email)}`);
+    if(id.memberNumber) filters.push(`member_number=eq.${encodeURIComponent(id.memberNumber)}`);
+    if(id.memberId) filters.push(`member_id=eq.${encodeURIComponent(id.memberId)}`);
+    if(!filters.length) return [];
+    return await supabaseRead(REWARD_CLAIMS_TABLE, `${filters.join('&')}&select=*&order=created_at.desc&limit=100`);
+  }
+
+  function loadLocalRewardEvents(){
     const engine = readJSON('play3d_reward_engine_v1', {history:[]});
     return Array.isArray(engine.history) ? engine.history.slice(-5).reverse().map(item=>{
       const label = item.reward && item.reward.label || 'Reward event';
       const game = item.game ? String(item.game).toUpperCase() : 'LOCAL';
       return game+' - '+label;
     }) : [];
-  }
-
-  function loadClaims(){
-    const engine = readJSON('play3d_reward_engine_v1', {history:[]});
-    const rows = Array.isArray(engine.history) ? engine.history : [];
-    return {
-      pending: rows.filter(item => item.claim_status === 'pending').map(item => item.reward && item.reward.label || 'Pending reward'),
-      approved: rows.filter(item => item.claim_status === 'approved').map(item => item.reward && item.reward.label || 'Approved reward'),
-      fulfilled: rows.filter(item => item.claim_status === 'fulfilled' || item.claimed === true).map(item => item.reward && item.reward.label || 'Fulfilled reward')
-    };
   }
 
   function getPaidMemberAccess(){
@@ -70,7 +145,7 @@
     return Math.max(0, Number(localStorage.getItem('play3d_game_points_v1') || profile.totalPoints || 0));
   }
 
-  function render(){
+  async function render(){
     const hasAccess = getPaidMemberAccess();
     if(els.locked) els.locked.hidden = hasAccess;
     if(els.dashboard) els.dashboard.hidden = !hasAccess;
@@ -85,15 +160,43 @@
 
     const profile = readJSON('play3d_player_profile_v1', {});
     const points = getPoints(profile);
-    const credits = getCredits();
-    const claims = loadClaims();
+    const localCredits = getCredits();
 
     if(els.points) els.points.textContent = points.toLocaleString();
-    if(els.credits) els.credits.textContent = credits.toLocaleString();
-    renderList(els.events, loadRewardEvents(), 'No reward events yet.');
-    renderList(els.pending, claims.pending, 'No pending claims.');
-    renderList(els.approved, claims.approved, 'No approved claims.');
-    renderList(els.fulfilled, claims.fulfilled, 'No fulfilled claims.');
+    if(els.credits) els.credits.textContent = localCredits.toLocaleString();
+
+    try{
+      const [events, claims] = await Promise.all([loadLiveRewardEvents(), loadLiveClaims()]);
+      const totalCredits = events.reduce((sum,row)=>sum + eventCredits(row), 0);
+      if(els.credits) els.credits.textContent = Math.max(localCredits, totalCredits).toLocaleString();
+
+      renderList(
+        els.events,
+        events.slice(0,10).map(row=>`${String(row.game || row.source || 'PLAY 3D').toUpperCase()} - ${eventLabel(row)} +${eventCredits(row).toLocaleString()}`),
+        'No live reward events yet.'
+      );
+
+      renderList(
+        els.pending,
+        claims.filter(row=>['pending','open','requested','new'].includes(claimStatus(row))).map(row=>claimLabel(row)),
+        'No pending claims.'
+      );
+      renderList(
+        els.approved,
+        claims.filter(row=>['approved','ready','processing'].includes(claimStatus(row))).map(row=>claimLabel(row)),
+        'No approved claims.'
+      );
+      renderList(
+        els.fulfilled,
+        claims.filter(row=>['fulfilled','complete','completed','shipped'].includes(claimStatus(row))).map(row=>claimLabel(row)),
+        'No fulfilled claims.'
+      );
+    }catch(error){
+      renderList(els.events, loadLocalRewardEvents(), 'No reward events yet.');
+      renderList(els.pending, [], 'No pending claims. Live rewards unavailable: '+error.message);
+      renderList(els.approved, [], 'No approved claims.');
+      renderList(els.fulfilled, [], 'No fulfilled claims.');
+    }
   }
 
   if(els.refresh) els.refresh.addEventListener('click', render);
