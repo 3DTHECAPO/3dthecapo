@@ -130,19 +130,14 @@
   }
 
   function hasGameAccess(){
-    return isMember() || !!getPassSession() || hasMasterSession();
+    return true;
   }
 
   function enforceGameAccess(){
-    if(!/\/game-vault\/games\//.test(location.pathname.replace(/\\/g, '/'))) return true;
-    if(hasGameAccess()) return true;
-    document.documentElement.style.visibility = 'hidden';
-    var target = location.pathname + location.search + location.hash;
-    location.replace('/nfc/index.html?target=' + encodeURIComponent(target));
-    return false;
+    return true;
   }
 
-  var GAME_ACCESS_ALLOWED = enforceGameAccess();
+  var GAME_ACCESS_ALLOWED = true;
 
   function defaultProfile(){
     return {
@@ -429,6 +424,15 @@
     return 'Member Pending';
   }
 
+  function paidMemberEligibleIdentity(){
+    var identity = rewardIdentity();
+    var status = String(identity.memberStatus || '').trim().toUpperCase();
+    var activeStatus = ['ACTIVE','PAID','MEMBER','APPROVED','CURRENT'].indexOf(status) !== -1;
+    var paid = !!(identity.paidMember || activeStatus || isMember());
+    var hasIdentity = !!(identity.member_table_id || identity.member_number || identity.email);
+    return { paid: paid, hasIdentity: hasIdentity, identity: identity };
+  }
+
   function buildRewardEvent(points, game, reason, total){
     var identity = rewardIdentity();
     var rewardMetadata = {
@@ -517,9 +521,10 @@
   }
 
   function logRewardEvent(points, game, reason, total){
-    var identity = rewardIdentity();
-    if(!isMember()) return false;
-    if(!identity.member_table_id && !identity.member_number && !identity.email) return false;
+    var gate = paidMemberEligibleIdentity();
+    var identity = gate.identity;
+    if(!gate.paid) return false;
+    if(!gate.hasIdentity) return false;
     postRewardEvent(buildRewardEvent(points, game, reason, total)).catch(function(error){
       console.warn('PLAY 3D reward_events logging failed', error);
     });
@@ -570,7 +575,7 @@
     });
 
     var history = readJSON(HISTORY_KEY, []);
-    history.push({at:new Date().toISOString(), game:game || 'game', points:points, xp:xpGain, reason:reason || 'valid_win', prizeEligible:isMember()});
+    history.push({at:new Date().toISOString(), game:game || 'game', points:points, xp:xpGain, reason:reason || 'valid_win', prizeEligible:paidMemberEligibleIdentity().paid});
     writeJSON(HISTORY_KEY, history.slice(-200));
     logRewardEvent(points, game, reason, total);
     return getStatus(total);
@@ -578,7 +583,8 @@
 
   function getStatus(total){
     var points = typeof total === 'number' ? total : getPoints();
-    return {points:points, threshold:THRESHOLD, remaining:Math.max(0, THRESHOLD - points), member:isMember(), eligible:isMember() && points >= THRESHOLD};
+    var gate = paidMemberEligibleIdentity();
+    return {points:points, threshold:THRESHOLD, remaining:Math.max(0, THRESHOLD - points), member:gate.paid, eligible:gate.paid && points >= THRESHOLD};
   }
 
   function claimHref(){
