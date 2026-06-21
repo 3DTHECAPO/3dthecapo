@@ -294,18 +294,9 @@ function makeFlowingPlacement(rawTile,arm,match,anchor,defaultFlow){
   if(straight && !placementOutsideTable(straight) && !placementCollides(straight,anchor)){
     return straight;
   }
-  const best = candidates.sort((a,b)=>placementPenalty(a,anchor,flowSide,arm)-placementPenalty(b,anchor,flowSide,arm))[0];
-  if(best && (placementCollides(best,anchor) || placementOutsideTable(best))){
-    const expanded = candidates.map(item=>{
-      const copy = Object.assign({}, item);
-      const dir = BRANCH_DIRS[copy.flowSide] || BRANCH_DIRS.right;
-      copy.x = (copy.x || 0) + dir.x * 18;
-      copy.y = (copy.y || 0) + dir.y * 18;
-      return copy;
-    }).find(item=>!placementCollides(item,anchor) && !placementOutsideTable(item));
-    if(expanded) return expanded;
-  }
-  return best;
+  return candidates
+    .filter(item=>!placementOutsideTable(item) && !placementCollides(item,anchor))
+    .sort((a,b)=>placementPenalty(a,anchor,flowSide,arm)-placementPenalty(b,anchor,flowSide,arm))[0] || null;
 }
 
 function currentBoardLimits(){
@@ -627,12 +618,14 @@ function placeOnArm(tile,arm){
     const previous = arm === 'left' ? line[0] : line[line.length-1];
     const anchor = previous || {x:0,y:0,orientation:'horizontal',flowSide:arm,exposedSide:arm};
     const placement = makeFlowingPlacement(tile,arm,end.value,anchor,arm);
+    if(!placement) return false;
     if(isDouble(placement.tile)){
       promoteFirstDoubleToSpinner(placement,arm,existingLine);
     }else if(arm === 'left') line.unshift(placement);
     else line.push(placement);
   }else{
     const placement = makeBranchPlacement(tile,arm,end.value);
+    if(!placement) return false;
     state.board.spinnerArms[arm].push(placement);
   }
 
@@ -873,11 +866,9 @@ function cpuTurn(){
   if(player === 0 || activeLocal() || state.handOver || state.gameOver) return;
   const hand = state.hands[player];
   let move = chooseCpuMove(hand);
-  const startingStock = state.stock.length;
-  let drew = 0;
-  while(!move && drew < startingStock && state.stock.length){
+  if(!move && state.stock.length){
     hand.push(state.stock.pop());
-    drew++;
+    log(seatName(player)+' drew one bone.');
     move = chooseCpuMove(hand);
   }
   if(move){
@@ -906,15 +897,9 @@ function drawTile(){
     return;
   }
   if(!state.stock.length){ log('Boneyard empty. Pass.'); return; }
-  const startingStock = state.stock.length;
-  let drew = 0;
-  while(drew < startingStock && state.stock.length && !canPlay(player)){
-    const tile = state.stock.pop();
-    if(!tile) break;
-    state.hands[player].push(tile);
-    drew++;
-  }
-  log(seatName(player)+' drew '+drew+(canPlay(player) ? ' and can play.' : '. Boneyard empty.'));
+  const tile = state.stock.pop();
+  if(tile) state.hands[player].push(tile);
+  log(seatName(player)+' drew one bone'+(canPlay(player) ? ' and can play.' : '.'));
   render();
 }
 
