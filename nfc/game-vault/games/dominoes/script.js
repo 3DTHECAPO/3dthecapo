@@ -294,7 +294,18 @@ function makeFlowingPlacement(rawTile,arm,match,anchor,defaultFlow){
   if(straight && !placementOutsideTable(straight) && !placementCollides(straight,anchor)){
     return straight;
   }
-  return candidates.sort((a,b)=>placementPenalty(a,anchor,flowSide,arm)-placementPenalty(b,anchor,flowSide,arm))[0];
+  const best = candidates.sort((a,b)=>placementPenalty(a,anchor,flowSide,arm)-placementPenalty(b,anchor,flowSide,arm))[0];
+  if(best && (placementCollides(best,anchor) || placementOutsideTable(best))){
+    const expanded = candidates.map(item=>{
+      const copy = Object.assign({}, item);
+      const dir = BRANCH_DIRS[copy.flowSide] || BRANCH_DIRS.right;
+      copy.x = (copy.x || 0) + dir.x * 18;
+      copy.y = (copy.y || 0) + dir.y * 18;
+      return copy;
+    }).find(item=>!placementCollides(item,anchor) && !placementOutsideTable(item));
+    if(expanded) return expanded;
+  }
+  return best;
 }
 
 function currentBoardLimits(){
@@ -630,6 +641,9 @@ function placeOnArm(tile,arm){
 }
 
 function commitPlay(playerIndex,tile,arm){
+  if(!tile || !Array.isArray(tile)) return false;
+  if((state.hands[playerIndex] || []).indexOf(tile) < 0) return false;
+  if(!legalArms(tile).includes(arm)) return false;
   const hadSpinner = !!state.board.spinnerTile;
   if(!placeOnArm(tile,arm)) return false;
   if(!hadSpinner && state.board.spinnerTile) play3dAnnounce('SPINNER','elite');
@@ -694,10 +708,21 @@ function awardSettlement(player,pips,reason){
 
 function requestArm(tile){
   if(state.handOver || state.gameOver) return;
+  if(!tile || !Array.isArray(tile)) return;
+  const hand = state.hands[state.currentPlayerIndex] || [];
+  if(hand.indexOf(tile) < 0){
+    log('That domino is not in this player hand.');
+    render();
+    return;
+  }
   const arms = legalArms(tile);
-  if(!arms.length){ log('Illegal domino.'); return; }
+  if(!arms.length){
+    log('Illegal domino. Match an open end.');
+    render();
+    return;
+  }
   if(arms.length === 1){ playTile(tile,arms[0]); return; }
-  state.pending = {tile};
+  state.pending = {tile, arms:arms.slice()};
   armChooser.hidden = false;
   armChooser.innerHTML = '<span>Choose arm</span>' + arms.map(arm=>'<button type="button" data-arm="'+arm+'">'+arm+'</button>').join('');
 }
@@ -705,8 +730,19 @@ function requestArm(tile){
 function playTile(tile,arm){
   const player = state.currentPlayerIndex;
   if(player !== 0 && !activeLocal()) return;
+  if(!tile || !Array.isArray(tile)) return;
+  if((state.hands[player] || []).indexOf(tile) < 0){
+    log('That domino is not in this player hand.');
+    render();
+    return;
+  }
+  if(!legalArms(tile).includes(arm)){
+    log('Illegal domino. Match an open end.');
+    render();
+    return;
+  }
   const opening = !hasBoardTiles();
-  if(!commitPlay(player,tile,arm)){ log('Illegal domino.'); return; }
+  if(!commitPlay(player,tile,arm)){ log('Illegal domino.'); render(); return; }
   const count = scoreBoardCount(player,opening ? 'opening_lead' : 'play');
   log(seatName(player)+' played on '+arm+'. Board count '+count+'.');
   if(state.gameOver) return;
