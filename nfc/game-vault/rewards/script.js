@@ -12,6 +12,7 @@
     dashboard: document.getElementById('dashboard'),
     points: document.getElementById('rewardPoints'),
     credits: document.getElementById('rewardCredits'),
+    pendingCredits: document.getElementById('pendingCredits'),
     events: document.getElementById('rewardEvents'),
     pending: document.getElementById('pendingClaims'),
     approved: document.getElementById('approvedClaims'),
@@ -76,6 +77,40 @@
     return Number(row.credits ?? row.points ?? meta.credits ?? meta.points ?? 0) || 0;
   }
 
+  function eventName(row){
+    const meta = eventMetadata(row);
+    return String(meta.event_name || row.reward_label || row.event_type || '').trim().toLowerCase();
+  }
+
+  function eventIsProgression(row){
+    const meta = eventMetadata(row);
+    return meta.ledger_type === 'progression' ||
+      meta.progression_points !== undefined ||
+      ['game_win','signup_bonus','purchase_bonus','milestone_unlock'].includes(eventName(row));
+  }
+
+  function eventProgressionPoints(row){
+    const meta = eventMetadata(row);
+    return Math.max(0, Number(meta.progression_points ?? meta.points ?? eventCredits(row)) || 0);
+  }
+
+  function progressionTotal(events, localTotal){
+    let running = 0;
+    let found = false;
+    events.filter(eventIsProgression).forEach(row=>{
+      if(!eventIsSpendableStatus(row)) return;
+      found = true;
+      const meta = eventMetadata(row);
+      const recordedTotal = Number(meta.progression_total ?? meta.total_points);
+      if(Number.isFinite(recordedTotal)){
+        running = Math.max(running, recordedTotal);
+      }else{
+        running += eventProgressionPoints(row);
+      }
+    });
+    return found ? Math.max(localTotal, running) : localTotal;
+  }
+
   function eventLabel(row){
     const meta = eventMetadata(row);
     return row.reward_label || row.event_type || row.reward_type || meta.event_name || meta.reward_key || 'Reward Event';
@@ -86,9 +121,29 @@
     return String(row.automation_status || row.payment_status || meta.status || meta.payment_status || '').trim().toLowerCase();
   }
 
-  function eventIsSpendable(row){
+  function eventIsPending(row){
     const status = eventStatus(row);
-    return !['pending','pending_review','payment_verification','reward_payment_verification','awaiting_inventory','denied','failed','cancelled','canceled'].includes(status);
+    const name = eventName(row);
+    return name.includes('pending') ||
+      ['pending','pending_review','payment_verification','reward_payment_verification','awaiting_inventory'].includes(status);
+  }
+
+  function eventIsDenied(row){
+    return ['denied','failed','cancelled','canceled','rejected'].includes(eventStatus(row));
+  }
+
+  function eventIsSpendableStatus(row){
+    return !eventIsPending(row) && !eventIsDenied(row);
+  }
+
+  function eventIsSpendable(row){
+    return !eventIsProgression(row) && eventIsSpendableStatus(row);
+  }
+
+  function pendingCreditValue(row){
+    if(eventIsProgression(row) || !eventIsPending(row)) return 0;
+    const meta = eventMetadata(row);
+    return Math.max(0, Number(meta.requested_credits ?? meta.quantity ?? eventCredits(row)) || 0);
   }
 
   function claimStatus(row){
@@ -182,23 +237,33 @@
     }
 
     const profile = readJSON('play3d_player_profile_v1', {});
-    const points = getPoints(profile);
+    const localPoints = getPoints(profile);
     const localCredits = getCredits();
 
-    if(els.points) els.points.textContent = points.toLocaleString();
+    if(els.points) els.points.textContent = localPoints.toLocaleString();
     if(els.credits) els.credits.textContent = localCredits.toLocaleString();
+    if(els.pendingCredits) els.pendingCredits.textContent = '0';
 
     try{
       const [events, claims] = await Promise.all([loadLiveRewardEvents(), loadLiveClaims()]);
+      const points = progressionTotal(events, localPoints);
       const totalCredits = events.filter(eventIsSpendable).reduce((sum,row)=>sum + eventCredits(row), 0);
+      const pendingCredits = events.reduce((sum,row)=>sum + pendingCreditValue(row), 0);
+      if(els.points) els.points.textContent = points.toLocaleString();
       if(els.credits) els.credits.textContent = totalCredits.toLocaleString();
+      if(els.pendingCredits) els.pendingCredits.textContent = pendingCredits.toLocaleString();
 
       renderList(
         els.events,
         events.slice(0,10).map(row=>{
-          const amount = eventCredits(row);
+          const progression = eventIsProgression(row);
+          const amount = progression ? eventProgressionPoints(row) : eventCredits(row);
           const status = eventStatus(row);
-          const amountText = eventIsSpendable(row) ? `${amount >= 0 ? '+' : ''}${amount.toLocaleString()}` : `${amount.toLocaleString()} pending`;
+          const amountText = progression
+            ? `+${amount.toLocaleString()} progression`
+            : eventIsSpendable(row)
+              ? `${amount >= 0 ? '+' : ''}${amount.toLocaleString()} credits`
+              : `${pendingCreditValue(row).toLocaleString()} credits pending`;
           return `${String(row.game || row.source || 'PLAY 3D').toUpperCase()} - ${eventLabel(row)} ${amountText}${status ? ` (${status})` : ''}`;
         }),
         'No live reward events yet.'
