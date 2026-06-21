@@ -2,36 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Claim Credits - Members Only</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>PLAY 3D - Rewards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
-  <script src="../../../public/shared/config.js"></script>
-  <script src="../../../public/shared/pass-session.js"></script>
-  <script src="../../../public/shared/room-guard.js"></script>
-  <script>
-    Play3DRoomGuard.requireMemberOrPass();
-  </script>
 </head>
 <body>
   <main class="app">
-    <section class="card">
-      <h1>Rewards Claim (Members Only)</h1>
+    <header class="topbar">
+      <div>
+        <div class="kicker">PLAY 3D</div>
+        <h1>PLAY 3D Rewards</h1>
+        <p>Protected fan/member rewards dashboard.</p>
+      </div>
+      <div class="header-actions">
+        <button id="refreshBtn" type="button">Refresh</button>
+        <a class="back-link" href="../index.html">Back to Game Vault</a>
+      </div>
+    </header>
 
-      <input id="claimCodeInput" type="text" aria-label="Claim code">
-
-      <button id="claimBtn" class="btn gold">Claim Credits</button>
-
-      <a id="playBtn" href="../index.html" class="btn gold" style="display:none;margin-top:10px;text-align:center;text-decoration:none;">
-        PLAY GAMES
-      </a>
-
-      <div id="statusBox">READY</div>
+    <section id="lockedState" class="panel locked-panel" hidden>
+      <h2>Rewards Locked</h2>
+      <p>Paid PLAY 3D membership is required to view rewards.</p>
+      <a class="back-link" href="../index.html">Back to Game Vault</a>
     </section>
-  </main>
 
-  <script src="../rewards/bankroll.js"></script>
-  <script src="../rewards/member-system.js"></script>
-  <script src="./claim.js"></script>
+    <div id="dashboard">
+      <section class="summary-grid">
+        <article class="panel">
+          <span>Points</span>
+          <b id="rewardPoints">0</b>
+        </article>
+        <article class="panel">
+          <span>Credits</span>
+          <b id="rewardCredits">0</b>
+        </article>
+      </section>
+
+      <section class="panel status-panel">
+        <h2>Reward Events</h2>
+        <div id="rewardEvents" class="placeholder-list"></div>
+      </section>
+
+      <section class="claims-grid">
+        <article class="panel">
+          <h2>Pending Claims</h2>
+          <div id="pendingClaims" class="placeholder-list"></div>
+        </article>
+        <article class="panel">
+          <h2>Approved Claims</h2>
+          <div id="approvedClaims" class="placeholder-list"></div>
+        </article>
+        <article class="panel">
+          <h2>Fulfilled Claims</h2>
+          <div id="fulfilledClaims" class="placeholder-list"></div>
+        </article>
+      </section>
+    </div>
+  </main>
+  <script src="../../shared/access-bridge.js"></script>
+  <script src="../member-system.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
-
