@@ -11,8 +11,18 @@
   var SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
   var SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
   var REWARD_EVENTS_TABLE = 'reward_events';
+  var REWARD_CLAIMS_TABLE = 'reward_claims';
   var THRESHOLD = 100000;
   var REWARD_MILESTONES = [100000,250000,400000,550000,700000,850000,1000000];
+  var REWARD_MILESTONE_LABELS = {
+    100000:'100K POINT REWARD',
+    250000:'250K POINT REWARD',
+    400000:'400K POINT REWARD',
+    550000:'550K POINT REWARD',
+    700000:'700K POINT REWARD',
+    850000:'850K POINT REWARD',
+    1000000:'1M POINT REWARD'
+  };
   var TODAY = new Date().toISOString().slice(0, 10);
   var DAILY_REWARD_CAP = 2500;
   var DAILY_GAME_CAP = 1000;
@@ -292,6 +302,10 @@
       total_wins:profile && profile.totalWins,
       jackpot_count:profile && profile.jackpotCount
     }, fanRoomContext()));
+    if(milestone.pointsRequired){
+      metadata.points_required = milestone.pointsRequired;
+      metadata.claim_status = 'pending_review';
+    }
 
     return {
       member_id:identity.member_table_id || undefined,
@@ -307,24 +321,101 @@
     };
   }
 
+  function buildMilestoneClaim(milestone){
+    var gate = paidMemberEligibleIdentity();
+    var identity = gate.identity;
+    if(!gate.paid || !gate.hasIdentity || !milestone.pointsRequired) return null;
+    return cleanObject({
+      member_id:identity.member_table_id,
+      member_number:identity.member_number,
+      email:identity.email,
+      points_required:milestone.pointsRequired,
+      prize_name:milestone.name,
+      claim_status:'pending_review',
+      created_at:new Date().toISOString()
+    });
+  }
+
+  async function milestoneClaimExists(milestone, identity){
+    var filters = [];
+    if(identity.member_table_id) filters.push('member_id=eq.' + encodeURIComponent(identity.member_table_id));
+    else if(identity.member_number) filters.push('member_number=eq.' + encodeURIComponent(identity.member_number));
+    else if(identity.email) filters.push('email=eq.' + encodeURIComponent(identity.email));
+    if(!filters.length) return false;
+    filters.push('points_required=eq.' + encodeURIComponent(milestone.pointsRequired));
+    try{
+      var response = await fetch(
+        SUPABASE_URL + '/rest/v1/' + REWARD_CLAIMS_TABLE + '?' + filters.join('&') + '&select=id&limit=1',
+        {headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer ' + SUPABASE_ANON}}
+      );
+      if(!response.ok) return false;
+      var rows = await response.json().catch(function(){ return []; });
+      return Array.isArray(rows) && rows.length > 0;
+    }catch(e){
+      return false;
+    }
+  }
+
+  async function postMilestoneClaim(payload){
+    var response = await fetch(SUPABASE_URL + '/rest/v1/' + REWARD_CLAIMS_TABLE, {
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':'Bearer ' + SUPABASE_ANON,
+        'Content-Type':'application/json',
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify(payload)
+    });
+    if(response.ok) return true;
+    throw new Error(await response.text().catch(function(){ return String(response.status); }));
+  }
+
   function logMilestoneUnlock(milestone, profile){
-    if(!isMember()) return false;
+    var gate = paidMemberEligibleIdentity();
+    if(!gate.paid || !gate.hasIdentity) return false;
     var payload = buildMilestoneEvent(milestone, profile);
     if(!payload) return false;
     var localLog = readJSON(MILESTONE_LOG_KEY, {});
     if(localLog[payload.reward_code]) return false;
-    localLog[payload.reward_code] = {at:new Date().toISOString(), milestone:milestone.id};
-    writeJSON(MILESTONE_LOG_KEY, localLog);
     Promise.resolve()
       .then(function(){ return rewardEventExists(payload.reward_code); })
-      .then(function(exists){
-        if(exists) return false;
-        return postRewardEvent(payload);
+      .then(async function(eventExists){
+        if(eventExists){
+          localLog[payload.reward_code] = {at:new Date().toISOString(), milestone:milestone.id};
+          writeJSON(MILESTONE_LOG_KEY, localLog);
+          return false;
+        }
+        if(milestone.pointsRequired){
+          var claimExists = await milestoneClaimExists(milestone, gate.identity);
+          if(!claimExists){
+            var claimPayload = buildMilestoneClaim(milestone);
+            if(!claimPayload) return false;
+            await postMilestoneClaim(claimPayload);
+          }
+        }
+        var inserted = await postRewardEvent(payload);
+        if(inserted){
+          localLog[payload.reward_code] = {at:new Date().toISOString(), milestone:milestone.id};
+          writeJSON(MILESTONE_LOG_KEY, localLog);
+        }
+        return inserted;
       })
       .catch(function(error){
-        console.warn('PLAY 3D milestone reward_events logging failed', {payload:payload, error:error});
+        console.warn('PLAY 3D milestone claim/event logging failed', {payload:payload, error:error});
       });
     return true;
+  }
+
+  function evaluateRewardMilestones(previousTotal, total, profile){
+    REWARD_MILESTONES.forEach(function(pointsRequired){
+      if(previousTotal >= pointsRequired || total < pointsRequired) return;
+      logMilestoneUnlock({
+        id:'points_' + pointsRequired,
+        name:REWARD_MILESTONE_LABELS[pointsRequired] || (pointsRequired.toLocaleString() + ' POINT REWARD'),
+        pointsRequired:pointsRequired
+      }, profile);
+    });
   }
 
   function evaluateAchievements(profile){
@@ -428,7 +519,7 @@
     var identity = rewardIdentity();
     var status = String(identity.memberStatus || '').trim().toUpperCase();
     var activeStatus = ['ACTIVE','PAID','MEMBER','APPROVED','CURRENT'].indexOf(status) !== -1;
-    var paid = !!(identity.paidMember || activeStatus || isMember());
+    var paid = !!activeStatus;
     var hasIdentity = !!(identity.member_table_id || identity.member_number || identity.email);
     return { paid: paid, hasIdentity: hasIdentity, identity: identity };
   }
@@ -545,7 +636,8 @@
     recent.push(now);
     awardLog[key] = recent.slice(-10);
     writeJSON(AWARD_LOG_KEY, awardLog);
-    var total = setPoints(getPoints() + points);
+    var previousTotal = getPoints();
+    var total = setPoints(previousTotal + points);
     var win = isWinReason(reason);
     var jackpot = /jackpot/i.test(reason || '');
     var xpGain = Math.max(5, Math.min(300, Math.floor(points * 0.65)));
@@ -572,6 +664,7 @@
       }
       if(/vault_pass/i.test(reason || '')) addInventoryItem(profile, {id:'vault_pass_slot', name:'Vault Pass Slot', type:'vault-pass', rarity:'vault', count:1});
       if(profile.streaks.win > 0 && profile.streaks.win % 5 === 0) addInventoryItem(profile, {id:'win_streak_badge', name:'Win Streak Badge', type:'badge', rarity:'epic', count:1});
+      evaluateRewardMilestones(previousTotal, total, profile);
     });
 
     var history = readJSON(HISTORY_KEY, []);
