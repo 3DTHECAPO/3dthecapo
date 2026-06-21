@@ -117,7 +117,7 @@ function buildRewardEvent(parsed, paid){
     claim_code:parsed.raw,
     claim_type:parsed.type,
     quantity:parsed.amount,
-    credits:paid ? parsed.amount : 0,
+    credits:paid && !parsed.needsClaim ? parsed.amount : 0,
     requested_credits:parsed.amount,
     paid_member:paid,
     email,
@@ -125,7 +125,7 @@ function buildRewardEvent(parsed, paid){
     member_number:memberNumber,
     timestamp:now,
     page:window.location.pathname,
-    status:paid ? 'earned' : 'promo_redeemed_not_paid_member'
+    status:parsed.needsClaim ? 'pending_review' : 'earned'
   };
 
   Object.keys(metadata).forEach(k=>{
@@ -138,7 +138,7 @@ function buildRewardEvent(parsed, paid){
     reward_type:'bonus_content',
     reward_label:rewardLabel,
     reward_code:parsed.raw,
-    credits:paid ? parsed.amount : 0,
+    credits:paid && !parsed.needsClaim ? parsed.amount : 0,
     source:'claim_page',
     game:'claim',
     created_at:now,
@@ -157,41 +157,53 @@ function buildRewardClaim(parsed){
     member_id:memberId || undefined,
     member_number:memberNumber || undefined,
     email:email || undefined,
-    reward_key:parsed.raw,
-    reward_label:parsed.type === 'vip' ? 'VIP Claim Code' : 'Member Claim Code',
-    claim_type:parsed.type,
-    status:'pending_review',
+    points_required:parsed.amount,
+    prize_name:parsed.type === 'vip' ? 'VIP Claim Code' : 'Member Claim Code',
     claim_status:'pending_review',
-    source:'claim_page',
-    created_at:now,
-    metadata:{
-      claim_code:parsed.raw,
-      requested_credits:parsed.amount,
-      credits:parsed.amount,
-      paid_member:isPaidMember(),
-      page:window.location.pathname
-    }
+    created_at:now
   };
+}
+
+async function rewardClaimExists(parsed){
+  const id = identity();
+  const email = String(id.email || '').trim().toLowerCase();
+  const memberId = id.memberId || id.member_id || id.memberTableId || id.member_table_id || '';
+  const memberNumber = id.memberNumber || id.member_number || '';
+  const filters = [];
+  if(memberId) filters.push(`member_id=eq.${encodeURIComponent(memberId)}`);
+  else if(memberNumber) filters.push(`member_number=eq.${encodeURIComponent(memberNumber)}`);
+  else if(email) filters.push(`email=eq.${encodeURIComponent(email)}`);
+  if(!filters.length) return false;
+  filters.push(`points_required=eq.${encodeURIComponent(parsed.amount)}`);
+  filters.push(`prize_name=eq.${encodeURIComponent(parsed.type === 'vip' ? 'VIP Claim Code' : 'Member Claim Code')}`);
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/reward_claims?${filters.join('&')}&select=id&limit=1`,{
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':`Bearer ${SUPABASE_ANON}`
+      }
+    });
+    if(!res.ok) return false;
+    const rows = await res.json().catch(()=>[]);
+    return Array.isArray(rows) && rows.length > 0;
+  }catch(e){
+    return false;
+  }
 }
 
 async function logClaim(parsed){
   const paid = isPaidMember();
+  if(!paid) return {ok:false, paidRequired:true, paid:false};
   const exists = await rewardEventExists(parsed.raw);
   if(exists) return {ok:false, duplicate:true};
 
+  if(parsed.needsClaim){
+    const existingClaim = await rewardClaimExists(parsed);
+    if(!existingClaim) await postJson('reward_claims', buildRewardClaim(parsed));
+  }
+
   const eventPayload = buildRewardEvent(parsed, paid);
   await postJson('reward_events', eventPayload);
-
-  // Only create reward_claims for claim types that require review/fulfillment.
-  // BOOST is just local/promo boost. MEMBER/VIP get admin visibility without
-  // client-side fake paid-member activation.
-  if(parsed.needsClaim){
-    try{
-      await postJson('reward_claims', buildRewardClaim(parsed));
-    }catch(e){
-      console.warn('reward_claims insert skipped/failed', e);
-    }
-  }
 
   return {ok:true, paid};
 }
@@ -220,23 +232,21 @@ btn.onclick = async () => {
       markUsed(p.raw);
       return;
     }
+    if(result.paidRequired){
+      statusBox.textContent = 'PAID MEMBERSHIP REQUIRED';
+      return;
+    }
 
-    // Removed unsafe client-side paid member upgrade:
-    // Play3DMemberSystem.setMember(true)
-    // Member/VIP claim codes now create pending_review claim records instead.
-    if(window.Play3DBankroll && typeof Play3DBankroll.queueBoost === 'function'){
+    // Claim codes never change membership state client-side.
+    if(!p.needsClaim && window.Play3DBankroll && typeof Play3DBankroll.queueBoost === 'function'){
       Play3DBankroll.queueBoost(p.amount);
     }
 
     markUsed(p.raw);
 
-    if(p.needsClaim && !result.paid){
-      statusBox.textContent = 'CLAIM PENDING REVIEW +' + p.amount;
-    }else{
-      statusBox.textContent = p.type === 'boost'
-        ? 'BOOST ADDED +' + p.amount
-        : 'CLAIM RECORDED +' + p.amount;
-    }
+    statusBox.textContent = p.type === 'boost'
+      ? 'BOOST ADDED +' + p.amount
+      : 'CLAIM PENDING REVIEW +' + p.amount;
 
     playBtn.style.display = 'block';
   }catch(e){
