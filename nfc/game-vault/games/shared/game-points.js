@@ -537,8 +537,10 @@
       user_agent:navigator.userAgent,
       reason:reason || 'valid_win',
       reward_status:'earned',
-      credits:points,
-      bank_after:total
+      ledger_type:'progression',
+      progression_points:points,
+      progression_total:total,
+      credit_effect:0
     };
     cleanObject(rewardMetadata);
     var rewardCode = ['game_win', String(game || 'game'), String(Date.now()), Math.random().toString(36).slice(2, 8)].join(':');
@@ -551,7 +553,7 @@
       reward_code:rewardCode,
       source:'game_vault_shared',
       game:String(game || 'game'),
-      credits:points,
+      credits:0,
       created_at:new Date().toISOString(),
       reward_metadata:rewardMetadata
     };
