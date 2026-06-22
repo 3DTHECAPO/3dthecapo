@@ -691,7 +691,7 @@ body.store-coming-soon .card::after{
           </ul>
         </div>
         <div class="pay-row">
-          <button class="cash-btn pay-start" type="button" data-tier="GOLD" data-code-type="GOLD" data-duration="30d" data-price="TBA" data-method="cashapp">Pay With Cash App</button>
+          <button class="cash-btn pay-start" type="button" data-tier="GOLD" data-code-type="GOLD" data-duration="30d" data-price="15" data-method="cashapp">Pay With Cash App</button>
           <button class="stripe-btn pay-start" type="button" data-tier="GOLD" data-code-type="GOLD" data-duration="30d" data-price="15" data-method="stripe">Pay With Card</button>
           <p class="pay-note">Enter your info first, then complete payment.</p>
         </div>
@@ -865,7 +865,15 @@ body.store-coming-soon .card::after{
   'use strict';
 
   var CASH_TAG = '$3dcashin';
-  var STRIPE_URL = 'https://buy.stripe.com/fZu3cvbAYcJogX2a5e4ZG00';
+  var STRIPE_URL = 'https://buy.stripe.com/9B6fZh34s4cScGM4KU4ZG06';
+  var STRIPE_LINKS = {
+    ENTRY: 'https://buy.stripe.com/9B6fZh34s4cScGM4KU4ZG06',
+    GOLD: 'https://buy.stripe.com/dRm28r8oMaBgbCI4KU4ZG05',
+    ELITE: 'https://buy.stripe.com/fZu4gz34s24K6ioa5e4ZG04',
+    REWARD_ENTRY: 'https://buy.stripe.com/eVqcN55cAeRw2283GQ4ZG03',
+    REWARD_GOLD: 'https://buy.stripe.com/5kQ00j48weRw36c0uE4ZG02',
+    REWARD_ELITE: 'https://buy.stripe.com/dRmbJ1gVieRwcGM1yI4ZG01'
+  };
   var STORAGE_KEY = 'play3d_pending_payments_v1';
   var STORE_COMING_SOON = true;
   var selected = null;
@@ -957,7 +965,8 @@ body.store-coming-soon .card::after{
 
   function paymentUrl(method, tier, price, email){
     if(method === 'cashapp') return 'https://cash.app/' + encodeURIComponent(CASH_TAG) + '/' + encodeURIComponent(price);
-    var url = new URL(STRIPE_URL);
+    var base = STRIPE_LINKS[tier] || STRIPE_URL;
+    var url = new URL(base);
     url.searchParams.set('client_reference_id', 'PLAY3D-' + tier + '-' + Date.now());
     if(email) url.searchParams.set('prefilled_email', email);
     return url.toString();
