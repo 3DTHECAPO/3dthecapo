@@ -7,9 +7,9 @@
   // Then set image:'./assets/exhibits/your-file.jpg'
   const museumExhibits = [
     {
-      title:'Album Cover Archive',
+      title:'The Resume Room',
       image:'',
-      description:'Awaiting upload. Reserved for future album cover artwork and official project visuals.',
+      description:'Entry exhibit for official project artwork, cover visuals, and early-release vault displays.',
       type:'cover art',
       year:'2026',
       tag:'COVER',
@@ -17,9 +17,9 @@
       section:'gallery'
     },
     {
-      title:'Music Snippet Archive',
+      title:'First Listen Vault',
       image:'',
-      description:'Awaiting audio upload. Future WAV or MP3 snippets will be connected to this archive slot.',
+      description:'Entry exhibit for private snippets, preview audio, and locked-in music moments.',
       type:'audio',
       year:'2026',
       tag:'AUDIO',
@@ -27,9 +27,9 @@
       section:'gallery'
     },
     {
-      title:'Music Milestone',
+      title:'Capo Milestone Wall',
       image:'',
-      description:'Awaiting milestone details. Reserved for future music achievements and release markers.',
+      description:'Entry exhibit for release markers, campaign wins, and official 3D THE CAPO milestones.',
       type:'milestone',
       year:'2026',
       tag:'MILESTONE',
@@ -37,9 +37,9 @@
       section:'trophy'
     },
     {
-      title:'Premium Cover Archive',
+      title:'Gold Cover Room',
       image:'',
-      description:'Awaiting upload. Reserved for premium cover art, alternate artwork, and rollout visuals.',
+      description:'Gold exhibit for alternate cover art, premium rollout visuals, and private project artwork.',
       type:'cover art',
       year:'2026',
       tag:'GOLD',
@@ -47,9 +47,9 @@
       section:'gallery'
     },
     {
-      title:'Studio Session Archive',
+      title:'Behind The Session',
       image:'',
-      description:'Awaiting upload. Reserved for studio photos, behind-the-scenes visuals, and session moments.',
+      description:'Gold exhibit for studio photos, behind-the-scenes moments, and recording-room archive pieces.',
       type:'photo',
       year:'2026',
       tag:'STUDIO',
@@ -57,9 +57,9 @@
       section:'gallery'
     },
     {
-      title:'Project Timeline Archive',
+      title:'Rollout Timeline',
       image:'',
-      description:'Awaiting timeline details. Reserved for future project dates, releases, and rollout history.',
+      description:'Gold exhibit for project dates, release history, campaign steps, and rollout moments.',
       type:'timeline',
       year:'2026',
       tag:'TIMELINE',
@@ -67,9 +67,9 @@
       section:'timeline'
     },
     {
-      title:'Exclusive Merch Archive',
+      title:'Elite Merch Vault',
       image:'',
-      description:'Awaiting merch upload. Reserved for future apparel designs, drops, bundles, and product previews.',
+      description:'Elite exhibit for private merch previews, apparel drops, bundles, and product concepts.',
       type:'merch',
       year:'2026',
       tag:'MERCH',
@@ -88,9 +88,9 @@
       video:''
     },
     {
-      title:'Founder Collection Archive',
+      title:'Capo Collector Case',
       image:'',
-      description:'Awaiting upload. Reserved for future elite collectibles, founder items, and high-tier archive pieces.',
+      description:'Elite exhibit for rare collectibles, founder pieces, high-tier vault items, and exclusive archive drops.',
       type:'collector archive',
       year:'2026',
       tag:'FOUNDER',
