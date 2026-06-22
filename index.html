@@ -15,31 +15,30 @@
   <link rel="stylesheet" href="./styles.css?v=4">
 
 <style id="vault-cart-style">
-.vault-cart-btn{
-  position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;
-  min-height:44px;padding:0 16px;border-radius:999px;border:1px solid rgba(202,162,74,.5);
+.vault-cart-btn.cart-icon-btn{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;
+  width:58px;height:44px;padding:0;border-radius:14px;border:1px solid rgba(202,162,74,.5);
   background:
-    radial-gradient(circle at 30% 25%, rgba(242,210,123,.28), transparent 28%),
-    linear-gradient(180deg,#6d5220,#1a1308 48%,#000);
-  color:#f2d27b;font-family:"Black Ops One", Oswald, Arial, sans-serif;font-size:14px;
-  letter-spacing:1px;text-transform:uppercase;box-shadow:0 14px 28px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
+    radial-gradient(circle at 30% 20%, rgba(255,225,145,.16), transparent 28%),
+    linear-gradient(180deg,#6b5120 0%, #24180a 44%, #090704 100%);
+  box-shadow:
+    0 14px 28px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.08);
 }
-.vault-cart-wheel{
-  width:18px;height:18px;border:2px solid #f2d27b;border-radius:50%;position:relative;display:inline-block;
-  box-shadow:0 0 10px rgba(242,210,123,.25);
+.cart-icon{
+  font-size:20px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));
 }
-.vault-cart-wheel::before,.vault-cart-wheel::after{
-  content:"";position:absolute;left:50%;top:50%;background:#f2d27b;transform:translate(-50%,-50%);
-}
-.vault-cart-wheel::before{width:2px;height:12px;box-shadow:0 0 0 0 #f2d27b, 0 0 0 0 #f2d27b;}
-.vault-cart-wheel::after{width:12px;height:2px;}
-.vault-cart-text{line-height:1}
 .vault-cart-count{
-  min-width:22px;height:22px;padding:0 6px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;
-  background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#8b641e);color:#17130c;font-weight:900;font-family:Oswald,Arial,sans-serif;
-  box-shadow:0 0 12px rgba(242,210,123,.25);
+  position:absolute;top:-7px;right:-7px;min-width:22px;height:22px;padding:0 6px;border-radius:999px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#8b641e);color:#17130c;
+  font:900 12px/1 Oswald,Arial,sans-serif;
+  box-shadow:0 0 12px rgba(242,210,123,.25), inset 0 1px 0 rgba(255,255,255,.18);
 }
-.vault-cart-btn:hover{transform:translateY(-2px);box-shadow:0 18px 34px rgba(0,0,0,.55),0 0 20px rgba(242,210,123,.18)}
+.vault-cart-btn.cart-icon-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 34px rgba(0,0,0,.55),0 0 20px rgba(242,210,123,.18),inset 0 1px 0 rgba(255,255,255,.08);
+}
 </style>
 
 </head>
@@ -59,9 +58,8 @@
         <a class="pill gold" href="./nfc/scan.html">Vault</a>
         <a class="pill gold" href="./buy.html">Buy Access</a>
         <a class="pill gold" href="./join.html">JOIN PLAY 3D</a>
-        <button class="vault-cart-btn" id="openMerchCart" type="button" aria-label="Open shopping cart">
-          <span class="vault-cart-wheel" aria-hidden="true"></span>
-          <span class="vault-cart-text">VAULT</span>
+        <button class="vault-cart-btn cart-icon-btn" id="openMerchCart" type="button" aria-label="Open shopping cart">
+          <span class="cart-icon" aria-hidden="true">🛒</span>
           <span class="vault-cart-count" id="merchCartCount">0</span>
         </button>
       </nav>
