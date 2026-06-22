@@ -30,6 +30,7 @@
         <a class="pill gold" href="./nfc/scan.html">Vault</a>
         <a class="pill gold" href="./buy.html">Buy Access</a>
         <a class="pill gold" href="./join.html">JOIN PLAY 3D</a>
+        <button class="pill gold" id="openMerchCart" type="button">Cart <span id="merchCartCount">0</span></button>
       </nav>
       <div class="tagline">HUSTLE • GRIND • DOMINATE</div>
     </header>
@@ -236,7 +237,7 @@
             </div>
             <div class="body">
               <p class="name">Fly &amp; Legendary Alien Tee</p>
-              <p class="price">$25</p>
+              <p class="price">$30</p>
               <div class="actions">
                 <button class="pill gold small merch-options-btn" type="button" data-product="alien">View / Buy</button>
               </div>
@@ -250,7 +251,7 @@
             </div>
             <div class="body">
               <p class="name">Fly &amp; Legendary Tee</p>
-              <p class="price">$25</p>
+              <p class="price">$30</p>
               <div class="actions">
                 <button class="pill gold small merch-options-btn" type="button" data-product="fly">View / Buy</button>
               </div>
@@ -264,7 +265,7 @@
             </div>
             <div class="body">
               <p class="name">Smokin Budz Coupon Tee</p>
-              <p class="price">$25</p>
+              <p class="price">$30</p>
               <div class="actions">
                 <button class="pill gold small merch-options-btn" type="button" data-product="smokin">View Colors / Buy</button>
               </div>
@@ -278,7 +279,7 @@
             </div>
             <div class="body">
               <p class="name">ROYAL ETIQUETTE TEE</p>
-              <p class="price">$25</p>
+              <p class="price">$30</p>
               <div class="actions">
                 <button class="pill gold small merch-options-btn" type="button" data-product="coming1">View Colors / Buy</button>
               </div>
@@ -292,7 +293,7 @@
             </div>
             <div class="body">
               <p class="name">STAY IN MY BAG Tee</p>
-              <p class="price">$25</p>
+              <p class="price">$30</p>
               <div class="actions">
                 <button class="pill gold small merch-options-btn" type="button" data-product="coming2">View Colors / Buy</button>
               </div>
@@ -339,6 +340,26 @@
               <a class="pill gold small" id="modalBuyButton" href="./buy.html" target="_blank" rel="noopener">Buy Now</a>
             </div>
             <p class="note" id="modalNote">$25. Pick color and size, then tap Buy Now to continue checkout.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal-backdrop" id="merchCartDrawer" aria-hidden="true">
+      <div class="modal">
+        <div class="modal-head">
+          <div class="drawer-title">Shopping Cart</div>
+          <button class="modal-close" id="closeMerchCart" type="button" aria-label="Close">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-info" style="width:100%;">
+            <div id="merchCartItems" class="note">Your cart is empty.</div>
+            <div class="mini-actions" style="margin-top:16px;">
+              <a class="pill gold small" id="merchCartCheckout" href="#merch" target="_blank" rel="noopener">Checkout</a>
+              <button class="pill small" id="clearMerchCart" type="button">Clear Cart</button>
+            </div>
+            <p class="note">Stripe checkout opens for the selected item. Size and color are saved in the cart note.</p>
           </div>
         </div>
       </div>
@@ -395,28 +416,39 @@
 
 <script>
 (function () {
-  const MERCH_BUY_URL = './buy.html';
+  const STRIPE_MERCH_LINKS = {
+    alien: 'https://buy.stripe.com/14A9ATfRefVAcGM2CM4ZG07',
+    fly: 'https://buy.stripe.com/dRm28rgVi8t8fSYb9i4ZG0a',
+    smokin: 'https://buy.stripe.com/fZuaEX6gEbFk9uAelu4ZG08',
+    coming1: 'https://buy.stripe.com/5kQ4gzdJ6bFk9uA1yI4ZG09',
+    coming2: 'https://buy.stripe.com/4gM8wP6gE10G6iogtC4ZG0b',
+    coming3: '#merch'
+  };
+
   const merchProducts = {
     alien: {
-      name: 'Fly & Legendary Alien TEE',
-      price: '$25',
-      buyUrl: MERCH_BUY_URL,
+      name: 'Fly & Legendary Graphic Tee',
+      price: '$30',
+      buyUrl: STRIPE_MERCH_LINKS.alien,
+      productId: 'prod_UkcueDlgYZwlDr',
       variants: [
         { label: 'Black Tee', img: './fly-legendary-alien-black-tee.png?v=2' }
       ]
     },
     fly: {
-      name: 'Fly & Legendary TEE',
-      price: '$25',
-      buyUrl: MERCH_BUY_URL,
+      name: 'Fly & Legendary Tee',
+      price: '$30',
+      buyUrl: STRIPE_MERCH_LINKS.fly,
+      productId: 'prod_Ukcff90W3aEsBw',
       variants: [
         { label: 'White Tee', img: './fly-legendary-white-tee.png?v=2' }
       ]
     },
     smokin: {
-      name: 'Smokin Budz Coupon TEE',
-      price: '$25',
-      buyUrl: MERCH_BUY_URL,
+      name: 'Smokin Budz Coupon Tee',
+      price: '$30',
+      buyUrl: STRIPE_MERCH_LINKS.smokin,
+      productId: 'prod_UkcmPgBFeneEoS',
       variants: [
         { label: 'Blue on White', img: './smokin-budz-blue-white-tee.png?v=2' },
         { label: 'Red on White', img: './smokin-budz-red-white-tee.png?v=2' },
@@ -425,18 +457,20 @@
       ]
     },
     coming1: {
-      name: 'ROYAL ETIQUETTE Tee',
-      price: '$25',
-      buyUrl: MERCH_BUY_URL,
+      name: 'Royal Etiquette Tee',
+      price: '$30',
+      buyUrl: STRIPE_MERCH_LINKS.coming1,
+      productId: 'prod_UkciZBO5toJPXJ',
       variants: [
-        { label: 'White Tee', img: './royals-etiquette-black.png?v=1' },
-        { label: 'Black Tee', img: './royals-etiquette-white.png?v=1' }
+        { label: 'White Tee', img: './royals-etiquette-white.png?v=1' },
+        { label: 'Black Tee', img: './royals-etiquette-black.png?v=1' }
       ]
     },
     coming2: {
-      name: 'STAY IN MY BAG TEE',
-      price: '$25',
-      buyUrl: MERCH_BUY_URL,
+      name: 'Stay In My Bag Tee',
+      price: '$30',
+      buyUrl: STRIPE_MERCH_LINKS.coming2,
+      productId: 'prod_UkcbjdRizbGoGl',
       variants: [
         { label: 'White Tee', img: './stay-in-my-bag-white.png?v=1' },
         { label: 'Black Tee', img: './stay-in-my-bag-black.png?v=1' }
@@ -450,6 +484,85 @@
     }
   };
 
+  const CART_KEY = 'step_loud_merch_cart_v1';
+  let activeProductKey = null;
+  let activeVariant = null;
+  let activeSize = 'L';
+
+  function readCart(){
+    try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+    catch(e){ return []; }
+  }
+
+  function writeCart(cart){
+    localStorage.setItem(CART_KEY, JSON.stringify(cart.slice(-20)));
+    renderCart();
+  }
+
+  function updateCartCount(){
+    const count = document.getElementById('merchCartCount');
+    if(count) count.textContent = String(readCart().length);
+  }
+
+  function withCheckoutParams(url, item){
+    if(!url || url === '#merch') return url || '#merch';
+    try{
+      const u = new URL(url);
+      u.searchParams.set('client_reference_id', 'MERCH-' + (item.key || 'ITEM') + '-' + Date.now());
+      u.searchParams.set('prefilled_promo_code', '');
+      return u.toString();
+    }catch(e){
+      return url;
+    }
+  }
+
+  function renderCart(){
+    updateCartCount();
+    const cart = readCart();
+    const wrap = document.getElementById('merchCartItems');
+    const checkout = document.getElementById('merchCartCheckout');
+    if(!wrap || !checkout) return;
+
+    if(!cart.length){
+      wrap.textContent = 'Your cart is empty.';
+      checkout.href = '#merch';
+      checkout.textContent = 'Checkout';
+      return;
+    }
+
+    wrap.innerHTML = cart.map(function(item, index){
+      return '<div style="border:1px solid rgba(202,162,74,.34);border-radius:14px;padding:12px;margin-bottom:10px;">'
+        + '<strong>' + item.name + '</strong><br>'
+        + item.price + ' • ' + item.variant + ' • Size ' + item.size
+        + '</div>';
+    }).join('');
+
+    const first = cart[0];
+    checkout.href = withCheckoutParams(first.buyUrl, first);
+    checkout.textContent = cart.length > 1 ? 'Checkout First Item' : 'Checkout';
+  }
+
+  function openCart(){
+    renderCart();
+    const drawer = document.getElementById('merchCartDrawer');
+    if(!drawer) return;
+    drawer.setAttribute('aria-hidden','false');
+    drawer.classList.add('show');
+    drawer.style.display = 'flex';
+    drawer.style.pointerEvents = 'auto';
+    drawer.style.opacity = '1';
+  }
+
+  function closeCart(){
+    const drawer = document.getElementById('merchCartDrawer');
+    if(!drawer) return;
+    drawer.setAttribute('aria-hidden','true');
+    drawer.classList.remove('show');
+    drawer.style.display = 'none';
+    drawer.style.pointerEvents = '';
+    drawer.style.opacity = '';
+  }
+
   function setupMerchModal() {
     const modal = document.getElementById('productModal');
     const modalImage = document.getElementById('modalImage');
@@ -461,44 +574,98 @@
     const modalSizes = document.getElementById('modalSizes');
     if (!modal || !modalImage || !modalName || !modalPrice || !modalVariants) return;
 
+    let addCartBtn = document.getElementById('modalAddToCart');
+    if(!addCartBtn && modalBuyButton && modalBuyButton.parentNode){
+      addCartBtn = document.createElement('button');
+      addCartBtn.className = 'pill gold small';
+      addCartBtn.id = 'modalAddToCart';
+      addCartBtn.type = 'button';
+      addCartBtn.textContent = 'Add To Cart';
+      modalBuyButton.parentNode.insertBefore(addCartBtn, modalBuyButton);
+    }
+
+    function setBuyUrl(product){
+      if(!modalBuyButton || !product) return;
+      const item = {
+        key: activeProductKey,
+        name: product.name,
+        price: product.price,
+        variant: activeVariant ? activeVariant.label : '',
+        size: activeSize,
+        buyUrl: product.buyUrl
+      };
+      modalBuyButton.href = withCheckoutParams(product.buyUrl || '#merch', item);
+    }
+
     function openProduct(key) {
       const product = merchProducts[key];
       if (!product) return;
+      activeProductKey = key;
+      activeVariant = product.variants[0];
+      activeSize = 'L';
+
       modalName.textContent = product.name;
       modalPrice.textContent = product.price;
-      modalImage.src = product.variants[0].img;
+      modalImage.src = activeVariant.img;
       modalImage.alt = product.name;
       modalVariants.innerHTML = '';
+
       product.variants.forEach(function (variant, index) {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'pill small' + (index === 0 ? ' gold' : '');
         btn.textContent = variant.label;
         btn.addEventListener('click', function () {
+          activeVariant = variant;
           modalImage.src = variant.img;
           modalVariants.querySelectorAll('button').forEach(function (item) { item.classList.remove('gold'); });
           btn.classList.add('gold');
+          setBuyUrl(product);
         });
         modalVariants.appendChild(btn);
       });
+
       if (modalBuyButton) {
         if (product.price === 'COMING SOON') {
           modalBuyButton.textContent = 'Coming Soon';
           modalBuyButton.href = '#merch';
         } else {
-          modalBuyButton.textContent = 'Buy Now';
-          modalBuyButton.href = product.buyUrl || MERCH_BUY_URL;
+          modalBuyButton.textContent = 'Checkout Now';
+          setBuyUrl(product);
         }
       }
+
+      if(addCartBtn){
+        addCartBtn.style.display = product.price === 'COMING SOON' ? 'none' : 'inline-flex';
+        addCartBtn.onclick = function(){
+          const cart = readCart();
+          cart.push({
+            key: activeProductKey,
+            name: product.name,
+            price: product.price,
+            variant: activeVariant ? activeVariant.label : '',
+            size: activeSize,
+            buyUrl: product.buyUrl,
+            productId: product.productId || '',
+            added_at: new Date().toISOString()
+          });
+          writeCart(cart);
+          openCart();
+        };
+      }
+
       if (modalSizes) {
         modalSizes.querySelectorAll('button').forEach(function (btn, index) {
-          btn.classList.toggle('gold', index === 2);
-          btn.addEventListener('click', function () {
+          btn.classList.toggle('gold', btn.getAttribute('data-size') === activeSize);
+          btn.onclick = function () {
+            activeSize = btn.getAttribute('data-size') || 'L';
             modalSizes.querySelectorAll('button').forEach(function (item) { item.classList.remove('gold'); });
             btn.classList.add('gold');
-          });
+            setBuyUrl(product);
+          };
         });
       }
+
       modal.setAttribute('aria-hidden', 'false');
       modal.classList.add('show');
       modal.style.display = 'flex';
@@ -527,6 +694,18 @@
       if (event.target === modal) closeProduct();
     });
     modal.style.display = 'none';
+
+    const openCartBtn = document.getElementById('openMerchCart');
+    const closeCartBtn = document.getElementById('closeMerchCart');
+    const clearCartBtn = document.getElementById('clearMerchCart');
+    const cartDrawer = document.getElementById('merchCartDrawer');
+
+    if(openCartBtn) openCartBtn.addEventListener('click', openCart);
+    if(closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
+    if(clearCartBtn) clearCartBtn.addEventListener('click', function(){ writeCart([]); });
+    if(cartDrawer) cartDrawer.addEventListener('click', function(event){ if(event.target === cartDrawer) closeCart(); });
+
+    renderCart();
   }
 
   if (document.readyState === 'loading') {
