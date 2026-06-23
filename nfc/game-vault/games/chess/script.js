@@ -40,6 +40,10 @@
   const stateText = document.getElementById('stateText');
   const difficultySelect = document.getElementById('difficultySelect');
 
+  function play3dSync(){
+    return window.Play3DGameSync || window.PLAY3D_SYNC || null;
+  }
+
   const moveSound = new Audio('./sounds/chess-move.wav');
   const checkSound = new Audio('./sounds/check.wav');
 
@@ -184,7 +188,10 @@
       playCheckSound();
       play3dAnnounce('CHECK','warning');
     }
-    if(window.Play3DGameSync) window.Play3DGameSync.sendMove({game:'chess', san:move.san, fen:game.fen()});
+    const sync = play3dSync();
+    if(sync && typeof sync.sendMove === 'function'){
+      sync.sendMove({game:'chess', san:move.san, fen:game.fen(), turn:game.turn()});
+    }
     if(window.Play3DPoints && verifiedCheckmate() && checkmateReward() > 0) window.Play3DPoints.award('chess', checkmateReward(), 'checkmate_' + cpuDifficultyName());
     if(mode === 'cpu' && game.turn() === 'b' && !game.isGameOver()){
       render('OPPONENT THINKING...');
@@ -440,7 +447,7 @@
   }
 
   function clickSquare(square){
-    if(mode === 'fan'){ render('ROOM CODE READY'); return; }
+    // Fan mode uses the same legal chess move flow, then broadcasts the new FEN.
     if(mode === 'cpu' && game.turn() === 'b') return;
     const piece = game.get(square);
     if(selected){
@@ -471,14 +478,27 @@
     };
   }
   window.addEventListener('play3d:modechange', event=>{ mode = event.detail.mode; reset(); });
-  window.addEventListener('load', ()=>{
-    if(window.Play3DGameSync){
-      window.Play3DGameSync.onMove(payload=>{
-        if(!payload || payload.game !== 'chess' || !payload.fen) return;
-        try{ game.load(payload.fen); selected = null; render('REMOTE MOVE'); }catch(e){}
-      });
-    }
-  });
+  let fanSyncAttached = false;
+  function attachFanSync(){
+    if(fanSyncAttached) return;
+    const sync = play3dSync();
+    if(!sync || typeof sync.onMove !== 'function') return;
+    fanSyncAttached = true;
+    sync.onMove(payload=>{
+      if(!payload || payload.game !== 'chess' || !payload.fen) return;
+      try{
+        game.load(payload.fen);
+        selected = null;
+        render('REMOTE MOVE');
+        playMoveSound();
+      }catch(e){}
+    });
+  }
+
+  window.addEventListener('load', attachFanSync);
+  window.addEventListener('play3d:modechange', attachFanSync);
+  setTimeout(attachFanSync, 300);
+  setTimeout(attachFanSync, 1000);
 
   reset();
 })();
