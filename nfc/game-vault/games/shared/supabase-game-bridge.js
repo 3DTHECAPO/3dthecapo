@@ -22,6 +22,7 @@ API:
 
   const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
   const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
+  const SUPABASE_JS_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
   const params = new URLSearchParams(location.search);
   const mode = params.get('mode');
   const room = params.get('room');
@@ -56,8 +57,52 @@ API:
     try{ localStorage.setItem(playerIdKey, playerId); }catch(_e){}
   }
 
-  function getClient(){
-    return window.PLAY3D_SUPABASE || window.supabaseClient || window.supabase || null;
+  let supabaseClientPromise = null;
+
+  function loadSupabaseJs(){
+    if(window.supabase && typeof window.supabase.createClient === 'function'){
+      return Promise.resolve(window.supabase);
+    }
+    if(supabaseClientPromise) return supabaseClientPromise;
+    supabaseClientPromise = new Promise((resolve, reject)=>{
+      const existing = document.querySelector('script[data-play3d-supabase-js="true"]');
+      if(existing){
+        existing.addEventListener('load',()=>resolve(window.supabase),{once:true});
+        existing.addEventListener('error',reject,{once:true});
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = SUPABASE_JS_URL;
+      script.async = true;
+      script.dataset.play3dSupabaseJs = 'true';
+      script.onload = ()=>resolve(window.supabase);
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+    return supabaseClientPromise;
+  }
+
+  async function getClient(){
+    const existing = window.PLAY3D_SUPABASE || window.supabaseClient;
+    if(existing && typeof existing.channel === 'function') return existing;
+
+    if(window.supabase && typeof window.supabase.channel === 'function'){
+      return window.supabase;
+    }
+
+    const sdk = await loadSupabaseJs().catch(error=>{
+      console.error('[PLAY3D_SYNC] Supabase JS load failed', error);
+      return null;
+    });
+
+    if(sdk && typeof sdk.createClient === 'function'){
+      window.PLAY3D_SUPABASE = sdk.createClient(SUPABASE_URL, SUPABASE_ANON, {
+        auth:{persistSession:false, autoRefreshToken:false}
+      });
+      return window.PLAY3D_SUPABASE;
+    }
+
+    return null;
   }
 
   function channelName(){
@@ -151,7 +196,7 @@ API:
 
   async function ensureChannel(){
     persistRoom();
-    const client = getClient();
+    const client = await getClient();
     if(!client || typeof client.channel !== 'function'){
       console.warn('[PLAY3D_SYNC] Supabase client not found. Room link active, live sync disabled.');
       return null;
