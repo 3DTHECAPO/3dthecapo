@@ -577,7 +577,9 @@ function render(label){
       '<div class="count-card">BID '+state.bid+'</div>'+
       '<div class="count-card">MELD A '+state.meldScores[0]+' / B '+state.meldScores[1]+'</div>'+
       '<div class="count-card">TRICKS A '+state.trickScores[0]+' / B '+state.trickScores[1]+'</div>'+
-      '<div class="count-card">CAPTURED A '+state.captured[0].length+' / B '+state.captured[1].length+'</div>';
+      '<div class="count-card">CAPTURED A '+state.captured[0].length+' / B '+state.captured[1].length+'</div>'+
+      (FAN_MODE?'<div class="count-card">YOUR SEAT '+(mySeat+1)+'<br>'+teamName(teamIndex(mySeat))+'</div>':'')+
+      fanSeatChoiceHTML();
   }
 
   if(stockArea)stockArea.innerHTML='<div class="count-card">NO STOCK<br>80 CARD DECK</div>';
@@ -589,7 +591,10 @@ function render(label){
   }
 
   if(mainScore)mainScore.textContent=state.scores[0]+' - '+state.scores[1];
-  if(stateText)stateText.textContent=label||(state.phase==='play'?(state.currentPlayerIndex===0?'YOUR TURN':seatName(state.currentPlayerIndex)+' TURN'):state.phase.toUpperCase());
+  if(stateText)stateText.textContent=label||(state.phase==='play'?(state.currentPlayerIndex===mySeat?'YOUR TURN':seatName(state.currentPlayerIndex)+' TURN'):state.phase.toUpperCase());
+  document.querySelectorAll('[data-fan-seat]').forEach(button=>{
+    button.onclick=()=>setFanPreferredSeat(Number(button.dataset.fanSeat));
+  });
   renderSeats();
 }
 
