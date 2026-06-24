@@ -22,6 +22,135 @@
   const order = Object.fromEntries(ranks.map((r,i)=>[r,i + 1]));
   const suitIcon = {S:'\u2660', H:'\u2665', D:'\u2666', C:'\u2663'};
   const state = { deck:[], stock:[], discard:[], hands:[], playerMelds:[], cpuMelds:[], selected:new Set(), phase:'idle', score:0, turn:0, playerCount:2 };
+  const FAN_PARAMS = new URLSearchParams(location.search);
+  const FAN_MODE = FAN_PARAMS.get('mode') === 'fan' && !!FAN_PARAMS.get('room');
+  let fanPlayers = [];
+  let fanSeatMap = {};
+  let fanMySeat = 0;
+  let fanSyncReady = false;
+  let applyingRemoteState = false;
+
+  function rummySync(){
+    return window.PLAY3D_SYNC || window.Play3DGameSync || null;
+  }
+
+  function fanPlayerId(){
+    const sync = rummySync();
+    return sync && sync.playerId ? sync.playerId : 'local';
+  }
+
+  function orderedFanPlayers(list){
+    return (list || [])
+      .filter(player => player && player.playerId)
+      .sort((a,b) => String(a.joinedAt || a.updatedAt || a.playerId).localeCompare(String(b.joinedAt || b.updatedAt || b.playerId)));
+  }
+
+  function rebuildFanSeats(list){
+    if(!FAN_MODE) return;
+    fanPlayers = orderedFanPlayers(list).slice(0, 2);
+    fanSeatMap = {};
+    fanPlayers.forEach((player, index) => { fanSeatMap[player.playerId] = index; });
+    const mine = fanPlayerId();
+    if(Object.prototype.hasOwnProperty.call(fanSeatMap, mine)) fanMySeat = fanSeatMap[mine];
+  }
+
+  function isFanSeat(seat){
+    if(!FAN_MODE) return seat === 0;
+    return Object.values(fanSeatMap).includes(seat);
+  }
+
+  function isMySeat(seat){
+    if(!FAN_MODE) return seat === 0;
+    return seat === fanMySeat;
+  }
+
+  function opponentIsFan(){
+    return FAN_MODE && Object.values(fanSeatMap).includes(1);
+  }
+
+  function myMelds(){
+    return fanMySeat === 0 ? state.playerMelds : state.cpuMelds;
+  }
+
+  function opponentMelds(){
+    return fanMySeat === 0 ? state.cpuMelds : state.playerMelds;
+  }
+
+  function cleanFanState(){
+    return {
+      deck:state.deck,
+      stock:state.stock,
+      discard:state.discard,
+      hands:state.hands,
+      playerMelds:state.playerMelds,
+      cpuMelds:state.cpuMelds,
+      phase:state.phase,
+      score:state.score,
+      turn:state.turn,
+      playerCount:state.playerCount
+    };
+  }
+
+  function applyFanState(snapshot, label){
+    if(!snapshot || typeof snapshot !== 'object') return;
+    applyingRemoteState = true;
+    Object.keys(snapshot).forEach(key => {
+      if(key in state) state[key] = snapshot[key];
+    });
+    state.selected = new Set();
+    applyingRemoteState = false;
+    render(label || 'REMOTE MOVE');
+    scheduleRummyCpuIfNeeded();
+  }
+
+  function broadcastFanState(reason){
+    if(!FAN_MODE || applyingRemoteState) return;
+    const sync = rummySync();
+    if(!sync || typeof sync.sendGameEvent !== 'function') return;
+    sync.sendGameEvent('rummy_state', {
+      game:'rummy',
+      reason:reason || 'state',
+      seat:fanMySeat,
+      state:cleanFanState()
+    });
+  }
+
+  function scheduleRummyCpuIfNeeded(){
+    if(!FAN_MODE) return;
+    if(state.phase === 'cpu' && !opponentIsFan()) scheduleCpu();
+  }
+
+  function fanSyncBoot(){
+    if(!FAN_MODE || fanSyncReady) return;
+    const sync = rummySync();
+    if(!sync || typeof sync.onGameEvent !== 'function') return;
+    fanSyncReady = true;
+
+    if(sync.onPresence){
+      sync.onPresence(players => {
+        rebuildFanSeats(players);
+        if(sync.updatePresence) sync.updatePresence({ready:false, seat:fanMySeat, game:'rummy'});
+        render('FAN RUMMY SEAT ' + (fanMySeat + 1));
+        scheduleRummyCpuIfNeeded();
+      });
+    }
+
+    sync.onGameEvent('rummy_state', msg => {
+      if(!msg || msg.playerId === fanPlayerId()) return;
+      const payload = msg.payload || msg;
+      if(payload && payload.game === 'rummy' && payload.state) applyFanState(payload.state, 'REMOTE MOVE');
+    });
+
+    sync.onGameEvent('rummy_request_state', msg => {
+      if(!msg || msg.playerId === fanPlayerId()) return;
+      if(fanMySeat === 0) broadcastFanState('state_response');
+    });
+
+    if(sync.updatePresence) sync.updatePresence({ready:false, seat:fanMySeat, game:'rummy'});
+    setTimeout(() => {
+      if(sync.sendGameEvent) sync.sendGameEvent('rummy_request_state', {game:'rummy', seat:fanMySeat});
+    }, 900);
+  }
   const els = {
     opponent:document.getElementById('opponentHand'),
     table:document.getElementById('tableCards'),
@@ -80,21 +209,29 @@
   function scoreMeld(cards){ return cards.reduce((sum,c)=>sum + cardValue(c), 0); }
 
   function render(){
-    const player = state.hands[0] || [];
+    const mySeat = FAN_MODE ? fanMySeat : 0;
+    const player = state.hands[mySeat] || [];
     sortHand(player);
-    const opponentCards = state.hands.slice(1).reduce((sum, hand)=>sum + hand.length, 0);
-    els.opponent.innerHTML = back(opponentCards) + '<div class="count-card">2 Players</div>';
+    const opponentSeat = mySeat === 0 ? 1 : 0;
+    const opponentCards = (state.hands[opponentSeat] || []).length;
+    const opponentLabel = FAN_MODE ? (opponentIsFan() ? 'Fan Opponent' : 'CPU Opponent') : 'CPU Opponent';
+    els.opponent.innerHTML = back(opponentCards) + '<div class="count-card">' + opponentLabel + '<br>' + opponentCards + ' Cards</div>';
     const topDiscard = state.discard[state.discard.length - 1];
     els.table.innerHTML = '<div class="count-card">Stock<br>' + state.stock.length + '</div>' + (topDiscard ? card(topDiscard, -1) : '<div class="count-card">Discard<br>Empty</div>');
-    els.melds.innerHTML = state.playerMelds.map(m => '<div class="meld-set">' + m.map(c => card(c, -2)).join('') + '</div>').join('') || '<div class="count-card">No melds yet</div>';
+    els.melds.innerHTML = myMelds().map(m => '<div class="meld-set">' + m.map(c => card(c, -2)).join('') + '</div>').join('') || '<div class="count-card">No melds yet</div>';
     els.player.innerHTML = player.map(card).join('');
     els.score.textContent = state.score;
     if(els.text.textContent !== 'OPPONENT THINKING...') els.text.textContent = state.phase.toUpperCase();
   }
 
   function deal(){
+    if(FAN_MODE && fanMySeat !== 0){
+      const sync = rummySync();
+      if(sync && sync.sendGameEvent) sync.sendGameEvent('rummy_request_state', {game:'rummy', seat:fanMySeat});
+      render('WAITING FOR HOST DEAL');
+      return;
+    }
     playShuffle();
-    const gameMode = window.Play3DModeBar ? window.Play3DModeBar.getMode() : 'cpu';
     state.playerCount = 2;
     state.deck = buildDeck();
     state.hands = Array.from({length:state.playerCount}, () => state.deck.splice(0, 10));
@@ -107,43 +244,68 @@
     state.turn = 0;
     state.phase = 'draw';
     render();
+    broadcastFanState('deal');
   }
   function recycleDiscard(){ const top = state.discard.pop(); state.stock = shuffle(state.discard); state.discard = top ? [top] : []; }
-  function drawFromStock(){ if(state.phase !== 'draw') return; if(!state.stock.length) recycleDiscard(); const drawn = state.stock.pop(); if(drawn){ playCard(); state.hands[0].push(drawn); } state.phase = 'meld'; render(); }
-  function drawFromDiscard(){ if(state.phase !== 'draw') return; const drawn = state.discard.pop(); if(drawn){ playCard(); state.hands[0].push(drawn); } state.phase = 'meld'; render(); }
+  function drawFromStock(){
+    const mySeat = FAN_MODE ? fanMySeat : 0;
+    if(state.phase !== 'draw' || state.turn !== mySeat) return;
+    if(!state.stock.length) recycleDiscard();
+    const drawn = state.stock.pop();
+    if(drawn){ playCard(); state.hands[mySeat].push(drawn); }
+    state.phase = 'meld';
+    render();
+    broadcastFanState('draw_stock');
+  }
+  function drawFromDiscard(){
+    const mySeat = FAN_MODE ? fanMySeat : 0;
+    if(state.phase !== 'draw' || state.turn !== mySeat) return;
+    const drawn = state.discard.pop();
+    if(drawn){ playCard(); state.hands[mySeat].push(drawn); }
+    state.phase = 'meld';
+    render();
+    broadcastFanState('draw_discard');
+  }
   function meldSelected(){
     if(state.phase !== 'meld') return;
     const indexes = [...state.selected].sort((a,b)=>a-b);
-    const picked = indexes.map(i => state.hands[0][i]).filter(Boolean);
+    const mySeat = FAN_MODE ? fanMySeat : 0;
+    if(state.turn !== mySeat) return;
+    const picked = indexes.map(i => state.hands[mySeat][i]).filter(Boolean);
     if(!isMeld(picked)){ els.text.textContent = 'SELECT A SET OR RUN'; return; }
-    removeIndexes(state.hands[0], indexes);
+    removeIndexes(state.hands[mySeat], indexes);
     playCard();
-    state.playerMelds.push(picked);
+    (mySeat === 0 ? state.playerMelds : state.cpuMelds).push(picked);
     state.score += scoreMeld(picked);
     play3dAnnounce('MELD','success');
     state.selected.clear();
     if(window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(10, scoreMeld(picked)), 'meld');
     checkRound();
     render();
+    broadcastFanState('meld');
   }
   function layoffSelected(){
     if(state.phase !== 'meld') return;
     const indexes = [...state.selected].sort((a,b)=>a-b);
     if(indexes.length !== 1){ els.text.textContent = 'SELECT ONE CARD TO ADD'; return; }
+    const mySeat = FAN_MODE ? fanMySeat : 0;
+    if(state.turn !== mySeat) return;
     const index = indexes[0];
-    const cardToAdd = state.hands[0][index];
+    const cardToAdd = state.hands[mySeat][index];
     if(!cardToAdd){ els.text.textContent = 'SELECT ONE CARD TO ADD'; return; }
-    for(let i = 0; i < state.playerMelds.length; i++){
-      const nextMeld = extendedMeld(state.playerMelds[i], cardToAdd);
+    const meldList = mySeat === 0 ? state.playerMelds : state.cpuMelds;
+    for(let i = 0; i < meldList.length; i++){
+      const nextMeld = extendedMeld(meldList[i], cardToAdd);
       if(nextMeld){
-        removeIndexes(state.hands[0], [index]);
+        removeIndexes(state.hands[mySeat], [index]);
         playCard();
-        state.playerMelds[i] = nextMeld;
+        meldList[i] = nextMeld;
         state.score += cardValue(cardToAdd);
         state.selected.clear();
         if(window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(5, cardValue(cardToAdd)), 'layoff');
         checkRound();
         render();
+        broadcastFanState('layoff');
         play3dAnnounce('LAYOFF','success');
         els.text.textContent = 'ADDED ' + cardToAdd.r + suitIcon[cardToAdd.s] + ' TO EXISTING MELD';
         return;
@@ -155,14 +317,31 @@
     if(state.phase !== 'meld') return;
     const indexes = [...state.selected];
     if(indexes.length !== 1){ els.text.textContent = 'SELECT ONE DISCARD'; return; }
-    const [discarded] = removeIndexes(state.hands[0], indexes);
+    const mySeat = FAN_MODE ? fanMySeat : 0;
+    if(state.turn !== mySeat) return;
+    const [discarded] = removeIndexes(state.hands[mySeat], indexes);
     playCard();
     state.discard.push(discarded);
     state.selected.clear();
     checkRound();
-    if(state.phase !== 'over'){ state.phase = 'cpu'; state.turn = 1; scheduleCpu(); render(); }
+    if(state.phase !== 'over'){
+      state.turn = (mySeat + 1) % state.playerCount;
+      if(FAN_MODE && opponentIsFan()){
+        state.phase = 'draw';
+        render();
+      }else{
+        state.phase = 'cpu';
+        scheduleCpu();
+        render();
+      }
+    }
+    broadcastFanState('discard');
   }
-  function scheduleCpu(){ els.text.textContent = 'OPPONENT THINKING...'; window.setTimeout(cpuTurn, thinkDelay()); }
+  function scheduleCpu(){
+    if(FAN_MODE && opponentIsFan()) return;
+    els.text.textContent = 'OPPONENT THINKING...';
+    window.setTimeout(cpuTurn, thinkDelay());
+  }
   function cpuTurn(){
     if(state.phase !== 'cpu') return;
     const hand = state.hands[state.turn] || [];
@@ -175,11 +354,11 @@
     if(hand.length){ hand.sort((a,b)=>cardValue(b) - cardValue(a)); playCard(); state.discard.push(hand.shift()); }
     checkRound();
     if(state.phase !== 'over'){
-      state.turn = (state.turn + 1) % state.playerCount;
-      if(state.turn === 0) state.phase = 'draw';
-      else { render(); scheduleCpu(); return; }
+      state.turn = 0;
+      state.phase = 'draw';
     }
     render();
+    broadcastFanState('cpu_turn');
   }
   function checkRound(){
     const player = state.hands[0] || [];
@@ -202,7 +381,8 @@
   }
   els.player.addEventListener('click', e => {
     const btn = e.target.closest('[data-index]');
-    if(!btn || state.phase === 'cpu') return;
+    const mySeat = FAN_MODE ? fanMySeat : 0;
+    if(!btn || state.phase === 'cpu' || state.turn !== mySeat) return;
     const idx = Number(btn.dataset.index);
     if(idx < 0) return;
     if(state.selected.has(idx)) state.selected.delete(idx); else state.selected.add(idx);
@@ -214,6 +394,20 @@
   document.getElementById('meldBtn').onclick = meldSelected;
   document.getElementById('layoffBtn').onclick = layoffSelected;
   document.getElementById('discardBtn').onclick = discardSelected;
-  window.addEventListener('play3d:modechange', function(){ state.playerCount = 2; deal(); });
-  deal();
+  window.addEventListener('play3d:modechange', function(){ state.playerCount = 2; fanSyncBoot(); deal(); });
+  if(FAN_MODE){
+    fanSyncBoot();
+    render('JOINING FAN RUMMY ROOM...');
+    setTimeout(()=>{
+      fanSyncBoot();
+      if(fanMySeat === 0) deal();
+      else{
+        const sync = rummySync();
+        if(sync && sync.sendGameEvent) sync.sendGameEvent('rummy_request_state', {game:'rummy', seat:fanMySeat});
+        render('WAITING FOR HOST DEAL');
+      }
+    }, 1000);
+  }else{
+    deal();
+  }
 })();
