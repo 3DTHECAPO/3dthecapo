@@ -8,76 +8,6 @@ const COUNTERS={A:1,'10':1,K:1,Q:0,J:0};
 const ICON={S:'\u2660',H:'\u2665',D:'\u2666',C:'\u2663'};
 const TRICK_HOLD_MS=1600;
 
-const FAN_PARAMS=new URLSearchParams(location.search);
-const FAN_MODE=FAN_PARAMS.get('mode')==='fan'&&!!FAN_PARAMS.get('room');
-const FAN_SEAT_PREF_KEY='play3d_pinochle_preferred_seat__'+(FAN_PARAMS.get('room')||'room');
-let fanPlayers=[];
-let fanSeatMap={};
-let fanMySeat=0;
-let fanPreferredSeat=Number(sessionStorage.getItem(FAN_SEAT_PREF_KEY)||localStorage.getItem(FAN_SEAT_PREF_KEY)||0);
-let applyingRemoteState=false;
-let fanSyncReady=false;
-if(!Number.isFinite(fanPreferredSeat)||fanPreferredSeat<0||fanPreferredSeat>3)fanPreferredSeat=0;
-
-function pinochleSync(){return window.PLAY3D_SYNC||window.Play3DGameSync||null}
-function fanPlayerId(){const sync=pinochleSync();return sync&&sync.playerId?sync.playerId:'local'}
-function orderedFanPlayers(list){return (list||[]).filter(p=>p&&p.playerId).sort((a,b)=>String(a.joinedAt||a.updatedAt||a.playerId).localeCompare(String(b.joinedAt||b.updatedAt||b.playerId)))}
-function rebuildFanSeats(list){
-  if(!FAN_MODE)return;
-  const ordered=orderedFanPlayers(list).slice(0,4);
-  fanPlayers=ordered; fanSeatMap={};
-  const occupied={};
-  function wantedSeat(p){const raw=p&&Number.isFinite(Number(p.preferredSeat))?Number(p.preferredSeat):p&&Number.isFinite(Number(p.seat))?Number(p.seat):null;return raw!==null&&raw>=0&&raw<=3?raw:null}
-  ordered.forEach(p=>{const s=wantedSeat(p); if(s!==null&&!occupied[s]){fanSeatMap[p.playerId]=s;occupied[s]=true;}});
-  ordered.forEach(p=>{if(Object.prototype.hasOwnProperty.call(fanSeatMap,p.playerId))return; for(let s=0;s<4;s++){if(!occupied[s]){fanSeatMap[p.playerId]=s;occupied[s]=true;break;}}});
-  const mine=fanPlayerId(); if(Object.prototype.hasOwnProperty.call(fanSeatMap,mine))fanMySeat=fanSeatMap[mine];
-}
-function isFanSeat(player){return FAN_MODE?Object.values(fanSeatMap).includes(player):player===0}
-function localSeatName(player){
-  if(!FAN_MODE)return ['YOU','LEFT CPU','PARTNER','RIGHT CPU'][player]||'CPU';
-  if(player===fanMySeat)return 'YOU';
-  return Object.values(fanSeatMap).includes(player)?'FAN '+(player+1):'CPU '+(player+1);
-}
-function fanTeamName(team){return team===0?'TEAM A (SEATS 1 + 3)':'TEAM B (SEATS 2 + 4)'}
-function cleanFanState(){return {hands:state.hands,captured:state.captured,trick:state.trick,scores:state.scores,handScores:state.handScores,meldScores:state.meldScores,trickScores:state.trickScores,dealer:state.dealer,currentBidder:state.currentBidder,bidder:state.bidder,bidTeam:state.bidTeam,bid:state.bid,trump:state.trump,phase:state.phase,currentPlayerIndex:state.currentPlayerIndex,lastWinner:state.lastWinner,lastTrickResult:state.lastTrickResult,passed:state.passed,meldShown:state.meldShown,trumpMarriageValid:state.trumpMarriageValid,handToken:state.handToken}}
-function applyFanState(snapshot,label){
-  if(!snapshot||typeof snapshot!=='object')return;
-  applyingRemoteState=true; clearCpuTimer(); clearTrickTimer();
-  Object.keys(snapshot).forEach(k=>{if(k in state)state[k]=snapshot[k]});
-  state.cpuTimer=null; state.trickTimer=null; applyingRemoteState=false;
-  render(label||'REMOTE TABLE UPDATE'); scheduleFanCpuIfNeeded();
-}
-function broadcastFanState(reason){
-  if(!FAN_MODE||applyingRemoteState)return;
-  const sync=pinochleSync(); if(!sync||typeof sync.sendGameEvent!=='function')return;
-  sync.sendGameEvent('pinochle_state',{game:'pinochle',reason:reason||'state',seat:fanMySeat,state:cleanFanState()});
-}
-function scheduleFanCpuIfNeeded(){if(FAN_MODE&&(state.phase==='bidding'||state.phase==='play')&&!isFanSeat(state.currentPlayerIndex))scheduleCpu()}
-function setFanPreferredSeat(seat){
-  seat=Number(seat); if(!Number.isFinite(seat)||seat<0||seat>3)return;
-  fanPreferredSeat=seat;
-  try{sessionStorage.setItem(FAN_SEAT_PREF_KEY,String(seat));}catch(e){}
-  try{localStorage.setItem(FAN_SEAT_PREF_KEY,String(seat));}catch(e){}
-  const sync=pinochleSync(); if(sync&&sync.updatePresence)sync.updatePresence({ready:false,seat:fanPreferredSeat,preferredSeat:fanPreferredSeat,game:'pinochle'});
-  render('SEAT CHOICE: '+seatName(seat)); broadcastFanState('seat_choice');
-}
-function fanSeatChoiceHTML(){
-  if(!FAN_MODE)return '';
-  const labels=['Seat 1: You / Host','Seat 2: Against You','Seat 3: Your Partner','Seat 4: Against You'];
-  return '<div class="count-card">FAN TEAM CHOICE<br>'+labels.map((label,index)=>'<button type="button" data-fan-seat="'+index+'" '+(fanMySeat===index?'class="active"':'')+'>'+label+'</button>').join('')+'</div>';
-}
-function fanSyncBoot(){
-  if(!FAN_MODE||fanSyncReady)return;
-  const sync=pinochleSync(); if(!sync||typeof sync.onGameEvent!=='function')return;
-  fanSyncReady=true;
-  if(sync.onPresence){sync.onPresence(players=>{rebuildFanSeats(players); if(sync.updatePresence)sync.updatePresence({ready:false,seat:fanPreferredSeat,preferredSeat:fanPreferredSeat,game:'pinochle'}); render('FAN ROOM SEAT '+(fanMySeat+1)); scheduleFanCpuIfNeeded();});}
-  sync.onGameEvent('pinochle_state',msg=>{if(!msg||msg.playerId===fanPlayerId())return; const payload=msg.payload||msg; if(payload&&payload.game==='pinochle'&&payload.state)applyFanState(payload.state,'REMOTE TABLE UPDATE');});
-  sync.onGameEvent('pinochle_request_state',msg=>{if(!msg||msg.playerId===fanPlayerId())return; if(fanMySeat===0)broadcastFanState('state_response');});
-  if(sync.updatePresence)sync.updatePresence({ready:false,seat:fanPreferredSeat,preferredSeat:fanPreferredSeat,game:'pinochle'});
-  setTimeout(()=>{if(sync.sendGameEvent)sync.sendGameEvent('pinochle_request_state',{game:'pinochle',seat:fanMySeat})},900);
-}
-
-
 const state={
   hands:[],
   captured:[[],[]],
@@ -118,8 +48,8 @@ const mainScore=document.getElementById('mainScore');
 const stateText=document.getElementById('stateText');
 
 function teamIndex(player){return player%2}
-function teamName(team){return FAN_MODE?fanTeamName(team):(team===0?'TEAM A (YOU + PARTNER)':'TEAM B (OPPONENTS)')}
-function seatName(player){return localSeatName(player)}
+function teamName(team){return team===0?'TEAM A (YOU + PARTNER)':'TEAM B (OPPONENTS)'}
+function seatName(player){return ['YOU','LEFT CPU','PARTNER','RIGHT CPU'][player]||'CPU'}
 function leftOfDealer(){return (state.dealer+1)%4}
 function thinkDelay(){return 460+Math.floor(Math.random()*650)}
 function hasMarriage(hand,suit){return hand.some(card=>card.rank==='K'&&card.suit===suit)&&hand.some(card=>card.rank==='Q'&&card.suit===suit)}
@@ -281,8 +211,7 @@ function advanceBidder(){
   state.currentBidder=next;
   state.currentPlayerIndex=next;
   render(seatName(next)+' TO BID - CURRENT '+(state.bid||'NONE'));
-  if(FAN_MODE)scheduleFanCpuIfNeeded();
-  else if(next!==0)scheduleCpu();
+  if(next!==0)scheduleCpu();
 }
 
 function placeBid(player,amount){
@@ -300,7 +229,6 @@ function placeBid(player,amount){
   announce('BID','casino',seatName(player)+' BID '+amount);
   emitRoomEvent('pinochle_bid',{player,amount});
   advanceBidder();
-  broadcastFanState('bid');
   return true;
 }
 
@@ -310,7 +238,6 @@ function passBid(player){
   announce('PASS','normal',seatName(player)+' PASS');
   emitRoomEvent('pinochle_pass_bid',{player});
   advanceBidder();
-  broadcastFanState('pass_bid');
   return true;
 }
 
@@ -363,8 +290,7 @@ function deal(){
   state.trumpMarriageValid=true;
   announce('DEAL','normal','PINOCHLE HAND DEALT.');
   render('DEALER '+seatName(state.dealer)+' - '+seatName(state.currentBidder)+' BIDS FIRST');
-  if(FAN_MODE){broadcastFanState('deal');scheduleFanCpuIfNeeded();}
-  else if(state.currentBidder!==mySeat)scheduleCpu();
+  if(state.currentBidder!==0)scheduleCpu();
 }
 
 function showMeld(){
@@ -383,14 +309,12 @@ function showMeld(){
       window.Play3DPoints.award('pinochle',Math.min(75,Math.max(25,state.meldScores[0]*2)),'meld_score');
     }
     render('MELD: TEAM A '+state.meldScores[0]+' / TEAM B '+state.meldScores[1]+' - PRESS START PLAY');
-    broadcastFanState('meld_shown');
     return;
   }
   state.phase='play';
   state.currentPlayerIndex=state.bidder;
   render('PLAY STARTS - '+seatName(state.currentPlayerIndex)+' LEADS');
-  if(FAN_MODE){broadcastFanState('start_play');scheduleFanCpuIfNeeded();}
-  else if(state.currentPlayerIndex!==0)scheduleCpu();
+  if(state.currentPlayerIndex!==0)scheduleCpu();
 }
 
 function setTrump(suit){
@@ -401,7 +325,6 @@ function setTrump(suit){
   }
   announce('TRUMP','elite','TRUMP '+suit);
   render('TRUMP '+suit);
-  broadcastFanState('trump');
 }
 
 function leadSuit(){
@@ -479,8 +402,7 @@ function settleVisibleTrick(){
     return;
   }
   render('TRICK TO '+seatName(winner)+' / '+teamName(team)+' +'+points);
-  if(FAN_MODE){broadcastFanState('trick_settled');scheduleFanCpuIfNeeded();}
-  else if(winner!==0)scheduleCpu();
+  if(winner!==0)scheduleCpu();
 }
 
 function play(player,index){
@@ -503,15 +425,13 @@ function play(player,index){
     state.lastTrickResult={winner,team:teamIndex(winner),points,preview:true};
     render('TRICK COMPLETE - '+seatName(winner)+' / '+teamName(teamIndex(winner))+' +'+points);
     announce('TRICK','success',teamName(teamIndex(winner))+' TAKES THE TRICK.');
-    broadcastFanState('trick_complete');
     state.trickTimer=setTimeout(settleVisibleTrick,TRICK_HOLD_MS);
     return;
   }
 
   state.currentPlayerIndex=(player+1)%4;
   render('TRICK LIVE');
-  if(FAN_MODE){broadcastFanState('card_played');scheduleFanCpuIfNeeded();}
-  else if(state.currentPlayerIndex!==0)scheduleCpu();
+  if(state.currentPlayerIndex!==0)scheduleCpu();
 }
 
 function leadScore(card,hand){
@@ -575,7 +495,7 @@ function cpuTurn(token){
     cpuBid(state.currentBidder);
     return;
   }
-  if(state.phase!=='play'||isFanSeat(state.currentPlayerIndex)||state.trick.length===4)return;
+  if(state.phase!=='play'||state.currentPlayerIndex===0||state.trick.length===4)return;
   const legal=legalCards(state.currentPlayerIndex);
   if(!legal.length)return;
   const chosen=chooseCpuCard(state.currentPlayerIndex,legal);
@@ -605,7 +525,6 @@ function finishHand(){
   if(window.Play3DPoints&&winner===0)window.Play3DPoints.award('pinochle',175,'round_win');
   announce('WIN','success',winner===null?(made?'BID MADE':'BID SET'):teamName(winner)+' WINS GAME');
   render(winner===null?(made?'BID MADE':'SET - LOSE BID'):teamName(winner)+' WINS GAME');
-  broadcastFanState('hand_finished');
 }
 
 function trickCardHTML(play,index){
@@ -627,14 +546,13 @@ function renderSeats(){
 }
 
 function render(label){
-  const mySeat=FAN_MODE?fanMySeat:0;
   if(meldBtn)meldBtn.textContent=state.phase==='meld'&&state.meldShown?'Start Play':'Show Meld';
-  if(bidBtn)bidBtn.disabled=state.phase!=='bidding'||state.currentBidder!==mySeat;
-  if(passBidBtn)passBidBtn.disabled=state.phase!=='bidding'||state.currentBidder!==mySeat;
-  if(bidInput)bidInput.disabled=state.phase!=='bidding'||state.currentBidder!==mySeat;
+  if(bidBtn)bidBtn.disabled=state.phase!=='bidding'||state.currentBidder!==0;
+  if(passBidBtn)passBidBtn.disabled=state.phase!=='bidding'||state.currentBidder!==0;
+  if(bidInput)bidInput.disabled=state.phase!=='bidding'||state.currentBidder!==0;
 
   if(opponentHand){
-    opponentHand.innerHTML=[0,1,2,3].filter(seat=>seat!==mySeat).map(seat=>'<div class="count-card">'+seatName(seat)+'<br>'+(state.hands[seat]||[]).length+' CARDS</div>').join('');
+    opponentHand.innerHTML=backs((state.hands[1]||[]).length)+'<div class="count-card">PARTNER '+(state.hands[2]||[]).length+'<br>RIGHT '+(state.hands[3]||[]).length+'</div>';
   }
 
   if(trickPile){
@@ -659,33 +577,28 @@ function render(label){
       '<div class="count-card">BID '+state.bid+'</div>'+
       '<div class="count-card">MELD A '+state.meldScores[0]+' / B '+state.meldScores[1]+'</div>'+
       '<div class="count-card">TRICKS A '+state.trickScores[0]+' / B '+state.trickScores[1]+'</div>'+
-      '<div class="count-card">CAPTURED A '+state.captured[0].length+' / B '+state.captured[1].length+'</div>'+
-      (FAN_MODE?'<div class="count-card">YOUR SEAT '+(mySeat+1)+'<br>'+teamName(teamIndex(mySeat))+'</div>':'')+
-      fanSeatChoiceHTML();
+      '<div class="count-card">CAPTURED A '+state.captured[0].length+' / B '+state.captured[1].length+'</div>';
   }
 
   if(stockArea)stockArea.innerHTML='<div class="count-card">NO STOCK<br>80 CARD DECK</div>';
 
   if(playerHand){
-    const legalIds=new Set(legalCards(mySeat).map(card=>card.id));
-    playerHand.innerHTML=(state.hands[mySeat]||[]).map((card,index)=>cardHTML(card,index,state.currentPlayerIndex===mySeat&&legalIds.has(card.id))).join('');
-    playerHand.querySelectorAll('.card').forEach(button=>button.onclick=()=>play(mySeat,Number(button.dataset.i)));
+    const legalIds=new Set(legalCards(0).map(card=>card.id));
+    playerHand.innerHTML=(state.hands[0]||[]).map((card,index)=>cardHTML(card,index,state.currentPlayerIndex===0&&legalIds.has(card.id))).join('');
+    playerHand.querySelectorAll('.card').forEach(button=>button.onclick=()=>play(0,Number(button.dataset.i)));
   }
 
   if(mainScore)mainScore.textContent=state.scores[0]+' - '+state.scores[1];
-  if(stateText)stateText.textContent=label||(state.phase==='play'?(state.currentPlayerIndex===mySeat?'YOUR TURN':seatName(state.currentPlayerIndex)+' TURN'):state.phase.toUpperCase());
-  document.querySelectorAll('[data-fan-seat]').forEach(button=>{
-    button.onclick=()=>setFanPreferredSeat(Number(button.dataset.fanSeat));
-  });
+  if(stateText)stateText.textContent=label||(state.phase==='play'?(state.currentPlayerIndex===0?'YOUR TURN':seatName(state.currentPlayerIndex)+' TURN'):state.phase.toUpperCase());
   renderSeats();
 }
 
 if(dealBtn)dealBtn.onclick=deal;
-if(bidBtn)bidBtn.onclick=()=>placeBid(FAN_MODE?fanMySeat:0,bidInput?.value||50);
-if(passBidBtn)passBidBtn.onclick=()=>passBid(FAN_MODE?fanMySeat:0);
+if(bidBtn)bidBtn.onclick=()=>placeBid(0,bidInput?.value||50);
+if(passBidBtn)passBidBtn.onclick=()=>passBid(0);
 if(meldBtn)meldBtn.onclick=showMeld;
 document.querySelectorAll('[data-trump]').forEach(button=>button.onclick=()=>setTrump(button.dataset.trump));
-window.addEventListener('play3d:modechange',()=>{fanSyncBoot();deal();});
+window.addEventListener('play3d:modechange',deal);
 
 window.Play3DPinochle={
   state,
@@ -696,9 +609,5 @@ window.Play3DPinochle={
   settleVisibleTrick
 };
 
-if(FAN_MODE){
-  fanSyncBoot();
-  render('JOINING FAN PINOCHLE ROOM...');
-  setTimeout(()=>{fanSyncBoot(); if(fanMySeat===0)deal(); else{const sync=pinochleSync(); if(sync&&sync.sendGameEvent)sync.sendGameEvent('pinochle_request_state',{game:'pinochle',seat:fanMySeat}); render('WAITING FOR HOST TABLE');}},1000);
-}else{deal();}
+deal();
 })();
