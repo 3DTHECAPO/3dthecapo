@@ -151,8 +151,9 @@ Does not change game logic.
 
     <div class="p3d-room-status">
       <span class="p3d-pill live" id="p3dBridgeStatus">Room Link</span>
-      <span class="p3d-pill" id="p3dPlayerStatus">Player: You</span>
-      <span class="p3d-pill" id="p3dReadyStatus">Not Ready</span>
+      <span class="p3d-pill" id="p3dPlayerStatus">You</span>
+      <span class="p3d-pill" id="p3dReadyStatus">You: Not Ready</span>
+      <span class="p3d-pill" id="p3dOpponentStatus">Fan: Waiting</span>
     </div>
 
     <div class="p3d-room-actions">
@@ -176,6 +177,7 @@ Does not change game logic.
   const bridgeStatus = document.getElementById('p3dBridgeStatus');
   const playerStatus = document.getElementById('p3dPlayerStatus');
   const readyStatus = document.getElementById('p3dReadyStatus');
+  const opponentStatus = document.getElementById('p3dOpponentStatus');
 
   let ready = false;
 
@@ -184,24 +186,32 @@ Does not change game logic.
     if(sync && sync.enabled){
       bridgeStatus.textContent = sync.connected ? 'Live Sync' : 'Room Link';
       if(sync.playerId){
-        playerStatus.textContent = 'Player: ' + String(sync.playerId).slice(0, 8);
+        playerStatus.textContent = 'You: ' + String(sync.playerId).slice(0, 8);
       }
     }else{
       bridgeStatus.textContent = 'Room Link';
     }
   }
 
+  function renderPresence(list){
+    const sync = window.PLAY3D_SYNC;
+    if(!sync) return;
+    const mine = (list || []).find(p => p && p.playerId === sync.playerId);
+    const other = (list || []).find(p => p && p.playerId !== sync.playerId);
+    readyStatus.textContent = 'You: ' + ((mine && mine.ready) ? 'Ready' : 'Not Ready');
+    opponentStatus.textContent = other ? ('Fan: ' + (other.ready ? 'Ready' : 'Joined')) : 'Fan: Waiting';
+  }
+
   function sendReady(){
     const sync = window.PLAY3D_SYNC;
-    if(sync && sync.sendGameEvent){
-      sync.sendGameEvent('player_ready', {ready, room, game:gameName});
-    }
+    if(sync && sync.updatePresence){ sync.updatePresence({ready}); }
+    if(sync && sync.sendGameEvent){ sync.sendGameEvent('player_ready', {ready, room, game:gameName}); }
   }
 
   readyBtn.addEventListener('click', function(){
     ready = !ready;
-    readyStatus.textContent = ready ? 'Ready' : 'Not Ready';
     readyBtn.textContent = ready ? 'Unready' : 'Ready';
+    readyStatus.textContent = 'You: ' + (ready ? 'Ready' : 'Not Ready');
     sendReady();
   });
 
@@ -223,12 +233,13 @@ Does not change game logic.
     document.body.classList.remove('p3d-room-collapsed');
   });
 
-  if(window.PLAY3D_SYNC && window.PLAY3D_SYNC.onGameEvent){
-    window.PLAY3D_SYNC.onGameEvent('player_ready', function(msg){
-      if(!msg || msg.playerId === window.PLAY3D_SYNC.playerId) return;
-      const isReady = !!(msg.payload && msg.payload.ready);
-      playerStatus.textContent = isReady ? 'Fan Ready' : 'Fan Joined';
-    });
+  if(window.PLAY3D_SYNC){
+    if(window.PLAY3D_SYNC.onPresence){
+      window.PLAY3D_SYNC.onPresence(renderPresence);
+    }
+    if(window.PLAY3D_SYNC.updatePresence){
+      window.PLAY3D_SYNC.updatePresence({ready:false});
+    }
   }
 
   updateBridgeStatus();

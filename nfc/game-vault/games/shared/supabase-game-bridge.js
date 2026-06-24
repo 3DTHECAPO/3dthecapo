@@ -48,11 +48,12 @@ API:
   const parts = location.pathname.split('/').filter(Boolean);
   const game = parts[parts.length - 2] || parts[parts.length - 1] || 'unknown';
 
-  const playerIdKey = 'play3d_player_id';
-  let playerId = localStorage.getItem(playerIdKey);
+  const playerIdKey = 'play3d_player_id__' + game + '__' + room;
+  let playerId = sessionStorage.getItem(playerIdKey) || localStorage.getItem(playerIdKey);
   if(!playerId){
     playerId = 'p_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
-    localStorage.setItem(playerIdKey, playerId);
+    try{ sessionStorage.setItem(playerIdKey, playerId); }catch(_e){}
+    try{ localStorage.setItem(playerIdKey, playerId); }catch(_e){}
   }
 
   function getClient(){
@@ -72,7 +73,9 @@ API:
     channel:null,
     roomPersisted:false,
     moveCallbacks:[],
-    eventCallbacks:{}
+    eventCallbacks:{},
+    presence:{},
+    presenceCallbacks:[]
   };
 
   async function restInsert(table, payload, label){
@@ -116,6 +119,19 @@ API:
     return ok;
   }
 
+  function emitPresence(){
+    const snapshot = Object.values(state.presence || {});
+    state.presenceCallbacks.forEach(cb=>{
+      try{ cb(snapshot); }catch(e){ console.error(e); }
+    });
+  }
+
+  function upsertPresencePlayer(entry){
+    if(!entry || !entry.playerId) return;
+    state.presence[entry.playerId] = Object.assign({}, state.presence[entry.playerId] || {}, entry);
+    emitPresence();
+  }
+
   async function persistMove(msg){
     const payload = {
       room_code:room,
@@ -147,6 +163,32 @@ API:
       config:{broadcast:{self:false}, presence:{key:playerId}}
     });
 
+    channel.on('presence', { event: 'sync' }, () => {
+      const presenceState = channel.presenceState ? channel.presenceState() : {};
+      state.presence = {};
+      Object.values(presenceState || {}).forEach(entries=>{
+        (entries || []).forEach(entry=>{
+          if(entry && entry.playerId){
+            state.presence[entry.playerId] = Object.assign({}, entry);
+          }
+        });
+      });
+      emitPresence();
+    });
+
+    channel.on('presence', { event: 'join' }, ({ newPresences }) => {
+      (newPresences || []).forEach(entry=> upsertPresencePlayer(entry));
+    });
+
+    channel.on('presence', { event: 'leave' }, ({ leftPresences }) => {
+      (leftPresences || []).forEach(entry=>{
+        if(entry && entry.playerId && state.presence[entry.playerId]){
+          delete state.presence[entry.playerId];
+        }
+      });
+      emitPresence();
+    });
+
     channel.on('broadcast', {event:'move'}, payload=>{
       const msg = payload.payload;
       state.moveCallbacks.forEach(cb=>{
@@ -169,7 +211,14 @@ API:
     channel.subscribe(status=>{
       state.connected = status === 'SUBSCRIBED';
       if(state.connected){
-        channel.track({playerId, game, room, joinedAt:new Date().toISOString()});
+        channel.track({
+          playerId,
+          game,
+          room,
+          joinedAt:new Date().toISOString(),
+          ready:false,
+          role:'player'
+        });
       }
     });
 
@@ -227,6 +276,24 @@ API:
     };
   }
 
+  function onPresence(cb){
+    state.presenceCallbacks.push(cb);
+    ensureChannel();
+    emitPresence();
+    return function unsubscribe(){
+      state.presenceCallbacks = state.presenceCallbacks.filter(x=>x!==cb);
+    };
+  }
+
+  async function updatePresence(patch){
+    const channel = await ensureChannel();
+    if(!channel || typeof channel.track !== 'function') return {skipped:true};
+    const current = state.presence[playerId] || {playerId, game, room};
+    const next = Object.assign({}, current, patch || {}, {playerId, game, room, updatedAt:new Date().toISOString()});
+    upsertPresencePlayer(next);
+    return channel.track(next);
+  }
+
   window.PLAY3D_ROOM = {game, room, playerId};
   window.PLAY3D_SYNC = {
     enabled:true,
@@ -238,6 +305,8 @@ API:
     onMove,
     sendGameEvent,
     onGameEvent,
+    onPresence,
+    updatePresence,
     ensureChannel
   };
   window.Play3DGameSync = window.PLAY3D_SYNC;
