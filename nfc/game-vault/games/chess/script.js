@@ -484,7 +484,8 @@
     const sync = play3dSync();
     if(!sync || typeof sync.onMove !== 'function') return;
     fanSyncAttached = true;
-    sync.onMove(payload=>{
+    sync.onMove(msg=>{
+      const payload = (msg && msg.payload) ? msg.payload : msg;
       if(!payload || payload.game !== 'chess' || !payload.fen) return;
       try{
         game.load(payload.fen);
