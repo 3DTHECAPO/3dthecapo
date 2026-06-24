@@ -22,7 +22,7 @@ API:
 
   const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
   const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
-  const SUPABASE_JS_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+  const SUPABASE_JS_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
   const params = new URLSearchParams(location.search);
   const mode = params.get('mode');
   const room = params.get('room');
@@ -74,7 +74,7 @@ API:
       const script = document.createElement('script');
       script.src = SUPABASE_JS_URL;
       script.async = true;
-      script.dataset.play3dSupabaseJs = 'true';
+      script.setAttribute('data-play3d-supabase-js','true');
       script.onload = ()=>resolve(window.supabase);
       script.onerror = reject;
       document.head.appendChild(script);
@@ -138,6 +138,9 @@ API:
 
       if(!res.ok){
         const text = await res.text().catch(()=>'');
+        if(label === 'play3d_rooms insert' && (res.status === 409 || String(text).includes('23505'))){
+          return true;
+        }
         console.error('[PLAY3D_SYNC] '+label+' failed', text || res.status);
         return false;
       }
