@@ -7,7 +7,6 @@ const ORDER={A:5,'10':4,K:3,Q:2,J:1};
 const COUNTERS={A:1,'10':1,K:1,Q:0,J:0};
 const ICON={S:'\u2660',H:'\u2665',D:'\u2666',C:'\u2663'};
 const TRICK_HOLD_MS=1600;
-const WINNING_SCORE=300;
 
 const state={
   hands:[],
@@ -48,132 +47,9 @@ const playerHand=document.getElementById('playerHand');
 const mainScore=document.getElementById('mainScore');
 const stateText=document.getElementById('stateText');
 
-
-const FAN_PARAMS=new URLSearchParams(location.search);
-const FAN_MODE=FAN_PARAMS.get('mode')==='fan'&&!!FAN_PARAMS.get('room');
-const FAN_ROOM=FAN_PARAMS.get('room')||'';
-const FAN_SEAT_KEY='play3d_pinochle_seat__'+FAN_ROOM;
-let fanMySeat=Number(sessionStorage.getItem(FAN_SEAT_KEY)||localStorage.getItem(FAN_SEAT_KEY)||0);
-if(!Number.isFinite(fanMySeat)||fanMySeat<0||fanMySeat>3)fanMySeat=0;
-let fanPreferredSeat=fanMySeat;
-let fanSeatMap={};
-let fanPlayers=[];
-let fanSyncReady=false;
-let applyingRemoteState=false;
-
-function pinochleSync(){return window.PLAY3D_SYNC||window.Play3DGameSync||null}
-function fanPlayerId(){const sync=pinochleSync();return sync&&sync.playerId?sync.playerId:'local'}
-function deepClone(value){return JSON.parse(JSON.stringify(value));}
-function fanSeatLabels(){return ['Seat 1 - You / Host','Seat 2 - Against You','Seat 3 - Your Partner','Seat 4 - Against You'];}
-function normalizeSeat(seat){seat=Number(seat);return Number.isFinite(seat)&&seat>=0&&seat<=3?seat:null;}
-function orderedFanPlayers(list){return (list||[]).filter(p=>p&&p.playerId).sort((a,b)=>String(a.joinedAt||a.updatedAt||a.playerId).localeCompare(String(b.joinedAt||b.updatedAt||b.playerId)));}
-function rebuildFanSeats(list){
-  if(!FAN_MODE)return;
-  const ordered=orderedFanPlayers(list).slice(0,4);
-  fanPlayers=ordered;
-  fanSeatMap={};
-  const used={};
-  ordered.forEach(player=>{
-    const desired=normalizeSeat(player.preferredSeat??player.seat);
-    if(desired!==null&&!used[desired]){fanSeatMap[player.playerId]=desired;used[desired]=true;}
-  });
-  ordered.forEach(player=>{
-    if(Object.prototype.hasOwnProperty.call(fanSeatMap,player.playerId))return;
-    for(let seat=0;seat<4;seat++)if(!used[seat]){fanSeatMap[player.playerId]=seat;used[seat]=true;break;}
-  });
-  const mine=fanPlayerId();
-  if(Object.prototype.hasOwnProperty.call(fanSeatMap,mine))fanMySeat=fanSeatMap[mine];
-}
-function isFanSeat(player){return FAN_MODE?Object.values(fanSeatMap).includes(player):player===0;}
-function isCpuSeat(player){return FAN_MODE?!isFanSeat(player):player!==0;}
-function canControlSeat(player){return FAN_MODE?player===fanMySeat:player===0;}
-function localSeatName(player){
-  if(!FAN_MODE)return ['YOU','LEFT CPU','PARTNER','RIGHT CPU'][player]||'CPU';
-  if(player===fanMySeat)return 'YOU';
-  const occupied=Object.values(fanSeatMap).includes(player);
-  if(occupied)return player===2?'FAN PARTNER':'FAN OPPONENT';
-  return player===2?'CPU PARTNER':'CPU OPPONENT';
-}
-function localTeamName(team){
-  if(!FAN_MODE)return team===0?'TEAM A (YOU + PARTNER)':'TEAM B (OPPONENTS)';
-  return team===0?'TEAM A (SEATS 1 + 3)':'TEAM B (SEATS 2 + 4)';
-}
-function cleanFanState(){
-  return deepClone({hands:state.hands,captured:state.captured,trick:state.trick,scores:state.scores,handScores:state.handScores,meldScores:state.meldScores,trickScores:state.trickScores,dealer:state.dealer,currentBidder:state.currentBidder,bidder:state.bidder,bidTeam:state.bidTeam,bid:state.bid,trump:state.trump,phase:state.phase,currentPlayerIndex:state.currentPlayerIndex,lastWinner:state.lastWinner,lastTrickResult:state.lastTrickResult,passed:state.passed,meldShown:state.meldShown,trumpMarriageValid:state.trumpMarriageValid,handToken:state.handToken});
-}
-function applyFanState(snapshot,label){
-  if(!FAN_MODE||!snapshot||typeof snapshot!=='object')return;
-  applyingRemoteState=true;
-  clearCpuTimer();clearTrickTimer();
-  Object.keys(snapshot).forEach(key=>{if(key in state)state[key]=snapshot[key];});
-  state.cpuTimer=null;state.trickTimer=null;
-  applyingRemoteState=false;
-  render(label||'REMOTE TABLE UPDATE');
-  scheduleFanCpuIfNeeded();
-}
-function broadcastFanState(reason){
-  if(!FAN_MODE||applyingRemoteState)return;
-  const sync=pinochleSync();
-  if(!sync||typeof sync.sendGameEvent!=='function')return;
-  sync.sendGameEvent('pinochle_state',{game:'pinochle',reason:reason||'state',seat:fanMySeat,state:cleanFanState()});
-}
-function requestFanState(){
-  const sync=pinochleSync();
-  if(sync&&typeof sync.sendGameEvent==='function')sync.sendGameEvent('pinochle_request_state',{game:'pinochle',seat:fanMySeat});
-}
-function scheduleFanCpuIfNeeded(){
-  if(!FAN_MODE)return;
-  if((state.phase==='bidding'||state.phase==='play')&&isCpuSeat(state.currentPlayerIndex))scheduleCpu();
-}
-function setFanPreferredSeat(seat){
-  seat=normalizeSeat(seat);
-  if(seat===null)return;
-  fanPreferredSeat=seat;
-  fanMySeat=seat;
-  try{sessionStorage.setItem(FAN_SEAT_KEY,String(seat));}catch(e){}
-  try{localStorage.setItem(FAN_SEAT_KEY,String(seat));}catch(e){}
-  const sync=pinochleSync();
-  if(sync&&sync.updatePresence)sync.updatePresence({ready:false,seat,preferredSeat:seat,game:'pinochle'});
-  requestFanState();
-  render('FAN SEAT: '+fanSeatLabels()[seat]);
-}
-function fanSeatChoiceHTML(){
-  if(!FAN_MODE)return '';
-  return '<div class="count-card fan-seat-card"><b>FAN PLAY</b><br><small>Pick team/seat. Empty seats are CPU.</small><br>'+fanSeatLabels().map((label,seat)=>'<button type="button" data-fan-seat="'+seat+'" '+(seat===fanPreferredSeat?'class="active"':'')+'>'+label+'</button>').join('')+'</div>';
-}
-function bindFanSeatButtons(){
-  if(!FAN_MODE)return;
-  document.querySelectorAll('[data-fan-seat]').forEach(btn=>{btn.onclick=()=>setFanPreferredSeat(btn.dataset.fanSeat);});
-}
-function fanSyncBoot(){
-  if(!FAN_MODE||fanSyncReady)return;
-  const sync=pinochleSync();
-  if(!sync||typeof sync.onGameEvent!=='function')return;
-  fanSyncReady=true;
-  if(sync.onPresence){
-    sync.onPresence(players=>{
-      rebuildFanSeats(players);
-      if(sync.updatePresence)sync.updatePresence({ready:false,seat:fanPreferredSeat,preferredSeat:fanPreferredSeat,game:'pinochle'});
-      render('FAN ROOM - '+fanSeatLabels()[fanMySeat]);
-      scheduleFanCpuIfNeeded();
-    });
-  }
-  sync.onGameEvent('pinochle_state',msg=>{
-    if(!msg||msg.playerId===fanPlayerId())return;
-    const payload=msg.payload||msg;
-    if(payload&&payload.game==='pinochle'&&payload.state)applyFanState(payload.state,'REMOTE TABLE UPDATE');
-  });
-  sync.onGameEvent('pinochle_request_state',msg=>{
-    if(!msg||msg.playerId===fanPlayerId())return;
-    if(fanMySeat===0)broadcastFanState('state_response');
-  });
-  if(sync.updatePresence)sync.updatePresence({ready:false,seat:fanPreferredSeat,preferredSeat:fanPreferredSeat,game:'pinochle'});
-  setTimeout(requestFanState,900);
-}
-
 function teamIndex(player){return player%2}
-function teamName(team){return localTeamName(team)}
-function seatName(player){return localSeatName(player)}
+function teamName(team){return team===0?'TEAM A (YOU + PARTNER)':'TEAM B (OPPONENTS)'}
+function seatName(player){return ['YOU','LEFT CPU','PARTNER','RIGHT CPU'][player]||'CPU'}
 function leftOfDealer(){return (state.dealer+1)%4}
 function thinkDelay(){return 460+Math.floor(Math.random()*650)}
 function hasMarriage(hand,suit){return hand.some(card=>card.rank==='K'&&card.suit===suit)&&hand.some(card=>card.rank==='Q'&&card.suit===suit)}
@@ -335,8 +211,7 @@ function advanceBidder(){
   state.currentBidder=next;
   state.currentPlayerIndex=next;
   render(seatName(next)+' TO BID - CURRENT '+(state.bid||'NONE'));
-  if(FAN_MODE)scheduleFanCpuIfNeeded();
-  else if(next!==0)scheduleCpu();
+  if(next!==0)scheduleCpu();
 }
 
 function placeBid(player,amount){
@@ -354,7 +229,6 @@ function placeBid(player,amount){
   announce('BID','casino',seatName(player)+' BID '+amount);
   emitRoomEvent('pinochle_bid',{player,amount});
   advanceBidder();
-  broadcastFanState('bid');
   return true;
 }
 
@@ -364,7 +238,6 @@ function passBid(player){
   announce('PASS','normal',seatName(player)+' PASS');
   emitRoomEvent('pinochle_pass_bid',{player});
   advanceBidder();
-  broadcastFanState('pass_bid');
   return true;
 }
 
@@ -391,8 +264,6 @@ function startMeld(player,bid){
 }
 
 function deal(){
-  fanSyncBoot();
-  if(FAN_MODE&&fanMySeat!==0){requestFanState();render('WAITING FOR HOST DEAL');return;}
   clearCpuTimer();
   clearTrickTimer();
   state.handToken++;
@@ -419,8 +290,7 @@ function deal(){
   state.trumpMarriageValid=true;
   announce('DEAL','normal','PINOCHLE HAND DEALT.');
   render('DEALER '+seatName(state.dealer)+' - '+seatName(state.currentBidder)+' BIDS FIRST');
-  if(FAN_MODE){broadcastFanState('deal');scheduleFanCpuIfNeeded();}
-  else if(state.currentBidder!==0)scheduleCpu();
+  if(state.currentBidder!==0)scheduleCpu();
 }
 
 function showMeld(){
@@ -439,14 +309,12 @@ function showMeld(){
       window.Play3DPoints.award('pinochle',Math.min(75,Math.max(25,state.meldScores[0]*2)),'meld_score');
     }
     render('MELD: TEAM A '+state.meldScores[0]+' / TEAM B '+state.meldScores[1]+' - PRESS START PLAY');
-    broadcastFanState('meld_shown');
     return;
   }
   state.phase='play';
   state.currentPlayerIndex=state.bidder;
   render('PLAY STARTS - '+seatName(state.currentPlayerIndex)+' LEADS');
-  if(FAN_MODE){broadcastFanState('start_play');scheduleFanCpuIfNeeded();}
-  else if(state.currentPlayerIndex!==0)scheduleCpu();
+  if(state.currentPlayerIndex!==0)scheduleCpu();
 }
 
 function setTrump(suit){
@@ -457,7 +325,6 @@ function setTrump(suit){
   }
   announce('TRUMP','elite','TRUMP '+suit);
   render('TRUMP '+suit);
-  broadcastFanState('trump');
 }
 
 function leadSuit(){
@@ -535,8 +402,7 @@ function settleVisibleTrick(){
     return;
   }
   render('TRICK TO '+seatName(winner)+' / '+teamName(team)+' +'+points);
-  if(FAN_MODE){broadcastFanState('trick_settled');scheduleFanCpuIfNeeded();}
-  else if(winner!==0)scheduleCpu();
+  if(winner!==0)scheduleCpu();
 }
 
 function play(player,index){
@@ -559,7 +425,6 @@ function play(player,index){
     state.lastTrickResult={winner,team:teamIndex(winner),points,preview:true};
     render('TRICK COMPLETE - '+seatName(winner)+' / '+teamName(teamIndex(winner))+' +'+points);
     announce('TRICK','success',teamName(teamIndex(winner))+' TAKES THE TRICK.');
-    broadcastFanState('trick_complete');
     state.trickTimer=setTimeout(settleVisibleTrick,TRICK_HOLD_MS);
     return;
   }
@@ -630,7 +495,7 @@ function cpuTurn(token){
     cpuBid(state.currentBidder);
     return;
   }
-  if(state.phase!=='play'||!isCpuSeat(state.currentPlayerIndex)||state.trick.length===4)return;
+  if(state.phase!=='play'||state.currentPlayerIndex===0||state.trick.length===4)return;
   const legal=legalCards(state.currentPlayerIndex);
   if(!legal.length)return;
   const chosen=chooseCpuCard(state.currentPlayerIndex,legal);
@@ -655,7 +520,7 @@ function finishHand(){
     state.scores[1-state.bidTeam]+=state.handScores[1-state.bidTeam];
   }
 
-  const winner=state.scores[0]>=WINNING_SCORE||state.scores[1]>=WINNING_SCORE?(state.scores[0]>=state.scores[1]?0:1):null;
+  const winner=state.scores[0]>=500||state.scores[1]>=500?(state.scores[0]>=state.scores[1]?0:1):null;
   state.phase=winner===null?'over':'gameover';
   if(window.Play3DPoints&&winner===0)window.Play3DPoints.award('pinochle',175,'round_win');
   announce('WIN','success',winner===null?(made?'BID MADE':'BID SET'):teamName(winner)+' WINS GAME');
@@ -681,14 +546,13 @@ function renderSeats(){
 }
 
 function render(label){
-  const mySeat=FAN_MODE?fanMySeat:0;
   if(meldBtn)meldBtn.textContent=state.phase==='meld'&&state.meldShown?'Start Play':'Show Meld';
-  if(bidBtn)bidBtn.disabled=state.phase!=='bidding'||state.currentBidder!==mySeat;
-  if(passBidBtn)passBidBtn.disabled=state.phase!=='bidding'||state.currentBidder!==mySeat;
-  if(bidInput)bidInput.disabled=state.phase!=='bidding'||state.currentBidder!==mySeat;
+  if(bidBtn)bidBtn.disabled=state.phase!=='bidding'||state.currentBidder!==0;
+  if(passBidBtn)passBidBtn.disabled=state.phase!=='bidding'||state.currentBidder!==0;
+  if(bidInput)bidInput.disabled=state.phase!=='bidding'||state.currentBidder!==0;
 
   if(opponentHand){
-    opponentHand.innerHTML=fanSeatChoiceHTML()+[0,1,2,3].filter(seat=>seat!==mySeat).map(seat=>'<div class="count-card">'+seatName(seat)+'<br>'+(state.hands[seat]||[]).length+' CARDS</div>').join('');
+    opponentHand.innerHTML=backs((state.hands[1]||[]).length)+'<div class="count-card">PARTNER '+(state.hands[2]||[]).length+'<br>RIGHT '+(state.hands[3]||[]).length+'</div>';
   }
 
   if(trickPile){
@@ -719,23 +583,22 @@ function render(label){
   if(stockArea)stockArea.innerHTML='<div class="count-card">NO STOCK<br>80 CARD DECK</div>';
 
   if(playerHand){
-    const legalIds=new Set(legalCards(mySeat).map(card=>card.id));
-    playerHand.innerHTML=(state.hands[mySeat]||[]).map((card,index)=>cardHTML(card,index,state.currentPlayerIndex===mySeat&&legalIds.has(card.id))).join('');
-    playerHand.querySelectorAll('.card').forEach(button=>button.onclick=()=>play(mySeat,Number(button.dataset.i)));
+    const legalIds=new Set(legalCards(0).map(card=>card.id));
+    playerHand.innerHTML=(state.hands[0]||[]).map((card,index)=>cardHTML(card,index,state.currentPlayerIndex===0&&legalIds.has(card.id))).join('');
+    playerHand.querySelectorAll('.card').forEach(button=>button.onclick=()=>play(0,Number(button.dataset.i)));
   }
 
   if(mainScore)mainScore.textContent=state.scores[0]+' - '+state.scores[1];
   if(stateText)stateText.textContent=label||(state.phase==='play'?(state.currentPlayerIndex===0?'YOUR TURN':seatName(state.currentPlayerIndex)+' TURN'):state.phase.toUpperCase());
   renderSeats();
-  bindFanSeatButtons();
 }
 
 if(dealBtn)dealBtn.onclick=deal;
-if(bidBtn)bidBtn.onclick=()=>placeBid(FAN_MODE?fanMySeat:0,bidInput?.value||50);
-if(passBidBtn)passBidBtn.onclick=()=>passBid(FAN_MODE?fanMySeat:0);
+if(bidBtn)bidBtn.onclick=()=>placeBid(0,bidInput?.value||50);
+if(passBidBtn)passBidBtn.onclick=()=>passBid(0);
 if(meldBtn)meldBtn.onclick=showMeld;
 document.querySelectorAll('[data-trump]').forEach(button=>button.onclick=()=>setTrump(button.dataset.trump));
-window.addEventListener('play3d:modechange',()=>{fanSyncBoot();deal();});
+window.addEventListener('play3d:modechange',deal);
 
 window.Play3DPinochle={
   state,
@@ -743,15 +606,8 @@ window.Play3DPinochle={
   render,
   legalCards,
   chooseCpuCard,
-  settleVisibleTrick,
-  fan:{enabled:FAN_MODE,getSeat:()=>fanMySeat,setSeat:setFanPreferredSeat}
+  settleVisibleTrick
 };
 
-if(FAN_MODE){
-  fanSyncBoot();
-  render('JOINING FAN PINOCHLE ROOM...');
-  setTimeout(()=>{fanSyncBoot();if(fanMySeat===0)deal();else{requestFanState();render('WAITING FOR HOST TABLE');}},1000);
-}else{
-  deal();
-}
+deal();
 })();
