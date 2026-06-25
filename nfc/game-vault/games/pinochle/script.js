@@ -520,7 +520,7 @@ function finishHand(){
     state.scores[1-state.bidTeam]+=state.handScores[1-state.bidTeam];
   }
 
-  const winner=state.scores[0]>=500||state.scores[1]>=500?(state.scores[0]>=state.scores[1]?0:1):null;
+  const winner=state.scores[0]>=300||state.scores[1]>=300?(state.scores[0]>=state.scores[1]?0:1):null;
   state.phase=winner===null?'over':'gameover';
   if(window.Play3DPoints&&winner===0)window.Play3DPoints.award('pinochle',175,'round_win');
   announce('WIN','success',winner===null?(made?'BID MADE':'BID SET'):teamName(winner)+' WINS GAME');
