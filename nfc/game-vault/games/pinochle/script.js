@@ -123,7 +123,6 @@ function requestFanState(){
 }
 function scheduleFanCpuIfNeeded(){
   if(!FAN_MODE)return;
-  if(fanMySeat!==0)return; // host runs CPU fill so browsers do not double-play CPU cards
   if((state.phase==='bidding'||state.phase==='play')&&isCpuSeat(state.currentPlayerIndex))scheduleCpu();
 }
 function setFanPreferredSeat(seat){
@@ -421,7 +420,7 @@ function deal(){
   announce('DEAL','normal','PINOCHLE HAND DEALT.');
   render('DEALER '+seatName(state.dealer)+' - '+seatName(state.currentBidder)+' BIDS FIRST');
   if(FAN_MODE){broadcastFanState('deal');scheduleFanCpuIfNeeded();}
-  else if(state.currentBidder!==mySeat)scheduleCpu();
+  else if(state.currentBidder!==0)scheduleCpu();
 }
 
 function showMeld(){
@@ -447,7 +446,6 @@ function showMeld(){
   state.currentPlayerIndex=state.bidder;
   render('PLAY STARTS - '+seatName(state.currentPlayerIndex)+' LEADS');
   if(FAN_MODE){broadcastFanState('start_play');scheduleFanCpuIfNeeded();}
-  else if(FAN_MODE){broadcastFanState('card_played');scheduleFanCpuIfNeeded();}
   else if(state.currentPlayerIndex!==0)scheduleCpu();
 }
 
