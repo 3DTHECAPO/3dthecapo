@@ -6,8 +6,8 @@
 <title>PLAY 3D - PINOCHLE</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
-<link rel="stylesheet" href=".../shared/superior/superior-events.css">
-<link rel="stylesheet" href=".../shared/mode-bar.css">
+<link rel="stylesheet" href="../shared/superior/superior-events.css">
+<link rel="stylesheet" href="../shared/mode-bar.css">
 </head>
 <body>
 <div class="bg"></div>
@@ -17,7 +17,7 @@
     <nav><a href="../../index.html">Game Vault</a><a href="../../rewards/index.html">Rewards</a><a href="../../../index.html">Vault</a></nav>
   </header>
   <section class="hero">
-    <div><div class="kicker">CARD TABLE</div><h1>Pinochle</h1><p>Double-deck partnership Pinochle: bid, name trump, meld, then take tricks to 500.</p></div>
+    <div><div class="kicker">CARD TABLE</div><h1>Pinochle</h1><p>Double-deck partnership Pinochle: bid, name trump, meld, then take tricks to 300.</p></div>
   </section>
   <section class="table pinochle-table-shell">
     <div class="pinochle-layout" aria-label="Pinochle table layout">
@@ -59,22 +59,13 @@
     </div>
   </section>
 </main>
-<script src=".../shared/superior/superior-lines.js"></script>
-<script src=".../shared/superior/superior-events.js"></script>
-<script src=".../shared/mode-bar.js"></script>
-<script src=".../shared/game-points.js"></script>
+<script src="../shared/superior/superior-lines.js"></script>
+<script src="../shared/superior/superior-events.js"></script>
+<script src="../shared/mode-bar.js"></script>
+<script src="../shared/game-points.js"></script>
 <script src="../shared/supabase-game-bridge.js"></script>
 <script src="../shared/multiplayer-room-ui.js"></script>
 <script src="./script.js"></script>
-<script>
-(function(){
-  var p = new URLSearchParams(location.search);
-  if(p.get('mode') !== 'fan' || !p.get('room')) return;
-  function load(src){ var s = document.createElement('script'); s.src = src; document.body.appendChild(s); }
-  load('.../shared/supabase-game-bridge.js');
-  load('.../shared/multiplayer-room-ui.js');
-})();
-</script>
 </body>
 </html>
 
