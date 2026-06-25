@@ -15,9 +15,9 @@
   const defaultDifficulty = 'boss';
   const difficultySettings = {
     easy:{depth:1,time:90,noise:28,delay:[160,360]},
-    normal:{depth:2,time:240,noise:6,delay:[140,280]},
-    hard:{depth:3,time:520,noise:0,delay:[90,190]},
-    boss:{depth:4,time:950,noise:0,delay:[60,140]}
+    normal:{depth:2,time:320,noise:3,delay:[120,240]},
+    hard:{depth:4,time:900,noise:0,delay:[80,170]},
+    boss:{depth:5,time:1800,noise:0,delay:[55,130]}
   };
   const difficultyDepth = Object.fromEntries(Object.entries(difficultySettings).map(([key,value])=>[key,value.depth]));
   let searchDeadline = 0;
@@ -114,11 +114,20 @@
   function verifiedCheckmate(){
     return game.isCheckmate() && verifiedCheck() && game.moves().length === 0;
   }
+  function legalMoveCount(){
+    try{ return game.moves().length; }catch(e){ return 0; }
+  }
+  function playablePosition(){
+    return !verifiedCheckmate() && !game.isStalemate() && legalMoveCount() > 0;
+  }
+  function verifiedDraw(){
+    return !verifiedCheckmate() && legalMoveCount() === 0 && game.isDraw();
+  }
 
   function statusText(label){
     if(verifiedCheckmate()) return 'CHECKMATE';
     if(game.isStalemate()) return 'STALEMATE';
-    if(game.isDraw()) return 'DRAW';
+    if(verifiedDraw()) return 'DRAW';
     if(verifiedCheck()) return 'CHECK';
     return label || (mode === 'fan' ? 'FAN ROOM' : 'READY');
   }
@@ -193,7 +202,7 @@
       sync.sendMove({game:'chess', san:move.san, fen:game.fen(), turn:game.turn()});
     }
     if(window.Play3DPoints && verifiedCheckmate() && checkmateReward() > 0) window.Play3DPoints.award('chess', checkmateReward(), 'checkmate_' + cpuDifficultyName());
-    if(mode === 'cpu' && game.turn() === 'b' && !game.isGameOver()){
+    if(mode === 'cpu' && game.turn() === 'b' && playablePosition()){
       render('OPPONENT THINKING...');
       window.setTimeout(cpuMove, thinkDelay());
     }
@@ -288,7 +297,7 @@
 
   function evaluateBoard(){
     if(verifiedCheckmate()) return game.turn()==='b' ? -999999 : 999999;
-    if(game.isDraw() || game.isStalemate()) return 0;
+    if(verifiedDraw() || game.isStalemate()) return 0;
     let score = 0;
     for(const square of allSquares()){
       const piece=game.get(square);
@@ -337,7 +346,7 @@
 
   function search(depth, alpha, beta){
     if(searchDeadline && nowMs() > searchDeadline){ searchStopped = true; return evaluateBoard(); }
-    if(depth<=0 || game.isGameOver()) return evaluateBoard();
+    if(depth<=0 || !playablePosition()) return evaluateBoard();
     const moves = game.moves({verbose:true}).sort((a,b)=>moveOrderScore(b)-moveOrderScore(a));
     if(!moves.length) return evaluateBoard();
     if(game.turn()==='b'){
@@ -427,7 +436,7 @@
   }
 
   function cpuMove(){
-    if(mode !== 'cpu' || game.turn() !== 'b' || game.isGameOver()) return;
+    if(mode !== 'cpu' || game.turn() !== 'b' || !playablePosition()) return;
     render('OPPONENT THINKING...');
     const moves = game.moves({verbose:true});
     if(!moves.length){ render(); return; }
@@ -467,7 +476,7 @@
   }
 
   document.getElementById('resetBtn').onclick = reset;
-  document.getElementById('flipBtn').onclick = ()=>{ flipped = !flipped; render('FLIPPED'); if(mode === 'cpu' && game.turn() === 'b' && !game.isGameOver()) window.setTimeout(cpuMove, 80); };
+  document.getElementById('flipBtn').onclick = ()=>{ flipped = !flipped; render('FLIPPED'); if(mode === 'cpu' && game.turn() === 'b' && playablePosition()) window.setTimeout(cpuMove, 80); };
   if(difficultySelect){
     syncDifficultyControl();
     difficultySelect.onchange=()=>{
