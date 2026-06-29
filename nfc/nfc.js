@@ -216,9 +216,19 @@ function saveVaultPass(record, tier){
 
     localStorage.setItem("play3d_vault_pass_v1", JSON.stringify({
       tier: tier || record.code_type || "ENTRY",
+      code_type: record.code_type || tier || "ENTRY",
       code: record.code || code,
       route: record.route || "",
-      expires_at: expires
+      duration: record.duration || "",
+      recipient_email: record.recipient_email || "",
+      email: record.recipient_email || "",
+      member_number: record.member_number || "",
+      member_id: record.member_id || record.member_table_id || "",
+      used_at: record.used_at || "",
+      starts_at: record.starts_at || record.used_at || "",
+      expires_at: expires,
+      active: true,
+      valid: true
     }));
   }catch(e){}
 }
