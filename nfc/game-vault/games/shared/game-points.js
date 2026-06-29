@@ -8,21 +8,18 @@
   var MILESTONE_LOG_KEY = 'play3d_milestone_event_log_v1';
   var DAILY_EARN_KEY = 'play3d_game_points_daily_earn_v1';
   var SESSION_KEY = 'play3d_game_session_seen_v1';
+  var PASS_KEYS = [
+    'play3d_vault_pass_v1',
+    'play3d_pass_session',
+    'PLAY3D_PASS_SESSION',
+    'vault_pass_session',
+    'capo_pass_session',
+    'CAPO_PASS_SESSION'
+  ];
   var SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
   var SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
   var REWARD_EVENTS_TABLE = 'reward_events';
-  var REWARD_CLAIMS_TABLE = 'reward_claims';
   var THRESHOLD = 100000;
-  var REWARD_MILESTONES = [100000,250000,400000,550000,700000,850000,1000000];
-  var REWARD_MILESTONE_LABELS = {
-    100000:'100K POINT REWARD',
-    250000:'250K POINT REWARD',
-    400000:'400K POINT REWARD',
-    550000:'550K POINT REWARD',
-    700000:'700K POINT REWARD',
-    850000:'850K POINT REWARD',
-    1000000:'1M POINT REWARD'
-  };
   var TODAY = new Date().toISOString().slice(0, 10);
   var DAILY_REWARD_CAP = 2500;
   var DAILY_GAME_CAP = 1000;
@@ -108,46 +105,67 @@
       if(window.Play3DPassSession && typeof window.Play3DPassSession.current === 'function') return window.Play3DPassSession.current();
     }catch(e){}
     try{
-      var raw = localStorage.getItem('play3d_vault_pass_v1');
-      if(!raw) return null;
-      var pass = JSON.parse(raw);
-      if(!pass || !pass.expires_at) return null;
-      return new Date(pass.expires_at).getTime() > Date.now() ? pass : null;
-    }catch(e){ return null; }
+      if(window.Play3DAccess && typeof window.Play3DAccess.currentPassSession === 'function') return window.Play3DAccess.currentPassSession();
+    }catch(e){}
+    try{
+      for(var i = 0; i < PASS_KEYS.length; i++){
+        var raw = localStorage.getItem(PASS_KEYS[i]);
+        if(!raw) continue;
+        var pass = JSON.parse(raw);
+        if(passIsActive(pass)) return pass;
+      }
+    }catch(e){}
+    return null;
+  }
+
+  function passIsActive(pass){
+    if(!pass || !pass.expires_at) return false;
+    var expiry = new Date(pass.expires_at).getTime();
+    return Number.isFinite(expiry) && expiry > Date.now();
+  }
+
+  function passDurationMs(pass){
+    var duration = String((pass && pass.duration) || '').trim().toLowerCase();
+    var units = {
+      '1h': 60 * 60 * 1000,
+      '6h': 6 * 60 * 60 * 1000,
+      '12h': 12 * 60 * 60 * 1000,
+      '1d': 24 * 60 * 60 * 1000,
+      '3d': 3 * 24 * 60 * 60 * 1000,
+      '7d': 7 * 24 * 60 * 60 * 1000,
+      '30d': 30 * 24 * 60 * 60 * 1000
+    };
+    return Object.prototype.hasOwnProperty.call(units, duration) ? units[duration] : null;
+  }
+
+  function hasRewardPass(){
+    var pass = getPassSession();
+    if(!pass) return false;
+
+    var duration = String(pass.duration || '').trim().toLowerCase();
+    if(['promo','free','trial','1h'].indexOf(duration) !== -1) return false;
+    if(duration && duration !== 'none') return true;
+    if(duration === 'none') return true;
+
+    var tier = String(pass.tier || pass.code_type || pass.level || '').trim().toUpperCase();
+    if(['GOLD','ELITE','MASTER','MEMBER','PAID'].indexOf(tier) !== -1) return true;
+
+    var expiry = new Date(pass.expires_at).getTime();
+    var remaining = expiry - Date.now();
+    var knownDuration = passDurationMs(pass);
+    if(knownDuration !== null) return knownDuration > (2 * 60 * 60 * 1000);
+    return Number.isFinite(remaining) && remaining > (2 * 60 * 60 * 1000);
   }
 
   function isMember(){
     if(localStorage.getItem('play3d_member_v1') === '1') return true;
-    if(localStorage.getItem('play3d_paid_member_v1') === '1') return true;
+    if(localStorage.getItem('play3d_member_access_v1') === '1') return true;
+    if(hasRewardPass()) return true;
     try{
-      if(window.Play3DMemberSystem && typeof window.Play3DMemberSystem.isPaidMember === 'function'){
-        return !!window.Play3DMemberSystem.isPaidMember();
-      }
+      if(window.Play3DAccess && typeof window.Play3DAccess.current === 'function') return !!window.Play3DAccess.current();
     }catch(e){}
     return false;
   }
-
-  function hasMasterSession(){
-    try{
-      if(window.Play3DAccess && typeof window.Play3DAccess.hasMasterSession === 'function'){
-        return !!window.Play3DAccess.hasMasterSession();
-      }
-      var session = readJSON('CAPO_MASTER_SESSION', null);
-      return !!(session && session.active === true && (!session.expires_at || Number(session.expires_at) > Date.now()));
-    }catch(e){
-      return false;
-    }
-  }
-
-  function hasGameAccess(){
-    return true;
-  }
-
-  function enforceGameAccess(){
-    return true;
-  }
-
-  var GAME_ACCESS_ALLOWED = true;
 
   function defaultProfile(){
     return {
@@ -194,8 +212,16 @@
     p.totalPoints = Math.max(getPoints(), Number(p.totalPoints) || 0);
     p.level = levelFromXP(Number(p.xp) || 0);
     p.rank = rankFor(p).name;
-    p.vaultTier = p.member ? (p.rank === 'CAPO ELITE' ? 'CAPO ELITE' : 'MEMBER') : 'FREE PLAY';
+    p.vaultTier = p.member ? passTierLabel() : 'FREE PLAY';
     return p;
+  }
+
+  function passTierLabel(){
+    var identity = rewardIdentity();
+    var tier = String(identity.tier || '').trim().toUpperCase();
+    if(tier && tier !== 'ENTRY') return tier + ' PASS';
+    if(identity.rewardPass) return 'PASS HOLDER';
+    return 'MEMBER';
   }
 
   function getProfile(){
@@ -302,10 +328,6 @@
       total_wins:profile && profile.totalWins,
       jackpot_count:profile && profile.jackpotCount
     }, fanRoomContext()));
-    if(milestone.pointsRequired){
-      metadata.points_required = milestone.pointsRequired;
-      metadata.claim_status = 'pending_review';
-    }
 
     return {
       member_id:identity.member_table_id || undefined,
@@ -321,101 +343,23 @@
     };
   }
 
-  function buildMilestoneClaim(milestone){
-    var gate = paidMemberEligibleIdentity();
-    var identity = gate.identity;
-    if(!gate.paid || !gate.hasIdentity || !milestone.pointsRequired) return null;
-    return cleanObject({
-      member_id:identity.member_table_id,
-      member_number:identity.member_number,
-      email:identity.email,
-      points_required:milestone.pointsRequired,
-      prize_name:milestone.name,
-      claim_status:'pending_review',
-      created_at:new Date().toISOString()
-    });
-  }
-
-  async function milestoneClaimExists(milestone, identity){
-    var filters = [];
-    if(identity.member_table_id) filters.push('member_id=eq.' + encodeURIComponent(identity.member_table_id));
-    else if(identity.member_number) filters.push('member_number=eq.' + encodeURIComponent(identity.member_number));
-    else if(identity.email) filters.push('email=eq.' + encodeURIComponent(identity.email));
-    if(!filters.length) return false;
-    filters.push('points_required=eq.' + encodeURIComponent(milestone.pointsRequired));
-    try{
-      var response = await fetch(
-        SUPABASE_URL + '/rest/v1/' + REWARD_CLAIMS_TABLE + '?' + filters.join('&') + '&select=id&limit=1',
-        {headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer ' + SUPABASE_ANON}}
-      );
-      if(!response.ok) return false;
-      var rows = await response.json().catch(function(){ return []; });
-      return Array.isArray(rows) && rows.length > 0;
-    }catch(e){
-      return false;
-    }
-  }
-
-  async function postMilestoneClaim(payload){
-    var response = await fetch(SUPABASE_URL + '/rest/v1/' + REWARD_CLAIMS_TABLE, {
-      method:'POST',
-      headers:{
-        'apikey':SUPABASE_ANON,
-        'Authorization':'Bearer ' + SUPABASE_ANON,
-        'Content-Type':'application/json',
-        'Prefer':'return=minimal'
-      },
-      body:JSON.stringify(payload)
-    });
-    if(response.ok) return true;
-    throw new Error(await response.text().catch(function(){ return String(response.status); }));
-  }
-
   function logMilestoneUnlock(milestone, profile){
-    var gate = paidMemberEligibleIdentity();
-    if(!gate.paid || !gate.hasIdentity) return false;
     var payload = buildMilestoneEvent(milestone, profile);
     if(!payload) return false;
     var localLog = readJSON(MILESTONE_LOG_KEY, {});
     if(localLog[payload.reward_code]) return false;
+    localLog[payload.reward_code] = {at:new Date().toISOString(), milestone:milestone.id};
+    writeJSON(MILESTONE_LOG_KEY, localLog);
     Promise.resolve()
       .then(function(){ return rewardEventExists(payload.reward_code); })
-      .then(async function(eventExists){
-        if(eventExists){
-          localLog[payload.reward_code] = {at:new Date().toISOString(), milestone:milestone.id};
-          writeJSON(MILESTONE_LOG_KEY, localLog);
-          return false;
-        }
-        if(milestone.pointsRequired){
-          var claimExists = await milestoneClaimExists(milestone, gate.identity);
-          if(!claimExists){
-            var claimPayload = buildMilestoneClaim(milestone);
-            if(!claimPayload) return false;
-            await postMilestoneClaim(claimPayload);
-          }
-        }
-        var inserted = await postRewardEvent(payload);
-        if(inserted){
-          localLog[payload.reward_code] = {at:new Date().toISOString(), milestone:milestone.id};
-          writeJSON(MILESTONE_LOG_KEY, localLog);
-        }
-        return inserted;
+      .then(function(exists){
+        if(exists) return false;
+        return postRewardEvent(payload);
       })
       .catch(function(error){
-        console.warn('PLAY 3D milestone claim/event logging failed', {payload:payload, error:error});
+        console.warn('PLAY 3D milestone reward_events logging failed', {payload:payload, error:error});
       });
     return true;
-  }
-
-  function evaluateRewardMilestones(previousTotal, total, profile){
-    REWARD_MILESTONES.forEach(function(pointsRequired){
-      if(previousTotal >= pointsRequired || total < pointsRequired) return;
-      logMilestoneUnlock({
-        id:'points_' + pointsRequired,
-        name:REWARD_MILESTONE_LABELS[pointsRequired] || (pointsRequired.toLocaleString() + ' POINT REWARD'),
-        pointsRequired:pointsRequired
-      }, profile);
-    });
   }
 
   function evaluateAchievements(profile){
@@ -502,7 +446,10 @@
       code:pass.code || localStorage.getItem('play3d_last_code') || '',
       tier:identity.tier || memberProfile.tier || pass.tier || pass.code_type || '',
       paidMember:!!(identity.paidMember || identity.paid_member || memberProfile.paid_registration),
-      memberStatus:identity.memberStatus || identity.member_status || memberProfile.member_status || ''
+      rewardPass:!!(identity.rewardPass || identity.passHolder) || hasRewardPass(),
+      memberStatus:identity.memberStatus || identity.member_status || memberProfile.member_status || '',
+      duration:pass.duration || '',
+      expires_at:pass.expires_at || ''
     };
   }
 
@@ -511,17 +458,9 @@
     var real = String(identity.real_member_number || identity.realMemberNumber || identity.member_number || '').trim();
     var status = String(identity.memberStatus || '').trim().toUpperCase();
     var activeStatus = ['ACTIVE','PAID','MEMBER','APPROVED','CURRENT'].indexOf(status) !== -1;
-    if((identity.paidMember || activeStatus) && /^MEM-\d{6,}$/i.test(real)) return real.toUpperCase();
+    if((identity.paidMember || identity.rewardPass || activeStatus) && /^MEM-\d{6,}$/i.test(real)) return real.toUpperCase();
+    if(identity.rewardPass) return 'Pass Holder';
     return 'Member Pending';
-  }
-
-  function paidMemberEligibleIdentity(){
-    var identity = rewardIdentity();
-    var status = String(identity.memberStatus || '').trim().toUpperCase();
-    var activeStatus = ['ACTIVE','PAID','MEMBER','APPROVED','CURRENT'].indexOf(status) !== -1;
-    var paid = !!activeStatus;
-    var hasIdentity = !!(identity.member_table_id || identity.member_number || identity.email);
-    return { paid: paid, hasIdentity: hasIdentity, identity: identity };
   }
 
   function buildRewardEvent(points, game, reason, total){
@@ -537,10 +476,8 @@
       user_agent:navigator.userAgent,
       reason:reason || 'valid_win',
       reward_status:'earned',
-      ledger_type:'progression',
-      progression_points:points,
-      progression_total:total,
-      credit_effect:0
+      credits:points,
+      bank_after:total
     };
     cleanObject(rewardMetadata);
     var rewardCode = ['game_win', String(game || 'game'), String(Date.now()), Math.random().toString(36).slice(2, 8)].join(':');
@@ -553,7 +490,7 @@
       reward_code:rewardCode,
       source:'game_vault_shared',
       game:String(game || 'game'),
-      credits:0,
+      credits:points,
       created_at:new Date().toISOString(),
       reward_metadata:rewardMetadata
     };
@@ -614,17 +551,14 @@
   }
 
   function logRewardEvent(points, game, reason, total){
-    var gate = paidMemberEligibleIdentity();
-    var identity = gate.identity;
-    if(!gate.paid) return false;
-    if(!gate.hasIdentity) return false;
+    if(!isMember()) return;
     postRewardEvent(buildRewardEvent(points, game, reason, total)).catch(function(error){
       console.warn('PLAY 3D reward_events logging failed', error);
     });
-    return true;
   }
 
   function award(game, points, reason){
+    if(!isMember()) return getStatus();
     points = Math.max(0, Math.floor(Number(points) || 0));
     if(!points) return getStatus();
     var now = Date.now();
@@ -638,8 +572,7 @@
     recent.push(now);
     awardLog[key] = recent.slice(-10);
     writeJSON(AWARD_LOG_KEY, awardLog);
-    var previousTotal = getPoints();
-    var total = setPoints(previousTotal + points);
+    var total = setPoints(getPoints() + points);
     var win = isWinReason(reason);
     var jackpot = /jackpot/i.test(reason || '');
     var xpGain = Math.max(5, Math.min(300, Math.floor(points * 0.65)));
@@ -666,11 +599,10 @@
       }
       if(/vault_pass/i.test(reason || '')) addInventoryItem(profile, {id:'vault_pass_slot', name:'Vault Pass Slot', type:'vault-pass', rarity:'vault', count:1});
       if(profile.streaks.win > 0 && profile.streaks.win % 5 === 0) addInventoryItem(profile, {id:'win_streak_badge', name:'Win Streak Badge', type:'badge', rarity:'epic', count:1});
-      evaluateRewardMilestones(previousTotal, total, profile);
     });
 
     var history = readJSON(HISTORY_KEY, []);
-    history.push({at:new Date().toISOString(), game:game || 'game', points:points, xp:xpGain, reason:reason || 'valid_win', prizeEligible:paidMemberEligibleIdentity().paid});
+    history.push({at:new Date().toISOString(), game:game || 'game', points:points, xp:xpGain, reason:reason || 'valid_win', prizeEligible:isMember()});
     writeJSON(HISTORY_KEY, history.slice(-200));
     logRewardEvent(points, game, reason, total);
     return getStatus(total);
@@ -678,8 +610,7 @@
 
   function getStatus(total){
     var points = typeof total === 'number' ? total : getPoints();
-    var gate = paidMemberEligibleIdentity();
-    return {points:points, threshold:THRESHOLD, remaining:Math.max(0, THRESHOLD - points), member:gate.paid, eligible:gate.paid && points >= THRESHOLD};
+    return {points:points, threshold:THRESHOLD, remaining:Math.max(0, THRESHOLD - points), member:isMember(), eligible:isMember() && points >= THRESHOLD};
   }
 
   function claimHref(){
@@ -814,7 +745,6 @@
   }
 
   function boot(){
-    if(!GAME_ACCESS_ALLOWED) return;
     claimDaily();
     renderProfilePanel();
     renderPanel();
@@ -843,11 +773,11 @@
 
   window.Play3DPoints = {
     threshold:THRESHOLD,
-    milestones:REWARD_MILESTONES.slice(),
     getPoints:getPoints,
     setPoints:setPoints,
     award:award,
     isMember:isMember,
+    hasRewardPass:hasRewardPass,
     getStatus:getStatus,
     claimHref:claimHref,
     renderPanel:renderPanel,
