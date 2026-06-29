@@ -56,6 +56,39 @@
     }
   }
 
+  function passDurationMs(pass){
+    const raw = String((pass && pass.duration) || '').trim().toLowerCase();
+    const units = {
+      '1h': 60 * 60 * 1000,
+      '6h': 6 * 60 * 60 * 1000,
+      '12h': 12 * 60 * 60 * 1000,
+      '1d': 24 * 60 * 60 * 1000,
+      '3d': 3 * 24 * 60 * 60 * 1000,
+      '7d': 7 * 24 * 60 * 60 * 1000,
+      '30d': 30 * 24 * 60 * 60 * 1000
+    };
+    return Object.prototype.hasOwnProperty.call(units, raw) ? units[raw] : null;
+  }
+
+  function isRewardPass(){
+    const pass = readVaultPass();
+    if(!hasActivePass()) return false;
+
+    const duration = String((pass && pass.duration) || '').trim().toLowerCase();
+    if(['promo','free','trial','1h'].includes(duration)) return false;
+    if(duration && duration !== 'none') return true;
+    if(duration === 'none') return true;
+
+    const tier = String((pass && (pass.tier || pass.code_type || pass.level)) || '').trim().toUpperCase();
+    if(['GOLD','ELITE','MASTER','MEMBER','PAID'].includes(tier)) return true;
+
+    const expires = new Date(pass.expires_at).getTime();
+    const remaining = expires - Date.now();
+    const knownDuration = passDurationMs(pass);
+    if(knownDuration !== null) return knownDuration > (2 * 60 * 60 * 1000);
+    return Number.isFinite(remaining) && remaining > (2 * 60 * 60 * 1000);
+  }
+
   function hasMasterSession(){
     return !!(window.Play3DAccess && window.Play3DAccess.hasMasterSession && window.Play3DAccess.hasMasterSession());
   }
@@ -165,7 +198,7 @@
 
   function isMember(){
     if(hasMasterSession()) return true;
-    return isPaidMember();
+    return isPaidMember() || isRewardPass();
   }
 
   function hasAccess(){
@@ -285,6 +318,8 @@
       paidMember:isPaidMember(),
       member:isMember(),
       visitorAccess:hasActivePass() && !isPaidMember(),
+      rewardPass:isRewardPass(),
+      passHolder:isRewardPass(),
       hasVaultPass:hasActivePass(),
       memberId: profile.member_id || localStorage.getItem(MEMBER_ID_KEY) || null,
       member_id: profile.member_id || localStorage.getItem(MEMBER_ID_KEY) || null,
@@ -298,7 +333,8 @@
       code: pass.code || '',
       tier: profile.tier || pass.tier || '',
       memberStatus: profile.member_status || '',
-      paidRegistration: !!profile.paid_registration || isPaidMember()
+      paidRegistration: !!profile.paid_registration || isPaidMember(),
+      rewardEligible: isMember()
     };
   }
 
@@ -320,6 +356,7 @@
     isPaidMember,
     hasAccess,
     hasActivePass,
+    isRewardPass,
     setMember,
     activatePaidMember,
     deactivateMember,
