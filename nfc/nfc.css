@@ -436,3 +436,141 @@ body:not(.locked) #room-gold:not(.hidden),
 body:not(.locked) #room-elite:not(.hidden){
   display:block !important;
 }
+
+/* ===== PHASE 1 ROOM IDENTITY REBUILD ===== */
+.main-vault-hall .room-bg{
+  filter:brightness(.70) contrast(1.08);
+}
+
+.main-vault-hall .room-overlay{
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.30), rgba(0,0,0,.84)),
+    radial-gradient(circle at 22% 20%, rgba(242,210,123,.16), transparent 36%),
+    radial-gradient(circle at 78% 76%, rgba(255,255,255,.045), transparent 38%);
+}
+
+.main-vault-hall .room-content{
+  justify-content:center;
+}
+
+.vault-hall-head,
+.music-lounge-head,
+.drop-lounge-head{
+  align-items:flex-start;
+}
+
+.vault-hall-grid{
+  grid-template-columns:1.05fr .95fr;
+  align-items:stretch;
+}
+
+.main-vault-hall .arrival-panel{
+  grid-row:span 2;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-height:260px;
+  border-color:rgba(242,210,123,.28);
+}
+
+.main-vault-hall .arrival-panel h3{
+  font-size:clamp(30px,4vw,52px);
+}
+
+.main-vault-hall .compact-embed iframe{
+  height:152px;
+}
+
+.main-vault-hall .compact-video,
+.elite-drop-lounge .compact-video{
+  min-height:190px;
+}
+
+.main-vault-hall .compact-video iframe,
+.elite-drop-lounge .compact-video iframe{
+  height:190px;
+}
+
+.gold-music-lounge .room-bg{
+  filter:brightness(.62) contrast(1.14) saturate(1.08);
+}
+
+.gold-music-lounge .room-overlay{
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.24), rgba(0,0,0,.88)),
+    radial-gradient(circle at 50% 30%, rgba(242,210,123,.20), transparent 46%),
+    linear-gradient(90deg, rgba(0,0,0,.78), transparent 42%, rgba(0,0,0,.76));
+}
+
+.gold-music-lounge .room-glow{
+  background:
+    radial-gradient(circle at 45% 28%, rgba(242,210,123,.22), transparent 48%),
+    radial-gradient(circle at 74% 68%, rgba(255,255,255,.06), transparent 36%);
+}
+
+.music-lounge-grid{
+  grid-template-columns:1.15fr .85fr;
+}
+
+.gold-music-lounge .music-feature-panel{
+  grid-row:span 2;
+  border-color:rgba(242,210,123,.34);
+}
+
+.gold-music-lounge .album-route-panel{
+  min-height:170px;
+}
+
+.elite-drop-lounge .room-bg{
+  filter:brightness(.60) contrast(1.16) saturate(1.12);
+}
+
+.elite-drop-lounge .room-overlay{
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.88)),
+    radial-gradient(circle at 32% 24%, rgba(242,210,123,.18), transparent 42%),
+    radial-gradient(circle at 74% 62%, rgba(153,105,25,.18), transparent 44%);
+}
+
+.elite-drop-lounge .room-glow{
+  background:
+    radial-gradient(circle at 30% 28%, rgba(242,210,123,.24), transparent 45%),
+    radial-gradient(circle at 80% 72%, rgba(210,167,79,.14), transparent 42%);
+}
+
+.drop-lounge-grid{
+  align-items:stretch;
+}
+
+.elite-drop-lounge .merch-hero-panel{
+  grid-column:span 2;
+  border-color:rgba(242,210,123,.38);
+}
+
+.elite-drop-lounge .merch-placeholder-grid{
+  margin-top:12px;
+}
+
+.elite-drop-lounge .product-card{
+  background:rgba(0,0,0,.38);
+}
+
+.hidden-drop-panel .action-row,
+.merch-hero-panel .action-row{
+  margin-top:14px;
+}
+
+@media (max-width:980px){
+  .vault-hall-grid,
+  .music-lounge-grid,
+  .drop-lounge-grid{
+    grid-template-columns:1fr;
+  }
+
+  .main-vault-hall .arrival-panel,
+  .gold-music-lounge .music-feature-panel,
+  .elite-drop-lounge .merch-hero-panel{
+    grid-row:auto;
+    grid-column:auto;
+  }
+}
