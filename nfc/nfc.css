@@ -574,3 +574,55 @@ body:not(.locked) #room-elite:not(.hidden){
     grid-column:auto;
   }
 }
+
+/* ===== VAULT DIRECTORY PAGE ===== */
+.vault-directory-page .page-wrap{
+  width:min(1220px,92vw);
+}
+
+.vault-directory-page .vault-directory-hero{
+  margin-bottom:16px;
+  border-color:rgba(242,210,123,.30);
+  background:
+    linear-gradient(135deg, rgba(242,210,123,.09), rgba(0,0,0,.56)),
+    linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02));
+}
+
+.vault-directory-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+  margin-top:16px;
+}
+
+.vault-directory-card{
+  min-height:230px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  border-color:rgba(242,210,123,.20);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(242,210,123,.10), transparent 38%),
+    linear-gradient(180deg, rgba(255,255,255,.052), rgba(0,0,0,.34));
+}
+
+.vault-directory-card .btn{
+  margin-top:auto;
+  align-self:flex-start;
+}
+
+@media (max-width:980px){
+  .vault-directory-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media (max-width:640px){
+  .vault-directory-grid{
+    grid-template-columns:1fr;
+  }
+
+  .vault-directory-card .btn{
+    width:100%;
+  }
+}

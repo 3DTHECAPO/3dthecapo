@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Vault Interface</title>
+  <title>Vault Directory</title>
   <link rel="stylesheet" href="./nfc.css">
   <link rel="stylesheet" href="./vault-polish.css">
   <style>
@@ -26,7 +26,7 @@
   </script>
 
 </head>
-<body class="room-cinematic room-interface">
+<body class="room-cinematic room-interface vault-directory-page">
   <div class="noise"></div>
   <div class="page-wrap">
     <header class="topbar">
@@ -37,11 +37,67 @@
         <a class="back-btn" href="./game-vault/index.html">Game Vault</a>
       </div>
     </header>
-    <section class="page-card" style="padding:22px">
-      <div class="eyebrow">Gold Control</div>
-      <h1>Vault Interface</h1>
-      <p>This room serves as a premium access lane for private navigation, coded entry, and deeper vault routes.</p>
-      <div class="action-row" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn gold" href="./scan.html">Open Scan Page</a></div>
+    <section class="page-card vault-directory-hero" style="padding:22px">
+      <div class="eyebrow">Gold Access</div>
+      <h1>Vault Directory</h1>
+      <p>Choose where to go next. PLAY 3D is the game floor. The Vault Directory connects the music, merch, museum, and hidden rooms.</p>
+      <div class="action-row" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn gold" href="./index.html">Main Vault Hall</a><a class="btn" href="./game-vault/index.html">PLAY 3D Game Floor</a><a class="btn" href="./scan.html">Open Scan Page</a></div>
+    </section>
+    <section class="vault-directory-grid">
+      <article class="page-card vault-directory-card">
+        <div class="eyebrow">Entry</div>
+        <h3>Main Vault Hall</h3>
+        <p>The first room after ACCESS GRANTED. Use it as the arrival hall and starting point.</p>
+        <a class="btn small gold" href="./index.html">Open Hall</a>
+      </article>
+      <article class="page-card vault-directory-card">
+        <div class="eyebrow">Gold</div>
+        <h3>Gold Music Lounge</h3>
+        <p>The dedicated listening lounge for Spotify, video, and premium music routes.</p>
+        <a class="btn small gold" href="./album-chamber.html">Enter Lounge</a>
+      </article>
+      <article class="page-card vault-directory-card">
+        <div class="eyebrow">Elite</div>
+        <h3>Elite Drop Lounge</h3>
+        <p>The VIP merch and hidden-drop lane for premium access holders.</p>
+        <a class="btn small gold" href="./merch-drop-room.html">Open Drops</a>
+      </article>
+      <article class="page-card vault-directory-card">
+        <div class="eyebrow">Games</div>
+        <h3>PLAY 3D Game Floor</h3>
+        <p>PLAY 3D means games only: chess, dominoes, cards, casino, and the Game Vault floor.</p>
+        <a class="btn small gold" href="./game-vault/index.html">Enter Game Floor</a>
+      </article>
+      <article class="page-card vault-directory-card">
+        <div class="eyebrow">Music</div>
+        <h3>Album Chamber</h3>
+        <p>Go deeper into the Gold music lane for album moments and release content.</p>
+        <a class="btn small" href="./album-chamber.html">Open Album Chamber</a>
+      </article>
+      <article class="page-card vault-directory-card">
+        <div class="eyebrow">Merch</div>
+        <h3>Merch Drop Room</h3>
+        <p>Preview vault merch and move toward Elite-exclusive product drops.</p>
+        <a class="btn small" href="./merch-drop-room.html">Open Merch Room</a>
+      </article>
+      <article class="page-card vault-directory-card">
+        <div class="eyebrow">Elite Merch</div>
+        <h3>Exclusive Merch Vault</h3>
+        <p>Reserved drop space for premium merch previews, claims, and limited pieces.</p>
+        <a class="btn small" href="./exclusive-merch-vault.html">Open Merch Vault</a>
+      </article>
+      <article class="page-card vault-directory-card">
+        <div class="eyebrow">Archive</div>
+        <h3>Vault Museum</h3>
+        <p>History wall, trophies, moments, fan submissions, and archive displays.</p>
+        <a class="btn small" href="./museum/index.html">Open Museum</a>
+      </article>
+      <article class="page-card vault-directory-card">
+        <div class="eyebrow">Hidden</div>
+        <h3>Secret Room</h3>
+        <p>A bunker-style room for hidden drops, clues, exclusive visuals, and private content.</p>
+        <a class="btn small" href="./secret-page.html">Open Secret Room</a>
+      </article>
     </section>
     
   </div>
