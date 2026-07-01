@@ -829,7 +829,6 @@ a {
   pointer-events: none;
 }
 
-.vault-page,
 .page,
 main,
 header,
@@ -880,21 +879,29 @@ h1,
 h2,
 h3,
 strong,
-.museum-back,
-.museum-pass,
 .museum-kicker,
 .museum-subtitle,
 .room-tier,
 .room-status,
-.vault-main-nav a,
 .exhibit-title,
-.enter-btn,
 .frame-tag,
 .frame-type,
 .trophy-plaque b,
 .history-item b{
   font-family:'Black Ops One',sans-serif;
   letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+.museum-back,
+.museum-pass,
+.vault-main-nav a,
+.enter-btn,
+.trophy-plaque small,
+.history-item small{
+  font-family:'Oswald',Arial,sans-serif;
+  font-weight:900;
+  letter-spacing:.08em;
   text-transform:uppercase;
 }
 
@@ -964,8 +971,44 @@ h1{
   text-shadow:0 0 12px rgba(242,210,123,.14);
 }
 
+.room-note{
+  max-width:620px;
+  margin-top:8px;
+  color:rgba(244,241,234,.68);
+  line-height:1.55;
+}
+
+.photo-album-block{
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.065), transparent 18%, transparent 82%, rgba(242,210,123,.055)),
+    radial-gradient(circle at 12% 0%, rgba(242,210,123,.16), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,.055), rgba(0,0,0,.54));
+}
+
+.photo-album-block .room-head{
+  align-items:flex-start;
+}
+
+.photo-album-block .room-status{
+  margin-top:4px;
+}
+
 .museum-grid{
   grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+}
+
+.photo-album-block .museum-grid{
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:18px;
+}
+
+.photo-album-block .museum-frame-card{
+  min-height:100%;
+  border-radius:22px;
+}
+
+.photo-album-block .image-frame{
+  min-height:220px;
 }
 
 .image-frame{
@@ -993,15 +1036,40 @@ h1{
   grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
 }
 
+.trophy-history-block{
+  align-items:start;
+}
+
+.trophy-history-block > div:first-child{
+  min-width:0;
+}
+
 .trophy-plaque.trophy-empty{
-  min-height:150px;
+  min-height:170px;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
   cursor:default;
+  border:1px solid rgba(242,210,123,.24);
+  border-radius:20px;
   background:
-    linear-gradient(145deg,rgba(242,210,123,.08),rgba(0,0,0,.56)),
-    radial-gradient(circle at 50% 24%,rgba(242,210,123,.13),transparent 34%);
+    linear-gradient(145deg,rgba(242,210,123,.09),rgba(0,0,0,.62)),
+    radial-gradient(circle at 50% 20%,rgba(242,210,123,.16),transparent 34%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 18px 54px rgba(0,0,0,.46);
+  opacity:.72;
+  filter:saturate(.72);
+}
+
+.trophy-plaque.trophy-empty::before{
+  content:"";
+  width:54px;
+  height:42px;
+  margin:0 auto 10px;
+  border:1px solid rgba(242,210,123,.28);
+  border-radius:8px 8px 22px 22px;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(242,210,123,.16), transparent 38%),
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.34));
 }
 
 .trophy-plaque.trophy-empty small{
@@ -1023,4 +1091,72 @@ h1{
   .museum-display-block{
     padding:16px;
   }
+}
+
+/* NFC STYLE UNIFICATION - USE ORIGINAL ROOM PRIMITIVES */
+.museum-shell.page-wrap{
+  width:min(1180px,92vw);
+  margin:0 auto;
+  padding:18px 0 56px;
+}
+
+.museum-header.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+  padding:8px 0 14px;
+}
+
+.museum-back.back-btn,
+.museum-pass.chip{
+  justify-self:auto;
+}
+
+.museum-hero.page-card,
+.room-section.page-card,
+.museum-display-block.page-card{
+  margin-top:18px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:24px;
+  padding:18px;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  box-shadow:0 24px 80px rgba(0,0,0,.58);
+}
+
+.museum-hero.page-card{
+  min-height:320px;
+  padding:28px;
+}
+
+.museum-hero.page-card,
+.room-section.page-card,
+.museum-display-block.page-card,
+.museum-frame-card,
+.exhibit-card,
+.video-card,
+.empty-museum-slot,
+.fan-submission-panel{
+  border-color:rgba(242,210,123,.24);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(242,210,123,.12), transparent 38%),
+    linear-gradient(180deg, rgba(255,255,255,.055), rgba(0,0,0,.38));
+  box-shadow:0 24px 80px rgba(0,0,0,.58), inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.museum-header .museum-kicker,
+.museum-subtitle,
+.room-tier,
+.room-status{
+  color:var(--bright);
+}
+
+.museum-back.back-btn,
+.vault-main-nav a,
+.enter-btn{
+  border-radius:999px;
+  min-height:44px;
+  padding:11px 16px;
 }
