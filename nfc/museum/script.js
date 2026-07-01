@@ -7,74 +7,114 @@
   // Then set image:'./assets/exhibits/your-file.jpg'
   const museumExhibits = [
     {
-      title:'The Resume Room',
+      title:'Day One Photo Slot',
       image:'',
-      description:'Entry exhibit for official project artwork, cover visuals, and early-release vault displays.',
-      type:'cover art',
+      description:'Placeholder for the first official vault photo, launch-night image, or early supporter memory.',
+      type:'photo chapter',
       year:'2026',
-      tag:'COVER',
+      tag:'DAY 1',
       unlockTier:'entry',
       section:'gallery'
     },
     {
-      title:'First Listen Vault',
+      title:'Behind The Scenes Slot',
       image:'',
-      description:'Entry exhibit for private snippets, preview audio, and locked-in music moments.',
-      type:'audio',
+      description:'Placeholder for studio, rehearsal, filming, or street campaign photos.',
+      type:'photo chapter',
       year:'2026',
-      tag:'AUDIO',
+      tag:'BTS',
       unlockTier:'entry',
       section:'gallery'
     },
     {
-      title:'Capo Milestone Wall',
+      title:'Release Memory Slot',
       image:'',
-      description:'Entry exhibit for release markers, campaign wins, and official 3D THE CAPO milestones.',
-      type:'milestone',
+      description:'Placeholder for cover art, release-night screenshots, listening party photos, or drop-day moments.',
+      type:'photo chapter',
       year:'2026',
-      tag:'MILESTONE',
+      tag:'DROP',
       unlockTier:'entry',
-      section:'trophy'
+      section:'gallery'
     },
     {
-      title:'Gold Cover Room',
+      title:'Fan Moment Slot',
       image:'',
-      description:'Gold exhibit for alternate cover art, premium rollout visuals, and private project artwork.',
-      type:'cover art',
+      description:'Placeholder for a fan photo, tagged moment, repost, or community highlight.',
+      type:'photo chapter',
+      year:'2026',
+      tag:'FAN',
+      unlockTier:'entry',
+      section:'gallery'
+    },
+    {
+      title:'Gold Lounge Photo Slot',
+      image:'',
+      description:'Placeholder for premium listening-room photos, album support moments, or Gold-tier visuals.',
+      type:'photo chapter',
       year:'2026',
       tag:'GOLD',
       unlockTier:'gold',
       section:'gallery'
     },
     {
-      title:'Behind The Session',
+      title:'Studio Session Slot',
       image:'',
-      description:'Gold exhibit for studio photos, behind-the-scenes moments, and recording-room archive pieces.',
-      type:'photo',
+      description:'Placeholder for studio photos, behind-the-scenes visuals, and session moments.',
+      type:'photo chapter',
       year:'2026',
       tag:'STUDIO',
       unlockTier:'gold',
       section:'gallery'
     },
     {
-      title:'Rollout Timeline',
+      title:'Visual Shoot Slot',
       image:'',
-      description:'Gold exhibit for project dates, release history, campaign steps, and rollout moments.',
+      description:'Placeholder for video shoot stills, trailer frames, interviews, or rollout visuals.',
+      type:'photo chapter',
+      year:'2026',
+      tag:'VISUAL',
+      unlockTier:'gold',
+      section:'gallery'
+    },
+    {
+      title:'Elite Drop Photo Slot',
+      image:'',
+      description:'Placeholder for VIP merch previews, private drops, and Elite-only photo moments.',
+      type:'photo chapter',
+      year:'2026',
+      tag:'ELITE',
+      unlockTier:'elite',
+      section:'gallery'
+    },
+    {
+      title:'Hidden Room Memory Slot',
+      image:'',
+      description:'Placeholder for secret-room clues, hidden drops, private reveals, or vault-only memories.',
+      type:'photo chapter',
+      year:'2026',
+      tag:'SECRET',
+      unlockTier:'elite',
+      section:'gallery'
+    },
+    {
+      title:'Project Timeline Slot',
+      image:'',
+      description:'Reserved for future dates, room launches, drops, and important PLAY 3D history.',
       type:'timeline',
       year:'2026',
       tag:'TIMELINE',
-      unlockTier:'gold',
+      unlockTier:'entry',
       section:'timeline'
     },
     {
-      title:'Elite Merch Vault',
+      title:'Vault Expansion Slot',
       image:'',
-      description:'Elite exhibit for private merch previews, apparel drops, bundles, and product concepts.',
-      type:'merch',
+      description:'Reserved for future museum chapters, new rooms, special events, and archive updates.',
+      type:'timeline',
       year:'2026',
-      tag:'MERCH',
-      unlockTier:'elite',
-      section:'gallery'
+      tag:'VAULT',
+      unlockTier:'gold',
+      section:'timeline'
     },
     {
       title:'Unreleased Video Archive',
@@ -86,16 +126,6 @@
       unlockTier:'elite',
       section:'video',
       video:''
-    },
-    {
-      title:'Capo Collector Case',
-      image:'',
-      description:'Elite exhibit for rare collectibles, founder pieces, high-tier vault items, and exclusive archive drops.',
-      type:'collector archive',
-      year:'2026',
-      tag:'FOUNDER',
-      unlockTier:'elite',
-      section:'trophy'
     },
     {
       title:'Future Fan Showcase',
@@ -191,7 +221,7 @@
   function renderImageWall(tier){
     const grid = document.getElementById('imageWallGrid');
     if(!grid) return;
-    const items = museumExhibits.filter(item => ['cover art','photo','poster','merch','award','rare collectible','audio','milestone','timeline','collector archive'].includes(String(item.type).toLowerCase()));
+    const items = museumExhibits.filter(item => ['photo chapter','cover art','photo','poster','merch','timeline','fan showcase'].includes(String(item.type).toLowerCase()));
     grid.innerHTML = items.map(item => cardMarkup(item, museumExhibits.indexOf(item), canOpenTier(item.unlockTier,tier), item.unlockTier, 'museum-frame-card')).join('');
   }
 
@@ -210,17 +240,21 @@
   function renderTrophyShelf(tier){
     const shelf = document.getElementById('trophyShelf');
     if(!shelf) return;
-    const items = museumExhibits.filter(item => item.section === 'trophy' || /award|collectible|collector|plaque|record|milestone|founder/i.test(item.type));
-    shelf.innerHTML = items.map(item => {
-      const open = canOpenTier(item.unlockTier,tier);
-      return `<button class="trophy-plaque ${open ? '' : 'is-locked'}" data-exhibit-index="${museumExhibits.indexOf(item)}" ${open ? '' : 'disabled'}><span>${item.tag}</span><b>${item.title}</b><small>${open ? item.year : 'LOCKED'}</small></button>`;
+    const cases = [
+      { tag:'CASE 01', title:'First Award Case' },
+      { tag:'CASE 02', title:'Milestone Plaque Case' },
+      { tag:'CASE 03', title:'Win Certificate Case' },
+      { tag:'CASE 04', title:'Achievement Display Case' }
+    ];
+    shelf.innerHTML = cases.map(item => {
+      return `<div class="trophy-plaque trophy-empty is-locked"><span>${item.tag}</span><b>${item.title}</b><small>Coming Soon</small></div>`;
     }).join('');
   }
 
   function renderHistoryWall(tier){
     const wall = document.getElementById('historyWall');
     if(!wall) return;
-    const items = museumExhibits.filter(item => item.section === 'timeline' || /album|single|milestone|music|cover/i.test(item.type));
+    const items = museumExhibits.filter(item => item.section === 'timeline');
     wall.innerHTML = items.map(item => {
       const open = canOpenTier(item.unlockTier,tier);
       return `<button class="history-item ${open ? '' : 'is-locked'}" data-exhibit-index="${museumExhibits.indexOf(item)}" ${open ? '' : 'disabled'}><span>${item.year || 'TBA'}</span><b>${item.title}</b><small>${open ? item.description : 'Unlock required'}</small></button>`;

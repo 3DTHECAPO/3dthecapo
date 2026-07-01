@@ -4,6 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>PLAY 3D Vault Museum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
   <style>
 html, body{
@@ -32,16 +35,17 @@ body::before{
       <button class="museum-back" type="button" onclick="history.back()">← Back</button>
       <div>
         <div class="museum-kicker">3D THE CAPO</div>
-        <h1>Vault Museum</h1>
+        <h1>VAULT MUSEUM</h1>
+        <div class="museum-subtitle">Photo Album</div>
       </div>
       <div class="museum-pass" id="museumPassState">ENTRY ACCESS</div>
     </header><nav class="vault-main-nav"><a href="/nfc/index.html">Vault</a><a href="/nfc/scan.html">Scan</a><a href="/nfc/game-vault/index.html">Game</a><a href="/nfc/game-vault/rewards/index.html">Rewards</a></nav>
 
     <section class="museum-hero">
       <div class="hero-copy">
-        <div class="museum-kicker">Private Archive</div>
-        <h2>Exhibits From The Capo Vault</h2>
-        <p>Music, visuals, merch concepts, collector pieces, and vault-room exhibits arranged like a luxury private archive.</p>
+        <div class="museum-kicker">Photo Album</div>
+        <h2>Vault Memories, Photos, And History</h2>
+        <p>The Vault Museum is the photo album and history wall for 3D THE CAPO: moments, chapters, fan memories, and archive slots ready for future uploads.</p>
       </div>
       <div class="hero-mark" aria-hidden="true">3D</div>
     </section>
@@ -50,7 +54,7 @@ body::before{
       <div class="room-head">
         <div>
           <div class="room-tier">ENTRY</div>
-          <h3>Entry Vault Room</h3>
+          <h3>Entry Photo Chapter</h3>
         </div>
         <span class="room-status">Open</span>
       </div>
@@ -61,7 +65,7 @@ body::before{
       <div class="room-head">
         <div>
           <div class="room-tier">GOLD</div>
-          <h3>Gold Vault Room</h3>
+          <h3>Gold Photo Chapter</h3>
         </div>
         <span class="room-status">Locked</span>
       </div>
@@ -72,7 +76,7 @@ body::before{
       <div class="room-head">
         <div>
           <div class="room-tier">ELITE</div>
-          <h3>Elite Vault Room</h3>
+          <h3>Elite Photo Chapter</h3>
         </div>
         <span class="room-status">Locked</span>
       </div>
@@ -82,8 +86,8 @@ body::before{
     <section class="museum-display-block">
       <div class="room-head">
         <div>
-          <div class="room-tier">IMAGE WALL</div>
-          <h3>Vault Image Wall</h3>
+          <div class="room-tier">PHOTO ALBUM</div>
+          <h3>Chapter Cards</h3>
         </div>
         <span class="room-status">Tap To Expand</span>
       </div>
@@ -106,7 +110,7 @@ body::before{
         <div class="room-head">
           <div>
             <div class="room-tier">TROPHY SHELF</div>
-            <h3>Collector Shelf</h3>
+            <h3>Achievement Cases</h3>
           </div>
         </div>
         <div class="trophy-shelf" id="trophyShelf"></div>
@@ -114,8 +118,8 @@ body::before{
       <div>
         <div class="room-head">
           <div>
-            <div class="room-tier">MUSIC HISTORY</div>
-            <h3>Release Timeline</h3>
+            <div class="room-tier">MUSEUM TIMELINE</div>
+            <h3>Photo / History Timeline</h3>
           </div>
         </div>
         <div class="history-wall" id="historyWall"></div>

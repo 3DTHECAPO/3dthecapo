@@ -855,3 +855,172 @@ body::before,
   background:none!important;
   background-image:none!important;
 }
+
+/* MUSEUM STYLE REPAIR - PLAY 3D / 3D THE CAPO ALIGNMENT */
+body{
+  font-family:'Oswald',Arial,sans-serif;
+  background:
+    radial-gradient(circle at 14% 8%, rgba(242,210,123,.16), transparent 30%),
+    radial-gradient(circle at 86% 18%, rgba(242,210,123,.09), transparent 28%),
+    linear-gradient(180deg,rgba(0,0,0,.58),rgba(0,0,0,.92)),
+    url("../assets/museum_bg.jpg") center/cover no-repeat !important;
+  background-attachment:fixed;
+}
+
+.museum-shell{
+  width:min(1220px,92vw);
+}
+
+.museum-header{
+  padding:10px 0 18px;
+  border-bottom:1px solid rgba(242,210,123,.18);
+}
+
+h1,
+h2,
+h3,
+strong,
+.museum-back,
+.museum-pass,
+.museum-kicker,
+.museum-subtitle,
+.room-tier,
+.room-status,
+.vault-main-nav a,
+.exhibit-title,
+.enter-btn,
+.frame-tag,
+.frame-type,
+.trophy-plaque b,
+.history-item b{
+  font-family:'Black Ops One',sans-serif;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+.museum-subtitle{
+  margin-top:8px;
+  color:rgba(244,241,234,.74);
+  font-size:13px;
+  text-align:center;
+}
+
+h1{
+  font-size:clamp(34px,5vw,64px);
+  text-shadow:0 0 20px rgba(242,210,123,.22),0 6px 24px rgba(0,0,0,.72);
+}
+
+.museum-back,
+.museum-pass,
+.vault-main-nav a,
+.enter-btn{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 12px 34px rgba(0,0,0,.34);
+}
+
+.vault-main-nav{
+  margin:16px 0 24px;
+}
+
+.museum-hero,
+.room-section,
+.museum-display-block,
+.video-card,
+.empty-museum-slot,
+.fan-submission-panel,
+.museum-frame-card,
+.exhibit-card{
+  border-color:rgba(242,210,123,.26);
+  border-radius:24px;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.06), transparent 18%, transparent 82%, rgba(242,210,123,.05)),
+    radial-gradient(circle at 20% 0%, rgba(242,210,123,.13), transparent 36%),
+    linear-gradient(180deg, rgba(255,255,255,.055), rgba(0,0,0,.48));
+  box-shadow:0 24px 78px rgba(0,0,0,.58), inset 0 1px 0 rgba(255,255,255,.09);
+}
+
+.room-section,
+.museum-display-block{
+  padding:20px;
+  border:1px solid rgba(242,210,123,.22);
+}
+
+.museum-hero{
+  border-radius:28px;
+}
+
+.hero-copy h2{
+  color:#f6df9a;
+  text-shadow:0 0 18px rgba(242,210,123,.18),0 6px 22px rgba(0,0,0,.72);
+}
+
+.hero-mark{
+  font-family:'Black Ops One',sans-serif;
+  border-color:rgba(242,210,123,.36);
+  color:rgba(242,210,123,.18);
+}
+
+.room-head h3{
+  color:#f6df9a;
+  text-shadow:0 0 12px rgba(242,210,123,.14);
+}
+
+.museum-grid{
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+}
+
+.image-frame{
+  min-height:250px;
+  border-color:#1f160a;
+  box-shadow:
+    inset 0 0 0 1px rgba(242,210,123,.48),
+    inset 0 0 54px rgba(0,0,0,.56),
+    0 12px 32px rgba(0,0,0,.36);
+}
+
+.museum-frame-card,
+.exhibit-card{
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+
+.museum-frame-card:hover,
+.exhibit-card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(242,210,123,.44);
+  box-shadow:0 30px 86px rgba(0,0,0,.66),0 0 28px rgba(242,210,123,.12),inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+.trophy-shelf{
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+}
+
+.trophy-plaque.trophy-empty{
+  min-height:150px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  cursor:default;
+  background:
+    linear-gradient(145deg,rgba(242,210,123,.08),rgba(0,0,0,.56)),
+    radial-gradient(circle at 50% 24%,rgba(242,210,123,.13),transparent 34%);
+}
+
+.trophy-plaque.trophy-empty small{
+  color:#f2d27b;
+}
+
+.history-item{
+  background:
+    linear-gradient(145deg,rgba(242,210,123,.10),rgba(0,0,0,.50)),
+    radial-gradient(circle at 10% 0%,rgba(242,210,123,.11),transparent 32%);
+}
+
+@media (max-width:760px){
+  .museum-header{
+    border-bottom:0;
+  }
+
+  .room-section,
+  .museum-display-block{
+    padding:16px;
+  }
+}
