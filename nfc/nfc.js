@@ -146,6 +146,36 @@ function unlockUI(rawTier){
   playAccessSequence();
 }
 
+function unlockMasterUI(){
+  try{
+    localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify({
+      active:true,
+      code:'CAPO-MASTER-999',
+      started_at:Date.now(),
+      expires_at:Date.now() + (1000 * 60 * 60 * 12)
+    }));
+  }catch(e){}
+
+  document.body.classList.remove('locked');
+
+  ['entry','gold','elite'].forEach(t=>hide(byId('room-'+t)));
+  show(byId('room-master'));
+
+  if(statusPill) statusPill.textContent = 'MASTER';
+  if(vaultState) vaultState.textContent = 'Master Control Room';
+
+  hide(lockedActions);
+  hide(lockedRoom);
+  hide(publicNav);
+  show(privateNav);
+  show(sessionDivider);
+  show(sessionLane);
+  show(connectDivider);
+  show(connect);
+
+  playAccessSequence();
+}
+
 async function getCode(codeValue){
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?code=eq.${encodeURIComponent(codeValue)}&select=*`,{
     headers:{
@@ -236,6 +266,11 @@ function saveVaultPass(record, tier){
 async function init(){
   if(!code){
     showLocked('No code provided');
+    return;
+  }
+
+  if(code === 'CAPO-MASTER-999'){
+    unlockMasterUI();
     return;
   }
 
