@@ -2,17 +2,173 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Loading Vault</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scan / Login | 3D Vault</title>
   <meta name="robots" content="noindex">
-  <script>
-    (function(){
-      var query = window.location.search || "";
-      window.location.replace("./index.html" + query);
-    })();
-  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./nfc.css">
 </head>
-<body style="margin:0;background:#000;color:#d2a74f;font-family:Arial,sans-serif;padding:20px">
-  Loading vault...
+<body class="locked">
+  <div class="cinematic-overlay" aria-hidden="true">
+    <div class="cinematic-fog-back"></div>
+    <div class="cinematic-glow"></div>
+    <div class="cinematic-particles"></div>
+    <div class="cinematic-fog-front"></div>
+    <div class="cinematic-vignette"></div>
+  </div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div class="vault-sequence" id="vaultSequence" aria-hidden="true">
+    <div class="door-cinematic">
+      <div class="door-backglow"></div>
+      <div class="door-light-spill"></div>
+      <div class="door-half left"></div>
+      <div class="door-half right"></div>
+    </div>
+    <div class="access-overlay access-container" id="accessOverlay">
+      <div class="access-backdrop"></div>
+      <div class="access-fallback access-text">ACCESS GRANTED</div>
+    </div>
+  </div>
+
+  <main class="shell">
+    <header class="header">
+      <a class="vault-logo-link" href="../index.html"><img onerror="this.hidden=true" src="./assets/vault_stamp_gold.png" class="vault-logo" alt="Vault Seal"></a>
+    </header>
+
+    <nav class="vault-main-nav" id="publicNav">
+      <a href="./index.html">Vault</a>
+      <a href="./game-vault/index.html">Game Vault</a>
+      <a href="./game-vault/rewards/index.html">Rewards</a>
+    </nav>
+
+    <section class="scan-hero" id="lockedGate">
+      <div class="scan-box scanner" id="scannerBox">
+        <div class="scan-aura"></div>
+        <div class="scan-frame"></div>
+        <div class="scan-line"></div>
+        <div class="scan-text">Scan / Enter Code</div>
+        <div class="tap-flash"></div>
+        <div class="status-pill" id="statusPill">Locked</div>
+      </div>
+
+      <div class="entry-panel">
+        <div class="eyebrow">Private Access</div>
+        <h1>Scan / Login</h1>
+        <p>Use your merch tap, QR code, email link, or enter your access code below.</p>
+
+        <label for="vaultCode">Access Code</label>
+        <input id="vaultCode" type="text" placeholder="ENTER CODE" autocomplete="off" autocapitalize="characters" spellcheck="false">
+
+        <div class="action-row" id="lockedActions">
+          <button class="btn gold" id="enterVault" type="button">Enter Code</button>
+          <a class="btn" href="./index.html">Tap Merch / Enter Code</a>
+          <a class="btn" href="../index.html">Return Home</a>
+        </div>
+
+        <div class="state-line"><span id="vaultState">Access code required</span></div>
+      </div>
+    </section>
+
+    <section class="locked-room" id="lockedRoom">
+      <div class="placeholder-icon">◆</div>
+      <h3>NFC Access Required</h3>
+      <p>This scan page stays closed until a valid access code opens the correct path.</p>
+    </section>
+
+    <section class="room room-entry hidden" id="room-entry">
+      <div class="room-bg"></div>
+      <div class="room-overlay"></div>
+      <div class="room-glow"></div>
+      <div class="room-content">
+        <div class="bundle-head glass">
+          <div>
+            <div class="room-tag">Entry Access</div>
+            <h3>Entry Chamber Unlocked</h3>
+            <p>Your code is valid. Continue into the Main Vault Hall or step onto the PLAY 3D game floor.</p>
+          </div>
+          <div class="action-row">
+            <a class="btn small gold" href="./index.html">Tap Merch / Enter Code</a>
+            <a class="btn small" href="./entry-backdrop.html">Entry Chamber</a>
+            <a class="btn small" href="./game-vault/index.html">PLAY 3D Game Floor</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="room room-gold hidden" id="room-gold">
+      <div class="room-bg"></div>
+      <div class="room-overlay"></div>
+      <div class="room-glow"></div>
+      <div class="room-content">
+        <div class="bundle-head glass">
+          <div>
+            <div class="room-tag">Gold Access</div>
+            <h3>Gold Lounge Unlocked</h3>
+            <p>Your code is valid. Gold access includes the Main Vault Hall, Gold Music Lounge, and PLAY 3D game floor.</p>
+          </div>
+          <div class="action-row">
+            <a class="btn small gold" href="./index.html">Tap Merch / Enter Code</a>
+            <a class="btn small" href="./album-chamber.html">Gold / Album Chamber</a>
+            <a class="btn small" href="./vault-interface.html">Vault Directory</a>
+            <a class="btn small" href="./game-vault/index.html">PLAY 3D Game Floor</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="room room-elite hidden" id="room-elite">
+      <div class="room-bg"></div>
+      <div class="room-overlay"></div>
+      <div class="room-glow"></div>
+      <div class="room-content">
+        <div class="bundle-head glass">
+          <div>
+            <div class="room-tag">Elite Access</div>
+            <h3>Elite Lounge Unlocked</h3>
+            <p>Your code is valid. Elite access opens drops, museum, secret rooms, and the PLAY 3D game floor.</p>
+          </div>
+          <div class="action-row">
+            <a class="btn small gold" href="./index.html">Tap Merch / Enter Code</a>
+            <a class="btn small" href="./merch-drop-room.html">Merch Drop</a>
+            <a class="btn small" href="./exclusive-merch-vault.html">Exclusive Merch Vault</a>
+            <a class="btn small" href="./secret-page.html">Secret Room</a>
+            <a class="btn small" href="./museum/index.html">Museum</a>
+            <a class="btn small" href="./game-vault/index.html">PLAY 3D Game Floor</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="divider hidden" id="sessionDivider"><span></span><strong>Session</strong><span></span></section>
+    <section class="connect-card hidden" id="sessionLane"></section>
+    <section class="divider hidden" id="connectDivider"><span></span><strong>Connect</strong><span></span></section>
+    <section class="connect-card hidden" id="connect"></section>
+    <footer class="footer">© <span id="year"></span> 3D THE CAPO</footer>
+  </main>
+
+  <script>
+  (function(){
+    function normalizeCode(value){ return (value || '').trim().toUpperCase(); }
+    function enterCode(){
+      var input = document.getElementById('vaultCode');
+      var code = normalizeCode(input ? input.value : '');
+      if(!code){ alert('Enter a valid code.'); return; }
+      window.location.href = './scan.html?code=' + encodeURIComponent(code);
+    }
+    document.addEventListener('DOMContentLoaded', function(){
+      var btn = document.getElementById('enterVault');
+      var input = document.getElementById('vaultCode');
+      if(btn) btn.addEventListener('click', enterCode);
+      if(input) input.addEventListener('keydown', function(e){
+        if(e.key === 'Enter') enterCode();
+      });
+    });
+  })();
+  </script>
+  <script src="./nfc.js?v=target-master-pipeline-v1"></script>
+  <script src="./vault-conversion.js"></script>
 </body>
 </html>
