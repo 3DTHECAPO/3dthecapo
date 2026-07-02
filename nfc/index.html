@@ -1,166 +1,319 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>PLAY 3D Vault Museum</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css">
-  <style>
-html, body{
-  background: none !important;
-}
-body{
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>3D Vault</title><meta name="description" content="Private NFC vault for 3D THE CAPO."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="./nfc.css">
+<style>
+/* MASTER CONTROL ROOM BACKGROUND + VISIBILITY */
+.room-master .room-bg{
   background:
-    linear-gradient(180deg,rgba(0,0,0,.50),rgba(0,0,0,.88)),
-    url("../assets/museum_bg.jpg") center/cover no-repeat !important;
-  background-attachment: fixed;
+    linear-gradient(rgba(0,0,0,.16), rgba(0,0,0,.34)),
+    url("./assets/master_control_bg.png") center/cover no-repeat !important;
+  opacity:1 !important;
+  filter:brightness(1.18) contrast(1.08) !important;
 }
-.museum-shell,
-.museum-hero,
-.museum-noise,
-body::before{
-  background: none !important;
-  background-image: none !important;
+.room-master .room-overlay{
+  background:linear-gradient(to bottom, rgba(0,0,0,.14), rgba(0,0,0,.30)) !important;
 }
-  </style>
-</head>
-<body>
-  <div class="museum-noise" aria-hidden="true"></div>
+.room-master .room-glow{
+  opacity:.22 !important;
+}
+.master-link-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:10px;
+}
+.room-master .subpanel h3{
+  color:#f2d27b;
+}
+.room-master .btn{
+  width:100%;
+}
 
-  <main class="museum-shell">
-    <header class="museum-header">
-      <button class="museum-back" type="button" onclick="history.back()">← Back</button>
-      <div>
-        <div class="museum-kicker">3D THE CAPO</div>
-        <h1>VAULT MUSEUM</h1>
-        <div class="museum-subtitle">Photo Album</div>
-      </div>
-      <div class="museum-pass" id="museumPassState">ENTRY ACCESS</div>
-    </header><nav class="vault-main-nav"><a href="/nfc/index.html">Vault</a><a href="/nfc/scan.html">Scan</a><a href="/nfc/game-vault/index.html">Game</a><a href="/nfc/game-vault/rewards/index.html">Rewards</a></nav>
+/* ===== PLAY 3D GAME TITLE OVERFLOW FIX ===== */
+.game-card-title,
+.game-title,
+.vault-game-title,
+.card-title,
+.game-name,
+.game-label,
+h3,
+h4{
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.18 !important;
+}
 
-    <section class="museum-hero">
-      <div class="hero-copy">
-        <div class="museum-kicker">Photo Album</div>
-        <h2>Vault Memories, Photos, And History</h2>
-        <p>The Vault Museum is the photo album and history wall for 3D THE CAPO: moments, chapters, fan memories, and archive slots ready for future uploads.</p>
-      </div>
-      <div class="hero-mark" aria-hidden="true">3D</div>
-    </section>
+.game-card,
+.vault-card,
+.game-tile,
+.arcade-card{
+  overflow: visible !important;
+  min-height: 320px !important;
+}
 
-    <section class="room-section" data-room="entry">
-      <div class="room-head">
-        <div>
-          <div class="room-tier">ENTRY</div>
-          <h3>Entry Photo Chapter</h3>
-        </div>
-        <span class="room-status">Open</span>
-      </div>
-      <div class="exhibit-grid" id="entryGrid"></div>
-    </section>
+.game-card .btn,
+.vault-card .btn{
+  margin-top: 8px !important;
+}
 
-    <section class="room-section locked" data-room="gold">
-      <div class="room-head">
-        <div>
-          <div class="room-tier">GOLD</div>
-          <h3>Gold Photo Chapter</h3>
-        </div>
-        <span class="room-status">Locked</span>
-      </div>
-      <div class="exhibit-grid" id="goldGrid"></div>
-    </section>
+</style>
 
-    <section class="room-section locked" data-room="elite">
-      <div class="room-head">
-        <div>
-          <div class="room-tier">ELITE</div>
-          <h3>Elite Photo Chapter</h3>
-        </div>
-        <span class="room-status">Locked</span>
-      </div>
-      <div class="exhibit-grid" id="eliteGrid"></div>
-    </section>
-
-    <section class="museum-display-block photo-album-block">
-      <div class="room-head">
-        <div>
-          <div class="room-tier">PHOTO ALBUM</div>
-          <h3>Chapter Cards</h3>
-          <p class="room-note">Built for a growing wall of photos, memories, archive chapters, and future uploads.</p>
-        </div>
-        <span class="room-status">Tap To Expand</span>
-      </div>
-      <div class="museum-grid" id="imageWallGrid"></div>
-    </section>
-
-    <section class="museum-display-block">
-      <div class="room-head">
-        <div>
-          <div class="room-tier">VIDEO WALL</div>
-          <h3>Trailers / Interviews</h3>
-        </div>
-        <span class="room-status">Optional Embeds</span>
-      </div>
-      <div class="video-wall" id="videoWall"></div>
-    </section>
-
-    <section class="museum-display-block museum-two-col trophy-history-block">
-      <div>
-        <div class="room-head">
-          <div>
-            <div class="room-tier">TROPHY SHELF</div>
-            <h3>Akalaids</h3>
-            <p class="room-note">Future awards, plaques, wins, certificates, milestones, and achievements live here.</p>
-          </div>
-        </div>
-        <div class="trophy-shelf" id="trophyShelf"></div>
-      </div>
-      <div>
-        <div class="room-head">
-          <div>
-            <div class="room-tier">MUSEUM TIMELINE</div>
-            <h3>Photo / History Timeline</h3>
-          </div>
-        </div>
-        <div class="history-wall" id="historyWall"></div>
-      </div>
-    </section>
-
-    <section class="museum-display-block">
-      <div class="room-head">
-        <div>
-          <div class="room-tier">FAN SUBMISSIONS</div>
-          <h3>Featured Fan Art / Moments</h3>
-        </div>
-        <span class="room-status">Display Only</span>
-      </div>
-      <div class="fan-submission-panel">
-        <div>
-          <strong>Upload Area Placeholder</strong>
-          <p>Drop future fan art, tagged photos, and featured community moments into the museum content data.</p>
-        </div>
-        <div class="museum-grid compact" id="fanGrid"></div>
-      </div>
-    </section>
-  </main>
-
-  <div class="exhibit-modal hidden" id="exhibitModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-panel">
-      <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
-      <div class="modal-art" id="modalArt"></div>
-      <div class="modal-copy">
-        <div class="modal-type" id="modalType"></div>
-        <h2 id="modalTitle"></h2>
-        <div class="modal-meta" id="modalMeta"></div>
-        <p id="modalText"></p>
-        <div class="modal-video hidden" id="modalVideo"></div>
-        <div class="audio-placeholder" id="modalUnlock"></div>
-      </div>
-    </div>
+</head><body>
+<div class="cinematic-overlay" aria-hidden="true">
+  <div class="cinematic-fog-back"></div>
+  <div class="cinematic-glow"></div>
+  <div class="cinematic-particles"></div>
+  <div class="cinematic-fog-front"></div>
+  <div class="cinematic-vignette"></div>
+</div>
+<div class="noise" aria-hidden="true"></div><div class="vault-sequence" id="vaultSequence" aria-hidden="true"><div class="door-cinematic"><div class="door-backglow"></div><div class="door-light-spill"></div><div class="door-half left"></div><div class="door-half right"></div></div><div class="access-overlay access-container" id="accessOverlay"><div class="access-backdrop"></div><div class="access-fallback access-text">ACCESS GRANTED</div></div></div><main class="shell"><header class="header"><a class="vault-logo-link" href="../index.html"><img onerror="this.hidden=true" src="./assets/vault_stamp_gold.png" class="vault-logo" alt="Vault Seal"></a></header><nav class="vault-main-nav"><a href="/nfc/index.html">Vault</a><a href="/nfc/game-vault/index.html">Game Vault</a><a href="/nfc/game-vault/rewards/index.html">Rewards</a></nav><section class="scan-hero" id="lockedGate">
+  <div class="scan-box scanner" id="scannerBox">
+    <div class="scan-aura"></div>
+    <div class="scan-frame"></div>
+    <div class="scan-line"></div>
+    <div class="scan-text">Tap Merch Or Enter Code</div>
+    <div class="tap-flash"></div>
+    <div class="status-pill" id="statusPill">Locked</div>
   </div>
 
-  <script src="./script.js"></script>
+  <div class="entry-panel">
+    <div class="target-access-panel hidden" id="targetAccessPanel">
+      <div class="eyebrow">Access Required</div>
+      <h1 id="targetAccessTitle">ACCESS REQUIRED</h1>
+      <p id="targetAccessCopy">This room requires Gold access or higher. Scan merch, enter a valid code, or upgrade access to continue.</p>
+      <div class="action-row target-access-actions">
+        <a class="btn gold" href="/nfc/scan.html">Scan / Enter Code</a>
+        <a class="btn" href="/buy.html">Buy Access</a>
+        <a class="btn" href="/">Back To Main Site</a>
+      </div>
+    </div>
+    <div class="eyebrow">Private Access</div>
+    <h1>Tap Merch Or Enter Code</h1>
+    <p>Use your merch tap or enter your access code below.</p>
+
+    <label for="vaultCode">Access Code</label>
+    <input id="vaultCode" type="text" placeholder="ENTER CODE" autocomplete="off" autocapitalize="characters" spellcheck="false">
+
+    <div class="action-row" id="lockedActions">
+      <button class="btn gold" id="enterVault" type="button">Enter Code</button>
+      <a class="btn" href="../index.html">Return Home</a>
+    </div>
+
+    <div class="state-line"><span id="vaultState">Access code required</span></div>
+  </div>
+</section>
+
+<section class="locked-room" id="lockedRoom">
+  <div class="placeholder-icon">◈</div>
+  <h3>NFC Access Required</h3>
+  <p>This vault stays closed until a valid access code opens the correct path.</p>
+</section><section class="room room-entry main-vault-hall hidden" id="room-entry"><div class="room-bg"></div><div class="room-overlay"></div><div class="room-glow"></div><div class="room-content"><div class="bundle-head glass vault-hall-head"><div><div class="room-tag">Entry Access</div><h3 id="entryTitle">Main Vault Hall</h3><p id="entryCopy">Welcome inside the vault. Start here, check your access, then choose the next room or step onto the PLAY 3D game floor.</p><div class="chip-row" id="entryChips"></div></div><div class="action-row"><a class="btn small gold" href="./game-vault/index.html">Continue To PLAY 3D</a><a class="btn small" href="./entry-backdrop.html">Open Entry Room</a><a class="btn small" href="./album-chamber.html">Gold Lounge</a><a class="btn small" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">Watch Channel</a></div></div><div class="room-grid vault-hall-grid"><div class="subpanel glass arrival-panel"><h3>Welcome To The Vault</h3><p>Your access is live. This hall is the first stop after the door opens, built for orientation before music, drops, or games.</p></div><div class="subpanel glass member-status-panel"><h3>Member Status</h3><p>Use your current pass to move through eligible rooms. Higher tiers unlock deeper lounges automatically.</p></div><div class="subpanel glass announcement-panel"><h3>Latest Announcement</h3><p>New vault rooms are being organized by purpose: Entry for arrival, Gold for music, Elite for drops, and PLAY 3D for games.</p></div><div class="subpanel glass featured-release-panel"><h3>Featured Release</h3><p>Start with one featured music lane here, then enter the Gold Music Lounge for the full listening room.</p><div class="embed-frame compact-embed"><iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4R7uJYf4ts6pthecl9IVBF?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div></div><div class="subpanel glass featured-video-panel"><h3>Featured Video</h3><div class="video-card compact-video"><iframe width="100%" height="190" src="https://www.youtube.com/embed/sroTF0qw92k" frameborder="0" allowfullscreen></iframe></div></div></div></div></section><section class="room room-gold gold-music-lounge hidden" id="room-gold"><div class="room-bg"></div><div class="room-overlay"></div><div class="room-glow"></div><div class="room-content"><div class="bundle-head glass music-lounge-head"><div><div class="room-tag">Gold Access</div><h3 id="goldTitle">Gold Music Lounge</h3><p id="goldCopy">The dedicated listening room for Spotify, video, album routes, and premium music moments.</p><div class="chip-row" id="goldChips"></div></div><div class="action-row"><a class="btn small gold" href="./album-chamber.html">Album Chamber</a><a class="btn small" href="./vault-interface.html">Open Vault Interface</a><a class="btn small" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">Watch Channel</a></div></div><div class="room-grid music-lounge-grid"><div class="subpanel glass music-feature-panel"><h3>Gold Listening Session</h3><div class="embed-frame"><iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4R7uJYf4ts6pthecl9IVBF?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div></div><div class="subpanel glass video-feature-panel"><h3>Gold Video Wall</h3><div class="video-card"><iframe width="100%" height="315" src="https://www.youtube.com/embed/sroTF0qw92k" frameborder="0" allowfullscreen></iframe></div></div><div class="subpanel glass album-route-panel"><h3>Album Chamber</h3><p>Go deeper into the Gold music lane for private album moments, release clips, and support routes.</p><div class="action-row"><a class="btn small gold" href="./album-chamber.html">Enter Album Chamber</a></div></div></div></div></section><section class="room room-elite elite-drop-lounge hidden" id="room-elite"><div class="room-bg"></div><div class="room-overlay"></div><div class="room-glow"></div><div class="room-content"><div class="bundle-head glass drop-lounge-head"><div><div class="room-tag">Elite Access</div><h3 id="eliteTitle">Elite Drop Lounge</h3><p id="eliteCopy">The VIP room for merch previews, hidden drops, secret routes, museum access, and exclusive content.</p><div class="chip-row" id="eliteChips"></div></div><div class="action-row"><a class="btn small gold" href="./merch-drop-room.html">Merch Room</a><a class="btn small" href="./secret-page.html">Exclusive Room</a><a class="btn small" href="./museum/index.html">Vault Museum</a></div></div><div class="room-grid triple-grid drop-lounge-grid"><div class="subpanel glass merch-hero-panel"><h3>VIP Merch Preview</h3><div class="merch-placeholder-grid"><article class="product-card"><img onerror="this.hidden=true" src="./assets/merch_hat.jpg" alt="Capo Hat"><div class="product-body"><h4>Cap</h4><p>Limited vault merch preview</p></div></article><article class="product-card"><img onerror="this.hidden=true" src="./assets/merch_hoodie.jpg" alt="Capo Hoodie"><div class="product-body"><h4>Hoodie</h4><p>Limited vault merch preview</p></div></article><article class="product-card"><img onerror="this.hidden=true" src="./assets/merch_shirt.jpg" alt="Capo Shirt"><div class="product-body"><h4>Shirt</h4><p>Limited vault merch preview</p></div></article></div><div class="action-row"><a class="btn small gold" href="./exclusive-merch-vault.html">Open Merch Vault</a></div></div><div class="subpanel glass hidden-drop-panel"><h3>Hidden Drops</h3><p>Use Elite access for secret pages, coded announcements, hidden bundles, and private release moments.</p><div class="action-row"><a class="btn small gold" href="./secret-page.html">Secret Room</a><a class="btn small" href="./museum/index.html">Museum</a></div></div><div class="subpanel glass elite-video-panel"><h3>Featured Visual</h3><p>Music stays secondary here. This lounge is built around drops first.</p><div class="video-card compact-video"><iframe width="100%" height="190" src="https://www.youtube.com/embed/sroTF0qw92k" frameborder="0" allowfullscreen></iframe></div></div></div></div></section>
+
+<section class="room room-master hidden" id="room-master">
+  <div class="room-bg"></div>
+  <div class="room-overlay"></div>
+  <div class="room-glow"></div>
+
+  <div class="room-content">
+    <div class="bundle-head glass">
+      <div>
+        <div class="room-tag">Master Pass</div>
+        <h3>Master Control Room</h3>
+        <p>Full vault access granted. This panel links to every consumer-facing vault room, game room, reward area, and social lane.</p>
+      </div>
+
+      <div class="action-row">
+        <a class="btn small gold" href="./index.html">Vault Home</a>
+        <a class="btn small" href="../index.html">Main Site</a>
+        <a class="btn small" href="./game-vault/index.html">Game Vault</a>
+      </div>
+    </div>
+
+    <div class="room-grid triple-grid">
+
+      <div class="subpanel glass">
+        <h3>Tier Rooms</h3>
+        <div class="master-link-grid">
+          <a class="btn small gold" href="#room-entry" data-master-room="entry">Entry Room</a>
+          <a class="btn small gold" href="#room-gold" data-master-room="gold">Gold Room</a>
+          <a class="btn small gold" href="#room-elite" data-master-room="elite">Elite Room</a>
+          <a class="btn small" href="#room-master" data-master-room="master">Master Panel</a>
+        </div>
+      </div>
+
+      <div class="subpanel glass">
+        <h3>Vault Pages</h3>
+        <div class="master-link-grid">
+          <a class="btn small gold" href="./entry-backdrop.html">Entry Backdrop</a>
+          <a class="btn small" href="./album-chamber.html">Album Chamber</a>
+          <a class="btn small" href="./merch-drop-room.html">Merch Drop Room</a>
+          <a class="btn small" href="./secret-page.html">Exclusive Room</a>
+          <a class="btn small" href="./vault-interface.html">Vault Interface</a>
+          <a class="btn small" href="./exclusive-merch-vault.html">Exclusive Merch Vault</a>
+          <a class="btn small" href="./museum/index.html">Vault Museum</a>
+       </div>
+      </div>
+
+      <div class="subpanel glass">
+        <h3>Game + Rewards</h3>
+        <div class="master-link-grid">
+          <a class="btn small gold" href="./game-vault/index.html">Game Vault</a>
+          <a class="btn small" href="./game-vault/games/slot-machine-custom/index.html">Slots</a>
+          <a class="btn small" href="./game-vault/games/poker/index.html">Poker</a>
+          <a class="btn small" href="./game-vault/games/blackjack/index.html">Blackjack</a>
+          <a class="btn small" href="./game-vault/rewards/index.html">Rewards</a>
+          <a class="btn small" href="./game-vault/claim/index.html">Claim Page</a>
+        </div>
+      </div>
+
+      <div class="subpanel glass">
+        <h3>Music + Social</h3>
+        <div class="master-link-grid">
+          <a class="btn small gold" href="https://youtube.com/@iiidtv" target="_blank" rel="noopener">YouTube</a>
+          <a class="btn small" href="https://open.spotify.com/artist/4R7uJYf4ts6pthecl9IVBF" target="_blank" rel="noopener">Spotify</a>
+          <a class="btn small" href="https://music.apple.com/" target="_blank" rel="noopener">Apple Music</a>
+        </div>
+      </div>
+
+      <div class="subpanel glass">
+        <h3>Access Pipeline</h3>
+        <div class="master-link-grid">
+          <a class="btn small gold" href="./index.html">NFC Access</a>
+          <a class="btn small" href="./index.html?code=CAPO-MASTER-999&target=%2Fnfc%2Findex.html">Scan Redirect</a>
+          <a class="btn small" href="./index.html?code=CAPO-MASTER-999&target=%2Fpublic%2Fvault%2F">Old Public Vault Redirect</a>
+        </div>
+      </div>
+
+      <div class="subpanel glass">
+        <h3>Admin Check</h3>
+        <p>Use this panel to test every room without loading all heavy embeds at once.</p>
+        <div class="master-link-grid">
+          <a class="btn small gold" href="#room-master" data-master-room="master">Back To Master Panel</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="divider hidden" id="sessionDivider"><span></span><strong>Session</strong><span></span></section><section class="connect-card hidden" id="sessionLane"></section><section class="divider hidden" id="connectDivider"><span></span><strong>Connect</strong><span></span></section><section class="connect-card hidden" id="connect"></section><footer class="footer">© <span id="year"></span> 3D THE CAPO</footer></main><script>
+(function(){
+  function normalizeCode(value){ return (value || '').trim().toUpperCase(); }
+  function enterCode(){
+    var input = document.getElementById('vaultCode');
+    var code = normalizeCode(input ? input.value : '');
+    if(!code){ alert('Enter a valid code.'); return; }
+    window.location.href = './index.html?code=' + encodeURIComponent(code);
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    var btn = document.getElementById('enterVault');
+    var input = document.getElementById('vaultCode');
+    if(btn) btn.addEventListener('click', enterCode);
+    if(input) input.addEventListener('keydown', function(e){
+      if(e.key === 'Enter') enterCode();
+    });
+  });
+})();
+</script>
+  <script>
+(function(){
+  function readJSON(key){
+    try{return JSON.parse(localStorage.getItem(key)||'null');}
+    catch(e){return null;}
+  }
+
+  function isMaster(){
+    const params=new URLSearchParams(window.location.search);
+    const code=(params.get('code')||'').toUpperCase();
+    const pass=readJSON('play3d_vault_pass_v1');
+    const master=readJSON('CAPO_MASTER_SESSION');
+
+    return (
+      code==='CAPO-MASTER-999' ||
+      (pass && String(pass.tier||'').toLowerCase()==='master') ||
+      (master && master.active===true)
+    );
+  }
+
+  function toggle(id,show){
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.classList[show?'remove':'add']('hidden');
+  }
+
+  function activateMasterPanel(){
+    if(!isMaster()) return;
+
+    toggle('room-entry',false);
+    toggle('room-gold',false);
+    toggle('room-elite',false);
+    toggle('room-master',true);
+
+    toggle('sessionDivider',false);
+    toggle('sessionLane',false);
+    toggle('connectDivider',false);
+    toggle('connect',false);
+
+    const status=document.getElementById('statusPill');
+    const state=document.getElementById('vaultState');
+
+    if(status) status.textContent='MASTER';
+    if(state) state.textContent='Master Control Room';
+  }
+
+  window.addEventListener('load',()=>{
+    setTimeout(activateMasterPanel,1200);
+  });
+  document.addEventListener('click', function(e){
+  const btn = e.target.closest('[data-master-room]');
+  if(!btn) return;
+
+  e.preventDefault();
+
+  const room = btn.getAttribute('data-master-room');
+
+  ['entry','gold','elite','master'].forEach(function(t){
+    toggle('room-' + t, false);
+  });
+
+  toggle('room-' + room, true);
+});
+})();
+</script>
+<script>
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const target = (params.get('target') || '').toLowerCase();
+  if(!target) return;
+
+  const panel = document.getElementById('targetAccessPanel');
+  const title = document.getElementById('targetAccessTitle');
+  const copy = document.getElementById('targetAccessCopy');
+  const status = document.getElementById('statusPill');
+  const state = document.getElementById('vaultState');
+
+  document.body.classList.add('target-locked');
+  if(panel) panel.classList.remove('hidden');
+  if(status) status.textContent = 'Access Required';
+  if(state) state.textContent = 'Upgrade or enter a valid code to continue';
+
+  if(target.indexOf('vault-interface.html') !== -1){
+    if(title) title.textContent = 'ACCESS REQUIRED';
+    if(copy) copy.textContent = 'Vault Directory requires Gold access or higher. Scan merch, enter a valid code, or upgrade access to continue.';
+    return;
+  }
+
+  if(
+    target.indexOf('secret-page.html') !== -1 ||
+    target.indexOf('merch-drop-room.html') !== -1 ||
+    target.indexOf('exclusive-merch-vault.html') !== -1
+  ){
+    if(title) title.textContent = 'ACCESS REQUIRED';
+    if(copy) copy.textContent = 'This room requires Elite access or higher. Scan merch, enter a valid code, or upgrade access to continue.';
+  }
+})();
+</script>
+<script src="./nfc.js?v=target-master-pipeline-v1"></script>
+<script src="./vault-conversion.js"></script>
 </body>
 </html>
