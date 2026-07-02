@@ -213,6 +213,44 @@ body.locked #lockedRoom{
   display:none !important;
 }
 
+body.target-locked #lockedGate.scan-hero{
+  grid-template-columns:1fr;
+  max-width:920px;
+  margin:0 auto;
+}
+
+body.target-locked #scannerBox,
+body.target-locked .entry-panel > .eyebrow,
+body.target-locked .entry-panel > h1,
+body.target-locked .entry-panel > p,
+body.target-locked .entry-panel > label,
+body.target-locked .entry-panel > input,
+body.target-locked #lockedActions,
+body.target-locked .state-line{
+  display:none !important;
+}
+
+body.target-locked #targetAccessPanel{
+  display:block !important;
+}
+
+.target-access-panel{
+  text-align:center;
+}
+
+.target-access-panel h1{
+  margin:8px 0 12px;
+}
+
+.target-access-panel p{
+  max-width:680px;
+  margin:0 auto 18px;
+}
+
+.target-access-actions{
+  justify-content:center;
+}
+
 body.locked .footer{
   display:none !important;
 }
