@@ -8,6 +8,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
+  <script src="../shared/access-bridge.js"></script>
+  <script>
+    (function(){
+      if(window.Play3DAccess && window.Play3DAccess.requireTier('elite',{redirect:true})) return;
+    })();
+  </script>
   <style>
 html, body{
   background: none !important;
