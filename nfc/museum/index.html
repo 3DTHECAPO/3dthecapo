@@ -30,18 +30,18 @@ body::before{
 <body>
   <div class="museum-noise" aria-hidden="true"></div>
 
-  <main class="museum-shell">
-    <header class="museum-header">
-      <button class="museum-back" type="button" onclick="history.back()">← Back</button>
+  <main class="page-wrap museum-shell">
+    <header class="topbar museum-header">
+      <button class="back-btn museum-back" type="button" onclick="history.back()">← Back</button>
       <div>
         <div class="museum-kicker">3D THE CAPO</div>
         <h1>VAULT MUSEUM</h1>
         <div class="museum-subtitle">Photo Album</div>
       </div>
-      <div class="museum-pass" id="museumPassState">ENTRY ACCESS</div>
-    </header><nav class="vault-main-nav"><a href="/nfc/index.html">Vault</a><a href="/nfc/scan.html">Scan</a><a href="/nfc/game-vault/index.html">Game</a><a href="/nfc/game-vault/rewards/index.html">Rewards</a></nav>
+      <div class="chip museum-pass" id="museumPassState">ENTRY ACCESS</div>
+    </header><nav class="vault-main-nav"><a href="/nfc/scan.html">Scan</a><a href="/nfc/game-vault/index.html">Game Vault</a></nav>
 
-    <section class="museum-hero">
+    <section class="page-card museum-hero">
       <div class="hero-copy">
         <div class="museum-kicker">Photo Album</div>
         <h2>Vault Memories, Photos, And History</h2>
@@ -50,7 +50,7 @@ body::before{
       <div class="hero-mark" aria-hidden="true">3D</div>
     </section>
 
-    <section class="room-section" data-room="entry">
+    <section class="page-card room-section" data-room="entry">
       <div class="room-head">
         <div>
           <div class="room-tier">ENTRY</div>
@@ -61,7 +61,7 @@ body::before{
       <div class="exhibit-grid" id="entryGrid"></div>
     </section>
 
-    <section class="room-section locked" data-room="gold">
+    <section class="page-card room-section locked" data-room="gold">
       <div class="room-head">
         <div>
           <div class="room-tier">GOLD</div>
@@ -72,7 +72,7 @@ body::before{
       <div class="exhibit-grid" id="goldGrid"></div>
     </section>
 
-    <section class="room-section locked" data-room="elite">
+    <section class="page-card room-section locked" data-room="elite">
       <div class="room-head">
         <div>
           <div class="room-tier">ELITE</div>
@@ -83,18 +83,19 @@ body::before{
       <div class="exhibit-grid" id="eliteGrid"></div>
     </section>
 
-    <section class="museum-display-block">
+    <section class="page-card museum-display-block photo-album-block">
       <div class="room-head">
         <div>
           <div class="room-tier">PHOTO ALBUM</div>
           <h3>Chapter Cards</h3>
+          <p class="room-note">Built for a growing wall of photos, memories, archive chapters, and future uploads.</p>
         </div>
         <span class="room-status">Tap To Expand</span>
       </div>
       <div class="museum-grid" id="imageWallGrid"></div>
     </section>
 
-    <section class="museum-display-block">
+    <section class="page-card museum-display-block">
       <div class="room-head">
         <div>
           <div class="room-tier">VIDEO WALL</div>
@@ -105,12 +106,13 @@ body::before{
       <div class="video-wall" id="videoWall"></div>
     </section>
 
-    <section class="museum-display-block museum-two-col">
+    <section class="page-card museum-display-block museum-two-col trophy-history-block">
       <div>
         <div class="room-head">
           <div>
             <div class="room-tier">TROPHY SHELF</div>
-            <h3>Achievement Cases</h3>
+            <h3>Akalaids</h3>
+            <p class="room-note">Future awards, plaques, wins, certificates, milestones, and achievements live here.</p>
           </div>
         </div>
         <div class="trophy-shelf" id="trophyShelf"></div>
@@ -126,7 +128,7 @@ body::before{
       </div>
     </section>
 
-    <section class="museum-display-block">
+    <section class="page-card museum-display-block">
       <div class="room-head">
         <div>
           <div class="room-tier">FAN SUBMISSIONS</div>
