@@ -363,12 +363,17 @@
         radial-gradient(circle at center,rgba(210,167,79,.18),transparent 30%),
         linear-gradient(180deg,#050403,#000);
       transition:opacity .9s ease,visibility .9s ease;
+      overflow:hidden;
     }
 
     .entrance-overlay.is-open{
       opacity:0;
       visibility:hidden;
       pointer-events:none;
+    }
+
+    .entrance-overlay.is-running .tunnel{
+      animation:spin 3.2s linear infinite,pulse 1.45s ease-in-out infinite;
     }
 
     .tunnel{
@@ -383,6 +388,46 @@
       animation:spin 16s linear infinite,pulse 3s ease-in-out infinite;
       filter:drop-shadow(0 0 42px rgba(210,167,79,.28));
     }
+
+    .portal-flare{
+      position:absolute;
+      width:min(88vw,520px);
+      aspect-ratio:1;
+      border-radius:50%;
+      background:
+        radial-gradient(circle,rgba(255,238,173,.44),rgba(210,167,79,.20) 32%,transparent 66%);
+      filter:blur(14px);
+      opacity:.74;
+      animation:portalBloom 3.2s ease-in-out forwards;
+    }
+
+    .year-stream{
+      position:absolute;
+      inset:0;
+      overflow:hidden;
+      pointer-events:none;
+    }
+
+    .year-marker{
+      position:absolute;
+      left:50%;
+      top:50%;
+      color:rgba(244,213,127,.82);
+      font-family:'Black Ops One',sans-serif;
+      font-size:clamp(18px,4vw,42px);
+      letter-spacing:.16em;
+      text-shadow:0 0 24px rgba(210,167,79,.45);
+      opacity:0;
+      transform:translate(-50%,-50%) scale(.35);
+      animation:yearFly 3.2s ease-in-out forwards;
+    }
+
+    .year-marker:nth-child(1){animation-delay:.08s}
+    .year-marker:nth-child(2){animation-delay:.42s}
+    .year-marker:nth-child(3){animation-delay:.76s}
+    .year-marker:nth-child(4){animation-delay:1.10s}
+    .year-marker:nth-child(5){animation-delay:1.44s}
+    .year-marker:nth-child(6){animation-delay:1.78s}
 
     .entrance-card{
       position:relative;
@@ -410,8 +455,25 @@
       line-height:1.45;
     }
 
+    .skip-intro{
+      margin-top:8px;
+      color:var(--muted);
+      border-color:rgba(255,255,255,.16);
+      background:rgba(255,255,255,.04);
+    }
+
     @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes pulse{50%{transform:scale(1.035);filter:brightness(1.18)}}
+    @keyframes portalBloom{
+      0%{transform:scale(.28);opacity:.10}
+      58%{transform:scale(1.06);opacity:.86}
+      100%{transform:scale(1.42);opacity:.18}
+    }
+    @keyframes yearFly{
+      0%{opacity:0;transform:translate(-50%,-50%) scale(.24) rotate(-8deg)}
+      22%{opacity:.92}
+      100%{opacity:0;transform:translate(calc(-50% + 18vw),calc(-50% - 24vh)) scale(2.4) rotate(8deg)}
+    }
 
     @media (max-width:900px){
       .hero-card,
@@ -447,11 +509,20 @@
 <body>
   <div class="entrance-overlay" id="entranceOverlay" aria-label="Time Machine entrance">
     <div class="tunnel" aria-hidden="true"></div>
+    <div class="portal-flare" aria-hidden="true"></div>
+    <div class="year-stream" aria-hidden="true">
+      <span class="year-marker">2007</span>
+      <span class="year-marker">2012</span>
+      <span class="year-marker">2016</span>
+      <span class="year-marker">2020</span>
+      <span class="year-marker">2024</span>
+      <span class="year-marker">NOW</span>
+    </div>
     <section class="entrance-card">
-      <div class="kicker">TIME MACHINE</div>
+      <div class="kicker">3D THE CAPO / TIME MACHINE</div>
       <h1>ENTER THE TIME MACHINE</h1>
       <p>Music. Moments. Memories. Journey.</p>
-      <button class="btn gold" id="beginJourney" type="button">Begin Journey</button>
+      <button class="btn skip-intro" id="skipIntro" type="button">Skip Intro</button>
     </section>
   </div>
 
@@ -532,14 +603,19 @@
   <script>
     (function(){
       const overlay = document.getElementById('entranceOverlay');
-      const begin = document.getElementById('beginJourney');
+      const skip = document.getElementById('skipIntro');
+      let opened = false;
 
       function openPortal(){
+        if(opened) return;
+        opened = true;
         if(!overlay) return;
         overlay.classList.add('is-open');
       }
 
-      if(begin) begin.addEventListener('click', openPortal);
+      if(overlay) overlay.classList.add('is-running');
+      window.setTimeout(openPortal, 3200);
+      if(skip) skip.addEventListener('click', openPortal);
       document.addEventListener('keydown', function(event){
         if(event.key === 'Enter' && overlay && !overlay.classList.contains('is-open')){
           openPortal();
