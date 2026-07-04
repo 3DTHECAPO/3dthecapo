@@ -455,13 +455,6 @@
       line-height:1.45;
     }
 
-    .skip-intro{
-      margin-top:8px;
-      color:var(--muted);
-      border-color:rgba(255,255,255,.16);
-      background:rgba(255,255,255,.04);
-    }
-
     @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes pulse{50%{transform:scale(1.035);filter:brightness(1.18)}}
     @keyframes portalBloom{
@@ -522,7 +515,6 @@
       <div class="kicker">3D THE CAPO / TIME MACHINE</div>
       <h1>ENTER THE TIME MACHINE</h1>
       <p>Music. Moments. Memories. Journey.</p>
-      <button class="btn skip-intro" id="skipIntro" type="button">Skip Intro</button>
     </section>
   </div>
 
@@ -603,7 +595,6 @@
   <script>
     (function(){
       const overlay = document.getElementById('entranceOverlay');
-      const skip = document.getElementById('skipIntro');
       let opened = false;
 
       function openPortal(){
@@ -615,12 +606,6 @@
 
       if(overlay) overlay.classList.add('is-running');
       window.setTimeout(openPortal, 3200);
-      if(skip) skip.addEventListener('click', openPortal);
-      document.addEventListener('keydown', function(event){
-        if(event.key === 'Enter' && overlay && !overlay.classList.contains('is-open')){
-          openPortal();
-        }
-      });
     })();
   </script>
 </body>
