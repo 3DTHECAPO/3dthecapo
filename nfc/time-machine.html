@@ -455,6 +455,58 @@
       line-height:1.45;
     }
 
+
+    body.time-lock{
+      overflow:hidden;
+    }
+
+    .time-shell{
+      opacity:0;
+      transform:translateY(18px) scale(.985);
+      transition:opacity 1.15s ease,transform 1.15s ease;
+    }
+
+    body.time-ready .time-shell{
+      opacity:1;
+      transform:none;
+    }
+
+    .entrance-overlay::before{
+      content:"";
+      position:absolute;
+      inset:-18%;
+      background:
+        radial-gradient(circle at center,rgba(244,213,127,.12),transparent 24%),
+        repeating-conic-gradient(from 0deg,rgba(210,167,79,.14) 0deg 4deg,transparent 4deg 12deg);
+      animation:warpSweep 3.8s ease-in-out forwards;
+      opacity:.78;
+    }
+
+    .entrance-card{
+      animation:entrancePush 3.8s ease-in-out forwards;
+    }
+
+    .entrance-overlay.is-open .tunnel,
+    .entrance-overlay.is-open .portal-flare,
+    .entrance-overlay.is-open .year-stream,
+    .entrance-overlay.is-open .entrance-card{
+      opacity:0;
+    }
+
+    @keyframes warpSweep{
+      0%{transform:scale(.52) rotate(0deg);filter:blur(10px);opacity:.14}
+      38%{transform:scale(1.02) rotate(120deg);filter:blur(3px);opacity:.74}
+      76%{transform:scale(1.52) rotate(250deg);filter:blur(1px);opacity:.92}
+      100%{transform:scale(2.35) rotate(360deg);filter:blur(18px);opacity:0}
+    }
+
+    @keyframes entrancePush{
+      0%{transform:translateY(18px) scale(.94);opacity:0}
+      22%{transform:translateY(0) scale(1);opacity:1}
+      72%{transform:translateY(0) scale(1.03);opacity:1}
+      100%{transform:translateY(-10px) scale(1.10);opacity:0}
+    }
+
     @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes pulse{50%{transform:scale(1.035);filter:brightness(1.18)}}
     @keyframes portalBloom{
@@ -499,7 +551,7 @@
     }
   </style>
 </head>
-<body>
+<body class="time-lock">
   <div class="entrance-overlay" id="entranceOverlay" aria-label="Time Machine entrance">
     <div class="tunnel" aria-hidden="true"></div>
     <div class="portal-flare" aria-hidden="true"></div>
@@ -533,10 +585,6 @@
         <div class="kicker">Music. Moments. Memories. Journey.</div>
         <h1>TIME MACHINE</h1>
         <p>Step through the archive and move through the chapters that built the 3D THE CAPO story.</p>
-        <div class="hero-actions">
-          <a class="btn gold" href="#chapters">Start Timeline</a>
-          <a class="btn" href="#album">Open Photo Album</a>
-        </div>
       </div>
       <div class="portal-preview" aria-hidden="true">
         <div class="portal-ring"></div>
@@ -600,12 +648,17 @@
       function openPortal(){
         if(opened) return;
         opened = true;
+        document.body.classList.remove('time-lock');
+        document.body.classList.add('time-ready');
         if(!overlay) return;
         overlay.classList.add('is-open');
+        window.setTimeout(function(){
+          if(overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        }, 950);
       }
 
       if(overlay) overlay.classList.add('is-running');
-      window.setTimeout(openPortal, 3200);
+      window.setTimeout(openPortal, 3800);
     })();
   </script>
 </body>
