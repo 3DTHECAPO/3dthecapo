@@ -422,38 +422,16 @@
       animation:yearFly 3.2s ease-in-out forwards;
     }
 
-    .year-marker:nth-child(1){animation-delay:.08s}
-    .year-marker:nth-child(2){animation-delay:.42s}
-    .year-marker:nth-child(3){animation-delay:.76s}
-    .year-marker:nth-child(4){animation-delay:1.10s}
-    .year-marker:nth-child(5){animation-delay:1.44s}
-    .year-marker:nth-child(6){animation-delay:1.78s}
+    .year-marker:nth-child(1){animation-delay:0.05s}
+    .year-marker:nth-child(2){animation-delay:0.32s}
+    .year-marker:nth-child(3){animation-delay:0.59s}
+    .year-marker:nth-child(4){animation-delay:0.86s}
+    .year-marker:nth-child(5){animation-delay:1.13s}
+    .year-marker:nth-child(6){animation-delay:1.40s}
+    .year-marker:nth-child(7){animation-delay:1.67s}
+    .year-marker:nth-child(8){animation-delay:1.94s}
+    .year-marker:nth-child(9){animation-delay:2.21s}
 
-    .entrance-card{
-      position:relative;
-      z-index:1;
-      width:min(620px,100%);
-      padding:28px;
-      text-align:center;
-      border:1px solid rgba(244,213,127,.42);
-      border-radius:32px;
-      background:linear-gradient(180deg,rgba(15,11,7,.88),rgba(0,0,0,.84));
-      box-shadow:0 30px 100px rgba(0,0,0,.76),0 0 60px rgba(210,167,79,.20);
-    }
-
-    .entrance-card h1{
-      margin:8px 0 12px;
-      font-size:clamp(34px,7vw,72px);
-      line-height:.95;
-    }
-
-    .entrance-card p{
-      margin:0 auto 22px;
-      max-width:460px;
-      color:var(--muted);
-      font-size:20px;
-      line-height:1.45;
-    }
 
 
     body.time-lock{
@@ -482,14 +460,10 @@
       opacity:.78;
     }
 
-    .entrance-card{
-      animation:entrancePush 3.8s ease-in-out forwards;
-    }
 
     .entrance-overlay.is-open .tunnel,
     .entrance-overlay.is-open .portal-flare,
-    .entrance-overlay.is-open .year-stream,
-    .entrance-overlay.is-open .entrance-card{
+    .entrance-overlay.is-open .year-stream{
       opacity:0;
     }
 
@@ -500,8 +474,6 @@
       100%{transform:scale(2.35) rotate(360deg);filter:blur(18px);opacity:0}
     }
 
-    @keyframes entrancePush{
-      0%{transform:translateY(18px) scale(.94);opacity:0}
       22%{transform:translateY(0) scale(1);opacity:1}
       72%{transform:translateY(0) scale(1.03);opacity:1}
       100%{transform:translateY(-10px) scale(1.10);opacity:0}
@@ -517,7 +489,7 @@
     @keyframes yearFly{
       0%{opacity:0;transform:translate(-50%,-50%) scale(.24) rotate(-8deg)}
       22%{opacity:.92}
-      100%{opacity:0;transform:translate(calc(-50% + 18vw),calc(-50% - 24vh)) scale(2.4) rotate(8deg)}
+      100%{opacity:0;transform:translate(calc(-50% + 10vw),calc(-50% - 8vh)) scale(3.2) rotate(8deg)}
     }
 
     @media (max-width:900px){
@@ -556,18 +528,16 @@
     <div class="tunnel" aria-hidden="true"></div>
     <div class="portal-flare" aria-hidden="true"></div>
     <div class="year-stream" aria-hidden="true">
-      <span class="year-marker">2007</span>
+      <span class="year-marker">2010</span>
       <span class="year-marker">2012</span>
+      <span class="year-marker">2014</span>
       <span class="year-marker">2016</span>
+      <span class="year-marker">2018</span>
       <span class="year-marker">2020</span>
+      <span class="year-marker">2022</span>
       <span class="year-marker">2024</span>
       <span class="year-marker">NOW</span>
     </div>
-    <section class="entrance-card">
-      <div class="kicker">3D THE CAPO / TIME MACHINE</div>
-      <h1>ENTER THE TIME MACHINE</h1>
-      <p>Music. Moments. Memories. Journey.</p>
-    </section>
   </div>
 
   <main class="time-shell" id="timeContent">
