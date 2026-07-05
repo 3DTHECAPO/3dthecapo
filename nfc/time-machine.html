@@ -526,13 +526,134 @@
       100%{opacity:0;filter:blur(8px);transform:translate(calc(-50% + var(--fly-x,24vw)),calc(-50% + var(--fly-y,-18vh))) scale(4.15) rotate(calc(var(--tilt,7deg) * -1))}
     }
 
+
+
+    .archive-console{
+      margin-top:18px;
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:18px;
+      background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025)),rgba(0,0,0,.44);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(14px);
+    }
+
+    .year-track,
+    .filter-track{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:10px 0 14px;
+    }
+
+    .year-btn,
+    .filter-btn{
+      cursor:pointer;
+      border:1px solid var(--line);
+      color:var(--text);
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.025));
+      border-radius:999px;
+      padding:10px 14px;
+      font-family:'Oswald',Arial,sans-serif;
+      font-weight:900;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      box-shadow:0 10px 24px rgba(0,0,0,.26);
+    }
+
+    .year-btn.is-active,
+    .filter-btn.is-active{
+      color:#130d04;
+      border-color:rgba(244,213,127,.70);
+      background:linear-gradient(180deg,#f6dc94,#d2a74f 52%,#986616);
+      box-shadow:0 0 28px rgba(210,167,79,.25),0 12px 32px rgba(0,0,0,.36);
+    }
+
+    .gallery-status{
+      color:var(--gold2);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      font-weight:900;
+      margin:4px 0 14px;
+    }
+
+    .gallery-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .gallery-card{
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025)),rgba(0,0,0,.46);
+      box-shadow:0 18px 55px rgba(0,0,0,.38);
+    }
+
+    .gallery-card img,
+    .gallery-placeholder{
+      width:100%;
+      min-height:170px;
+      aspect-ratio:4/3;
+      object-fit:cover;
+      display:grid;
+      place-items:center;
+      border-bottom:1px solid var(--line);
+    }
+
+    .gallery-placeholder{
+      color:rgba(255,244,220,.76);
+      font-family:'Black Ops One',sans-serif;
+      letter-spacing:.12em;
+      text-align:center;
+      background:
+        radial-gradient(circle at 50% 35%,rgba(244,213,127,.24),transparent 42%),
+        linear-gradient(135deg,rgba(210,167,79,.18),rgba(255,255,255,.025));
+    }
+
+    .gallery-copy{
+      padding:13px;
+    }
+
+    .gallery-copy b{
+      display:block;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:4px;
+    }
+
+    .gallery-copy span{
+      color:var(--gold2);
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+    }
+
+    .photo-guide{
+      margin-top:14px;
+      color:var(--muted);
+      line-height:1.55;
+      border-top:1px solid var(--line);
+      padding-top:14px;
+    }
+
+    code{
+      color:var(--gold2);
+      background:rgba(0,0,0,.42);
+      border:1px solid rgba(210,167,79,.22);
+      border-radius:8px;
+      padding:1px 6px;
+    }
+
     @media (max-width:900px){
       .hero-card,
       .memory-card{
         grid-template-columns:1fr;
       }
 
-      .album-grid{
+      .album-grid,
+      .gallery-grid{
         grid-template-columns:repeat(2,minmax(0,1fr));
       }
     }
@@ -542,7 +663,8 @@
         grid-template-columns:1fr;
       }
 
-      .album-grid{
+      .album-grid,
+      .gallery-grid{
         grid-template-columns:1fr;
       }
 
@@ -599,38 +721,48 @@
     <section id="chapters">
       <div class="section-head">
         <h2>Timeline Chapters</h2>
-        <p>Each chapter is ready for real photos, captions, links, dates, and memories when the archive grows.</p>
+        <p>Pick a year or category to open the archive. Drop your real photos into the folders listed below and update the file names in the page when you are ready.</p>
       </div>
+
       <div class="timeline">
-        <article class="chapter-card"><div class="chapter-number">01</div><div><h3>The Beginning</h3><p>The first spark, the first idea, the first step into the story.</p></div></article>
-        <article class="chapter-card"><div class="chapter-number">02</div><div><h3>The Hustle</h3><p>Work, motion, late nights, lessons, and the push behind the brand.</p></div></article>
-        <article class="chapter-card"><div class="chapter-number">03</div><div><h3>Music &amp; Moments</h3><p>Releases, visuals, listening sessions, and the moments connected to the sound.</p></div></article>
-        <article class="chapter-card"><div class="chapter-number">04</div><div><h3>Friends &amp; Family</h3><p>The people around the journey and the memories that hold weight.</p></div></article>
-        <article class="chapter-card"><div class="chapter-number">05</div><div><h3>Studio Sessions</h3><p>Behind the mic, behind the boards, and inside the work.</p></div></article>
-        <article class="chapter-card"><div class="chapter-number">06</div><div><h3>Shows &amp; Events</h3><p>Live moments, rooms, streets, stages, and pop-up memories.</p></div></article>
-        <article class="chapter-card"><div class="chapter-number">07</div><div><h3>Behind The Scenes</h3><p>Unpolished snapshots, preparation, planning, and real-life movement.</p></div></article>
-        <article class="chapter-card"><div class="chapter-number">08</div><div><h3>Legacy In Motion</h3><p>The archive keeps growing. Every new chapter becomes part of the machine.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>The Beginning</h3><p>First public chapter of the archive. Early memories, first moves, and the start of the journey.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>The Hustle</h3><p>Work, motion, late nights, streets, family, friends, and growth.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>Music &amp; Moments</h3><p>Music connected to real-life moments, photos, sessions, and visuals.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>Friends &amp; Family</h3><p>People who were there, moments that stuck, and photos fans can come find themselves in.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>Studio Sessions</h3><p>Behind the mic, behind the scenes, cover work, and creative process.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>Shows &amp; Events</h3><p>Rooms, streets, events, pop-ups, road moments, and live memories.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>Behind The Scenes</h3><p>Unpolished snapshots, preparation, planning, lifestyle, and brand movement.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>Legacy In Motion</h3><p>The archive grows into the vault: music, merch, PLAY 3D, fans, and future history.</p></div></article>
+      </div>
+
+      <div class="archive-console" id="archiveConsole">
+        <div class="kicker">Time Machine Controls</div>
+        <h2 style="margin:0 0 8px">Open The Archive</h2>
+        <div class="year-track" id="yearTrack" aria-label="Choose archive year"></div>
+        <div class="filter-track" id="filterTrack" aria-label="Choose archive category"></div>
+        <div class="gallery-status" id="galleryStatus">Showing All Years / All Moments</div>
+        <div class="gallery-grid" id="galleryGrid"></div>
+        <div class="photo-guide">
+          <strong>How to add your photos:</strong><br>
+          Put images in folders like <code>./assets/time-machine//</code>, <code>./assets/time-machine//</code>, or <code>./assets/time-machine//</code>. Then replace the placeholder <code>src</code> values in the <code>timeMachinePhotos</code> list at the bottom of this file with your real image file names.
+        </div>
       </div>
     </section>
 
     <section id="album">
       <div class="section-head">
-        <h2>Photo Album</h2>
-        <p>Placeholder slots are ready to replace with real image paths, years, captions, and archive notes.</p>
+        <h2>Photo Album Wall</h2>
+        <p>This wall can stay as a quick highlight reel while the archive controls above handle the full year/category browsing.</p>
       </div>
       <div class="album-grid">
-        <article class="album-card"><div class="photo-slot">Photo Slot</div><div class="album-copy"><b>Origin Frame</b><span>Year TBD</span></div></article>
-        <article class="album-card"><div class="photo-slot">Photo Slot</div><div class="album-copy"><b>Early Motion</b><span>Year TBD</span></div></article>
-        <article class="album-card"><div class="photo-slot">Photo Slot</div><div class="album-copy"><b>Studio Night</b><span>Year TBD</span></div></article>
-        <article class="album-card"><div class="photo-slot">Photo Slot</div><div class="album-copy"><b>Family Moment</b><span>Year TBD</span></div></article>
-        <article class="album-card"><div class="photo-slot">Photo Slot</div><div class="album-copy"><b>Video Day</b><span>Year TBD</span></div></article>
-        <article class="album-card"><div class="photo-slot">Photo Slot</div><div class="album-copy"><b>Backstage</b><span>Year TBD</span></div></article>
-        <article class="album-card"><div class="photo-slot">Photo Slot</div><div class="album-copy"><b>Street Memory</b><span>Year TBD</span></div></article>
-        <article class="album-card"><div class="photo-slot">Photo Slot</div><div class="album-copy"><b>Legacy Frame</b><span>Year TBD</span></div></article>
-        <article class="album-card"><div class="photo-slot">Photo Slot</div><div class="album-copy"><b>Vault Moment</b><span>Year TBD</span></div></article>
-        <article class="album-card"><div class="photo-slot">Photo Slot</div><div class="album-copy"><b>Fan Memory</b><span>Year TBD</span></div></article>
-        <article class="album-card"><div class="photo-slot">Photo Slot</div><div class="album-copy"><b>Show Night</b><span>Year TBD</span></div></article>
-        <article class="album-card"><div class="photo-slot">Photo Slot</div><div class="album-copy"><b>Next Chapter</b><span>Year TBD</span></div></article>
+        <article class="album-card"><div class="photo-slot">Music</div><div class="album-copy"><b>Music Moments</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">Family</div><div class="album-copy"><b>Family Memories</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">Friends</div><div class="album-copy"><b>Friends &amp; Fans</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">Studio</div><div class="album-copy"><b>Studio Sessions</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">Shows</div><div class="album-copy"><b>Shows &amp; Events</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">BTS</div><div class="album-copy"><b>Behind The Scenes</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">Life</div><div class="album-copy"><b>Lifestyle</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">Legacy</div><div class="album-copy"><b>Legacy Frames</b><span>Archive Slot</span></div></article>
       </div>
     </section>
 
@@ -663,6 +795,127 @@
 
       if(overlay) overlay.classList.add('is-running');
       window.setTimeout(openPortal, 6200);
+    })();
+
+    (function(){
+      const years = ['All','','','','','','','','',''];
+      const categories = ['All','Music','Moments','Family','Friends','Studio','Shows','Behind The Scenes','Lifestyle','Business'];
+
+      /*
+        HOW TO ADD REAL PHOTOS:
+        1. Upload images into: nfc/assets/time-machine/YEAR/
+           Example: nfc/assets/time-machine//studio-night.jpg
+        2. Replace the src below with that relative path:
+           ./assets/time-machine//studio-night.jpg
+        3. Change title/category/caption as needed.
+      */
+      const timeMachinePhotos = [
+        {year:'', category:'Music', title:'First Public Chapter', caption:'Replace with a  music memory.', src:''},
+        {year:'', category:'Moments', title:'Origin Moment', caption:'Replace with a  life moment.', src:''},
+        {year:'', category:'Friends', title:'Crew Memory', caption:'Friends, fans, and people from the journey.', src:''},
+        {year:'', category:'Lifestyle', title:'Street Memory', caption:'Lifestyle photo slot from the hustle.', src:''},
+        {year:'', category:'Music', title:'Music & Moments', caption:'Release, cover, studio, or video memory.', src:''},
+        {year:'', category:'Behind The Scenes', title:'Behind The Work', caption:'Planning, filming, or real work in motion.', src:''},
+        {year:'', category:'Family', title:'Family Frame', caption:'Family and personal memories.', src:''},
+        {year:'', category:'Friends', title:'Were You There?', caption:'A place for people to find themselves.', src:''},
+        {year:'', category:'Studio', title:'Studio Session', caption:'Behind the mic or behind the boards.', src:''},
+        {year:'', category:'Music', title:'Soundtrack Moment', caption:'Photo connected to the music.', src:''},
+        {year:'', category:'Shows', title:'Event Night', caption:'Shows, pop-ups, parties, or public moments.', src:''},
+        {year:'', category:'Moments', title:'Real Life Frame', caption:'A memory from the year.', src:''},
+        {year:'', category:'Behind The Scenes', title:'Behind The Scenes', caption:'Unpolished movement and preparation.', src:''},
+        {year:'', category:'Business', title:'Brand Motion', caption:'Business, merch, website, or planning memory.', src:''},
+        {year:'', category:'Music', title:'Current Chapter', caption:'Newer music, visuals, and promo memories.', src:''},
+        {year:'', category:'Business', title:'PLAY 3D Era', caption:'Website, vault, merch, and game floor growth.', src:''},
+        {year:'', category:'Moments', title:'Still Moving', caption:'Add the newest chapter here.', src:''},
+        {year:'', category:'Fans', title:'Fan Memory', caption:'Fans, friends, and family can find the moment.', src:''}
+      ];
+
+      const yearTrack = document.getElementById('yearTrack');
+      const filterTrack = document.getElementById('filterTrack');
+      const galleryGrid = document.getElementById('galleryGrid');
+      const galleryStatus = document.getElementById('galleryStatus');
+      let activeYear = 'All';
+      let activeCategory = 'All';
+
+      function button(label, className, onClick){
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = className;
+        btn.textContent = label;
+        btn.addEventListener('click', onClick);
+        return btn;
+      }
+
+      function renderControls(){
+        if(yearTrack){
+          yearTrack.innerHTML = '';
+          years.forEach(function(year){
+            const btn = button(year, 'year-btn' + (year === activeYear ? ' is-active' : ''), function(){
+              activeYear = year;
+              renderControls();
+              renderGallery();
+            });
+            yearTrack.appendChild(btn);
+          });
+        }
+
+        if(filterTrack){
+          filterTrack.innerHTML = '';
+          categories.forEach(function(category){
+            const btn = button(category, 'filter-btn' + (category === activeCategory ? ' is-active' : ''), function(){
+              activeCategory = category;
+              renderControls();
+              renderGallery();
+            });
+            filterTrack.appendChild(btn);
+          });
+        }
+      }
+
+      function photoCard(item){
+        const card = document.createElement('article');
+        card.className = 'gallery-card';
+
+        if(item.src){
+          const img = document.createElement('img');
+          img.src = item.src;
+          img.alt = item.title || 'Time Machine photo';
+          img.loading = 'lazy';
+          card.appendChild(img);
+        } else {
+          const placeholder = document.createElement('div');
+          placeholder.className = 'gallery-placeholder';
+          placeholder.innerHTML = item.year + '<br>' + item.category;
+          card.appendChild(placeholder);
+        }
+
+        const copy = document.createElement('div');
+        copy.className = 'gallery-copy';
+        copy.innerHTML = '<b>' + item.title + '</b><span>' + item.year + ' / ' + item.category + '</span><p style="margin:8px 0 0;color:var(--muted);line-height:1.45">' + item.caption + '</p>';
+        card.appendChild(copy);
+        return card;
+      }
+
+      function renderGallery(){
+        if(!galleryGrid) return;
+        const filtered = timeMachinePhotos.filter(function(item){
+          const yearOK = activeYear === 'All' || item.year === activeYear;
+          const categoryOK = activeCategory === 'All' || item.category === activeCategory;
+          return yearOK && categoryOK;
+        });
+
+        galleryGrid.innerHTML = '';
+        filtered.forEach(function(item){
+          galleryGrid.appendChild(photoCard(item));
+        });
+
+        if(galleryStatus){
+          galleryStatus.textContent = 'Showing ' + (activeYear === 'All' ? 'All Years' : activeYear) + ' / ' + (activeCategory === 'All' ? 'All Moments' : activeCategory) + ' — ' + filtered.length + ' slot(s)';
+        }
+      }
+
+      renderControls();
+      renderGallery();
     })();
   </script>
 </body>
