@@ -1,0 +1,1237 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>PLAY 3D Time Machine</title>
+  <meta name="description" content="TIME MACHINE - Music. Moments. Memories. Journey.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --gold:#d2a74f;
+      --gold2:#f4d57f;
+      --ink:#050403;
+      --panel:rgba(10,8,6,.78);
+      --line:rgba(210,167,79,.30);
+      --text:#fff4dc;
+      --muted:rgba(255,244,220,.72);
+      --shadow:0 26px 90px rgba(0,0,0,.70);
+    }
+
+    *{box-sizing:border-box}
+
+    html{scroll-behavior:smooth}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      font-family:'Oswald',Arial,sans-serif;
+      background:
+        radial-gradient(circle at 50% 8%,rgba(244,213,127,.20),transparent 28%),
+        linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.96)),
+        url("./assets/museum_bg.jpg") center/cover fixed no-repeat,
+        #050403;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background:
+        radial-gradient(circle at 18% 20%,rgba(210,167,79,.18),transparent 16%),
+        radial-gradient(circle at 78% 15%,rgba(210,167,79,.12),transparent 20%),
+        linear-gradient(90deg,rgba(210,167,79,.05),transparent 18%,transparent 82%,rgba(210,167,79,.05));
+      mix-blend-mode:screen;
+    }
+
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      opacity:.34;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+      background-size:38px 38px;
+      mask-image:radial-gradient(circle at center,black,transparent 72%);
+    }
+
+    h1,h2,h3,.logo-mark,.kicker,.chapter-number{
+      font-family:'Black Ops One',sans-serif;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    a{color:inherit}
+
+    .time-shell{
+      position:relative;
+      z-index:1;
+      width:min(1180px,calc(100% - 28px));
+      margin:0 auto;
+      padding:22px 0 56px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+      padding:10px 0 18px;
+    }
+
+    .logo-mark{
+      display:inline-grid;
+      place-items:center;
+      width:58px;
+      height:58px;
+      border-radius:18px;
+      color:#120d04;
+      background:linear-gradient(180deg,#f7da8a,#b67a1d);
+      box-shadow:0 0 32px rgba(210,167,79,.28),inset 0 1px 0 rgba(255,255,255,.45);
+    }
+
+    .time-nav{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:44px;
+      padding:11px 16px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      color:var(--text);
+      text-decoration:none;
+      text-transform:uppercase;
+      letter-spacing:.10em;
+      font-weight:900;
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
+      box-shadow:0 10px 28px rgba(0,0,0,.34);
+      transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+    }
+
+    .btn:hover,.btn:focus-visible{
+      transform:translateY(-2px);
+      border-color:rgba(244,213,127,.62);
+      box-shadow:0 0 30px rgba(210,167,79,.24),0 16px 38px rgba(0,0,0,.42);
+    }
+
+    .btn.gold{
+      color:#130d04;
+      border-color:rgba(244,213,127,.62);
+      background:linear-gradient(180deg,#f6dc94,#d2a74f 48%,#986616);
+    }
+
+    .hero-card,.chapter-card,.album-card,.memory-card{
+      border:1px solid var(--line);
+      border-radius:28px;
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025)),
+        var(--panel);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(14px);
+    }
+
+    .hero-card{
+      position:relative;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:22px;
+      padding:28px;
+      min-height:430px;
+    }
+
+    .hero-card::before{
+      content:"";
+      position:absolute;
+      inset:auto -18% -44% 42%;
+      height:420px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(244,213,127,.30),transparent 58%);
+      filter:blur(6px);
+    }
+
+    .kicker{
+      color:var(--gold2);
+      font-size:12px;
+      margin-bottom:12px;
+    }
+
+    .hero-card h1{
+      margin:0;
+      font-size:clamp(48px,8vw,108px);
+      line-height:.88;
+      text-shadow:0 0 34px rgba(210,167,79,.28);
+    }
+
+    .hero-card p{
+      margin:18px 0 0;
+      color:var(--muted);
+      font-size:clamp(18px,2vw,24px);
+      line-height:1.45;
+      max-width:620px;
+    }
+
+    .hero-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:26px;
+    }
+
+    .portal-preview{
+      position:relative;
+      min-height:350px;
+      display:grid;
+      place-items:center;
+    }
+
+    .portal-ring{
+      position:absolute;
+      width:min(82vw,360px);
+      aspect-ratio:1;
+      border-radius:50%;
+      border:2px solid rgba(244,213,127,.55);
+      background:
+        radial-gradient(circle at center,rgba(244,213,127,.22),transparent 34%),
+        conic-gradient(from 0deg,transparent,rgba(244,213,127,.74),transparent,rgba(210,167,79,.42),transparent);
+      box-shadow:0 0 44px rgba(210,167,79,.30),inset 0 0 52px rgba(0,0,0,.70);
+      animation:spin 12s linear infinite,pulse 2.8s ease-in-out infinite;
+    }
+
+    .portal-core{
+      position:relative;
+      z-index:1;
+      width:190px;
+      height:190px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      color:#170f05;
+      font-family:'Black Ops One',sans-serif;
+      letter-spacing:.14em;
+      background:radial-gradient(circle,#fff1bc,#d2a74f 48%,#5d390b 72%,#070504);
+      box-shadow:0 0 70px rgba(244,213,127,.38);
+    }
+
+    .section-head{
+      display:flex;
+      align-items:end;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+      margin:42px 0 16px;
+    }
+
+    .section-head h2{
+      margin:0;
+      font-size:clamp(28px,4vw,46px);
+    }
+
+    .section-head p{
+      margin:0;
+      color:var(--muted);
+      max-width:520px;
+      line-height:1.55;
+    }
+
+    .timeline{
+      display:grid;
+      gap:14px;
+      position:relative;
+    }
+
+    .chapter-card{
+      display:grid;
+      grid-template-columns:88px 1fr;
+      gap:16px;
+      align-items:center;
+      padding:18px;
+    }
+
+    .chapter-number{
+      display:grid;
+      place-items:center;
+      width:70px;
+      height:70px;
+      border-radius:22px;
+      color:#130d04;
+      background:linear-gradient(180deg,#f6dc94,#d2a74f,#8f5f16);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 24px rgba(210,167,79,.24);
+    }
+
+    .chapter-card h3{
+      margin:0 0 6px;
+      font-size:22px;
+    }
+
+    .chapter-card p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .album-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .album-card{
+      overflow:hidden;
+      min-height:240px;
+    }
+
+    .photo-slot{
+      min-height:152px;
+      display:grid;
+      place-items:center;
+      color:rgba(255,244,220,.70);
+      font-family:'Black Ops One',sans-serif;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      background:
+        linear-gradient(135deg,rgba(210,167,79,.16),rgba(255,255,255,.025)),
+        radial-gradient(circle at 50% 42%,rgba(244,213,127,.18),transparent 42%),
+        rgba(0,0,0,.36);
+      border-bottom:1px solid var(--line);
+    }
+
+    .album-copy{
+      padding:14px;
+    }
+
+    .album-copy b{
+      display:block;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+      margin-bottom:4px;
+    }
+
+    .album-copy span{
+      color:var(--gold2);
+      font-size:13px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+
+    .memory-card{
+      padding:24px;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:18px;
+      align-items:center;
+      margin-top:18px;
+    }
+
+    .memory-card h2{
+      margin:0 0 8px;
+      font-size:clamp(28px,4vw,48px);
+    }
+
+    .memory-card p{
+      margin:0;
+      color:var(--muted);
+      font-size:20px;
+      line-height:1.45;
+    }
+
+    .entrance-overlay{
+      position:fixed;
+      inset:0;
+      z-index:20;
+      display:grid;
+      place-items:center;
+      padding:22px;
+      background:
+        radial-gradient(circle at center,rgba(210,167,79,.18),transparent 30%),
+        linear-gradient(180deg,#050403,#000);
+      transition:opacity .9s ease,visibility .9s ease;
+      overflow:hidden;
+    }
+
+    .entrance-overlay.is-open{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    .entrance-overlay.is-running .tunnel{
+      animation:spin 3.2s linear infinite,pulse 1.45s ease-in-out infinite;
+    }
+
+    .tunnel{
+      position:absolute;
+      width:min(92vw,720px);
+      aspect-ratio:1;
+      border-radius:50%;
+      opacity:.82;
+      background:
+        repeating-radial-gradient(circle,rgba(210,167,79,.24) 0 2px,transparent 2px 26px),
+        conic-gradient(from 0deg,transparent,rgba(244,213,127,.32),transparent,rgba(210,167,79,.24),transparent);
+      animation:spin 16s linear infinite,pulse 3s ease-in-out infinite;
+      filter:drop-shadow(0 0 42px rgba(210,167,79,.28));
+    }
+
+    .portal-flare{
+      position:absolute;
+      width:min(88vw,520px);
+      aspect-ratio:1;
+      border-radius:50%;
+      background:
+        radial-gradient(circle,rgba(255,238,173,.44),rgba(210,167,79,.20) 32%,transparent 66%);
+      filter:blur(14px);
+      opacity:.74;
+      animation:portalBloom 3.2s ease-in-out forwards;
+    }
+
+    .year-stream{
+      position:absolute;
+      inset:0;
+      overflow:hidden;
+      pointer-events:none;
+    }
+
+    .year-marker{
+      position:absolute;
+      left:calc(50% + var(--lane-x,0px));
+      top:calc(50% + var(--lane-y,0px));
+      color:rgba(244,213,127,.88);
+      font-family:'Black Ops One',sans-serif;
+      font-size:clamp(20px,4.8vw,54px);
+      letter-spacing:.16em;
+      text-shadow:0 0 28px rgba(210,167,79,.55),0 0 62px rgba(244,213,127,.22);
+      opacity:0;
+      transform:translate(-50%,-50%) scale(.16) rotate(var(--tilt,-7deg));
+      animation:yearFly 4.25s cubic-bezier(.12,.72,.22,1) forwards;
+      will-change:transform,opacity,filter;
+    }
+
+    .year-marker:nth-child(1){--lane-x:-16vw;--lane-y:10vh;--fly-x:-44vw;--fly-y:25vh;--tilt:-9deg;animation-delay:.05s}
+    .year-marker:nth-child(2){--lane-x:12vw;--lane-y:-8vh;--fly-x:38vw;--fly-y:-18vh;--tilt:7deg;animation-delay:.55s}
+    .year-marker:nth-child(3){--lane-x:-6vw;--lane-y:-16vh;--fly-x:-22vw;--fly-y:-34vh;--tilt:-4deg;animation-delay:1.05s}
+    .year-marker:nth-child(4){--lane-x:18vw;--lane-y:12vh;--fly-x:48vw;--fly-y:28vh;--tilt:8deg;animation-delay:1.55s}
+    .year-marker:nth-child(5){--lane-x:-22vw;--lane-y:-2vh;--fly-x:-52vw;--fly-y:-4vh;--tilt:-8deg;animation-delay:2.05s}
+    .year-marker:nth-child(6){--lane-x:4vw;--lane-y:16vh;--fly-x:14vw;--fly-y:42vh;--tilt:3deg;animation-delay:2.55s}
+    .year-marker:nth-child(7){--lane-x:-12vw;--lane-y:-11vh;--fly-x:-38vw;--fly-y:-28vh;--tilt:-5deg;animation-delay:3.05s}
+    .year-marker:nth-child(8){--lane-x:20vw;--lane-y:-1vh;--fly-x:54vw;--fly-y:2vh;--tilt:6deg;animation-delay:3.55s}
+    .year-marker:nth-child(9){--lane-x:0vw;--lane-y:0vh;--fly-x:0vw;--fly-y:0vh;--tilt:0deg;animation-delay:4.15s;color:#fff1b8;text-shadow:0 0 34px rgba(255,230,155,.85),0 0 90px rgba(210,167,79,.45)}
+
+    .entrance-card{
+      position:relative;
+      z-index:1;
+      width:min(620px,100%);
+      padding:28px;
+      text-align:center;
+      border:1px solid rgba(244,213,127,.42);
+      border-radius:32px;
+      background:linear-gradient(180deg,rgba(15,11,7,.88),rgba(0,0,0,.84));
+      box-shadow:0 30px 100px rgba(0,0,0,.76),0 0 60px rgba(210,167,79,.20);
+    }
+
+    .entrance-card h1{
+      margin:8px 0 12px;
+      font-size:clamp(34px,7vw,72px);
+      line-height:.95;
+    }
+
+    .entrance-card p{
+      margin:0 auto 22px;
+      max-width:460px;
+      color:var(--muted);
+      font-size:20px;
+      line-height:1.45;
+    }
+
+
+    body.time-lock{
+      overflow:hidden;
+    }
+
+    .time-shell{
+      opacity:0;
+      transform:translateY(18px) scale(.985);
+      transition:opacity 1.15s ease,transform 1.15s ease;
+    }
+
+    body.time-ready .time-shell{
+      opacity:1;
+      transform:none;
+    }
+
+    .entrance-overlay::before{
+      content:"";
+      position:absolute;
+      inset:-18%;
+      background:
+        radial-gradient(circle at center,rgba(244,213,127,.12),transparent 24%),
+        repeating-conic-gradient(from 0deg,rgba(210,167,79,.14) 0deg 4deg,transparent 4deg 12deg);
+      animation:warpSweep 3.8s ease-in-out forwards;
+      opacity:.78;
+    }
+
+    .entrance-card{
+      animation:entrancePush 3.8s ease-in-out forwards;
+    }
+
+    .entrance-overlay.is-open .tunnel,
+    .entrance-overlay.is-open .portal-flare,
+    .entrance-overlay.is-open .year-stream,
+    .entrance-overlay.is-open .entrance-card{
+      opacity:0;
+    }
+
+    @keyframes warpSweep{
+      0%{transform:scale(.52) rotate(0deg);filter:blur(10px);opacity:.14}
+      38%{transform:scale(1.02) rotate(120deg);filter:blur(3px);opacity:.74}
+      76%{transform:scale(1.52) rotate(250deg);filter:blur(1px);opacity:.92}
+      100%{transform:scale(2.35) rotate(360deg);filter:blur(18px);opacity:0}
+    }
+
+    @keyframes entrancePush{
+      0%{transform:translateY(18px) scale(.94);opacity:0}
+      22%{transform:translateY(0) scale(1);opacity:1}
+      72%{transform:translateY(0) scale(1.03);opacity:1}
+      100%{transform:translateY(-10px) scale(1.10);opacity:0}
+    }
+
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse{50%{transform:scale(1.035);filter:brightness(1.18)}}
+    @keyframes portalBloom{
+      0%{transform:scale(.28);opacity:.10}
+      58%{transform:scale(1.06);opacity:.86}
+      100%{transform:scale(1.42);opacity:.18}
+    }
+    @keyframes yearFly{
+      0%{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(.14) rotate(var(--tilt,-7deg))}
+      18%{opacity:.82;filter:blur(2px);transform:translate(-50%,-50%) scale(.58) rotate(var(--tilt,-7deg))}
+      58%{opacity:1;filter:blur(0);transform:translate(-50%,-50%) scale(1.18) rotate(0deg)}
+      82%{opacity:.76;filter:blur(1px);transform:translate(calc(-50% + var(--fly-x,24vw)),calc(-50% + var(--fly-y,-18vh))) scale(2.45) rotate(calc(var(--tilt,7deg) * -1))}
+      100%{opacity:0;filter:blur(8px);transform:translate(calc(-50% + var(--fly-x,24vw)),calc(-50% + var(--fly-y,-18vh))) scale(4.15) rotate(calc(var(--tilt,7deg) * -1))}
+    }
+
+
+
+    .archive-console{
+      margin-top:18px;
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:18px;
+      background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025)),rgba(0,0,0,.44);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(14px);
+    }
+
+    .year-track,
+    .filter-track{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:10px 0 14px;
+    }
+
+    .year-btn,
+    .filter-btn{
+      cursor:pointer;
+      border:1px solid var(--line);
+      color:var(--text);
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.025));
+      border-radius:999px;
+      padding:10px 14px;
+      font-family:'Oswald',Arial,sans-serif;
+      font-weight:900;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      box-shadow:0 10px 24px rgba(0,0,0,.26);
+    }
+
+    .year-btn.is-active,
+    .filter-btn.is-active{
+      color:#130d04;
+      border-color:rgba(244,213,127,.70);
+      background:linear-gradient(180deg,#f6dc94,#d2a74f 52%,#986616);
+      box-shadow:0 0 28px rgba(210,167,79,.25),0 12px 32px rgba(0,0,0,.36);
+    }
+
+    .gallery-status{
+      color:var(--gold2);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      font-weight:900;
+      margin:4px 0 14px;
+    }
+
+    .gallery-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .gallery-card{
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025)),rgba(0,0,0,.46);
+      box-shadow:0 18px 55px rgba(0,0,0,.38);
+    }
+
+    .gallery-card img,
+    .gallery-placeholder{
+      width:100%;
+      min-height:170px;
+      aspect-ratio:4/3;
+      object-fit:cover;
+      display:grid;
+      place-items:center;
+      border-bottom:1px solid var(--line);
+    }
+
+    .gallery-placeholder{
+      color:rgba(255,244,220,.76);
+      font-family:'Black Ops One',sans-serif;
+      letter-spacing:.12em;
+      text-align:center;
+      background:
+        radial-gradient(circle at 50% 35%,rgba(244,213,127,.24),transparent 42%),
+        linear-gradient(135deg,rgba(210,167,79,.18),rgba(255,255,255,.025));
+    }
+
+    .gallery-copy{
+      padding:13px;
+    }
+
+    .gallery-copy b{
+      display:block;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:4px;
+    }
+
+    .gallery-copy span{
+      color:var(--gold2);
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+    }
+
+    .photo-guide{
+      margin-top:14px;
+      color:var(--muted);
+      line-height:1.55;
+      border-top:1px solid var(--line);
+      padding-top:14px;
+    }
+
+    code{
+      color:var(--gold2);
+      background:rgba(0,0,0,.42);
+      border:1px solid rgba(210,167,79,.22);
+      border-radius:8px;
+      padding:1px 6px;
+    }
+
+    @media (max-width:900px){
+      .hero-card,
+      .memory-card{
+        grid-template-columns:1fr;
+      }
+
+      .album-grid,
+      .gallery-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+    }
+
+    @media (max-width:560px){
+      .chapter-card{
+        grid-template-columns:1fr;
+      }
+
+      .album-grid,
+      .gallery-grid{
+        grid-template-columns:1fr;
+      }
+
+      .time-nav,
+      .hero-actions{
+        flex-direction:column;
+      }
+
+      .btn{
+        width:100%;
+      }
+    }
+  
+    /* GRAPHIC CONTENT REVEAL PANEL */
+    .graphic-warning-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+      margin-top:16px;
+    }
+    .graphic-reveal-card{
+      position:relative;
+      overflow:hidden;
+      min-height:300px;
+      border:1px solid rgba(210,167,79,.34);
+      border-radius:28px;
+      background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025)),rgba(10,8,6,.78);
+      box-shadow:0 26px 90px rgba(0,0,0,.70);
+      backdrop-filter:blur(14px);
+    }
+    .graphic-media{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      background:radial-gradient(circle at 50% 40%,rgba(244,213,127,.14),transparent 42%),linear-gradient(135deg,rgba(70,0,0,.28),rgba(0,0,0,.84));
+      filter:blur(16px) brightness(.55);
+      transform:scale(1.08);
+      transition:filter .45s ease,transform .45s ease;
+    }
+    .graphic-media img,.graphic-media video{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .graphic-placeholder{
+      font-family:'Black Ops One',sans-serif;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:rgba(255,244,220,.55);
+      text-align:center;
+      padding:20px;
+    }
+    .graphic-warning{
+      position:absolute;
+      inset:0;
+      z-index:2;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:12px;
+      padding:22px;
+      text-align:center;
+      background:linear-gradient(180deg,rgba(5,4,3,.88),rgba(0,0,0,.92)),repeating-linear-gradient(135deg,rgba(210,167,79,.16) 0 12px,transparent 12px 24px);
+      border:1px solid rgba(244,213,127,.22);
+      transition:opacity .35s ease,visibility .35s ease;
+    }
+    .graphic-warning strong{
+      font-family:'Black Ops One',sans-serif;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      color:#f4d57f;
+      font-size:clamp(22px,3vw,34px);
+      text-shadow:0 0 22px rgba(210,167,79,.34);
+    }
+    .graphic-warning p{
+      margin:0;
+      color:rgba(255,244,220,.78);
+      max-width:420px;
+      line-height:1.45;
+      font-size:17px;
+    }
+    .graphic-reveal-card.is-revealed .graphic-warning{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+    .graphic-reveal-card.is-revealed .graphic-media{
+      filter:none;
+      transform:none;
+    }
+    .hide-graphic-btn{
+      position:absolute;
+      top:12px;
+      right:12px;
+      z-index:3;
+      display:none;
+      min-height:38px;
+      padding:8px 12px;
+      font-size:12px;
+    }
+    .graphic-reveal-card.is-revealed .hide-graphic-btn{
+      display:inline-flex;
+    }
+    .graphic-note{
+      color:rgba(255,244,220,.70);
+      line-height:1.5;
+      margin:0;
+    }
+    @media (max-width:900px){
+      .graphic-warning-grid{grid-template-columns:1fr;}
+    }
+
+  
+    .graphic-reveal-card .graphic-caption{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:1;
+      background:linear-gradient(180deg,transparent,rgba(0,0,0,.84) 30%,rgba(0,0,0,.94));
+      border-top:1px solid rgba(210,167,79,.22);
+    }
+    .graphic-reveal-card.is-revealed{
+      min-height:360px;
+    }
+
+  </style>
+</head>
+<body class="time-lock">
+  <div class="entrance-overlay" id="entranceOverlay" aria-label="Time Machine entrance">
+    <div class="tunnel" aria-hidden="true"></div>
+    <div class="portal-flare" aria-hidden="true"></div>
+    <div class="year-stream" aria-hidden="true">
+      <span class="year-marker">2010</span>
+      <span class="year-marker">2012</span>
+      <span class="year-marker">2014</span>
+      <span class="year-marker">2016</span>
+      <span class="year-marker">2018</span>
+      <span class="year-marker">2020</span>
+      <span class="year-marker">2022</span>
+      <span class="year-marker">2024</span>
+      <span class="year-marker">NOW</span>
+    </div>
+  </div>
+
+  <main class="time-shell" id="timeContent">
+    <header class="topbar">
+      <a class="logo-mark" href="./museum/index.html" aria-label="Back to Museum">3D</a>
+      <nav class="time-nav" aria-label="Time Machine navigation">
+        <a class="btn" href="./museum/index.html">Back To Museum</a>
+        <a class="btn" href="./scan.html">Back To Vault</a>
+        <a class="btn gold" href="./game-vault/index.html">Game Vault</a>
+      </nav>
+    </header>
+
+    <section class="hero-card">
+      <div>
+        <div class="kicker">Music. Moments. Memories. Journey.</div>
+        <h1>TIME MACHINE</h1>
+        <p>Step through the archive and move through the chapters that built the 3D THE CAPO story.</p>
+      </div>
+      <div class="portal-preview" aria-hidden="true">
+        <div class="portal-ring"></div>
+        <div class="portal-core">PLAY<br>BACK</div>
+      </div>
+    </section>
+
+    <section id="chapters">
+      <div class="section-head">
+        <h2>Timeline Chapters</h2>
+        <p>Pick a year or category to open the archive. Drop your real photos into the folders listed below and update the file names in the page when you are ready.</p>
+      </div>
+
+      <div class="timeline">
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>The Beginning</h3><p>First public chapter of the archive. Early memories, first moves, and the start of the journey.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>The Hustle</h3><p>Work, motion, late nights, streets, family, friends, and growth.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>Music &amp; Moments</h3><p>Music connected to real-life moments, photos, sessions, and visuals.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>Friends &amp; Family</h3><p>People who were there, moments that stuck, and photos fans can come find themselves in.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>Studio Sessions</h3><p>Behind the mic, behind the scenes, cover work, and creative process.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>Shows &amp; Events</h3><p>Rooms, streets, events, pop-ups, road moments, and live memories.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>Behind The Scenes</h3><p>Unpolished snapshots, preparation, planning, lifestyle, and brand movement.</p></div></article>
+        <article class="chapter-card"><div class="chapter-number"></div><div><h3>Legacy In Motion</h3><p>The archive grows into the vault: music, merch, PLAY 3D, fans, and future history.</p></div></article>
+      </div>
+
+      <div class="archive-console" id="archiveConsole">
+        <div class="kicker">Time Machine Controls</div>
+        <h2 style="margin:0 0 8px">Open The Archive</h2>
+        <div class="year-track" id="yearTrack" aria-label="Choose archive year"></div>
+        <div class="filter-track" id="filterTrack" aria-label="Choose archive category"></div>
+        <div class="gallery-status" id="galleryStatus">Showing All Years / All Moments</div>
+        <div class="gallery-grid" id="galleryGrid"></div>
+        <div class="photo-guide">
+          <strong>How to add your photos:</strong><br>
+          Put images in folders like <code>./assets/time-machine//</code>, <code>./assets/time-machine//</code>, or <code>./assets/time-machine//</code>. Then replace the placeholder <code>src</code> values in the <code>timeMachinePhotos</code> list at the bottom of this file with your real image file names.
+        </div>
+      </div>
+    </section>
+
+    <section id="album">
+      <div class="section-head">
+        <h2>Photo Album Wall</h2>
+        <p>This wall can stay as a quick highlight reel while the archive controls above handle the full year/category browsing.</p>
+      </div>
+      <div class="album-grid">
+        <article class="album-card"><div class="photo-slot">Music</div><div class="album-copy"><b>Music Moments</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">Family</div><div class="album-copy"><b>Family Memories</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">Friends</div><div class="album-copy"><b>Friends &amp; Fans</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">Studio</div><div class="album-copy"><b>Studio Sessions</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">Shows</div><div class="album-copy"><b>Shows &amp; Events</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">BTS</div><div class="album-copy"><b>Behind The Scenes</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">Life</div><div class="album-copy"><b>Lifestyle</b><span>Archive Slot</span></div></article>
+        <article class="album-card"><div class="photo-slot">Legacy</div><div class="album-copy"><b>Legacy Frames</b><span>Archive Slot</span></div></article>
+      </div>
+    </section>
+
+
+    <section id="graphic-content">
+      <div class="section-head">
+        <h2>Graphic Content</h2>
+        <p>Accident recovery photos can stay covered until the visitor chooses to view them.</p>
+      </div>
+      <p class="graphic-note">Replace the placeholder blocks with your real injury/recovery image paths when you are ready. The warning stays on top until someone taps reveal.</p>
+
+      <div class="graphic-warning-grid">
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="./assets/time-machine/graphic/graphic-recovery-01.jpg" alt="Hospital Recovery — Day One">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Hospital Recovery — Day One</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="./assets/time-machine/graphic/graphic-recovery-02.jpg" alt="First Hospital Room Memory">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>First Hospital Room Memory</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="./assets/time-machine/graphic/graphic-recovery-03.jpg" alt="Surgery Recovery Close-Up">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Surgery Recovery Close-Up</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="./assets/time-machine/graphic/graphic-recovery-04.jpg" alt="Healing Through The Pain">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Healing Through The Pain</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="./assets/time-machine/graphic/graphic-recovery-05.jpg" alt="Post-Surgery Leg Recovery">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Post-Surgery Leg Recovery</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="./assets/time-machine/graphic/graphic-recovery-06.jpg" alt="Hospital Recovery Setup">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Hospital Recovery Setup</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="./assets/time-machine/graphic/graphic-recovery-07.jpg" alt="Foot Recovery Documentation">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Foot Recovery Documentation</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="./assets/time-machine/graphic/graphic-recovery-08.jpg" alt="Cast And Trauma Recovery">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Cast And Trauma Recovery</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="./assets/time-machine/graphic/graphic-recovery-09.jpg" alt="Long Incision Recovery">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Long Incision Recovery</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="./assets/time-machine/graphic/graphic-recovery-10.jpg" alt="Face Recovery Progress">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Face Recovery Progress</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="./assets/time-machine/graphic/graphic-recovery-11.jpg" alt="Home Recovery Chapter">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Home Recovery Chapter</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="./assets/time-machine/graphic/graphic-recovery-12.jpg" alt="Medical Documentation One">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Medical Documentation One</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="./assets/time-machine/graphic/graphic-recovery-13.jpg" alt="Medical Documentation Two">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Medical Documentation Two</b><span>Recovery Archive</span></div>
+        </article>
+      </div>
+    </section>
+
+
+    <section class="memory-card">
+      <div>
+        <div class="kicker">Were You There?</div>
+        <h2>Were You There?</h2>
+        <p>Fans, family, and friends &mdash; look back through the journey and see if you were part of the moment.</p>
+      </div>
+      <a class="btn gold" href="./museum/index.html">Back To Museum</a>
+    </section>
+  </main>
+
+  <script>
+    (function(){
+      const overlay = document.getElementById('entranceOverlay');
+      let opened = false;
+
+      function openPortal(){
+        if(opened) return;
+        opened = true;
+        document.body.classList.remove('time-lock');
+        document.body.classList.add('time-ready');
+        if(!overlay) return;
+        overlay.classList.add('is-open');
+        window.setTimeout(function(){
+          if(overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        }, 950);
+      }
+
+      if(overlay) overlay.classList.add('is-running');
+      window.setTimeout(openPortal, 6200);
+    })();
+
+    (function(){
+      const years = ['All','','','','','','','','',''];
+      const categories = ['All','Music','Moments','Family','Friends','Studio','Shows','Behind The Scenes','Lifestyle','Business'];
+
+      /*
+        HOW TO ADD REAL PHOTOS:
+        1. Upload images into: nfc/assets/time-machine/YEAR/
+           Example: nfc/assets/time-machine//studio-night.jpg
+        2. Replace the src below with that relative path:
+           ./assets/time-machine//studio-night.jpg
+        3. Change title/category/caption as needed.
+      */
+      const timeMachinePhotos = [
+        {year:'', category:'Music', title:'First Public Chapter', caption:'Replace with a  music memory.', src:''},
+        {year:'', category:'Moments', title:'Origin Moment', caption:'Replace with a  life moment.', src:''},
+        {year:'', category:'Friends', title:'Crew Memory', caption:'Friends, fans, and people from the journey.', src:''},
+        {year:'', category:'Lifestyle', title:'Street Memory', caption:'Lifestyle photo slot from the hustle.', src:''},
+        {year:'', category:'Music', title:'Music & Moments', caption:'Release, cover, studio, or video memory.', src:''},
+        {year:'', category:'Behind The Scenes', title:'Behind The Work', caption:'Planning, filming, or real work in motion.', src:''},
+        {year:'', category:'Family', title:'Family Frame', caption:'Family and personal memories.', src:''},
+        {year:'', category:'Friends', title:'Were You There?', caption:'A place for people to find themselves.', src:''},
+        {year:'', category:'Studio', title:'Studio Session', caption:'Behind the mic or behind the boards.', src:''},
+        {year:'', category:'Music', title:'Soundtrack Moment', caption:'Photo connected to the music.', src:''},
+        {year:'', category:'Shows', title:'Event Night', caption:'Shows, pop-ups, parties, or public moments.', src:''},
+        {year:'', category:'Moments', title:'Real Life Frame', caption:'A memory from the year.', src:''},
+        {year:'', category:'Behind The Scenes', title:'Behind The Scenes', caption:'Unpolished movement and preparation.', src:''},
+        {year:'', category:'Business', title:'Brand Motion', caption:'Business, merch, website, or planning memory.', src:''},
+        {year:'', category:'Music', title:'Current Chapter', caption:'Newer music, visuals, and promo memories.', src:''},
+        {year:'', category:'Business', title:'PLAY 3D Era', caption:'Website, vault, merch, and game floor growth.', src:''},
+        {year:'', category:'Moments', title:'Still Moving', caption:'Add the newest chapter here.', src:''},
+        {year:'', category:'Fans', title:'Fan Memory', caption:'Fans, friends, and family can find the moment.', src:''}
+      ];
+
+      const yearTrack = document.getElementById('yearTrack');
+      const filterTrack = document.getElementById('filterTrack');
+      const galleryGrid = document.getElementById('galleryGrid');
+      const galleryStatus = document.getElementById('galleryStatus');
+      let activeYear = 'All';
+      let activeCategory = 'All';
+
+      function button(label, className, onClick){
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = className;
+        btn.textContent = label;
+        btn.addEventListener('click', onClick);
+        return btn;
+      }
+
+      function renderControls(){
+        if(yearTrack){
+          yearTrack.innerHTML = '';
+          years.forEach(function(year){
+            const btn = button(year, 'year-btn' + (year === activeYear ? ' is-active' : ''), function(){
+              activeYear = year;
+              renderControls();
+              renderGallery();
+            });
+            yearTrack.appendChild(btn);
+          });
+        }
+
+        if(filterTrack){
+          filterTrack.innerHTML = '';
+          categories.forEach(function(category){
+            const btn = button(category, 'filter-btn' + (category === activeCategory ? ' is-active' : ''), function(){
+              activeCategory = category;
+              renderControls();
+              renderGallery();
+            });
+            filterTrack.appendChild(btn);
+          });
+        }
+      }
+
+      function photoCard(item){
+        const card = document.createElement('article');
+        card.className = 'gallery-card';
+
+        if(item.src){
+          const img = document.createElement('img');
+          img.src = item.src;
+          img.alt = item.title || 'Time Machine photo';
+          img.loading = 'lazy';
+          card.appendChild(img);
+        } else {
+          const placeholder = document.createElement('div');
+          placeholder.className = 'gallery-placeholder';
+          placeholder.innerHTML = item.year + '<br>' + item.category;
+          card.appendChild(placeholder);
+        }
+
+        const copy = document.createElement('div');
+        copy.className = 'gallery-copy';
+        copy.innerHTML = '<b>' + item.title + '</b><span>' + item.year + ' / ' + item.category + '</span><p style="margin:8px 0 0;color:var(--muted);line-height:1.45">' + item.caption + '</p>';
+        card.appendChild(copy);
+        return card;
+      }
+
+      function renderGallery(){
+        if(!galleryGrid) return;
+        const filtered = timeMachinePhotos.filter(function(item){
+          const yearOK = activeYear === 'All' || item.year === activeYear;
+          const categoryOK = activeCategory === 'All' || item.category === activeCategory;
+          return yearOK && categoryOK;
+        });
+
+        galleryGrid.innerHTML = '';
+        filtered.forEach(function(item){
+          galleryGrid.appendChild(photoCard(item));
+        });
+
+        if(galleryStatus){
+          galleryStatus.textContent = 'Showing ' + (activeYear === 'All' ? 'All Years' : activeYear) + ' / ' + (activeCategory === 'All' ? 'All Moments' : activeCategory) + ' — ' + filtered.length + ' slot(s)';
+        }
+      }
+
+      renderControls();
+      renderGallery();
+
+      document.querySelectorAll('.graphic-reveal-card').forEach(function(card){
+        const reveal = card.querySelector('.reveal-graphic-btn');
+        const hide = card.querySelector('.hide-graphic-btn');
+        if(reveal){
+          reveal.addEventListener('click', function(){
+            card.classList.add('is-revealed');
+          });
+        }
+        if(hide){
+          hide.addEventListener('click', function(){
+            card.classList.remove('is-revealed');
+            const media = card.querySelector('video');
+            if(media) media.pause();
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
