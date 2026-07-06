@@ -780,6 +780,20 @@
       .graphic-warning-grid{grid-template-columns:1fr;}
     }
 
+  
+    .graphic-reveal-card .graphic-caption{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:1;
+      background:linear-gradient(180deg,transparent,rgba(0,0,0,.84) 30%,rgba(0,0,0,.94));
+      border-top:1px solid rgba(210,167,79,.22);
+    }
+    .graphic-reveal-card.is-revealed{
+      min-height:360px;
+    }
+
   </style>
 </head>
 <body class="time-lock">
@@ -880,49 +894,171 @@
       <div class="graphic-warning-grid">
         <article class="graphic-reveal-card">
           <div class="graphic-media">
-            <div class="graphic-placeholder">Graphic Photo Slot</div>
-            <!-- Replace with:
-            <img src="./assets/time-machine/graphic/accident-01.jpg" alt="Accident recovery documentation">
-            -->
+            <img src="assets/time-machine/graphic/graphic-recovery-01.jpg" alt="Hospital Recovery — Day One">
           </div>
           <div class="graphic-warning">
             <strong>Graphic Content</strong>
-            <p>These images document the reality of my accident and recovery. Viewer discretion is advised.</p>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
             <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
           </div>
           <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Hospital Recovery — Day One</b><span>Recovery Archive</span></div>
         </article>
 
         <article class="graphic-reveal-card">
           <div class="graphic-media">
-            <div class="graphic-placeholder">Recovery Photo Slot</div>
-            <!-- Replace with:
-            <img src="./assets/time-machine/graphic/recovery-01.jpg" alt="Recovery journey documentation">
-            -->
+            <img src="assets/time-machine/graphic/graphic-recovery-02.jpg" alt="First Hospital Room Memory">
           </div>
           <div class="graphic-warning">
             <strong>Graphic Content</strong>
-            <p>This section may contain injury, surgery, or recovery photos. Tap reveal only if you want to view it.</p>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
             <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
           </div>
           <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>First Hospital Room Memory</b><span>Recovery Archive</span></div>
         </article>
 
         <article class="graphic-reveal-card">
           <div class="graphic-media">
-            <div class="graphic-placeholder">Medical Journey Slot</div>
-            <!-- Replace with:
-            <video controls playsinline preload="metadata">
-              <source src="./assets/time-machine/graphic/recovery-video-01.mp4" type="video/mp4">
-            </video>
-            -->
+            <img src="assets/time-machine/graphic/graphic-recovery-03.jpg" alt="Surgery Recovery Close-Up">
           </div>
           <div class="graphic-warning">
             <strong>Graphic Content</strong>
-            <p>Personal medical journey content is covered by default to respect every visitor's choice.</p>
-            <button class="btn gold reveal-graphic-btn" type="button">Reveal Content</button>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
           </div>
-          <button class="btn hide-graphic-btn" type="button">Hide Content</button>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Surgery Recovery Close-Up</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="assets/time-machine/graphic/graphic-recovery-04.jpg" alt="Healing Through The Pain">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Healing Through The Pain</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="assets/time-machine/graphic/graphic-recovery-05.jpg" alt="Post-Surgery Leg Recovery">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Post-Surgery Leg Recovery</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="assets/time-machine/graphic/graphic-recovery-06.jpg" alt="Hospital Recovery Setup">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Hospital Recovery Setup</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="assets/time-machine/graphic/graphic-recovery-07.jpg" alt="Foot Recovery Documentation">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Foot Recovery Documentation</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="assets/time-machine/graphic/graphic-recovery-08.jpg" alt="Cast And Trauma Recovery">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Cast And Trauma Recovery</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="assets/time-machine/graphic/graphic-recovery-09.jpg" alt="Long Incision Recovery">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Long Incision Recovery</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="assets/time-machine/graphic/graphic-recovery-10.jpg" alt="Face Recovery Progress">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Face Recovery Progress</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="assets/time-machine/graphic/graphic-recovery-11.jpg" alt="Home Recovery Chapter">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Home Recovery Chapter</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="assets/time-machine/graphic/graphic-recovery-12.jpg" alt="Medical Documentation One">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Medical Documentation One</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <img src="assets/time-machine/graphic/graphic-recovery-13.jpg" alt="Medical Documentation Two">
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This image documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+          <div class="album-copy graphic-caption"><b>Medical Documentation Two</b><span>Recovery Archive</span></div>
         </article>
       </div>
     </section>
@@ -1078,6 +1214,25 @@
 
       renderControls();
       renderGallery();
+
+      document.querySelectorAll('.graphic-media img').forEach(function(img){
+        const file = (img.getAttribute('src') || '').split('/').pop();
+        if(!file) return;
+        const tries = [
+          'assets/time-machine/graphic/' + file,
+          './assets/time-machine/graphic/' + file,
+          '/nfc/assets/time-machine/graphic/' + file,
+          '../assets/time-machine/graphic/' + file
+        ];
+        let index = 0;
+        img.onerror = function(){
+          index += 1;
+          if(index < tries.length){
+            img.src = tries[index];
+          }
+        };
+      });
+
 
       document.querySelectorAll('.graphic-reveal-card').forEach(function(card){
         const reveal = card.querySelector('.reveal-graphic-btn');
