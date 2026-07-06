@@ -677,6 +677,109 @@
         width:100%;
       }
     }
+  
+    /* GRAPHIC CONTENT REVEAL PANEL */
+    .graphic-warning-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+      margin-top:16px;
+    }
+    .graphic-reveal-card{
+      position:relative;
+      overflow:hidden;
+      min-height:300px;
+      border:1px solid rgba(210,167,79,.34);
+      border-radius:28px;
+      background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025)),rgba(10,8,6,.78);
+      box-shadow:0 26px 90px rgba(0,0,0,.70);
+      backdrop-filter:blur(14px);
+    }
+    .graphic-media{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      background:radial-gradient(circle at 50% 40%,rgba(244,213,127,.14),transparent 42%),linear-gradient(135deg,rgba(70,0,0,.28),rgba(0,0,0,.84));
+      filter:blur(16px) brightness(.55);
+      transform:scale(1.08);
+      transition:filter .45s ease,transform .45s ease;
+    }
+    .graphic-media img,.graphic-media video{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .graphic-placeholder{
+      font-family:'Black Ops One',sans-serif;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:rgba(255,244,220,.55);
+      text-align:center;
+      padding:20px;
+    }
+    .graphic-warning{
+      position:absolute;
+      inset:0;
+      z-index:2;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:12px;
+      padding:22px;
+      text-align:center;
+      background:linear-gradient(180deg,rgba(5,4,3,.88),rgba(0,0,0,.92)),repeating-linear-gradient(135deg,rgba(210,167,79,.16) 0 12px,transparent 12px 24px);
+      border:1px solid rgba(244,213,127,.22);
+      transition:opacity .35s ease,visibility .35s ease;
+    }
+    .graphic-warning strong{
+      font-family:'Black Ops One',sans-serif;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      color:#f4d57f;
+      font-size:clamp(22px,3vw,34px);
+      text-shadow:0 0 22px rgba(210,167,79,.34);
+    }
+    .graphic-warning p{
+      margin:0;
+      color:rgba(255,244,220,.78);
+      max-width:420px;
+      line-height:1.45;
+      font-size:17px;
+    }
+    .graphic-reveal-card.is-revealed .graphic-warning{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+    .graphic-reveal-card.is-revealed .graphic-media{
+      filter:none;
+      transform:none;
+    }
+    .hide-graphic-btn{
+      position:absolute;
+      top:12px;
+      right:12px;
+      z-index:3;
+      display:none;
+      min-height:38px;
+      padding:8px 12px;
+      font-size:12px;
+    }
+    .graphic-reveal-card.is-revealed .hide-graphic-btn{
+      display:inline-flex;
+    }
+    .graphic-note{
+      color:rgba(255,244,220,.70);
+      line-height:1.5;
+      margin:0;
+    }
+    @media (max-width:900px){
+      .graphic-warning-grid{grid-template-columns:1fr;}
+    }
+
   </style>
 </head>
 <body class="time-lock">
@@ -765,6 +868,65 @@
         <article class="album-card"><div class="photo-slot">Legacy</div><div class="album-copy"><b>Legacy Frames</b><span>Archive Slot</span></div></article>
       </div>
     </section>
+
+
+    <section id="graphic-content">
+      <div class="section-head">
+        <h2>Graphic Content</h2>
+        <p>Accident recovery photos can stay covered until the visitor chooses to view them.</p>
+      </div>
+      <p class="graphic-note">Replace the placeholder blocks with your real injury/recovery image paths when you are ready. The warning stays on top until someone taps reveal.</p>
+
+      <div class="graphic-warning-grid">
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <div class="graphic-placeholder">Graphic Photo Slot</div>
+            <!-- Replace with:
+            <img src="./assets/time-machine/graphic/accident-01.jpg" alt="Accident recovery documentation">
+            -->
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>These images document the reality of my accident and recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <div class="graphic-placeholder">Recovery Photo Slot</div>
+            <!-- Replace with:
+            <img src="./assets/time-machine/graphic/recovery-01.jpg" alt="Recovery journey documentation">
+            -->
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>This section may contain injury, surgery, or recovery photos. Tap reveal only if you want to view it.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Image</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Image</button>
+        </article>
+
+        <article class="graphic-reveal-card">
+          <div class="graphic-media">
+            <div class="graphic-placeholder">Medical Journey Slot</div>
+            <!-- Replace with:
+            <video controls playsinline preload="metadata">
+              <source src="./assets/time-machine/graphic/recovery-video-01.mp4" type="video/mp4">
+            </video>
+            -->
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Content</strong>
+            <p>Personal medical journey content is covered by default to respect every visitor's choice.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Content</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Content</button>
+        </article>
+      </div>
+    </section>
+
 
     <section class="memory-card">
       <div>
@@ -916,6 +1078,23 @@
 
       renderControls();
       renderGallery();
+
+      document.querySelectorAll('.graphic-reveal-card').forEach(function(card){
+        const reveal = card.querySelector('.reveal-graphic-btn');
+        const hide = card.querySelector('.hide-graphic-btn');
+        if(reveal){
+          reveal.addEventListener('click', function(){
+            card.classList.add('is-revealed');
+          });
+        }
+        if(hide){
+          hide.addEventListener('click', function(){
+            card.classList.remove('is-revealed');
+            const media = card.querySelector('video');
+            if(media) media.pause();
+          });
+        }
+      });
     })();
   </script>
 </body>
