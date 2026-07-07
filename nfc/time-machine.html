@@ -794,6 +794,15 @@
       min-height:360px;
     }
 
+  
+    .graphic-video-card{min-height:420px;}
+    .graphic-video-card .graphic-media video{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      background:#050403;
+    }
+
   </style>
 </head>
 <body class="time-lock">
@@ -1060,6 +1069,52 @@
           <button class="btn hide-graphic-btn" type="button">Hide Image</button>
           <div class="album-copy graphic-caption"><b>Medical Documentation Two</b><span>Recovery Archive</span></div>
         </article>
+
+        <article class="graphic-reveal-card graphic-video-card">
+          <div class="graphic-media">
+            <video controls playsinline preload="metadata">
+              <source src="assets/time-machine/graphic/videos/recovery-video-01.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Video</strong>
+            <p>This video documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Video</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Video</button>
+          <div class="album-copy graphic-caption"><b>Recovery Video One</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card graphic-video-card">
+          <div class="graphic-media">
+            <video controls playsinline preload="metadata">
+              <source src="assets/time-machine/graphic/videos/recovery-video-02.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Video</strong>
+            <p>This video documents accident injury, surgery, or recovery. Viewer discretion is advised.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Video</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Video</button>
+          <div class="album-copy graphic-caption"><b>Recovery Video Two</b><span>Recovery Archive</span></div>
+        </article>
+
+        <article class="graphic-reveal-card graphic-video-card">
+          <div class="graphic-media">
+            <video controls playsinline preload="metadata">
+              <source src="assets/time-machine/graphic/videos/recovery-video-03.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="graphic-warning">
+            <strong>Graphic Video</strong>
+            <p>Reserved for your third recovery video. Add it as recovery-video-03.mp4.</p>
+            <button class="btn gold reveal-graphic-btn" type="button">Reveal Video</button>
+          </div>
+          <button class="btn hide-graphic-btn" type="button">Hide Video</button>
+          <div class="album-copy graphic-caption"><b>Recovery Video Three</b><span>Recovery Archive</span></div>
+        </article>
+
       </div>
     </section>
 
@@ -1233,6 +1288,29 @@
         };
       });
 
+
+
+      document.querySelectorAll('.graphic-media video source').forEach(function(source){
+        const file = (source.getAttribute('src') || '').split('/').pop();
+        if(!file) return;
+        const tries = [
+          'assets/time-machine/graphic/videos/' + file,
+          './assets/time-machine/graphic/videos/' + file,
+          '/nfc/assets/time-machine/graphic/videos/' + file,
+          '../assets/time-machine/graphic/videos/' + file
+        ];
+        const video = source.parentElement;
+        let index = 0;
+        if(video){
+          video.addEventListener('error', function(){
+            index += 1;
+            if(index < tries.length){
+              source.src = tries[index];
+              video.load();
+            }
+          }, true);
+        }
+      });
 
       document.querySelectorAll('.graphic-reveal-card').forEach(function(card){
         const reveal = card.querySelector('.reveal-graphic-btn');
