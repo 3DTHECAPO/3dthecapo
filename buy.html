@@ -1,14 +1,14 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Buy Access | 3D THE CAPO</title>
-  <meta name="description" content="STAY LOCKED IN WIT YA BOY.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shop The Vault | 3D THE CAPO</title>
+<meta name="description" content="Official 3D THE CAPO store for merch, music collectibles, vault access, and PLAY 3D rewards.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
     :root{
       --gold:#caa24a;
       --gold2:#f2d27b;
@@ -505,672 +505,200 @@ body.buy-page .pill.gold:hover{
   .pay-form-grid{grid-template-columns:1fr}
 }
 
-/* ===== COMING SOON CONSTRUCTION TAPE LOCK ===== */
-.coming-soon-tape-layer{
-  position:fixed;
-  inset:0;
-  z-index:99990;
-  pointer-events:none;
-  display:grid;
-  place-items:center;
-  overflow:hidden;
-}
 
-.coming-soon-tape{
-  width:160vw;
-  min-height:118px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:28px;
-  transform:rotate(-18deg);
-  border-top:8px solid #060606;
-  border-bottom:8px solid #060606;
-  background:
-    repeating-linear-gradient(135deg,rgba(0,0,0,.95) 0 22px,transparent 22px 46px),
-    linear-gradient(180deg,#ffe35a,#ffc400 52%,#d89400);
-  color:#080704;
-  box-shadow:
-    0 26px 70px rgba(0,0,0,.72),
-    inset 0 3px 0 rgba(255,255,255,.48),
-    inset 0 -7px 0 rgba(0,0,0,.22);
-  font-family:"Black Ops One",Oswald,Arial,sans-serif;
-  font-size:clamp(28px,5vw,74px);
-  line-height:1;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  text-shadow:0 2px 0 rgba(255,255,255,.28),0 5px 0 rgba(0,0,0,.20);
-}
+.store-header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.brand-mark{font-family:"Black Ops One",system-ui,sans-serif;color:var(--gold2);font-size:28px;text-decoration:none;letter-spacing:1px;text-shadow:0 0 20px rgba(202,162,74,.22)}
+.section-title{text-align:center;margin:42px auto 18px}
+.section-title h2{font-family:"Black Ops One",system-ui,sans-serif;font-size:clamp(32px,5vw,56px);color:var(--gold2);text-transform:uppercase;margin:6px 0 8px;letter-spacing:1.2px}
+.bonus-banner{margin:26px auto 8px;display:grid;grid-template-columns:92px 1fr;gap:18px;align-items:center;border:1px solid rgba(242,210,123,.50);border-radius:24px;background:radial-gradient(circle at 92% 20%,rgba(242,210,123,.16),transparent 25%),linear-gradient(180deg,rgba(30,20,6,.82),rgba(0,0,0,.78));box-shadow:0 28px 84px rgba(0,0,0,.76),0 0 30px rgba(202,162,74,.14);padding:20px}
+.bonus-icon{width:92px;height:92px;border-radius:22px;display:grid;place-items:center;color:#17130c;background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#8b641e);font-family:"Black Ops One",system-ui,sans-serif;font-size:42px}
+.bonus-banner h2{font-family:"Black Ops One",system-ui,sans-serif;color:var(--gold2);margin:0 0 6px;text-transform:uppercase;font-size:clamp(26px,4vw,46px)}
+.bonus-banner p{margin:0;color:rgba(244,241,234,.86);font-size:18px;line-height:1.45}
+.product-card{min-height:470px}
+.product-img{width:100%;aspect-ratio:1.18/1;border-radius:18px;border:1px solid rgba(202,162,74,.25);background:rgba(0,0,0,.48);object-fit:cover;display:block;margin:14px 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 16px 34px rgba(0,0,0,.46)}
+.product-card h2{font-size:clamp(24px,3vw,32px)}
+.bonus-note{border:1px solid rgba(242,210,123,.32);border-radius:14px;padding:9px 10px;color:#f2d27b;background:rgba(0,0,0,.42);font-size:13px;text-align:center;text-transform:uppercase;letter-spacing:.7px;font-weight:900;margin:10px 0}
+.soon-box{width:100%;aspect-ratio:1.18/1;border-radius:18px;border:1px solid rgba(202,162,74,.25);display:grid;place-items:center;color:rgba(244,241,234,.72);font-family:"Black Ops One",sans-serif;text-align:center;background:rgba(0,0,0,.48);margin:14px 0}
+.soon-btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:54px;border-radius:16px;border:1px solid rgba(202,162,74,.28);background:rgba(0,0,0,.52);color:rgba(244,241,234,.72);font-weight:900;letter-spacing:1px;text-transform:uppercase}
+.back-row{margin-top:30px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+@media(max-width:720px){.bonus-banner{grid-template-columns:1fr;text-align:center}.bonus-icon{margin:0 auto}}
 
-.coming-soon-tape span{
-  display:inline-flex;
-  align-items:center;
-  white-space:nowrap;
-  padding:0 16px;
-  background:rgba(255,214,0,.90);
-  border:3px solid rgba(0,0,0,.82);
-  box-shadow:0 7px 0 rgba(0,0,0,.34);
-}
 
-.coming-soon-tape-note{
-  position:fixed;
-  left:50%;
-  bottom:22px;
-  z-index:99991;
-  transform:translateX(-50%);
-  width:min(720px,92vw);
-  padding:14px 18px;
-  border:1px solid rgba(255,227,90,.68);
-  border-radius:18px;
-  background:rgba(0,0,0,.82);
-  color:#ffe35a;
-  text-align:center;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  box-shadow:0 18px 44px rgba(0,0,0,.72),0 0 24px rgba(255,196,0,.20);
-}
-
-body.store-coming-soon .pay-start,
-body.store-coming-soon #savePaymentRequest,
-body.store-coming-soon .cash-btn,
-body.store-coming-soon .stripe-btn,
-body.store-coming-soon a[href*="cash.app"],
-body.store-coming-soon a[href*="stripe.com"]{
-  filter:grayscale(.8) brightness(.68);
-  opacity:.62;
-  cursor:not-allowed !important;
-}
-
-body.store-coming-soon .card{
+/* ===== MINI CD / MINI VINYL PRODUCT CARD + ALIGNMENT FIX ===== */
+.grid{align-items:stretch;}
+.card{height:100%;}
+.product-card{min-height:500px;}
+.product-card .pay-row{margin-top:auto;}
+.music-product-card{min-height:560px;}
+.collectible-scene{
   position:relative;
+  min-height:320px;
+  border-radius:20px;
+  overflow:hidden;
+  border:1px solid rgba(242,210,123,.34);
+  background:linear-gradient(180deg,rgba(0,0,0,.26),rgba(0,0,0,.92)),url('./assets/buy/my-resume-backdrop.png') center/cover;
+  margin:14px 0;
+  box-shadow:0 22px 52px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.06);
 }
-
-body.store-coming-soon .card::after{
-  content:"STORE COMING SOON";
-  position:absolute;
-  left:18px;
-  right:18px;
-  bottom:18px;
-  min-height:38px;
-  display:grid;
-  place-items:center;
-  border:1px solid rgba(255,227,90,.72);
-  border-radius:999px;
-  background:rgba(0,0,0,.76);
-  color:#ffe35a;
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.14em;
-  text-transform:uppercase;
+.collectible-scene::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.80),rgba(0,0,0,.18) 48%,rgba(0,0,0,.84));}
+.collectible-cover{
+  position:absolute;left:22px;bottom:28px;width:42%;aspect-ratio:1/1;border:2px solid rgba(242,210,123,.46);border-radius:10px;object-fit:cover;
+  box-shadow:0 20px 42px rgba(0,0,0,.72),0 0 22px rgba(255,70,20,.20);z-index:2;transform:perspective(700px) rotateY(-8deg);
 }
-
-@media(max-width:760px){
-  .coming-soon-tape{
-    width:180vw;
-    min-height:82px;
-    gap:16px;
-    transform:rotate(-24deg);
-    border-top-width:6px;
-    border-bottom-width:6px;
-  }
-
-  .coming-soon-tape span{
-    padding:0 10px;
-    border-width:2px;
-  }
-
-  .coming-soon-tape-note{
-    bottom:14px;
-    font-size:12px;
-    line-height:1.35;
-  }
+.cd-disc{
+  position:absolute;right:24px;bottom:34px;width:44%;aspect-ratio:1/1;border-radius:50%;z-index:3;
+  background:
+    radial-gradient(circle at center,#050505 0 10%,#d7d7d7 10.5% 13%,#080808 13.5% 17%,transparent 17.5%),
+    radial-gradient(circle at 35% 30%,rgba(255,255,255,.95),rgba(255,255,255,.35) 16%,transparent 36%),
+    conic-gradient(from 15deg,rgba(255,255,255,.85),rgba(130,210,255,.38),rgba(255,160,220,.35),rgba(255,255,255,.78),rgba(160,255,210,.32),rgba(255,255,255,.85)),
+    url('./assets/buy/my-resume-cover.png') center/cover;
+  background-blend-mode:normal,screen,screen,normal;
+  border:3px solid rgba(255,255,255,.78);
+  box-shadow:0 22px 42px rgba(0,0,0,.72),0 0 28px rgba(210,235,255,.34);
 }
-
+.cd-disc::before{content:"";position:absolute;inset:8%;border-radius:50%;border:2px solid rgba(255,255,255,.38);}
+.vinyl-disc{
+  position:absolute;right:16px;bottom:24px;width:54%;aspect-ratio:1/1;border-radius:50%;z-index:3;
+  background:repeating-radial-gradient(circle at center,#050505 0 3px,#171717 3px 5px,#030303 5px 8px);
+  border:3px solid rgba(0,0,0,.92);
+  box-shadow:0 24px 48px rgba(0,0,0,.80),0 0 18px rgba(242,210,123,.12);
+}
+.vinyl-disc::after{content:"";position:absolute;inset:31%;border-radius:50%;background:url('./assets/buy/my-resume-cover.png') center/cover;border:2px solid rgba(242,210,123,.55);box-shadow:0 0 16px rgba(242,210,123,.22);}
+.nfc-chip{
+  position:absolute;right:22px;top:22px;z-index:4;width:76px;height:90px;border-radius:12px;display:grid;place-items:center;text-align:center;
+  font-family:"Black Ops One",system-ui,sans-serif;font-size:12px;line-height:1.05;color:#17130c;background:linear-gradient(180deg,#f2d27b,#caa24a 60%,#8b641e);
+  box-shadow:0 12px 24px rgba(0,0,0,.60),0 0 18px rgba(242,210,123,.28);border:1px solid rgba(255,231,153,.75);
+}
+.collectible-badges{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px;}
+.collectible-badges span{border:1px solid rgba(242,210,123,.32);border-radius:999px;padding:6px 9px;color:#f2d27b;background:rgba(0,0,0,.42);font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;}
+@media(max-width:900px){.product-card,.music-product-card{min-height:auto;}}
 </style>
+
 </head>
-<body class="buy-page store-coming-soon">
-  <div class="coming-soon-tape-layer" aria-hidden="true">
-    <div class="coming-soon-tape">
-      <span>COMING SOON</span>
-      <span>UNDER CONSTRUCTION</span>
-      <span>STEP LOUD STORE COMING SOON</span>
-      <span>COMING SOON</span>
+<body class="buy-page">
+<main class="wrap">
+<header class="store-header">
+<a class="brand-mark" href="./">3D THE CAPO</a>
+<nav class="nav">
+<a class="pill" href="./">Home</a>
+<a class="pill" href="#merch">Merch</a>
+<a class="pill" href="#music">Music</a>
+<a class="pill" href="#access">Access</a>
+<a class="pill" href="#rewards">Rewards</a>
+<a class="pill" href="./nfc/scan.html">Vault Scan</a>
+<a class="pill" href="./nfc/game-vault/index.html">PLAY 3D</a>
+</nav>
+</header>
+<section class="hero">
+<div class="kicker">Official Store</div>
+<h1>Shop The Vault</h1>
+<p class="sub">Official merch, music collectibles, vault access, and PLAY 3D rewards from 3D THE CAPO.</p>
+</section>
+<section class="bonus-banner"><div class="bonus-icon">NFC</div><div><h2>Limited-Time Bonus</h2><p>Every qualifying merch purchase and every qualifying Vault Access purchase includes a FREE physical collectible Mini CD or Mini Vinyl with embedded NFC technology. Tap to unlock the album. Available while the promotion lasts.</p></div></section>
+
+<section id="merch" class="section-title"><div class="kicker">Merch</div><h2>Live Merch</h2><p class="sub">Shirts available now. Hoodies and hats are coming soon.</p></section>
+<section class="grid" aria-label="Merch products">
+<article class="card product-card"><div><span class="tag">Merch</span><h2>Fly And Legendary Black Tee</h2><img class="product-img" src="./assets/buy/fly-legendary-alien-black-tee.png" alt="Fly And Legendary Black Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+      <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/14A9ATfRefVAcGM2CM4ZG07" target="_blank" rel="noopener">Stripe</a>
+    </div></article>
+<article class="card product-card"><div><span class="tag">Merch</span><h2>Fly And Legendary White Tee</h2><img class="product-img" src="./assets/buy/fly-legendary-white-tee.png" alt="Fly And Legendary White Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+      <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/fZuaEX6gEbFk9uAelu4ZG08" target="_blank" rel="noopener">Stripe</a>
+    </div></article>
+<article class="card product-card"><div><span class="tag">Merch</span><h2>Smokin Budz Tee</h2><img class="product-img" src="./assets/buy/smokin-budz-blue-white-tee.png" alt="Smokin Budz Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+      <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/5kQ4gzdJ6bFk9uA1yI4ZG09" target="_blank" rel="noopener">Stripe</a>
+    </div></article>
+<article class="card product-card"><div><span class="tag">Merch</span><h2>Royals Etiquette Tee</h2><img class="product-img" src="./assets/buy/royals-etiquette-white.png" alt="Royals Etiquette Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+      <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/4gM8wP6gE10G6iogtC4ZG0b" target="_blank" rel="noopener">Stripe</a>
+    </div></article>
+<article class="card product-card"><div><span class="tag">Merch</span><h2>Stay In My Bag Tee</h2><img class="product-img" src="./assets/buy/stay-in-my-bag-white.png" alt="Stay In My Bag Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+      <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/14A9ATfRefVAcGM2CM4ZG07" target="_blank" rel="noopener">Stripe</a>
+    </div></article>
+<article class="card product-card"><div><span class="tag">Coming Soon</span><h2>Hoodies</h2><div class="soon-box">Hoodies Coming Soon</div><p class="duration">Hoodie drops are not live yet.</p></div><div class="pay-row"><div class="soon-btn">Coming Soon</div></div></article>
+<article class="card product-card"><div><span class="tag">Coming Soon</span><h2>Hats</h2><div class="soon-box">Hats Coming Soon</div><p class="duration">Hat drops are not live yet.</p></div><div class="pay-row"><div class="soon-btn">Coming Soon</div></div></article>
+</section>
+
+<section id="music" class="section-title"><div class="kicker">Music</div><h2>Collectible Album</h2><p class="sub">Mini CD and Mini Vinyl use the cover art. Final track/title details can stay blank until decided.</p></section>
+<section class="grid" aria-label="Music collectibles">
+
+<article class="card product-card music-product-card cd">
+  <div>
+    <span class="tag">Music</span>
+    <h2>Collector's Edition Mini CD</h2>
+    <div class="collectible-scene">
+      <img class="collectible-cover" src="./assets/buy/my-resume-cover.png" alt="Mini CD cover art">
+      <div class="cd-disc" aria-hidden="true"></div>
+      <div class="nfc-chip">NFC<br>Tap<br>Unlock</div>
     </div>
+    <p class="price">$5.00</p>
+    <p class="duration">Physical Mini CD collectible with embedded NFC. Tap to unlock the album and exclusive content.</p>
+    <div class="collectible-badges"><span>NFC Enabled</span><span>Physical Collectible</span><span>Limited Time</span></div>
   </div>
-  <div class="coming-soon-tape-note" role="status">STEP LOUD STORE COMING SOON — checkout is temporarily locked.</div>
-  <main class="wrap">
-    <header class="top">
-      <a href="./">
-</a>
-      <nav class="nav">
-        <a class="pill" href="./">Home</a>
-        <a class="pill" href="./nfc/scan.html">Enter Code</a>
-        <a class="pill gold" href="https://cash.app/$3dcashin" target="_blank" rel="noopener">Cash App</a>
-        <a class="pill gold" href="https://buy.stripe.com/fZu3cvbAYcJogX2a5e4ZG00" target="_blank" rel="noopener">Card Pay</a>
-      </nav>
-    </header>
+  <div class="pay-row two-pay">
+      <a class="cash-btn" href="https://cash.app/$3dcashin/5" target="_blank" rel="noopener">Cash App</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/fZuaEX6gEbFk9uAelu4ZG08" target="_blank" rel="noopener">Stripe</a>
+    </div></article>
 
-    <section class="hero">
-      
-      <h1>Buy Access</h1>
-      <p class="sub">.</p>
-      <div class="notice">Pay with card or Cash App. Enter your name and email first, then complete checkout so your vault access or rewards pack can be activated after confirmed payment.</div>
-    </section>
-
-    <section class="grid" aria-label="Pricing">
-      <article class="card">
-        <div>
-          <span class="tag">Entry</span>
-          <h2>Entry Access</h2>
-          <p class="price">$5</p>
-          <p class="duration">Entry Access 30 Days</p>
-          <ul>
-            <li>Access to Entry-level vault rooms</li>
-            <li>Album access included</li>
-            <li>Access begins when code is used</li>
-          </ul>
-        </div>
-        <div class="pay-row">
-          <button class="cash-btn pay-start" type="button" data-tier="ENTRY" data-code-type="ENTRY" data-duration="30d" data-price="5" data-method="cashapp">Pay With Cash App</button>
-          <button class="stripe-btn pay-start" type="button" data-tier="ENTRY" data-code-type="ENTRY" data-duration="30d" data-price="5" data-method="stripe">Pay With Card</button>
-          <p class="pay-note">Enter your info first, then complete payment.</p>
-        </div>
-      </article>
-
-      <article class="card">
-        <div>
-          <span class="tag">Gold</span>
-          <h2>Gold Access</h2>
-          <p class="price">$15</p>
-          <p class="duration">Gold Access 30 Days</p>
-          <ul>
-            <li>Access to Gold vault rooms</li>
-            <li>Includes all Entry-level vault rooms</li>
-            <li>Album access included</li>
-          </ul>
-        </div>
-        <div class="pay-row">
-          <button class="cash-btn pay-start" type="button" data-tier="GOLD" data-code-type="GOLD" data-duration="30d" data-price="15" data-method="cashapp">Pay With Cash App</button>
-          <button class="stripe-btn pay-start" type="button" data-tier="GOLD" data-code-type="GOLD" data-duration="30d" data-price="15" data-method="stripe">Pay With Card</button>
-          <p class="pay-note">Enter your info first, then complete payment.</p>
-        </div>
-      </article>
-
-      <article class="card">
-        <div>
-          <span class="tag">Elite</span>
-          <h2>Elite Access</h2>
-          <p class="price">$25</p>
-          <p class="duration">Elite Access 30 Days</p>
-          <ul>
-            <li>Access to Elite vault rooms</li>
-            <li>Includes all Gold and Entry-level vault rooms</li>
-            <li>Album access included</li>
-          </ul>
-        </div>
-        <div class="pay-row">
-          <button class="cash-btn pay-start" type="button" data-tier="ELITE" data-code-type="ELITE" data-duration="30d" data-price="25" data-method="cashapp">Pay With Cash App</button>
-          <button class="stripe-btn pay-start" type="button" data-tier="ELITE" data-code-type="ELITE" data-duration="30d" data-price="25" data-method="stripe">Pay With Card</button>
-          <p class="pay-note">Enter your info first, then complete payment.</p>
-        </div>
-      </article>
-    </section>
-
-    <section class="hero">
-      <div class="kicker">Rewards Only</div>
-      <h1>Buy Reward Credits</h1>
-      <p class="sub">Reward credit packs are separate from vault access. Buying credits does not include vault room access.</p>
-    </section>
-
-    <section class="grid" aria-label="Reward credit packs">
-      <article class="card">
-        <div>
-          <span class="tag">Rewards</span>
-          <h2>Entry Rewards Pack</h2>
-          <p class="price">$10</p>
-          <p class="duration">2,500 Credits</p>
-          <ul>
-            <li>Adds 2,500 PLAY 3D reward credits</li>
-            <li>Reward credits do not include vault access</li>
-            <li>Activated after confirmed purchase</li>
-          </ul>
-        </div>
-        <div class="pay-row">
-          <button class="cash-btn pay-start" type="button" data-tier="REWARD_ENTRY" data-label="Entry Rewards Pack" data-credits="2500" data-price="10" data-method="cashapp" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false">Pay With Cash App</button>
-          <button class="stripe-btn pay-start" type="button" data-tier="REWARD_ENTRY" data-label="Entry Rewards Pack" data-credits="2500" data-price="10" data-method="stripe" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false">Pay With Card</button>
-          <p class="pay-note">Credits activate after confirmed payment. No vault access code is issued.</p>
-        </div>
-      </article>
-
-      <article class="card">
-        <div>
-          <span class="tag">Rewards</span>
-          <h2>Gold Rewards Pack</h2>
-          <p class="price">$20</p>
-          <p class="duration">5,000 Credits</p>
-          <ul>
-            <li>Adds 5,000 PLAY 3D reward credits</li>
-            <li>Reward credits do not include vault access</li>
-            <li>Activated after confirmed purchase</li>
-          </ul>
-        </div>
-        <div class="pay-row">
-          <button class="cash-btn pay-start" type="button" data-tier="REWARD_GOLD" data-label="Gold Rewards Pack" data-credits="5000" data-price="20" data-method="cashapp" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false">Pay With Cash App</button>
-          <button class="stripe-btn pay-start" type="button" data-tier="REWARD_GOLD" data-label="Gold Rewards Pack" data-credits="5000" data-price="20" data-method="stripe" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false">Pay With Card</button>
-          <p class="pay-note">Credits activate after confirmed payment. No vault access code is issued.</p>
-        </div>
-      </article>
-
-      <article class="card">
-        <div>
-          <span class="tag">Rewards</span>
-          <h2>Elite Rewards Pack</h2>
-          <p class="price">$35</p>
-          <p class="duration">10,000 Credits</p>
-          <ul>
-            <li>Adds 10,000 PLAY 3D reward credits</li>
-            <li>Reward credits do not include vault access</li>
-            <li>Activated after confirmed purchase</li>
-          </ul>
-        </div>
-        <div class="pay-row">
-          <button class="cash-btn pay-start" type="button" data-tier="REWARD_ELITE" data-label="Elite Rewards Pack" data-credits="10000" data-price="35" data-method="cashapp" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false">Pay With Cash App</button>
-          <button class="stripe-btn pay-start" type="button" data-tier="REWARD_ELITE" data-label="Elite Rewards Pack" data-credits="10000" data-price="35" data-method="stripe" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false">Pay With Card</button>
-          <p class="pay-note">Credits activate after confirmed payment. No vault access code is issued.</p>
-        </div>
-      </article>
-    </section>
-
-    <section class="steps">
-      <h3>How it works</h3>
-      <ol>
-        <li>Choose Entry, Gold, Elite, or a Rewards Pack.</li>
-        <li>Enter your name and email.</li>
-        <li>Pay through card checkout or Cash App.</li>
-        <li>After confirmed payment, access or credits are activated for the matching product.</li>
-        <li>Access passes unlock the vault rooms tied to the purchased tier.</li>
-        <li>Rewards Packs add PLAY 3D reward credits and do not include vault access.</li>
-      </ol>
-    </section>
-
-
-    <section class="pay-capture-card" id="paymentRequest">
-      <h3>Submit Payment Information</h3>
-      <p>After payment, submit your information so we can verify your access and activate your vault benefits.</p>
-      <div class="pay-form-grid">
-        <div>
-          <label for="payName">Name</label>
-          <input id="payName" type="text" placeholder="Buyer name">
-        </div>
-        <div>
-          <label for="payEmail">Email</label>
-          <input id="payEmail" type="email" placeholder="buyer@email.com">
-        </div>
-        <div>
-          <label for="payTier">Tier</label>
-          <select id="payTier">
-            <option value="ENTRY" data-code-type="ENTRY" data-duration="30d" data-amount="5">Entry Access - $5 / 30 Days</option>
-            <option value="GOLD" data-code-type="GOLD" data-duration="30d" data-amount="15">Gold Access - $15 / 30 Days</option>
-            <option value="ELITE" data-code-type="ELITE" data-duration="30d" data-amount="25">Elite Access - $25 / 30 Days</option>
-            <option value="REWARD_ENTRY" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false" data-credits="2500" data-amount="10">Entry Rewards Pack - $10 / 2,500 Credits</option>
-            <option value="REWARD_GOLD" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false" data-credits="5000" data-amount="20">Gold Rewards Pack - $20 / 5,000 Credits</option>
-            <option value="REWARD_ELITE" data-source="buy_rewards" data-status="reward_payment_verification" data-issue-code="false" data-credits="10000" data-amount="35">Elite Rewards Pack - $35 / 10,000 Credits</option>
-          </select>
-        </div>
-        <div>
-          <label for="payMethod">Payment Method</label>
-          <select id="payMethod">
-            <option value="cashapp">Cash App</option>
-            <option value="stripe">Stripe / Card</option>
-          </select>
-        </div>
-        <div class="full">
-          <label for="payReceipt">Payment Information</label>
-          <textarea id="payReceipt" placeholder="Enter your Cash App name, payment confirmation, or any information that helps verify your purchase."></textarea>
-        </div>
-        <div class="full">
-          <button class="pay-flow-btn" id="savePaymentRequest" type="button">Submit Payment Information</button>
-          <div class="pay-flow-status" id="paymentStatus"></div>
-        </div>
-      </div>
-    </section>
-
-    <div class="pay-flow-modal" id="payFlowModal" aria-hidden="true">
-      <div class="pay-flow-box">
-        <h3 id="payFlowTitle">Start Payment</h3>
-        <p class="sub" id="payFlowCopy">Enter your name and email before payment.</p>
-        <div class="pay-form-grid">
-          <div>
-            <label for="modalBuyerName">Name</label>
-            <input id="modalBuyerName" type="text" placeholder="Buyer name">
-          </div>
-          <div>
-            <label for="modalBuyerEmail">Email</label>
-            <input id="modalBuyerEmail" type="email" placeholder="buyer@email.com">
-          </div>
-        </div>
-        <div class="pay-flow-actions">
-          <button class="pay-flow-btn" id="continuePayment" type="button">Continue To Pay</button>
-          <button class="pay-flow-secondary" id="cancelPayment" type="button">Cancel</button>
-        </div>
-        <div class="pay-flow-status" id="modalPayStatus"></div>
-      </div>
+<article class="card product-card music-product-card vinyl">
+  <div>
+    <span class="tag">Music</span>
+    <h2>Collector's Edition Mini Vinyl</h2>
+    <div class="collectible-scene">
+      <img class="collectible-cover" src="./assets/buy/my-resume-cover.png" alt="Mini Vinyl cover art">
+      <div class="vinyl-disc" aria-hidden="true"></div>
+      <div class="nfc-chip">NFC<br>Tap<br>Unlock</div>
     </div>
-  </main>
+    <p class="price">$5.00</p>
+    <p class="duration">Physical Mini Vinyl collectible with embedded NFC. Tap to unlock the album and exclusive content.</p>
+    <div class="collectible-badges"><span>NFC Enabled</span><span>Physical Collectible</span><span>Limited Time</span></div>
+  </div>
+  <div class="pay-row two-pay">
+      <a class="cash-btn" href="https://cash.app/$3dcashin/5" target="_blank" rel="noopener">Cash App</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/5kQ4gzdJ6bFk9uA1yI4ZG09" target="_blank" rel="noopener">Stripe</a>
+    </div></article>
 
-<script src="./zoho-lead-router.js?v=buy-30d-levels-1"></script>
-<script>
-(function(){
-  'use strict';
+</section>
 
-  var CASH_TAG = '$3dcashin';
-  var STRIPE_URL = 'https://buy.stripe.com/9B6fZh34s4cScGM4KU4ZG06';
-  var STRIPE_LINKS = {
-    ENTRY: 'https://buy.stripe.com/9B6fZh34s4cScGM4KU4ZG06',
-    GOLD: 'https://buy.stripe.com/dRm28r8oMaBgbCI4KU4ZG05',
-    ELITE: 'https://buy.stripe.com/fZu4gz34s24K6ioa5e4ZG04',
-    REWARD_ENTRY: 'https://buy.stripe.com/eVqcN55cAeRw2283GQ4ZG03',
-    REWARD_GOLD: 'https://buy.stripe.com/5kQ00j48weRw36c0uE4ZG02',
-    REWARD_ELITE: 'https://buy.stripe.com/dRmbJ1gVieRwcGM1yI4ZG01'
-  };
-  var STORAGE_KEY = 'play3d_pending_payments_v1';
-  var STORE_COMING_SOON = true;
-  var selected = null;
+<section id="access" class="section-title"><div class="kicker">Vault Access</div><h2>Access Passes</h2><p class="sub">Access purchases include the limited-time physical NFC collectible bonus.</p></section>
+<section class="grid" aria-label="Access">
+<article class="card"><div><span class="tag">Access</span><h2>Entry Access</h2><p class="price">$10.00</p><p class="duration">Entry Access 30 Days</p><ul><li>Vault room access tied to purchased tier</li><li>Album access included</li><li>Limited-time physical NFC collectible bonus included</li></ul><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+      <a class="cash-btn" href="https://cash.app/$3dcashin/10" target="_blank" rel="noopener">Cash App</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/9B6fZh34s4cScGM4KU4ZG06" target="_blank" rel="noopener">Stripe</a>
+    </div></article>
+<article class="card"><div><span class="tag">Access</span><h2>Gold Access</h2><p class="price">$20.00</p><p class="duration">Gold Access 30 Days</p><ul><li>Vault room access tied to purchased tier</li><li>Album access included</li><li>Limited-time physical NFC collectible bonus included</li></ul><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+      <a class="cash-btn" href="https://cash.app/$3dcashin/20" target="_blank" rel="noopener">Cash App</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/dRm28r8oMaBgbCI4KU4ZG05" target="_blank" rel="noopener">Stripe</a>
+    </div></article>
+<article class="card"><div><span class="tag">Access</span><h2>Elite Access</h2><p class="price">$30.00</p><p class="duration">Elite Access 30 Days</p><ul><li>Vault room access tied to purchased tier</li><li>Album access included</li><li>Limited-time physical NFC collectible bonus included</li></ul><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+      <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/fZu4gz34s24K6ioa5e4ZG04" target="_blank" rel="noopener">Stripe</a>
+    </div></article>
+</section>
 
-  function sendZohoLeadSafe(payload){
-    try{
-      if(window.Play3DZohoLeadRouter && typeof window.Play3DZohoLeadRouter.submit === 'function'){
-        return window.Play3DZohoLeadRouter.submit(payload);
-      }
-    }catch(e){}
-    return Promise.resolve({ok:false, skipped:true});
-  }
+<section id="rewards" class="section-title"><div class="kicker">PLAY 3D</div><h2>Rewards</h2><p class="sub">Reward credit packs are separate from vault access.</p></section>
+<section class="grid" aria-label="Rewards">
+<article class="card"><div><span class="tag">Rewards</span><h2>Entry Rewards Pack</h2><p class="price">$10.00</p><p class="duration">2,500 Credits</p><ul><li>Adds PLAY 3D reward credits</li><li>Does not include vault room access</li><li>Activated after confirmed purchase</li></ul></div><div class="pay-row two-pay">
+      <a class="cash-btn" href="https://cash.app/$3dcashin/10" target="_blank" rel="noopener">Cash App</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/eVqcN55cAeRw2283GQ4ZG03" target="_blank" rel="noopener">Stripe</a>
+    </div></article>
+<article class="card"><div><span class="tag">Rewards</span><h2>Gold Rewards Pack</h2><p class="price">$20.00</p><p class="duration">5,000 Credits</p><ul><li>Adds PLAY 3D reward credits</li><li>Does not include vault room access</li><li>Activated after confirmed purchase</li></ul></div><div class="pay-row two-pay">
+      <a class="cash-btn" href="https://cash.app/$3dcashin/20" target="_blank" rel="noopener">Cash App</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/5kQ00j48weRw36c0uE4ZG02" target="_blank" rel="noopener">Stripe</a>
+    </div></article>
+<article class="card"><div><span class="tag">Rewards</span><h2>Elite Rewards Pack</h2><p class="price">$30.00</p><p class="duration">10,000 Credits</p><ul><li>Adds PLAY 3D reward credits</li><li>Does not include vault room access</li><li>Activated after confirmed purchase</li></ul></div><div class="pay-row two-pay">
+      <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/dRmbJ1gVieRwcGM1yI4ZG01" target="_blank" rel="noopener">Stripe</a>
+    </div></article>
+</section>
 
-  function byId(id){ return document.getElementById(id); }
-  function normalizeEmail(email){ return String(email || '').trim().toLowerCase(); }
-
-  function postRewardPurchaseEvent(record){
-    if(!record || record.source !== 'buy_rewards') return Promise.resolve(false);
-    var now = new Date().toISOString();
-    var payload = {
-      email: normalizeEmail(record.email),
-      reward_type: 'bonus_content',
-      reward_label: 'Credit Purchase Pending',
-      reward_code: 'credit:' + normalizeEmail(record.email) + ':' + (record.id || Date.now()),
-      credits: 0,
-      source: 'buy_rewards',
-      game: 'buy_rewards',
-      created_at: now,
-      reward_metadata: {
-        event_name: 'credit_purchase_request',
-        source: 'buy_rewards',
-        reward_status: 'pending_review',
-        payment_status: record.status || 'reward_payment_verification',
-        purchase_id: record.id || '',
-        buyer_name: record.name || '',
-        email: normalizeEmail(record.email),
-        tier: record.tier || '',
-        quantity: Number(record.credits || 0),
-        requested_credits: Number(record.credits || 0),
-        amount: Number(record.amount || 0),
-        payment_method: record.method || '',
-        payment_information: record.payment_information || '',
-        issue_code: false,
-        timestamp: now
-      }
-    };
-    Object.keys(payload.reward_metadata).forEach(function(k){
-      if(payload.reward_metadata[k] === null || payload.reward_metadata[k] === undefined || payload.reward_metadata[k] === '') delete payload.reward_metadata[k];
-    });
-    return fetch('https://fupoedrovfloudefyzna.supabase.co/rest/v1/reward_events',{
-      method:'POST',
-      headers:{
-        'apikey':'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1',
-        'Authorization':'Bearer sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1',
-        'Content-Type':'application/json',
-        'Prefer':'return=minimal'
-      },
-      body:JSON.stringify(payload)
-    }).then(function(res){ return res.ok; }).catch(function(){ return false; });
-  }
-
-
-  function readList(){
-    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
-    catch(e){ return []; }
-  }
-
-  function saveRecord(record){
-    var list = readList();
-    list.push(record);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(-100)));
-    localStorage.setItem('play3d_last_payment_request_v1', JSON.stringify(record));
-    return record;
-  }
-
-  function setStatus(node, text, good){
-    if(!node) return;
-    node.textContent = text;
-    node.classList.remove('good','bad');
-    node.classList.add(good ? 'good' : 'bad');
-  }
-
-  function blockCheckout(message){
-    var text = message || 'STEP LOUD STORE COMING SOON. Checkout is temporarily locked.';
-    setStatus(byId('paymentStatus'), text, false);
-    setStatus(byId('modalPayStatus'), text, false);
-    return true;
-  }
-
-  function paymentUrl(method, tier, price, email){
-    if(method === 'cashapp') return 'https://cash.app/' + encodeURIComponent(CASH_TAG) + '/' + encodeURIComponent(price);
-    var base = STRIPE_LINKS[tier] || STRIPE_URL;
-    var url = new URL(base);
-    url.searchParams.set('client_reference_id', 'PLAY3D-' + tier + '-' + Date.now());
-    if(email) url.searchParams.set('prefilled_email', email);
-    return url.toString();
-  }
-
-  function openModal(btn){
-    if(STORE_COMING_SOON){
-      blockCheckout();
-      return;
-    }
-
-    selected = {
-      tier: btn.getAttribute('data-tier') || 'ENTRY',
-      code_type: btn.getAttribute('data-code-type') || btn.getAttribute('data-tier') || 'ENTRY',
-      duration: btn.getAttribute('data-duration') || '30d',
-      price: btn.getAttribute('data-price') || '5',
-      method: btn.getAttribute('data-method') || 'cashapp',
-      label: btn.getAttribute('data-label') || '',
-      credits: Number(btn.getAttribute('data-credits') || 0),
-      source: btn.getAttribute('data-source') || 'buy_access',
-      status: btn.getAttribute('data-status') || 'payment_started',
-      issue_code: btn.getAttribute('data-issue-code') === 'true'
-    };
-
-    byId('payFlowTitle').textContent = (selected.label || selected.tier + ' ACCESS') + ' - $' + selected.price;
-    byId('payFlowCopy').textContent = selected.method === 'cashapp'
-      ? 'Enter buyer info, then continue to Cash App.'
-      : 'Enter buyer info, then continue to card checkout.';
-
-    byId('modalBuyerName').value = '';
-    byId('modalBuyerEmail').value = '';
-    byId('modalPayStatus').textContent = '';
-
-    var modal = byId('payFlowModal');
-    modal.classList.add('show');
-    modal.setAttribute('aria-hidden','false');
-  }
-
-  function closeModal(){
-    var modal = byId('payFlowModal');
-    modal.classList.remove('show');
-    modal.setAttribute('aria-hidden','true');
-  }
-
-  function continuePayment(){
-    if(STORE_COMING_SOON){
-      blockCheckout();
-      return;
-    }
-
-    if(!selected) return;
-    var name = String(byId('modalBuyerName').value || '').trim();
-    var email = normalizeEmail(byId('modalBuyerEmail').value);
-
-    if(!email){
-      setStatus(byId('modalPayStatus'), 'Enter email first.', false);
-      return;
-    }
-
-    var rewardPurchase = selected.source === 'buy_rewards';
-    var record = saveRecord({
-      id:'PAY-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
-      status:rewardPurchase ? 'reward_payment_verification' : 'payment_started',
-      name:name,
-      email:email,
-      tier:selected.tier,
-      code_type:selected.code_type,
-      duration:selected.duration,
-      amount:Number(selected.price),
-      method:selected.method,
-      auto_code:false,
-      issue_code:rewardPurchase ? false : undefined,
-      credits:rewardPurchase ? selected.credits : undefined,
-      created_at:new Date().toISOString(),
-      source:rewardPurchase ? 'buy_rewards' : 'buy_page_payment_start'
-    });
-
-    var zohoStartPayload = {
-      name:name,
-      email:email,
-      source:rewardPurchase ? 'buy_rewards' : 'buy_access',
-      form:'buy_page_payment_start',
-      status:rewardPurchase ? 'reward_payment_verification' : 'payment_started',
-      lead_status:rewardPurchase ? 'reward_payment_verification' : 'payment_verification',
-      tier:selected.tier,
-      code_type:selected.code_type,
-      duration:selected.duration,
-      amount:Number(selected.price),
-      method:selected.method,
-      auto_code:false,
-      notes:rewardPurchase ? 'Buyer started '+selected.credits+' reward credits purchase. No vault access code requested.' : 'Buyer started '+selected.tier+' 30-day access purchase.'
-    };
-    if(rewardPurchase){
-      zohoStartPayload.credits = selected.credits;
-      zohoStartPayload.issue_code = false;
-    }
-    sendZohoLeadSafe(zohoStartPayload);
-    if(rewardPurchase) postRewardPurchaseEvent(record);
-
-    byId('payName').value = name;
-    byId('payEmail').value = email;
-    byId('payTier').value = selected.tier;
-    byId('payMethod').value = selected.method;
-
-    setStatus(byId('modalPayStatus'), 'Information saved. Opening payment...', true);
-    setTimeout(function(){
-      window.location.href = paymentUrl(selected.method, selected.tier, selected.price, email);
-    }, 350);
-  }
-
-  function saveManualPayment(){
-    if(STORE_COMING_SOON){
-      blockCheckout();
-      return;
-    }
-
-    var name = String(byId('payName').value || '').trim();
-    var email = normalizeEmail(byId('payEmail').value);
-    var tier = byId('payTier').value || 'ENTRY';
-    var method = byId('payMethod').value || 'cashapp';
-    var receipt = String(byId('payReceipt').value || '').trim();
-    var opt = byId('payTier').options[byId('payTier').selectedIndex];
-    var codeType = opt ? (opt.getAttribute('data-code-type') || tier) : tier;
-    var duration = opt ? (opt.getAttribute('data-duration') || '30d') : '30d';
-    var amount = opt ? Number(opt.getAttribute('data-amount') || 5) : (tier === 'ELITE' ? 25 : tier === 'GOLD' ? 15 : 5);
-    var source = opt ? (opt.getAttribute('data-source') || 'buy_access') : 'buy_access';
-    var rewardPurchase = source === 'buy_rewards';
-    var credits = opt ? Number(opt.getAttribute('data-credits') || 0) : 0;
-
-    if(!email){
-      setStatus(byId('paymentStatus'), 'Enter email first.', false);
-      return;
-    }
-
-    var record = saveRecord({
-      id:'PAYINFO-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase(),
-      status:rewardPurchase ? 'reward_payment_verification' : 'information_submitted',
-      name:name,
-      email:email,
-      tier:tier,
-      code_type:codeType,
-      duration:duration,
-      amount:amount,
-      method:method,
-      payment_information:receipt,
-      auto_code:false,
-      issue_code:rewardPurchase ? false : undefined,
-      credits:rewardPurchase ? credits : undefined,
-      created_at:new Date().toISOString(),
-      source:rewardPurchase ? 'buy_rewards' : 'buy_page_payment_information'
-    });
-
-    var zohoInformationPayload = {
-      name:name,
-      email:email,
-      source:rewardPurchase ? 'buy_rewards' : 'buy_access',
-      form:'buy_page_payment_information',
-      status:rewardPurchase ? 'reward_payment_verification' : 'information_submitted',
-      lead_status:rewardPurchase ? 'reward_payment_verification' : 'payment_verification',
-      tier:tier,
-      code_type:codeType,
-      duration:duration,
-      amount:amount,
-      method:method,
-      auto_code:false,
-      notes:receipt
-    };
-    if(rewardPurchase){
-      zohoInformationPayload.credits = credits;
-      zohoInformationPayload.issue_code = false;
-    }
-    sendZohoLeadSafe(zohoInformationPayload);
-    if(rewardPurchase) postRewardPurchaseEvent(record);
-
-    byId('payReceipt').value = '';
-    setStatus(byId('paymentStatus'), rewardPurchase
-      ? 'Reward payment information received. Your credits request will be reviewed after verification. No vault access code will be issued.'
-      : 'Payment information received. Your access request will be reviewed and activated after verification.', true);
-  }
-
-
-  document.querySelectorAll('.pay-start').forEach(function(btn){
-    btn.addEventListener('click', function(){ openModal(btn); });
-    btn.setAttribute('aria-disabled','true');
-  });
-
-  document.querySelectorAll('a[href*="cash.app"], a[href*="stripe.com"], a[href*="buy.stripe.com"]').forEach(function(link){
-    link.setAttribute('aria-disabled','true');
-    link.addEventListener('click', function(event){
-      if(!STORE_COMING_SOON) return;
-      event.preventDefault();
-      blockCheckout();
-    });
-  });
-
-  if(byId('cancelPayment')) byId('cancelPayment').addEventListener('click', closeModal);
-  if(byId('continuePayment')) byId('continuePayment').addEventListener('click', continuePayment);
-  if(byId('savePaymentRequest')) byId('savePaymentRequest').addEventListener('click', saveManualPayment);
-  if(byId('payFlowModal')) byId('payFlowModal').addEventListener('click', function(e){
-    if(e.target && e.target.id === 'payFlowModal') closeModal();
-  });
-
-})();
-</script>
-
+<section class="steps"><h3>How It Works</h3><ol><li>Choose merch, music collectible, access, or rewards.</li><li>Checkout through Stripe.</li><li>Merch orders ship with the limited-time NFC Mini CD or Mini Vinyl bonus when eligible.</li><li>Access purchases include the limited-time physical collectible bonus during the promotion.</li><li>Rewards packs add PLAY 3D credits and do not include vault access.</li></ol></section>
+<div class="back-row"><a class="pill gold" href="./">Home</a><a class="pill" href="./nfc/scan.html">Vault Scan</a><a class="pill" href="./nfc/game-vault/index.html">PLAY 3D</a></div>
+</main>
+<script src="./zoho-lead-router.js?v=buy-live-store-v1"></script>
+<script>(function(){'use strict';})();</script>
 </body>
 </html>
