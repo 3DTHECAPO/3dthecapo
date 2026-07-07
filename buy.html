@@ -527,9 +527,15 @@ body.buy-page .pill.gold:hover{
 /* ===== MINI CD / MINI VINYL PRODUCT CARD + ALIGNMENT FIX ===== */
 .grid{align-items:stretch;}
 .card{height:100%;}
+.card > div:first-child{display:flex;flex-direction:column;flex:1;}
+.card h2{min-height:76px;display:flex;align-items:flex-end;}
+.card .price{min-height:52px;display:flex;align-items:center;}
+.card .duration{min-height:54px;}
+.pay-row{margin-top:auto;}
 .product-card{min-height:500px;}
 .product-card .pay-row{margin-top:auto;}
 .music-product-card{min-height:560px;}
+.product-img,.soon-box{height:260px;aspect-ratio:auto;object-fit:contain;}
 .collectible-scene{
   position:relative;
   min-height:320px;
@@ -546,17 +552,18 @@ body.buy-page .pill.gold:hover{
   box-shadow:0 20px 42px rgba(0,0,0,.72),0 0 22px rgba(255,70,20,.20);z-index:2;transform:perspective(700px) rotateY(-8deg);
 }
 .cd-disc{
-  position:absolute;right:24px;bottom:34px;width:44%;aspect-ratio:1/1;border-radius:50%;z-index:3;
+  position:absolute;right:24px;bottom:34px;width:44%;aspect-ratio:1/1;border-radius:50%;z-index:3;overflow:hidden;
   background:
-    radial-gradient(circle at center,#050505 0 10%,#d7d7d7 10.5% 13%,#080808 13.5% 17%,transparent 17.5%),
-    radial-gradient(circle at 35% 30%,rgba(255,255,255,.95),rgba(255,255,255,.35) 16%,transparent 36%),
-    conic-gradient(from 15deg,rgba(255,255,255,.85),rgba(130,210,255,.38),rgba(255,160,220,.35),rgba(255,255,255,.78),rgba(160,255,210,.32),rgba(255,255,255,.85)),
+    radial-gradient(circle at center,transparent 0 7%,rgba(240,240,235,.90) 7.5% 9%,transparent 9.5%),
+    linear-gradient(118deg,transparent 0 42%,rgba(255,255,255,.20) 46%,transparent 58%),
+    radial-gradient(circle at 34% 28%,rgba(255,255,255,.18),transparent 28%),
     url('./assets/buy/my-resume-cover.png') center/cover;
   background-blend-mode:normal,screen,screen,normal;
-  border:3px solid rgba(255,255,255,.78);
-  box-shadow:0 22px 42px rgba(0,0,0,.72),0 0 28px rgba(210,235,255,.34);
+  border:2px solid rgba(245,245,235,.78);
+  box-shadow:0 22px 42px rgba(0,0,0,.72),0 0 18px rgba(210,235,255,.18);
 }
-.cd-disc::before{content:"";position:absolute;inset:8%;border-radius:50%;border:2px solid rgba(255,255,255,.38);}
+.cd-disc::before{content:"";position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,.18),transparent 30%,transparent 72%,rgba(255,255,255,.10));pointer-events:none;}
+.cd-disc::after{content:"";position:absolute;left:50%;top:50%;width:12%;aspect-ratio:1/1;border-radius:50%;transform:translate(-50%,-50%);background:#080808;border:2px solid rgba(245,245,235,.82);box-shadow:0 0 0 5px rgba(255,255,255,.16);}
 .vinyl-disc{
   position:absolute;right:16px;bottom:24px;width:54%;aspect-ratio:1/1;border-radius:50%;z-index:3;
   background:repeating-radial-gradient(circle at center,#050505 0 3px,#171717 3px 5px,#030303 5px 8px);
@@ -571,7 +578,7 @@ body.buy-page .pill.gold:hover{
 }
 .collectible-badges{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px;}
 .collectible-badges span{border:1px solid rgba(242,210,123,.32);border-radius:999px;padding:6px 9px;color:#f2d27b;background:rgba(0,0,0,.42);font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;}
-@media(max-width:900px){.product-card,.music-product-card{min-height:auto;}}
+@media(max-width:900px){.product-card,.music-product-card{min-height:auto;}.card h2,.card .price,.card .duration{min-height:auto;}.product-img,.soon-box{height:230px;}}
 </style>
 
 </head>
@@ -594,7 +601,7 @@ body.buy-page .pill.gold:hover{
 <h1>Shop The Vault</h1>
 <p class="sub">Official merch, music collectibles, vault access, and PLAY 3D rewards from 3D THE CAPO.</p>
 </section>
-<section class="bonus-banner"><div class="bonus-icon">NFC</div><div><h2>Limited-Time Bonus</h2><p>Every qualifying merch purchase and every qualifying Vault Access purchase includes a FREE physical collectible Mini CD or Mini Vinyl with embedded NFC technology. Tap to unlock the album. Available while the promotion lasts.</p></div></section>
+<section class="bonus-banner"><div class="bonus-icon">NFC</div><div><h2>Limited-Time Bonus</h2><p>Every qualifying merch purchase and Vault Access purchase includes a FREE physical NFC Mini CD or Mini Vinyl while supplies last.</p></div></section>
 
 <section id="merch" class="section-title"><div class="kicker">Merch</div><h2>Live Merch</h2><p class="sub">Shirts available now. Hoodies and hats are coming soon.</p></section>
 <section class="grid" aria-label="Merch products">
@@ -604,19 +611,19 @@ body.buy-page .pill.gold:hover{
     </div></article>
 <article class="card product-card"><div><span class="tag">Merch</span><h2>Fly And Legendary White Tee</h2><img class="product-img" src="./assets/buy/fly-legendary-white-tee.png" alt="Fly And Legendary White Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
-      <a class="stripe-btn" href="https://buy.stripe.com/fZuaEX6gEbFk9uAelu4ZG08" target="_blank" rel="noopener">Stripe</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/14A9ATfRefVAcGM2CM4ZG07" target="_blank" rel="noopener">Stripe</a>
     </div></article>
 <article class="card product-card"><div><span class="tag">Merch</span><h2>Smokin Budz Tee</h2><img class="product-img" src="./assets/buy/smokin-budz-blue-white-tee.png" alt="Smokin Budz Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
-      <a class="stripe-btn" href="https://buy.stripe.com/5kQ4gzdJ6bFk9uA1yI4ZG09" target="_blank" rel="noopener">Stripe</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/fZuaEX6gEbFk9uAelu4ZG08" target="_blank" rel="noopener">Stripe</a>
     </div></article>
 <article class="card product-card"><div><span class="tag">Merch</span><h2>Royals Etiquette Tee</h2><img class="product-img" src="./assets/buy/royals-etiquette-white.png" alt="Royals Etiquette Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
-      <a class="stripe-btn" href="https://buy.stripe.com/4gM8wP6gE10G6iogtC4ZG0b" target="_blank" rel="noopener">Stripe</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/5kQ4gzdJ6bFk9uA1yI4ZG09" target="_blank" rel="noopener">Stripe</a>
     </div></article>
 <article class="card product-card"><div><span class="tag">Merch</span><h2>Stay In My Bag Tee</h2><img class="product-img" src="./assets/buy/stay-in-my-bag-white.png" alt="Stay In My Bag Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
-      <a class="stripe-btn" href="https://buy.stripe.com/14A9ATfRefVAcGM2CM4ZG07" target="_blank" rel="noopener">Stripe</a>
+      <a class="stripe-btn" href="https://buy.stripe.com/4gM8wP6gE10G6iogtC4ZG0b" target="_blank" rel="noopener">Stripe</a>
     </div></article>
 <article class="card product-card"><div><span class="tag">Coming Soon</span><h2>Hoodies</h2><div class="soon-box">Hoodies Coming Soon</div><p class="duration">Hoodie drops are not live yet.</p></div><div class="pay-row"><div class="soon-btn">Coming Soon</div></div></article>
 <article class="card product-card"><div><span class="tag">Coming Soon</span><h2>Hats</h2><div class="soon-box">Hats Coming Soon</div><p class="duration">Hat drops are not live yet.</p></div><div class="pay-row"><div class="soon-btn">Coming Soon</div></div></article>
