@@ -22,6 +22,55 @@
 #merch .product .actions{margin-top:auto}
 </style>
 
+
+<style>
+/* FINAL MERCH INDEX CARD FIX */
+#merch .merch-grid,
+#merch .merch-grid-v26{
+  align-items:stretch;
+}
+#merch .product{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
+#merch .product .img{
+  height:250px !important;
+  display:grid !important;
+  place-items:center !important;
+  background:#050403 !important;
+  overflow:hidden;
+}
+#merch .product .img img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  padding:10px !important;
+}
+#merch .product .body{
+  min-height:172px !important;
+  display:grid !important;
+  grid-template-rows:58px 36px auto !important;
+  gap:8px !important;
+}
+#merch .product .name{
+  min-height:58px !important;
+  display:flex !important;
+  align-items:flex-end !important;
+  line-height:1.08 !important;
+  overflow-wrap:anywhere !important;
+}
+#merch .product .price{
+  min-height:36px !important;
+  display:flex !important;
+  align-items:center !important;
+}
+#merch .product .actions{
+  align-self:end !important;
+}
+</style>
+
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
@@ -331,7 +380,7 @@
 
           <article class="card product" data-tag="IN STOCK">
             <div class="img">
-              <img src="./my-resume-cover.png?v=final1" alt="Collector's Edition Mini CD" loading="lazy">
+              <img src="./my-resume-cover.png?v=mini2" alt="Collector's Edition Mini CD" loading="lazy">
               <div class="badge overlay-badge">NFC MINI CD</div>
             </div>
             <div class="body">
@@ -343,7 +392,7 @@
 
           <article class="card product" data-tag="IN STOCK">
             <div class="img">
-              <img src="./my-resume-cover.png?v=final1" alt="Collector's Edition Mini Vinyl" loading="lazy">
+              <img src="./my-resume-cover.png?v=mini2" alt="Collector's Edition Mini Vinyl" loading="lazy">
               <div class="badge overlay-badge">NFC MINI VINYL</div>
             </div>
             <div class="body">
