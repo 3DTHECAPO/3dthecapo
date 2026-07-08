@@ -525,8 +525,9 @@ body.buy-page .pill.gold:hover{
 
 
 
-/* ===== FINAL PRODUCT IMAGE + CARD ALIGNMENT FIX ===== */
-.grid{align-items:stretch!important;grid-auto-rows:1fr}
+
+/* ===== FINAL PRODUCTION PRODUCT GRID + ROOT IMAGE FIX ===== */
+.grid{align-items:stretch!important;grid-auto-rows:1fr!important}
 .card{height:100%!important;display:flex!important;flex-direction:column!important}
 .card>div:first-child{display:grid!important;grid-template-rows:34px 96px 260px 58px 64px auto!important;row-gap:0!important;flex:1 1 auto!important}
 .card h2{min-height:0!important;height:auto!important;margin:0!important;display:flex!important;align-items:flex-end!important;line-height:1.08!important}
@@ -537,20 +538,20 @@ body.buy-page .pill.gold:hover{
 .pay-row{margin-top:18px!important}
 .product-card,.music-product-card{min-height:620px!important}
 .music-product-card>div:first-child{grid-template-rows:34px 104px 260px 58px 72px auto!important}
-.collectible-scene{position:relative!important;width:100%!important;height:260px!important;min-height:260px!important;margin:0!important;border-radius:18px!important;overflow:hidden!important;border:1px solid rgba(242,210,123,.34)!important;background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.82)),url('assets/buy/my-resume-backdrop.png') center/cover!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 16px 34px rgba(0,0,0,.46)!important}
-.collectible-scene::before{content:""!important;position:absolute!important;inset:0!important;background:linear-gradient(90deg,rgba(0,0,0,.70),rgba(0,0,0,.04) 48%,rgba(0,0,0,.70))!important;pointer-events:none!important}
+.collectible-scene{position:relative!important;width:100%!important;height:260px!important;min-height:260px!important;margin:0!important;border-radius:18px!important;overflow:hidden!important;border:1px solid rgba(242,210,123,.34)!important;background:linear-gradient(180deg,rgba(0,0,0,.14),rgba(0,0,0,.78)),url('./my-resume-backdrop.png?v=final1') center/cover!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 16px 34px rgba(0,0,0,.46)!important}
+.collectible-scene::before{content:""!important;position:absolute!important;inset:0!important;background:linear-gradient(90deg,rgba(0,0,0,.64),rgba(0,0,0,.03) 48%,rgba(0,0,0,.64))!important;pointer-events:none!important}
 .collectible-cover{position:absolute!important;left:22px!important;bottom:28px!important;width:41%!important;aspect-ratio:1/1!important;object-fit:cover!important;border:2px solid rgba(242,210,123,.52)!important;border-radius:10px!important;z-index:2!important;box-shadow:0 16px 34px rgba(0,0,0,.70)!important;transform:none!important}
-.cd-disc{position:absolute!important;right:30px!important;bottom:30px!important;width:42%!important;aspect-ratio:1/1!important;border-radius:50%!important;z-index:3!important;overflow:hidden!important;background:url('assets/buy/my-resume-cover.png') center/cover!important;border:3px solid rgba(235,245,255,.92)!important;box-shadow:0 18px 34px rgba(0,0,0,.72),0 0 18px rgba(210,235,255,.20),inset 0 0 0 3px rgba(255,255,255,.25)!important}
-.cd-disc::before{content:""!important;position:absolute!important;inset:0!important;border-radius:50%!important;background:radial-gradient(circle at center,transparent 0 9%,rgba(255,255,255,.92) 9.5% 12%,rgba(0,0,0,.75) 12.5% 15%,transparent 15.5%),linear-gradient(125deg,transparent 0 48%,rgba(255,255,255,.18) 50%,transparent 60%)!important;pointer-events:none!important}
-.cd-disc::after{content:""!important;position:absolute!important;left:50%!important;top:50%!important;width:13%!important;aspect-ratio:1/1!important;transform:translate(-50%,-50%)!important;border-radius:50%!important;background:#050505!important;border:2px solid rgba(245,245,235,.88)!important;box-shadow:0 0 0 5px rgba(255,255,255,.18)!important}
+.cd-disc{position:absolute!important;right:30px!important;bottom:30px!important;width:42%!important;aspect-ratio:1/1!important;border-radius:50%!important;z-index:3!important;overflow:hidden!important;background:url('./my-resume-cover.png?v=final1') center/cover!important;border:3px solid rgba(235,245,255,.92)!important;box-shadow:0 18px 34px rgba(0,0,0,.72),0 0 14px rgba(210,235,255,.16),inset 0 0 0 3px rgba(255,255,255,.18)!important}
+.cd-disc::before{content:""!important;position:absolute!important;inset:0!important;border-radius:50%!important;background:radial-gradient(circle at center,transparent 0 9%,rgba(255,255,255,.88) 9.4% 11.8%,rgba(0,0,0,.72) 12.2% 14.8%,transparent 15.4%),linear-gradient(130deg,transparent 0 54%,rgba(255,255,255,.14) 57%,transparent 66%)!important;pointer-events:none!important}
+.cd-disc::after{content:""!important;position:absolute!important;left:50%!important;top:50%!important;width:12%!important;aspect-ratio:1/1!important;transform:translate(-50%,-50%)!important;border-radius:50%!important;background:#050505!important;border:2px solid rgba(245,245,235,.88)!important;box-shadow:0 0 0 4px rgba(255,255,255,.14)!important}
 .vinyl-disc{position:absolute!important;right:20px!important;bottom:24px!important;width:52%!important;aspect-ratio:1/1!important;border-radius:50%!important;z-index:3!important;background:repeating-radial-gradient(circle at center,#050505 0 3px,#171717 3px 5px,#030303 5px 8px)!important;border:3px solid rgba(0,0,0,.92)!important;box-shadow:0 24px 48px rgba(0,0,0,.80),0 0 18px rgba(242,210,123,.12)!important}
-.vinyl-disc::after{content:""!important;position:absolute!important;inset:31%!important;border-radius:50%!important;background:url('assets/buy/my-resume-cover.png') center/cover!important;border:2px solid rgba(242,210,123,.55)!important}
+.vinyl-disc::after{content:""!important;position:absolute!important;inset:31%!important;border-radius:50%!important;background:url('./my-resume-cover.png?v=final1') center/cover!important;border:2px solid rgba(242,210,123,.55)!important}
 .nfc-chip{right:20px!important;top:20px!important;width:72px!important;height:82px!important;z-index:5!important}
 .collectible-badges{display:flex!important;gap:8px!important;flex-wrap:wrap!important;align-items:flex-start!important}
 .collectible-badges span{white-space:nowrap!important}
-img[data-missing=true]{outline:2px solid rgba(255,70,70,.75)!important;background:rgba(80,0,0,.35)!important}
 @media(max-width:900px){.grid{grid-template-columns:1fr!important}.card>div:first-child,.music-product-card>div:first-child{grid-template-rows:auto auto 240px auto auto auto!important;row-gap:10px!important}.product-img,.soon-box,.collectible-scene{height:240px!important}.product-card,.music-product-card{min-height:auto!important}}
 </style>
+
 
 
 </head>
@@ -577,23 +578,23 @@ img[data-missing=true]{outline:2px solid rgba(255,70,70,.75)!important;backgroun
 
 <section id="merch" class="section-title"><div class="kicker">Merch</div><h2>Live Merch</h2><p class="sub">Shirts available now. Hoodies and hats are coming soon.</p></section>
 <section class="grid" aria-label="Merch products">
-<article class="card product-card"><div><span class="tag">Merch</span><h2>Fly And Legendary Black Tee</h2><img class="product-img" src="assets/buy/fly-legendary-alien-black-tee.png" data-buy-img="fly-legendary-alien-black-tee.png" alt="Fly And Legendary Black Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+<article class="card product-card"><div><span class="tag">Merch</span><h2>Fly And Legendary Black Tee</h2><img class="product-img" src="./fly-legendary-alien-black-tee.png?v=final1" alt="Fly And Legendary Black Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/14A9ATfRefVAcGM2CM4ZG07" target="_blank" rel="noopener">Stripe</a>
     </div></article>
-<article class="card product-card"><div><span class="tag">Merch</span><h2>Fly And Legendary White Tee</h2><img class="product-img" src="assets/buy/fly-legendary-white-tee.png" data-buy-img="fly-legendary-white-tee.png" alt="Fly And Legendary White Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+<article class="card product-card"><div><span class="tag">Merch</span><h2>Fly And Legendary White Tee</h2><img class="product-img" src="./fly-legendary-white-tee.png?v=final1" alt="Fly And Legendary White Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/14A9ATfRefVAcGM2CM4ZG07" target="_blank" rel="noopener">Stripe</a>
     </div></article>
-<article class="card product-card"><div><span class="tag">Merch</span><h2>Smokin Budz Tee</h2><img class="product-img" src="assets/buy/smokin-budz-blue-white-tee.png" data-buy-img="smokin-budz-blue-white-tee.png" alt="Smokin Budz Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+<article class="card product-card"><div><span class="tag">Merch</span><h2>Smokin Budz Tee</h2><img class="product-img" src="./smokin-budz-blue-white-tee.png?v=final1" alt="Smokin Budz Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/fZuaEX6gEbFk9uAelu4ZG08" target="_blank" rel="noopener">Stripe</a>
     </div></article>
-<article class="card product-card"><div><span class="tag">Merch</span><h2>Royals Etiquette Tee</h2><img class="product-img" src="assets/buy/royals-etiquette-white.png" data-buy-img="royals-etiquette-white.png" alt="Royals Etiquette Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+<article class="card product-card"><div><span class="tag">Merch</span><h2>Royals Etiquette Tee</h2><img class="product-img" src="./royals-etiquette-white.png?v=final1" alt="Royals Etiquette Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/5kQ4gzdJ6bFk9uA1yI4ZG09" target="_blank" rel="noopener">Stripe</a>
     </div></article>
-<article class="card product-card"><div><span class="tag">Merch</span><h2>Stay In My Bag Tee</h2><img class="product-img" src="assets/buy/stay-in-my-bag-white.png" data-buy-img="stay-in-my-bag-white.png" alt="Stay In My Bag Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+<article class="card product-card"><div><span class="tag">Merch</span><h2>Stay In My Bag Tee</h2><img class="product-img" src="./stay-in-my-bag-white.png?v=final1" alt="Stay In My Bag Tee"><p class="price">$30.00</p><p class="duration">Live shirt drop.</p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/4gM8wP6gE10G6iogtC4ZG0b" target="_blank" rel="noopener">Stripe</a>
     </div></article>
@@ -609,7 +610,7 @@ img[data-missing=true]{outline:2px solid rgba(255,70,70,.75)!important;backgroun
     <span class="tag">Music</span>
     <h2>Collector's Edition Mini CD</h2>
     <div class="collectible-scene">
-      <img class="collectible-cover" src="assets/buy/my-resume-cover.png" data-buy-img="my-resume-cover.png" alt="Mini CD cover art">
+      <img class="collectible-cover" src="./my-resume-cover.png?v=final1" alt="Mini CD cover art">
       <div class="cd-disc" aria-hidden="true"></div>
       <div class="nfc-chip">NFC<br>Tap<br>Unlock</div>
     </div>
@@ -627,7 +628,7 @@ img[data-missing=true]{outline:2px solid rgba(255,70,70,.75)!important;backgroun
     <span class="tag">Music</span>
     <h2>Collector's Edition Mini Vinyl</h2>
     <div class="collectible-scene">
-      <img class="collectible-cover" src="assets/buy/my-resume-cover.png" data-buy-img="my-resume-cover.png" alt="Mini Vinyl cover art">
+      <img class="collectible-cover" src="./my-resume-cover.png?v=final1" alt="Mini Vinyl cover art">
       <div class="vinyl-disc" aria-hidden="true"></div>
       <div class="nfc-chip">NFC<br>Tap<br>Unlock</div>
     </div>
@@ -679,21 +680,6 @@ img[data-missing=true]{outline:2px solid rgba(255,70,70,.75)!important;backgroun
 </main>
 <script src="./zoho-lead-router.js?v=buy-live-store-v1"></script>
 <script>(function(){'use strict';})();</script>
-
-<script>
-(function(){
-  const roots=["assets/buy/","./assets/buy/","/assets/buy/","nfc/assets/buy/","./nfc/assets/buy/","/nfc/assets/buy/","assets/","./assets/","/assets/"];
-  document.querySelectorAll("img[data-buy-img]").forEach(function(img){
-    const file=img.getAttribute("data-buy-img");
-    let i=0;
-    img.addEventListener("error",function(){
-      i++;
-      if(i<roots.length){img.src=roots[i]+file;}
-      else{img.setAttribute("data-missing","true");img.alt="Missing asset: "+file+" — upload it to assets/buy/";}
-    });
-  });
-})();
-</script>
 
 </body>
 </html>
