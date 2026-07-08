@@ -71,6 +71,46 @@
 }
 </style>
 
+
+<style>
+/* ===== INDEX MERCH PRODUCT BACKGROUNDS V1 ===== */
+#merch .merch-grid-v26 .product{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+#merch .merch-grid-v26 .product > *{
+  position:relative;
+  z-index:2;
+}
+#merch .merch-grid-v26 .product::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 78% 18%,rgba(242,210,123,.12),transparent 26%),
+    linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.28));
+}
+#merch .merch-grid-v26 .product.merch-product::after{
+  background:
+    radial-gradient(circle at 50% 36%,rgba(242,210,123,.12),transparent 34%),
+    linear-gradient(180deg,rgba(0,0,0,.06),rgba(0,0,0,.24));
+}
+#merch .merch-grid-v26 .product.collector-product::after{
+  background:
+    radial-gradient(circle at 78% 28%,rgba(210,235,255,.14),transparent 28%),
+    radial-gradient(circle at 84% 74%,rgba(242,210,123,.16),transparent 24%),
+    linear-gradient(180deg,rgba(0,0,0,.06),rgba(0,0,0,.30));
+}
+#merch .merch-grid-v26 .product.soon-product::after{
+  background:
+    repeating-linear-gradient(135deg,rgba(242,210,123,.065) 0 2px,transparent 2px 17px),
+    linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.34));
+}
+</style>
+
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
@@ -285,7 +325,7 @@
         </div>
 
         <div class="merch-grid merch-grid-v26">
-          <article class="card product" data-tag="IN STOCK">
+          <article class="card product merch-product" data-tag="IN STOCK">
             <div class="img">
               <img src="./fly-legendary-alien-black-tee.png?v=2" alt="Fly &amp; Legendary Alien Tee" loading="lazy">
               <div class="badge overlay-badge">IN STOCK</div>
@@ -299,7 +339,7 @@
             </div>
           </article>
 
-          <article class="card product" data-tag="IN STOCK">
+          <article class="card product merch-product" data-tag="IN STOCK">
             <div class="img">
               <img src="./fly-legendary-white-tee.png?v=2" alt="Fly &amp; Legendary Tee" loading="lazy">
               <div class="badge overlay-badge">IN STOCK</div>
@@ -313,7 +353,7 @@
             </div>
           </article>
 
-          <article class="card product" data-tag="IN STOCK">
+          <article class="card product merch-product" data-tag="IN STOCK">
             <div class="img">
               <img src="./smokin-budz-blue-white-tee.png?v=2" alt="Smokin Budz Coupon Tee" loading="lazy">
               <div class="badge overlay-badge">IN STOCK</div>
@@ -327,7 +367,7 @@
             </div>
           </article>
 
-          <article class="card product" data-tag="IN STOCK">
+          <article class="card product merch-product" data-tag="IN STOCK">
             <div class="img">
               <img src="./royals-etiquette-white.png?v=1" alt="ROYAL ETIQUETTE TEE" loading="lazy">
               <div class="badge overlay-badge">IN STOCK</div>
@@ -341,7 +381,7 @@
             </div>
           </article>
 
-          <article class="card product" data-tag="IN STOCK">
+          <article class="card product merch-product" data-tag="IN STOCK">
             <div class="img">
               <img src="./stay-in-my-bag-white.png?v=1" alt="STAY IN MY BAG Tee" loading="lazy">
               <div class="badge overlay-badge">IN STOCK</div>
@@ -354,7 +394,7 @@
               </div>
             </div>
           </article>
-          <article class="card product" data-tag="COMING SOON">
+          <article class="card product soon-product" data-tag="COMING SOON">
             <div class="img">
               <img src="./placeholder-product.jpg?v=2" alt="Hoodies Coming Soon" loading="lazy">
               <div class="badge overlay-badge">COMING SOON</div>
@@ -366,7 +406,7 @@
             </div>
           </article>
 
-          <article class="card product" data-tag="COMING SOON">
+          <article class="card product soon-product" data-tag="COMING SOON">
             <div class="img">
               <img src="./placeholder-product.jpg?v=2" alt="Hats Coming Soon" loading="lazy">
               <div class="badge overlay-badge">COMING SOON</div>
@@ -378,7 +418,7 @@
             </div>
           </article>
 
-          <article class="card product" data-tag="IN STOCK">
+          <article class="card product collector-product" data-tag="IN STOCK">
             <div class="img">
               <img src="./my-resume-cover.png?v=mini2" alt="Collector's Edition Mini CD" loading="lazy">
               <div class="badge overlay-badge">NFC MINI CD</div>
@@ -390,7 +430,7 @@
             </div>
           </article>
 
-          <article class="card product" data-tag="IN STOCK">
+          <article class="card product collector-product" data-tag="IN STOCK">
             <div class="img">
               <img src="./my-resume-cover.png?v=mini2" alt="Collector's Edition Mini Vinyl" loading="lazy">
               <div class="badge overlay-badge">NFC MINI VINYL</div>

@@ -550,7 +550,168 @@ body.buy-page .pill.gold:hover{
 .collectible-badges{display:flex!important;gap:8px!important;flex-wrap:wrap!important;align-items:flex-start!important}
 .collectible-badges span{white-space:nowrap!important}
 @media(max-width:900px){.grid{grid-template-columns:1fr!important}.card>div:first-child,.music-product-card>div:first-child{grid-template-rows:auto auto 240px auto auto auto!important;row-gap:10px!important}.product-img,.soon-box,.collectible-scene{height:240px!important}.product-card,.music-product-card{min-height:auto!important}}
+
+/* ===== CINEMATIC CATEGORY BACKGROUNDS V1 ===== */
+
+/* Make product cards accept layered cinematic backgrounds */
+body.buy-page .card{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+body.buy-page .card > *{
+  position:relative;
+  z-index:2;
+}
+body.buy-page .card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  opacity:.92;
+}
+
+/* Category banners */
+.category-banner{
+  margin:34px 0 4px;
+  border:1px solid rgba(242,210,123,.40);
+  border-radius:26px;
+  min-height:170px;
+  display:grid;
+  align-items:center;
+  padding:26px;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 28px 82px rgba(0,0,0,.78),0 0 32px rgba(202,162,74,.13),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.category-banner::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.82),rgba(0,0,0,.36),rgba(0,0,0,.86));
+}
+.category-banner > div{
+  position:relative;
+  z-index:2;
+  max-width:780px;
+}
+.category-banner h2{
+  font-family:"Black Ops One",system-ui,sans-serif;
+  color:var(--gold2);
+  font-size:clamp(34px,5vw,64px);
+  line-height:.95;
+  margin:0 0 8px;
+  text-transform:uppercase;
+  text-shadow:0 0 22px rgba(242,210,123,.22),0 5px 0 rgba(0,0,0,.70);
+}
+.category-banner p{
+  color:rgba(244,241,234,.82);
+  font-size:18px;
+  line-height:1.45;
+  margin:0;
+}
+.merch-banner{
+  background:
+    radial-gradient(circle at 78% 28%,rgba(242,210,123,.16),transparent 28%),
+    linear-gradient(135deg,rgba(34,20,5,.92),rgba(0,0,0,.80)),
+    url('./bg_texture.jpg?v=merchbanner') center/cover;
+}
+.collector-banner{
+  background:
+    radial-gradient(circle at 76% 34%,rgba(210,235,255,.16),transparent 28%),
+    radial-gradient(circle at 84% 72%,rgba(242,210,123,.18),transparent 24%),
+    linear-gradient(135deg,rgba(8,8,10,.94),rgba(0,0,0,.80)),
+    url('./my-resume-backdrop.png?v=mini2') center/cover;
+}
+.vault-banner{
+  background:
+    radial-gradient(circle at 72% 40%,rgba(242,210,123,.20),transparent 28%),
+    repeating-linear-gradient(90deg,rgba(242,210,123,.08) 0 2px,transparent 2px 13px),
+    linear-gradient(135deg,rgba(18,12,4,.94),rgba(0,0,0,.82));
+}
+.rewards-banner{
+  background:
+    radial-gradient(circle at 76% 30%,rgba(0,214,50,.13),transparent 26%),
+    radial-gradient(circle at 86% 70%,rgba(242,210,123,.23),transparent 22%),
+    linear-gradient(135deg,rgba(10,8,2,.94),rgba(0,0,0,.83));
+}
+
+/* Merch cards: clean product showcase */
+body.buy-page .merch-card::after{
+  background:
+    radial-gradient(circle at 50% 34%,rgba(242,210,123,.10),transparent 33%),
+    linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.22));
+}
+
+/* Collector cards: mini CD / vinyl music-display feel */
+body.buy-page .collector-card::after{
+  background:
+    radial-gradient(circle at 78% 26%,rgba(210,235,255,.13),transparent 30%),
+    radial-gradient(circle at 82% 72%,rgba(242,210,123,.14),transparent 26%),
+    linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.28));
+}
+
+/* Access pass cards: vault door background */
+body.buy-page .access-card::after{
+  background:
+    radial-gradient(circle at 50% 28%,rgba(242,210,123,.20),transparent 24%),
+    radial-gradient(circle at 50% 46%,rgba(0,0,0,.0) 0 23%,rgba(202,162,74,.18) 23.5% 25%,transparent 25.5%),
+    repeating-conic-gradient(from 0deg at 50% 44%,rgba(242,210,123,.12) 0deg 7deg,transparent 7deg 18deg),
+    linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.42));
+}
+body.buy-page .access-card::before{
+  content:"";
+  position:absolute;
+  right:-68px;
+  top:78px;
+  width:230px;
+  aspect-ratio:1/1;
+  border-radius:50%;
+  z-index:1;
+  pointer-events:none;
+  border:2px solid rgba(242,210,123,.22);
+  box-shadow:inset 0 0 0 18px rgba(202,162,74,.05),0 0 32px rgba(242,210,123,.12);
+}
+
+/* Rewards cards: cash / prize / win background */
+body.buy-page .reward-card::after{
+  background:
+    radial-gradient(circle at 76% 20%,rgba(0,214,50,.16),transparent 22%),
+    radial-gradient(circle at 82% 72%,rgba(242,210,123,.18),transparent 22%),
+    repeating-linear-gradient(135deg,rgba(0,214,50,.055) 0 2px,transparent 2px 18px),
+    linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.36));
+}
+body.buy-page .reward-card::before{
+  content:"$";
+  position:absolute;
+  right:18px;
+  top:42px;
+  z-index:1;
+  font-family:"Black Ops One",system-ui,sans-serif;
+  font-size:118px;
+  color:rgba(0,214,50,.10);
+  text-shadow:0 0 22px rgba(0,214,50,.12);
+  pointer-events:none;
+}
+
+/* Better access/reward text spacing */
+body.buy-page .access-card ul,
+body.buy-page .reward-card ul{
+  line-height:1.42 !important;
+  margin:0 0 10px !important;
+}
+body.buy-page .access-card .bonus-note{
+  margin-top:4px !important;
+}
+
+/* Mobile keeps same look but less height */
+@media(max-width:900px){
+  .category-banner{min-height:145px;padding:20px}
+}
 </style>
+
 
 
 
@@ -664,23 +825,23 @@ body.buy-page .vinyl-disc::after{
 
 <section id="merch" class="section-title"><div class="kicker">Merch</div><h2>Merch</h2><p class="sub">Shirts available now. Hoodies and hats coming soon.</p></section>
 <section class="grid" aria-label="Merch products">
-<article class="card product-card"><div><span class="tag">Merch</span><h2>Fly And Legendary Black Tee</h2><img class="product-img" src="./fly-legendary-alien-black-tee.png?v=final1" alt="Fly And Legendary Black Tee"><p class="price">$30.00</p><p class="duration"></p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+<article class="card product-card merch-card"><div><span class="tag">Merch</span><h2>Fly And Legendary Black Tee</h2><img class="product-img" src="./fly-legendary-alien-black-tee.png?v=final1" alt="Fly And Legendary Black Tee"><p class="price">$30.00</p><p class="duration"></p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/14A9ATfRefVAcGM2CM4ZG07" target="_blank" rel="noopener">Stripe</a>
     </div></article>
-<article class="card product-card"><div><span class="tag">Merch</span><h2>Fly And Legendary White Tee</h2><img class="product-img" src="./fly-legendary-white-tee.png?v=final1" alt="Fly And Legendary White Tee"><p class="price">$30.00</p><p class="duration"></p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+<article class="card product-card merch-card"><div><span class="tag">Merch</span><h2>Fly And Legendary White Tee</h2><img class="product-img" src="./fly-legendary-white-tee.png?v=final1" alt="Fly And Legendary White Tee"><p class="price">$30.00</p><p class="duration"></p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/14A9ATfRefVAcGM2CM4ZG07" target="_blank" rel="noopener">Stripe</a>
     </div></article>
-<article class="card product-card"><div><span class="tag">Merch</span><h2>Smokin Budz Tee</h2><img class="product-img" src="./smokin-budz-blue-white-tee.png?v=final1" alt="Smokin Budz Tee"><p class="price">$30.00</p><p class="duration"></p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+<article class="card product-card merch-card"><div><span class="tag">Merch</span><h2>Smokin Budz Tee</h2><img class="product-img" src="./smokin-budz-blue-white-tee.png?v=final1" alt="Smokin Budz Tee"><p class="price">$30.00</p><p class="duration"></p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/fZuaEX6gEbFk9uAelu4ZG08" target="_blank" rel="noopener">Stripe</a>
     </div></article>
-<article class="card product-card"><div><span class="tag">Merch</span><h2>Royals Etiquette Tee</h2><img class="product-img" src="./royals-etiquette-white.png?v=final1" alt="Royals Etiquette Tee"><p class="price">$30.00</p><p class="duration"></p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+<article class="card product-card merch-card"><div><span class="tag">Merch</span><h2>Royals Etiquette Tee</h2><img class="product-img" src="./royals-etiquette-white.png?v=final1" alt="Royals Etiquette Tee"><p class="price">$30.00</p><p class="duration"></p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/5kQ4gzdJ6bFk9uA1yI4ZG09" target="_blank" rel="noopener">Stripe</a>
     </div></article>
-<article class="card product-card"><div><span class="tag">Merch</span><h2>Stay In My Bag Tee</h2><img class="product-img" src="./stay-in-my-bag-white.png?v=final1" alt="Stay In My Bag Tee"><p class="price">$30.00</p><p class="duration"></p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+<article class="card product-card merch-card"><div><span class="tag">Merch</span><h2>Stay In My Bag Tee</h2><img class="product-img" src="./stay-in-my-bag-white.png?v=final1" alt="Stay In My Bag Tee"><p class="price">$30.00</p><p class="duration"></p><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/4gM8wP6gE10G6iogtC4ZG0b" target="_blank" rel="noopener">Stripe</a>
     </div></article>
@@ -691,7 +852,7 @@ body.buy-page .vinyl-disc::after{
 <section id="music" class="section-title"><div class="kicker">Music</div><h2>Collectible Album</h2><p class="sub">Mini CD and Mini Vinyl use the cover art. Final track/title details can stay blank until decided.</p></section>
 <section class="grid" aria-label="Music collectibles">
 
-<article class="card product-card music-product-card cd">
+<article class="card product-card music-product-card collector-card cd">
   <div>
     <span class="tag">Music</span>
     <h2>Collector's Edition Mini CD</h2>
@@ -709,7 +870,7 @@ body.buy-page .vinyl-disc::after{
       <a class="stripe-btn" href="https://buy.stripe.com/fZuaEX6gEbFk9uAelu4ZG08" target="_blank" rel="noopener">Stripe</a>
     </div></article>
 
-<article class="card product-card music-product-card vinyl">
+<article class="card product-card music-product-card collector-card vinyl">
   <div>
     <span class="tag">Music</span>
     <h2>Collector's Edition Mini Vinyl</h2>
@@ -731,15 +892,15 @@ body.buy-page .vinyl-disc::after{
 
 <section id="access" class="section-title"><div class="kicker">Vault Access</div><h2>Access Passes</h2><p class="sub">Access purchases include the limited-time physical NFC collectible bonus.</p></section>
 <section class="grid" aria-label="Access">
-<article class="card"><div><span class="tag">Access</span><h2>Entry Access</h2><p class="price">$10.00</p><p class="duration">Entry Access 30 Days</p><ul><li>Vault room access tied to purchased tier</li><li>Album access included</li><li>Limited-time physical NFC collectible bonus included</li></ul><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+<article class="card access-card"><div><span class="tag">Access</span><h2>Entry Access</h2><p class="price">$10.00</p><p class="duration">Entry Access 30 Days</p><ul><li>Vault room access tied to purchased tier</li><li>Album access included</li><li>Limited-time physical NFC collectible bonus included</li></ul><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/10" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/9B6fZh34s4cScGM4KU4ZG06" target="_blank" rel="noopener">Stripe</a>
     </div></article>
-<article class="card"><div><span class="tag">Access</span><h2>Gold Access</h2><p class="price">$20.00</p><p class="duration">Gold Access 30 Days</p><ul><li>Vault room access tied to purchased tier</li><li>Album access included</li><li>Limited-time physical NFC collectible bonus included</li></ul><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+<article class="card access-card"><div><span class="tag">Access</span><h2>Gold Access</h2><p class="price">$20.00</p><p class="duration">Gold Access 30 Days</p><ul><li>Vault room access tied to purchased tier</li><li>Album access included</li><li>Limited-time physical NFC collectible bonus included</li></ul><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/20" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/dRm28r8oMaBgbCI4KU4ZG05" target="_blank" rel="noopener">Stripe</a>
     </div></article>
-<article class="card"><div><span class="tag">Access</span><h2>Elite Access</h2><p class="price">$30.00</p><p class="duration">Elite Access 30 Days</p><ul><li>Vault room access tied to purchased tier</li><li>Album access included</li><li>Limited-time physical NFC collectible bonus included</li></ul><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
+<article class="card access-card"><div><span class="tag">Access</span><h2>Elite Access</h2><p class="price">$30.00</p><p class="duration">Elite Access 30 Days</p><ul><li>Vault room access tied to purchased tier</li><li>Album access included</li><li>Limited-time physical NFC collectible bonus included</li></ul><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/fZu4gz34s24K6ioa5e4ZG04" target="_blank" rel="noopener">Stripe</a>
     </div></article>
@@ -747,15 +908,15 @@ body.buy-page .vinyl-disc::after{
 
 <section id="rewards" class="section-title"><div class="kicker">PLAY 3D</div><h2>Rewards</h2><p class="sub">Reward credit packs are separate from vault access.</p></section>
 <section class="grid" aria-label="Rewards">
-<article class="card"><div><span class="tag">Rewards</span><h2>Entry Rewards Pack</h2><p class="price">$10.00</p><p class="duration">2,500 Credits</p><ul><li>Adds PLAY 3D reward credits</li><li>Does not include vault room access</li><li>Activated after confirmed purchase</li></ul></div><div class="pay-row two-pay">
+<article class="card reward-card"><div><span class="tag">Rewards</span><h2>Entry Rewards Pack</h2><p class="price">$10.00</p><p class="duration">2,500 Credits</p><ul><li>Adds PLAY 3D reward credits</li><li>Does not include vault room access</li><li>Activated after confirmed purchase</li></ul></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/10" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/eVqcN55cAeRw2283GQ4ZG03" target="_blank" rel="noopener">Stripe</a>
     </div></article>
-<article class="card"><div><span class="tag">Rewards</span><h2>Gold Rewards Pack</h2><p class="price">$20.00</p><p class="duration">5,000 Credits</p><ul><li>Adds PLAY 3D reward credits</li><li>Does not include vault room access</li><li>Activated after confirmed purchase</li></ul></div><div class="pay-row two-pay">
+<article class="card reward-card"><div><span class="tag">Rewards</span><h2>Gold Rewards Pack</h2><p class="price">$20.00</p><p class="duration">5,000 Credits</p><ul><li>Adds PLAY 3D reward credits</li><li>Does not include vault room access</li><li>Activated after confirmed purchase</li></ul></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/20" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/5kQ00j48weRw36c0uE4ZG02" target="_blank" rel="noopener">Stripe</a>
     </div></article>
-<article class="card"><div><span class="tag">Rewards</span><h2>Elite Rewards Pack</h2><p class="price">$30.00</p><p class="duration">10,000 Credits</p><ul><li>Adds PLAY 3D reward credits</li><li>Does not include vault room access</li><li>Activated after confirmed purchase</li></ul></div><div class="pay-row two-pay">
+<article class="card reward-card"><div><span class="tag">Rewards</span><h2>Elite Rewards Pack</h2><p class="price">$30.00</p><p class="duration">10,000 Credits</p><ul><li>Adds PLAY 3D reward credits</li><li>Does not include vault room access</li><li>Activated after confirmed purchase</li></ul></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/30" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/dRmbJ1gVieRwcGM1yI4ZG01" target="_blank" rel="noopener">Stripe</a>
     </div></article>
