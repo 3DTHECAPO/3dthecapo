@@ -510,6 +510,45 @@ body.buy-page .pill.gold:hover{
 .brand-mark{font-family:"Black Ops One",system-ui,sans-serif;color:var(--gold2);font-size:28px;text-decoration:none;letter-spacing:1px;text-shadow:0 0 20px rgba(202,162,74,.22)}
 .section-title{text-align:center;margin:42px auto 18px}
 .section-title h2{font-family:"Black Ops One",system-ui,sans-serif;font-size:clamp(32px,5vw,56px);color:var(--gold2);text-transform:uppercase;margin:6px 0 8px;letter-spacing:1.2px}
+.section-title.access-bg,
+.section-title.rewards-bg{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(242,210,123,.34);
+  border-radius:26px;
+  margin-top:54px;
+  padding:34px 18px;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.38),rgba(0,0,0,.86)),
+    var(--section-bg) center/cover no-repeat;
+  box-shadow:0 28px 84px rgba(0,0,0,.76),0 0 34px rgba(202,162,74,.16),inset 0 1px 0 rgba(255,255,255,.07);
+}
+.section-title.access-bg::before,
+.section-title.rewards-bg::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 50% 80%,rgba(242,210,123,.22),transparent 38%);
+  pointer-events:none;
+}
+.section-title.access-bg > *,
+.section-title.rewards-bg > *{
+  position:relative;
+  z-index:1;
+}
+.access-bg{--section-bg:url('./access-key-bg.png')}
+.rewards-bg{--section-bg:url('./rewards-vault-bg.jpg')}
+.section-bg-grid{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(242,210,123,.22);
+  border-radius:26px;
+  padding:18px;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.74),rgba(0,0,0,.91)),
+    var(--section-bg) center/cover no-repeat;
+  box-shadow:0 26px 76px rgba(0,0,0,.74),0 0 28px rgba(202,162,74,.10);
+}
 .bonus-banner{margin:26px auto 8px;display:grid;grid-template-columns:92px 1fr;gap:18px;align-items:center;border:1px solid rgba(242,210,123,.50);border-radius:24px;background:radial-gradient(circle at 92% 20%,rgba(242,210,123,.16),transparent 25%),linear-gradient(180deg,rgba(30,20,6,.82),rgba(0,0,0,.78));box-shadow:0 28px 84px rgba(0,0,0,.76),0 0 30px rgba(202,162,74,.14);padding:20px}
 .bonus-icon{width:92px;height:92px;border-radius:22px;display:grid;place-items:center;color:#17130c;background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#8b641e);font-family:"Black Ops One",system-ui,sans-serif;font-size:42px}
 .bonus-banner h2{font-family:"Black Ops One",system-ui,sans-serif;color:var(--gold2);margin:0 0 6px;text-transform:uppercase;font-size:clamp(26px,4vw,46px)}
@@ -729,8 +768,8 @@ body.buy-page .vinyl-disc::after{
 
 </section>
 
-<section id="access" class="section-title"><div class="kicker">Vault Access</div><h2>Access Passes</h2><p class="sub">Access purchases include the limited-time physical NFC collectible bonus.</p></section>
-<section class="grid" aria-label="Access">
+<section id="access" class="section-title access-bg"><div class="kicker">Vault Access</div><h2>Access Passes</h2><p class="sub">Access purchases include the limited-time physical NFC collectible bonus.</p></section>
+<section class="grid section-bg-grid access-bg" aria-label="Access">
 <article class="card"><div><span class="tag">Access</span><h2>Entry Access</h2><p class="price">$10.00</p><p class="duration">Entry Access 30 Days</p><ul><li>Vault room access tied to purchased tier</li><li>Album access included</li><li>Limited-time physical NFC collectible bonus included</li></ul><div class="bonus-note">Includes FREE NFC Mini CD or Mini Vinyl while promotion lasts</div></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/10" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/9B6fZh34s4cScGM4KU4ZG06" target="_blank" rel="noopener">Stripe</a>
@@ -745,8 +784,8 @@ body.buy-page .vinyl-disc::after{
     </div></article>
 </section>
 
-<section id="rewards" class="section-title"><div class="kicker">PLAY 3D</div><h2>Rewards</h2><p class="sub">Reward credit packs are separate from vault access.</p></section>
-<section class="grid" aria-label="Rewards">
+<section id="rewards" class="section-title rewards-bg"><div class="kicker">PLAY 3D</div><h2>Rewards</h2><p class="sub">Reward credit packs are separate from vault access.</p></section>
+<section class="grid section-bg-grid rewards-bg" aria-label="Rewards">
 <article class="card"><div><span class="tag">Rewards</span><h2>Entry Rewards Pack</h2><p class="price">$10.00</p><p class="duration">2,500 Credits</p><ul><li>Adds PLAY 3D reward credits</li><li>Does not include vault room access</li><li>Activated after confirmed purchase</li></ul></div><div class="pay-row two-pay">
       <a class="cash-btn" href="https://cash.app/$3dcashin/10" target="_blank" rel="noopener">Cash App</a>
       <a class="stripe-btn" href="https://buy.stripe.com/eVqcN55cAeRw2283GQ4ZG03" target="_blank" rel="noopener">Stripe</a>
