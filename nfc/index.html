@@ -3,170 +3,46 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>PLAY 3D Vault Museum</title>
+  <title>PLAY 3D Vault Router</title>
+  <meta name="robots" content="noindex">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css">
-  <script src="../shared/access-bridge.js"></script>
+  <link rel="stylesheet" href="./nfc.css">
   <script>
     (function(){
-      if(window.Play3DAccess && window.Play3DAccess.requireTier('elite',{redirect:true})) return;
+      'use strict';
+      var params = new URLSearchParams(window.location.search);
+      var code = (params.get('code') || '').trim();
+      var target = code
+        ? './scan.html?code=' + encodeURIComponent(code)
+        : './vault-interface.html';
+      window.location.replace(target);
     })();
   </script>
   <style>
-html, body{
-  background: none !important;
-}
-body{
-  background:
-    linear-gradient(180deg,rgba(0,0,0,.50),rgba(0,0,0,.88)),
-    url("../assets/museum_bg.jpg") center/cover no-repeat !important;
-  background-attachment: fixed;
-}
-.museum-shell,
-.museum-hero,
-.museum-noise,
-body::before{
-  background: none !important;
-  background-image: none !important;
-}
+    body{margin:0;min-height:100vh;display:grid;place-items:center;background:linear-gradient(180deg,rgba(0,0,0,.82),rgba(0,0,0,.96)),url('./assets/vault-bg.jpg') center/cover;color:#f4f1ea;font-family:Oswald,Arial,sans-serif;text-align:center;padding:22px}
+    .router-card{width:min(620px,96vw);border:1px solid rgba(202,162,74,.40);border-radius:26px;background:linear-gradient(180deg,rgba(12,10,7,.92),rgba(0,0,0,.78));box-shadow:0 30px 90px rgba(0,0,0,.82);padding:26px}
+    h1{font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;margin:0 0 10px;text-transform:uppercase;letter-spacing:1px}
+    p{color:rgba(244,241,234,.78);font-size:18px;line-height:1.45;margin:0 0 18px}
+    .pill{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid rgba(202,162,74,.42);background:rgba(0,0,0,.50);color:#f4f1ea;text-decoration:none;font-weight:900;text-transform:uppercase;letter-spacing:1px}
+    .gold{color:#17130c;background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#8b641e)}
   </style>
 </head>
 <body>
-  <div class="museum-noise" aria-hidden="true"></div>
-
-  <main class="page-wrap museum-shell">
-    <header class="topbar museum-header">
-      <button class="back-btn museum-back" type="button" onclick="history.back()">← Back</button>
-      <div>
-        <div class="museum-kicker">3D THE CAPO</div>
-        <h1>VAULT MUSEUM</h1>
-        <div class="museum-subtitle">Photo Album</div>
-      </div>
-      <div class="chip museum-pass" id="museumPassState">ENTRY ACCESS</div>
-    </header><nav class="vault-main-nav"><a href="/nfc/scan.html">Scan</a><a href="/nfc/game-vault/index.html">Game Vault</a></nav>
-
-    <section class="page-card museum-hero">
-      <div class="hero-copy">
-        <div class="museum-kicker">Photo Album</div>
-        <h2>Vault Memories, Photos, And History</h2>
-        <p>The Vault Museum is the photo album and history wall for 3D THE CAPO: moments, chapters, fan memories, and archive slots ready for future uploads.</p>
-      </div>
-      <div class="hero-mark" aria-hidden="true">3D</div>
-    </section>
-
-    <section class="page-card room-section" data-room="entry">
-      <div class="room-head">
-        <div>
-          <div class="room-tier">ENTRY</div>
-          <h3>Entry Photo Chapter</h3>
-        </div>
-        <span class="room-status">Open</span>
-      </div>
-      <div class="exhibit-grid" id="entryGrid"></div>
-    </section>
-
-    <section class="page-card room-section locked" data-room="gold">
-      <div class="room-head">
-        <div>
-          <div class="room-tier">GOLD</div>
-          <h3>Gold Photo Chapter</h3>
-        </div>
-        <span class="room-status">Locked</span>
-      </div>
-      <div class="exhibit-grid" id="goldGrid"></div>
-    </section>
-
-    <section class="page-card room-section locked" data-room="elite">
-      <div class="room-head">
-        <div>
-          <div class="room-tier">ELITE</div>
-          <h3>Elite Photo Chapter</h3>
-        </div>
-        <span class="room-status">Locked</span>
-      </div>
-      <div class="exhibit-grid" id="eliteGrid"></div>
-    </section>
-
-    <section class="page-card museum-display-block photo-album-block">
-      <div class="room-head">
-        <div>
-          <div class="room-tier">PHOTO ALBUM</div>
-          <h3>Chapter Cards</h3>
-          <p class="room-note">Built for a growing wall of photos, memories, archive chapters, and future uploads.</p>
-        </div>
-        <span class="room-status">Tap To Expand</span>
-      </div>
-      <div class="museum-grid" id="imageWallGrid"></div>
-    </section>
-
-    <section class="page-card museum-display-block">
-      <div class="room-head">
-        <div>
-          <div class="room-tier">VIDEO WALL</div>
-          <h3>Trailers / Interviews</h3>
-        </div>
-        <span class="room-status">Optional Embeds</span>
-      </div>
-      <div class="video-wall" id="videoWall"></div>
-    </section>
-
-    <section class="page-card museum-display-block museum-two-col trophy-history-block">
-      <div>
-        <div class="room-head">
-          <div>
-            <div class="room-tier">TROPHY SHELF</div>
-            <h3>Akalaids</h3>
-            <p class="room-note">Future awards, plaques, wins, certificates, milestones, and achievements live here.</p>
-          </div>
-        </div>
-        <div class="trophy-shelf" id="trophyShelf"></div>
-      </div>
-      <div>
-        <div class="room-head">
-          <div>
-            <div class="room-tier">MUSEUM TIMELINE</div>
-            <h3>Photo / History Timeline</h3>
-          </div>
-        </div>
-        <div class="history-wall" id="historyWall"></div>
-      </div>
-    </section>
-
-    <section class="page-card museum-display-block">
-      <div class="room-head">
-        <div>
-          <div class="room-tier">FAN SUBMISSIONS</div>
-          <h3>Featured Fan Art / Moments</h3>
-        </div>
-        <span class="room-status">Display Only</span>
-      </div>
-      <div class="fan-submission-panel">
-        <div>
-          <strong>Upload Area Placeholder</strong>
-          <p>Drop future fan art, tagged photos, and featured community moments into the museum content data.</p>
-        </div>
-        <div class="museum-grid compact" id="fanGrid"></div>
-      </div>
-    </section>
+  <main class="router-card">
+    <h1>Opening Vault</h1>
+    <p>Routing you to the correct PLAY 3D access flow.</p>
+    <a class="pill gold" id="manualRoute" href="./vault-interface.html">Continue</a>
   </main>
-
-  <div class="exhibit-modal hidden" id="exhibitModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-panel">
-      <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
-      <div class="modal-art" id="modalArt"></div>
-      <div class="modal-copy">
-        <div class="modal-type" id="modalType"></div>
-        <h2 id="modalTitle"></h2>
-        <div class="modal-meta" id="modalMeta"></div>
-        <p id="modalText"></p>
-        <div class="modal-video hidden" id="modalVideo"></div>
-        <div class="audio-placeholder" id="modalUnlock"></div>
-      </div>
-    </div>
-  </div>
-
-  <script src="./script.js"></script>
+  <script>
+    (function(){
+      var params = new URLSearchParams(window.location.search);
+      var code = (params.get('code') || '').trim();
+      var target = code ? './scan.html?code=' + encodeURIComponent(code) : './vault-interface.html';
+      var link = document.getElementById('manualRoute');
+      if(link) link.href = target;
+    })();
+  </script>
 </body>
 </html>
