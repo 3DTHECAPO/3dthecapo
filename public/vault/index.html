@@ -56,11 +56,11 @@
   <script>
     (function () {
       const params = new URLSearchParams(window.location.search);
-      const code = params.get("code") || "";
+      const code = (params.get("code") || "").trim();
 
-      const target =
-        "/nfc/index.html" +
-        (code ? "?code=" + encodeURIComponent(code) : "");
+      const target = code
+        ? "/nfc/scan.html?code=" + encodeURIComponent(code)
+        : "/nfc/vault-interface.html";
 
       window.location.replace(target);
     })();
