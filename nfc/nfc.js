@@ -21,6 +21,8 @@ const connect=byId('connect');
 const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
 const TABLE = 'vault_codes';
+const MASTER_CODE = 'CAPO-MASTER-999';
+const MASTER_ROUTE = './rooms/master/index.html';
 
 const ROOM_MAP = {
   entry: 'room-entry',
@@ -150,7 +152,7 @@ function unlockMasterUI(){
   try{
     localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify({
       active:true,
-      code:'CAPO-MASTER-999',
+      code:MASTER_CODE,
       started_at:Date.now(),
       expires_at:Date.now() + (1000 * 60 * 60 * 12)
     }));
@@ -174,6 +176,18 @@ function unlockMasterUI(){
   show(connect);
 
   playAccessSequence();
+}
+
+function routeMasterCode(){
+  try{
+    localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify({
+      active:true,
+      code:MASTER_CODE,
+      started_at:Date.now(),
+      expires_at:Date.now() + (1000 * 60 * 60 * 12)
+    }));
+  }catch(e){}
+  window.location.replace(MASTER_ROUTE + '?code=' + encodeURIComponent(MASTER_CODE) + '&master=1');
 }
 
 async function getCode(codeValue){
@@ -269,8 +283,8 @@ async function init(){
     return;
   }
 
-  if(code === 'CAPO-MASTER-999'){
-    unlockMasterUI();
+  if(code === MASTER_CODE){
+    routeMasterCode();
     return;
   }
 

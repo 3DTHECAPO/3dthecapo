@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./nfc.css">
-</head>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">`r`n</head>
 <body class="locked">
   <div class="cinematic-overlay" aria-hidden="true">
     <div class="cinematic-fog-back"></div>
@@ -147,12 +147,34 @@
 
   <script>
   (function(){
+    var MASTER_CODE = 'CAPO-MASTER-999';
+    var MASTER_ROUTE = './rooms/master/index.html';
     function normalizeCode(value){ return (value || '').trim().toUpperCase(); }
+    function routeMasterCode(code){
+      try{
+        localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify({
+          active:true,
+          code:MASTER_CODE,
+          started_at:Date.now(),
+          expires_at:Date.now() + (1000 * 60 * 60 * 12)
+        }));
+      }catch(e){}
+      window.location.replace(MASTER_ROUTE + '?code=' + encodeURIComponent(code || MASTER_CODE) + '&master=1');
+    }
     function enterCode(){
       var input = document.getElementById('vaultCode');
       var code = normalizeCode(input ? input.value : '');
       if(!code){ alert('Enter a valid code.'); return; }
+      if(code === MASTER_CODE){
+        routeMasterCode(code);
+        return;
+      }
       window.location.href = './scan.html?code=' + encodeURIComponent(code);
+    }
+    var initialCode = normalizeCode(new URLSearchParams(window.location.search).get('code'));
+    if(initialCode === MASTER_CODE){
+      routeMasterCode(initialCode);
+      return;
     }
     document.addEventListener('DOMContentLoaded', function(){
       var btn = document.getElementById('enterVault');
