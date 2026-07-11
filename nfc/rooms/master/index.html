@@ -3,13 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Master Panel Redirect</title>
-  <meta http-equiv="refresh" content="0;url=../../index.html">
+  <title>Opening Master Control</title>
   <script>
-    window.location.replace('../../index.html');
+    (function(){
+      var MASTER_CODE = 'CAPO-MASTER-999';
+      var MASTER_CONTROL_URL = 'http://127.0.0.1:8787/CONTROLERS/MASTER%20COMMAND%20CENTER/index.html';
+      try{
+        localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify({
+          active:true,
+          code:MASTER_CODE,
+          started_at:Date.now(),
+          expires_at:Date.now() + (1000 * 60 * 60 * 12),
+          destination:MASTER_CONTROL_URL
+        }));
+      }catch(e){}
+      window.location.replace(MASTER_CONTROL_URL);
+    })();
   </script>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body>
-  <p><a href="../../index.html">Open Master Panel</a></p>
+  <h1>Opening Master Control</h1>
+  <p>Master session active. Opening the original Master Control Hub.</p>
+  <p><a href="http://127.0.0.1:8787/CONTROLERS/MASTER%20COMMAND%20CENTER/index.html">Open Master Control Hub</a></p>
+  <p><a href="../../scan.html">Back To Scan</a></p>
 </body>
 </html>
