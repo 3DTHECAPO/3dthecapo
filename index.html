@@ -13,6 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css?v=4">
+  <link rel="stylesheet" href="./cart.css?v=1">
 
 <style>
 /* BUY PAGE ROUTE / MERCH CARD SYNC */
@@ -71,7 +72,7 @@
 }
 </style>
 
-</head>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">`r`n</head>
 <body>
   <div class="noise" aria-hidden="true"></div>
 
@@ -87,6 +88,7 @@
         <a class="pill" href="#mail">Updates</a>
         <a class="pill gold" href="/nfc/vault-interface.html">Vault Directory</a>
         <a class="pill gold" href="./buy.html">Buy Access</a>
+        <button class="pill capo-cart-nav-button" id="cartButton" type="button">Cart (<span id="cartCount">0</span>)</button>
       </nav>
       <div class="tagline">HUSTLE • GRIND • DOMINATE</div>
     </header>
@@ -482,6 +484,7 @@
 <!-- your main script loads AFTER the player -->
 <script src="./script.js?v=email-lock-1"></script>
 
+<script src="./cart.js?v=1"></script>
 <script>
 (function () {
   const MERCH_BUY_URL = './buy.html';
