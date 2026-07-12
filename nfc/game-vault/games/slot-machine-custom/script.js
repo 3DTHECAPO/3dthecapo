@@ -97,6 +97,9 @@
     'capo_pass_session',
     'CAPO_PASS_SESSION'
   ];
+  const PLAY3D_SYMBOL_WEIGHT = 0.001;
+  const VAULT_PASS_SYMBOL_WEIGHT = 0.018;
+  const play3dSymbol = {id:'play-3d', src:'./assets/play-3d.png', pay:44};
   const regularSymbols = [
     {id:'cash', src:'./assets/cash.png', pay:10},
     {id:'chain', src:'./assets/chain.png', pay:12},
@@ -106,8 +109,10 @@
     {id:'lock', src:'./assets/lock.png', pay:15},
     {id:'mic', src:'./assets/mic.png', pay:16},
     {id:'speaker', src:'./assets/speaker.png', pay:13},
-    {id:'vault', src:'./assets/vault.png', pay:24}
+    {id:'vault', src:'./assets/vault.png', pay:24},
+    play3dSymbol
   ];
+  const ordinaryReelSymbols = regularSymbols.filter(symbol => symbol.id !== 'play-3d');
   const vaultPassSymbols = [
     {id:'vault-pass-100x3', src:'./assets/cover-100x3.png'},
     {id:'vault-pass-grammy', src:'./assets/cover-fuck-a-grammy.png'},
@@ -142,8 +147,10 @@
   }
 
   function weightedSymbol(){
-    if(Math.random() < 0.018) return vaultPassSymbols[Math.floor(Math.random() * vaultPassSymbols.length)];
-    return regularSymbols[Math.floor(Math.random() * regularSymbols.length)];
+    const roll = Math.random();
+    if(roll < PLAY3D_SYMBOL_WEIGHT) return play3dSymbol;
+    if(roll < PLAY3D_SYMBOL_WEIGHT + VAULT_PASS_SYMBOL_WEIGHT) return vaultPassSymbols[Math.floor(Math.random() * vaultPassSymbols.length)];
+    return ordinaryReelSymbols[Math.floor(Math.random() * ordinaryReelSymbols.length)];
   }
 
   function readJson(key, fallback){
@@ -219,11 +226,10 @@
   }
 
   function play3dGlobalWinBoard(board){
-    const vault = regularSymbols.find(symbol => symbol.id === 'vault') || regularSymbols[0];
     const next = board.slice();
-    next[3] = vault;
-    next[4] = vault;
-    next[5] = vault;
+    next[3] = play3dSymbol;
+    next[4] = play3dSymbol;
+    next[5] = play3dSymbol;
     return next;
   }
 
