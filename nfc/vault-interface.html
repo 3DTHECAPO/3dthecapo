@@ -7,4 +7,96 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./nfc
+  <link rel="stylesheet" href="./nfc.css">
+  <link rel="stylesheet" href="./vault-polish.css">
+  <style>
+    body{
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.20)),
+        url("./assets/vault_interface.jpg") center/cover fixed no-repeat;
+    }
+    .page-wrap{width:min(1180px,92vw);margin:0 auto;padding:18px 0 56px}
+    .page-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    @media (max-width:980px){.page-grid,.product-grid{grid-template-columns:1fr}}
+  </style>
+
+  <script src="./shared/access-bridge.js"></script>
+  <script>
+    (function(){
+      if(window.Play3DAccess && window.Play3DAccess.requireTier('gold',{redirect:true})) return;
+    })();
+  </script>
+
+</head>
+<body class="room-cinematic room-interface">
+  <div class="noise"></div>
+  <div class="page-wrap">
+    <header class="topbar">
+      <a class="logo-link" href="./index.html"><img class="logo" src="./assets/vault_stamp_gold.png" alt="Vault Seal"></a>
+      <div class="action-row" style="gap:10px;flex-wrap:wrap">
+        <a class="back-btn" href="./scan.html">Back To Vault</a>
+        <a class="back-btn" href="../index.html">Main Site</a>
+        <a class="back-btn" href="./game-vault/index.html">Game Vault</a>
+      </div>
+    </header>
+    <section class="page-card" style="padding:22px">
+      <div class="eyebrow">Gold Access</div>
+      <h1>Vault Directory</h1>
+      <p>Choose where to go next. PLAY 3D is the game floor. The Vault Directory connects the music, merch, museum, and hidden rooms.</p>
+      <div class="action-row" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="./game-vault/index.html">PLAY 3D Game Floor</a><a class="btn" href="./scan.html">Open Scan Page</a></div>
+    </section>
+    <section class="page-grid">
+      <article class="page-card">
+        <div class="eyebrow">Gold</div>
+        <h3>Gold Music Lounge</h3>
+        <p>The dedicated listening lounge for Spotify, video, and premium music routes.</p>
+        <a class="btn small gold" href="./album-chamber.html">Enter Lounge</a>
+      </article>
+      <article class="page-card">
+        <div class="eyebrow">Elite</div>
+        <h3>Elite Drop Lounge</h3>
+        <p>The VIP merch and hidden-drop lane for premium access holders.</p>
+        <a class="btn small gold" href="./merch-drop-room.html">Open Drops</a>
+      </article>
+      <article class="page-card">
+        <div class="eyebrow">Games</div>
+        <h3>PLAY 3D Game Floor</h3>
+        <p>PLAY 3D means games only: chess, dominoes, cards, casino, and the Game Vault floor.</p>
+        <a class="btn small gold" href="./game-vault/index.html">Enter Game Floor</a>
+      </article>
+      <article class="page-card">
+        <div class="eyebrow">Music</div>
+        <h3>Album Chamber</h3>
+        <p>Go deeper into the Gold music lane for album moments and release content.</p>
+        <a class="btn small" href="./album-chamber.html">Open Album Chamber</a>
+      </article>
+      <article class="page-card">
+        <div class="eyebrow">Merch</div>
+        <h3>Merch Drop Room</h3>
+        <p>Preview vault merch and move toward Elite-exclusive product drops.</p>
+        <a class="btn small" href="./merch-drop-room.html">Open Merch Room</a>
+      </article>
+      <article class="page-card">
+        <div class="eyebrow">Elite Merch</div>
+        <h3>Exclusive Merch Vault</h3>
+        <p>Reserved drop space for premium merch previews, claims, and limited pieces.</p>
+        <a class="btn small" href="./exclusive-merch-vault.html">Open Merch Vault</a>
+      </article>
+      <article class="page-card">
+        <div class="eyebrow">Archive</div>
+        <h3>Vault Museum</h3>
+        <p>History wall, trophies, moments, fan submissions, and archive displays.</p>
+        <a class="btn small" href="./museum/index.html">Open Museum</a>
+      </article>
+      <article class="page-card">
+        <div class="eyebrow">Hidden</div>
+        <h3>Secret Room</h3>
+        <p>A bunker-style room for hidden drops, clues, exclusive visuals, and private content.</p>
+        <a class="btn small" href="./secret-page.html">Open Secret Room</a>
+      </article>
+    </section>
+    
+  </div>
+</body>
+</html>
