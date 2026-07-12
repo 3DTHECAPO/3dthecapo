@@ -87,6 +87,16 @@
 
   const bank = window.Play3DGameBank;
   const points = window.Play3DPoints;
+  const GLOBAL_SPIN_ENDPOINT = 'https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint';
+  const GLOBAL_SPIN_KEY = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
+  const PASS_KEYS = [
+    'play3d_vault_pass_v1',
+    'play3d_pass_session',
+    'PLAY3D_PASS_SESSION',
+    'vault_pass_session',
+    'capo_pass_session',
+    'CAPO_PASS_SESSION'
+  ];
   const regularSymbols = [
     {id:'cash', src:'./assets/cash.png', pay:10},
     {id:'chain', src:'./assets/chain.png', pay:12},
@@ -134,6 +144,87 @@
   function weightedSymbol(){
     if(Math.random() < 0.018) return vaultPassSymbols[Math.floor(Math.random() * vaultPassSymbols.length)];
     return regularSymbols[Math.floor(Math.random() * regularSymbols.length)];
+  }
+
+  function readJson(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){
+      return fallback;
+    }
+  }
+
+  function activePassSession(){
+    try{
+      if(window.Play3DPassSession && typeof window.Play3DPassSession.current === 'function') return window.Play3DPassSession.current();
+    }catch(e){}
+    try{
+      if(window.Play3DAccess && typeof window.Play3DAccess.currentPassSession === 'function') return window.Play3DAccess.currentPassSession();
+    }catch(e){}
+    for(let i = 0; i < PASS_KEYS.length; i++){
+      const pass = readJson(PASS_KEYS[i], null);
+      if(pass && (!pass.expires_at || new Date(pass.expires_at).getTime() > Date.now())) return pass;
+    }
+    return {};
+  }
+
+  function spinIdentity(){
+    const pass = activePassSession() || {};
+    const profile = readJson('play3d_member_profile_v1', {});
+    let identity = {};
+    try{
+      if(window.Play3DMemberSystem && typeof window.Play3DMemberSystem.identity === 'function'){
+        identity = window.Play3DMemberSystem.identity() || {};
+      }
+    }catch(e){}
+    return {
+      member_id:identity.memberTableId || identity.member_table_id || identity.memberId || identity.member_id || profile.member_id || profile.id || pass.member_table_id || pass.member_id || '',
+      member_number:identity.memberNumber || identity.member_number || profile.member_number || pass.member_number || '',
+      email:identity.email || profile.email || pass.email || pass.recipient_email || pass.recipientEmail || '',
+      code:pass.code || localStorage.getItem('play3d_last_code') || '',
+      tier:identity.tier || profile.tier || pass.tier || pass.code_type || ''
+    };
+  }
+
+  function spinClientId(){
+    const random = Math.random().toString(36).slice(2);
+    return 'slot-machine-custom:' + Date.now() + ':' + random;
+  }
+
+  async function recordGlobalSpin(clientSpinId){
+    const identity = spinIdentity();
+    const res = await fetch(GLOBAL_SPIN_ENDPOINT, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey':GLOBAL_SPIN_KEY,
+        'Authorization':'Bearer ' + GLOBAL_SPIN_KEY
+      },
+      body:JSON.stringify({
+        source:'play3d_global_slot_spin',
+        game:'slot-machine-custom',
+        client_spin_id:clientSpinId,
+        bet:betVal,
+        member_id:identity.member_id,
+        member_number:identity.member_number,
+        email:identity.email,
+        code:identity.code,
+        tier:identity.tier
+      })
+    });
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error(data.error || data.message || ('global_spin_http_' + res.status));
+    return data;
+  }
+
+  function play3dGlobalWinBoard(board){
+    const vault = regularSymbols.find(symbol => symbol.id === 'vault') || regularSymbols[0];
+    const next = board.slice();
+    next[3] = vault;
+    next[4] = vault;
+    next[5] = vault;
+    return next;
   }
 
   function setCell(cell, symbol){
@@ -236,8 +327,10 @@
     return Math.min(125, Math.max(25, Math.floor(win / 20)));
   }
 
-  function finishSpin(board){
+  function finishSpin(board, globalSpin){
     stopSpinSound();
+    const globalWinner = !!(globalSpin && globalSpin.is_global_winner);
+    if(globalWinner) board = play3dGlobalWinBoard(board);
     board.forEach((symbol, i)=>setCell(cells[i], symbol));
     cells.forEach(cell => cell.classList.remove('spinning'));
     const passCount = vaultPassCount(board);
@@ -261,10 +354,18 @@
       playBigWin();
     }
 
+    if(globalWinner){
+      label = 'PLAY 3D GLOBAL 444 WIN';
+      win = Math.max(win, betVal * 44);
+      playBigWin();
+    }
+
     creditsVal += win;
     lastWin.textContent = win;
     stateText.textContent = label;
-    resultLine.textContent = passCount >= 3
+    resultLine.textContent = globalWinner
+      ? 'PLAY 3D global spin #444 verified. Challenge claim created for review.'
+      : passCount >= 3
       ? 'Vault Pass unlocked. Claim button is ready.'
       : win
         ? label + ' pays ' + win + ' credits. ' + (scored.hits && scored.hits.length ? scored.hits.map(hit => hit.line + ': ' + hit.combo + ' = ' + hit.payout).join(' | ') : '')
@@ -275,6 +376,16 @@
     playAgainBtn.hidden = false;
     save();
     render();
+  }
+
+  async function completeSpin(board, clientSpinId){
+    let globalSpin = null;
+    try{
+      globalSpin = await recordGlobalSpin(clientSpinId);
+    }catch(e){
+      console.warn('[PLAY 3D GLOBAL SPIN] Server counter unavailable; normal spin result will continue.', e);
+    }
+    finishSpin(board, globalSpin);
   }
 
   function spin(){
@@ -294,6 +405,7 @@
     stateText.textContent = 'SPINNING';
     resultLine.textContent = 'Reels spinning...';
     playAgainBtn.hidden = true;
+    const clientSpinId = spinClientId();
     lastLineHits = [];
     clearPaylines();
     spinBtn.classList.add('pulled');
@@ -308,7 +420,7 @@
       if(ticks >= 15){
         clearInterval(interval);
         spinBtn.classList.remove('pulled');
-        finishSpin(Array.from({length:9}, weightedSymbol));
+        completeSpin(Array.from({length:9}, weightedSymbol), clientSpinId);
       }
     }, 80);
   }
