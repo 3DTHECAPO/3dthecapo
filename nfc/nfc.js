@@ -21,8 +21,6 @@ const connect=byId('connect');
 const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
 const TABLE = 'vault_codes';
-const MASTER_CODE = 'CAPO-MASTER-999';
-const MASTER_ROUTE = './rooms/master/index.html';
 
 const ROOM_MAP = {
   entry: 'room-entry',
@@ -37,7 +35,7 @@ function hide(el){ if(el) el.classList.add('hidden'); }
 
 async function logEvent(codeValue, tier, type){
   try{
-    await fetch(`${SUPABASE_URL}/rest/v1/vault_logs`,{
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/dynamic-endpoint`,{
       method:'POST',
       headers:{
         'apikey':SUPABASE_ANON,
@@ -45,6 +43,7 @@ async function logEvent(codeValue, tier, type){
         'Content-Type':'application/json'
       },
       body:JSON.stringify({
+        source:'nfc_vault_log',
         code: codeValue,
         tier: tier || '',
         event_type: type,
@@ -52,9 +51,17 @@ async function logEvent(codeValue, tier, type){
         page: window.location.pathname
       })
     });
-  }catch(e){}
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok){
+      console.error('Vault log failed', data);
+      return { success:false, error:data };
+    }
+    return data;
+  }catch(e){
+    console.error('Vault log request failed', e);
+    return { success:false, error:String(e && e.message ? e.message : e) };
+  }
 }
-
 
 function fireBrevoSafe(codeValue, tier){
   // Keeps Brevo-compatible hooks non-blocking. If your Brevo script is loaded anywhere,
@@ -152,7 +159,7 @@ function unlockMasterUI(){
   try{
     localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify({
       active:true,
-      code:MASTER_CODE,
+      code:'CAPO-MASTER-999',
       started_at:Date.now(),
       expires_at:Date.now() + (1000 * 60 * 60 * 12)
     }));
@@ -176,18 +183,6 @@ function unlockMasterUI(){
   show(connect);
 
   playAccessSequence();
-}
-
-function routeMasterCode(){
-  try{
-    localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify({
-      active:true,
-      code:MASTER_CODE,
-      started_at:Date.now(),
-      expires_at:Date.now() + (1000 * 60 * 60 * 12)
-    }));
-  }catch(e){}
-  window.location.replace(MASTER_ROUTE + '?code=' + encodeURIComponent(MASTER_CODE) + '&master=1');
 }
 
 async function getCode(codeValue){
@@ -283,8 +278,8 @@ async function init(){
     return;
   }
 
-  if(code === MASTER_CODE){
-    routeMasterCode();
+  if(code === 'CAPO-MASTER-999'){
+    unlockMasterUI();
     return;
   }
 
@@ -321,7 +316,7 @@ async function init(){
     const tier = String(record.code_type || 'ENTRY').toLowerCase();
     saveVaultPass(record, tier);
     fireBrevoSafe(code, tier);
-    logEvent(code, tier, 'success');
+    await logEvent(code, tier, 'success');
     unlockUI(tier);
   }catch(err){
     console.error(err);
