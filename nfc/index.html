@@ -3,45 +3,49 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>PLAY 3D Vault Router</title>
+  <title>Access Required | PLAY 3D Vault</title>
   <meta name="robots" content="noindex">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./nfc.css">
-  <script>
-    (function(){
-      'use strict';
-      var params = new URLSearchParams(window.location.search);
-      var code = (params.get('code') || '').trim();
-      var target = code
-        ? './scan.html?code=' + encodeURIComponent(code)
-        : './vault-interface.html';
-      window.location.replace(target);
-    })();
-  </script>
   <style>
     body{margin:0;min-height:100vh;display:grid;place-items:center;background:linear-gradient(180deg,rgba(0,0,0,.82),rgba(0,0,0,.96)),url('./assets/vault-bg.jpg') center/cover;color:#f4f1ea;font-family:Oswald,Arial,sans-serif;text-align:center;padding:22px}
-    .router-card{width:min(620px,96vw);border:1px solid rgba(202,162,74,.40);border-radius:26px;background:linear-gradient(180deg,rgba(12,10,7,.92),rgba(0,0,0,.78));box-shadow:0 30px 90px rgba(0,0,0,.82);padding:26px}
-    h1{font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;margin:0 0 10px;text-transform:uppercase;letter-spacing:1px}
-    p{color:rgba(244,241,234,.78);font-size:18px;line-height:1.45;margin:0 0 18px}
+    .router-card{width:min(680px,96vw);border:1px solid rgba(202,162,74,.40);border-radius:26px;background:linear-gradient(180deg,rgba(12,10,7,.92),rgba(0,0,0,.78));box-shadow:0 30px 90px rgba(0,0,0,.82);padding:28px}
+    .eyebrow{color:#f2d27b;letter-spacing:2px;text-transform:uppercase;font-weight:900;font-size:13px;margin-bottom:8px}
+    h1{font-family:'Black Ops One',system-ui,sans-serif;color:#f2d27b;margin:0 0 12px;text-transform:uppercase;letter-spacing:1px;font-size:clamp(34px,8vw,68px);line-height:.95}
+    p{color:rgba(244,241,234,.78);font-size:18px;line-height:1.45;margin:0 auto 18px;max-width:560px}
+    .action-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
     .pill{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid rgba(202,162,74,.42);background:rgba(0,0,0,.50);color:#f4f1ea;text-decoration:none;font-weight:900;text-transform:uppercase;letter-spacing:1px}
     .gold{color:#17130c;background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#8b641e)}
   </style>
 </head>
 <body>
   <main class="router-card">
-    <h1>Opening Vault</h1>
-    <p>Routing you to the correct PLAY 3D access flow.</p>
-    <a class="pill gold" id="manualRoute" href="./vault-interface.html">Continue</a>
+    <div class="eyebrow" id="accessTier">ACCESS REQUIRED</div>
+    <h1>ACCESS REQUIRED</h1>
+    <p id="accessMessage">This room requires Gold access or higher. Scan merch, enter a valid code, or upgrade access to continue.</p>
+    <div class="action-row">
+      <a class="pill gold" href="./scan.html">Scan / Enter Code</a>
+      <a class="pill" href="../buy.html">Buy Access</a>
+      <a class="pill" href="../index.html">Back To Main Site</a>
+    </div>
   </main>
   <script>
     (function(){
       var params = new URLSearchParams(window.location.search);
-      var code = (params.get('code') || '').trim();
-      var target = code ? './scan.html?code=' + encodeURIComponent(code) : './vault-interface.html';
-      var link = document.getElementById('manualRoute');
-      if(link) link.href = target;
+      var target = String(params.get('target') || '').toLowerCase();
+      var message = document.getElementById('accessMessage');
+      var tier = document.getElementById('accessTier');
+      if(target.indexOf('vault-interface.html') !== -1){
+        if(tier) tier.textContent = 'GOLD ACCESS REQUIRED';
+        if(message) message.textContent = 'Vault Directory requires Gold access or higher. Scan merch, enter a valid code, or upgrade access to continue.';
+        return;
+      }
+      if(target.indexOf('merch-drop-room.html') !== -1 || target.indexOf('exclusive-merch-vault.html') !== -1 || target.indexOf('secret-page.html') !== -1 || target.indexOf('museum/') !== -1){
+        if(tier) tier.textContent = 'ELITE ACCESS REQUIRED';
+        if(message) message.textContent = 'This room requires Elite access or higher. Scan merch, enter a valid code, or upgrade access to continue.';
+      }
     })();
   </script>
 </body>
