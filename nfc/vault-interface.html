@@ -24,7 +24,8 @@
   <script src="./shared/access-bridge.js"></script>
   <script>
     (function(){
-      if(window.Play3DAccess && window.Play3DAccess.requireTier('gold',{redirect:true})) return;
+      if(window.Play3DAccess && window.Play3DAccess.requireTier('gold',{redirect:false})) return;
+      window.location.replace('./index.html?target=%2Fnfc%2Fvault-interface.html');
     })();
   </script>
 
@@ -33,7 +34,7 @@
   <div class="noise"></div>
   <div class="page-wrap">
     <header class="topbar">
-      <a class="logo-link" href="./index.html"><img class="logo" src="./assets/vault_stamp_gold.png" alt="Vault Seal"></a>
+      <a class="logo-link" href="./vault-interface.html"><img class="logo" src="./assets/vault_stamp_gold.png" alt="Vault Seal"></a>
       <div class="action-row" style="gap:10px;flex-wrap:wrap">
         <a class="back-btn" href="./scan.html">Back To Vault</a>
         <a class="back-btn" href="../index.html">Main Site</a>
