@@ -9,8 +9,6 @@
   }
 
   function routeFor(codeType, code){
-    // IMPORTANT: always route /nfc/index.html?code= so ACCESS GRANTED + cinematic doors can run.
-    // The room/tier is still decided from Supabase inside /nfc/nfc.js.
     const safeCode = encodeURIComponent(normalizeCode(code));
     return `/nfc/index.html?code=${safeCode}&play=1`;
   }
@@ -40,8 +38,6 @@
           "Content-Type": "application/json",
           "Prefer": "return=minimal"
         },
-        // This restores your analytics dashboard because it reads used/used_at.
-        // It does NOT block re-entry because consumeOnRedeem remains false.
         body: JSON.stringify({
           used: true,
           used_at: new Date().toISOString()
@@ -75,7 +71,6 @@
     }
   }
 
-
   function fireBrevoSafe(row, eventType){
     try{
       window.dispatchEvent(new CustomEvent('play3d:redeem_success', { detail:{ code: row && row.code || '', tier: row && row.code_type || '', event_type:eventType || 'redeem_success' } }));
@@ -90,6 +85,25 @@
     const code = normalizeCode(rawCode);
     if(!code) return {ok:false, reason:"empty"};
 
+    if(code === "CAPO-MASTER-999"){
+      const startedAt = Date.now();
+      const expiresAt = startedAt + (1000 * 60 * 60 * 12);
+      try{
+        localStorage.setItem("CAPO_MASTER_SESSION", JSON.stringify({
+          active:true,
+          code,
+          started_at:startedAt,
+          expires_at:expiresAt
+        }));
+      }catch(e){}
+      return {
+        ok:true,
+        route:"/nfc/rooms/master/index.html?code=CAPO-MASTER-999&master=1&from=master",
+        row:{code, code_type:"master"},
+        pass:{tier:"master", code, expires_at:new Date(expiresAt).toISOString(), active:true, valid:true}
+      };
+    }
+
     const row = await fetchCodeRecord(code);
 
     if(!row){
@@ -97,10 +111,7 @@
       return {ok:false, reason:"invalid"};
     }
 
-    // 🔥 START TIMER ON FIRST USE (SAFE VERSION)
-    // Uses the duration saved by the generator dropdown for every code.
     if (!row.expires_at) {
-
       const map = {
         "1h": 1 * 60 * 60 * 1000,
         "6h": 6 * 60 * 60 * 1000,
@@ -110,14 +121,11 @@
         "7d": 7 * 24 * 60 * 60 * 1000,
         "30d": 30 * 24 * 60 * 60 * 1000
       };
-
       const key = row.duration || "1h";
       const durationMs = map[key];
-
       if (durationMs) {
         const now = new Date();
         const expires = new Date(now.getTime() + durationMs);
-
         try {
           await fetch(`${supabaseUrl}/rest/v1/${tableName}?id=eq.${encodeURIComponent(row.id)}`, {
             method: "PATCH",
@@ -127,13 +135,9 @@
               "Content-Type": "application/json",
               "Prefer": "return=representation"
             },
-            body: JSON.stringify({
-              expires_at: expires.toISOString()
-            })
+            body: JSON.stringify({ expires_at: expires.toISOString() })
           });
-
           row.expires_at = expires.toISOString();
-
         } catch (e) {
           console.warn("Timer failed", e);
         }
@@ -150,7 +154,6 @@
       return {ok:false, reason:"expired", row};
     }
 
-    // Tracking must never block access. Fire-and-forget keeps the vault from freezing.
     patchCodeHit(row.id);
     logVaultEvent(row, 'redeem_success');
     fireBrevoSafe(row, 'redeem_success');
