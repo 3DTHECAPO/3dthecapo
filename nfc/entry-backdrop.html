@@ -46,7 +46,27 @@
         <div class="video-card"><iframe src="https://www.youtube.com/embed/sroTF0qw92k" title="3D THE CAPO video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>
       </article>
     </section>
+
+    <section class="vault-grid" id="paidAlbumAccess" hidden>
+      <article class="vault-card">
+        <strong>Album Access</strong>
+        <p>Included for active paid monthly members for a limited time.</p>
+        <a class="vault-btn gold" href="./rooms/gold-album/">Open Album Chamber</a>
+      </article>
+    </section>
   </main>
+  <script>
+    (function(){
+      try{
+        var pass = JSON.parse(localStorage.getItem('play3d_vault_pass_v1') || 'null');
+        var paidMonthly = pass && pass.active === true && String(pass.duration || '').toLowerCase() === '30d';
+        if(paidMonthly){
+          var album = document.getElementById('paidAlbumAccess');
+          if(album) album.hidden = false;
+        }
+      }catch(e){}
+    })();
+  </script>
   <script src="./cinematic-room-transitions.js"></script>
 </body>
 </html>
