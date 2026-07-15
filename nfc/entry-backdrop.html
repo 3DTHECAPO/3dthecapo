@@ -3,75 +3,61 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Entry Album Room</title>
+  <title>Entry Chamber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./nfc.css">
-  <link rel="stylesheet" href="./cinematic-vault-rooms.css">
-  <script src="../public/shared/config.js"></script>
-  <script src="../public/shared/pass-session.js"></script>
-  <script src="../public/shared/room-guard.js"></script>
-  <script>Play3DRoomGuard.requireTier("ENTRY");</script>
+  <style>
+    body{background:linear-gradient(180deg, rgba(0,0,0,.46), rgba(0,0,0,.88)), url("./assets/entry_backdrop.jpg") center/cover fixed no-repeat}
+    .page-wrap{width:min(1180px,92vw);margin:0 auto;padding:18px 0 56px;position:relative;z-index:2}
+    .page-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .topbar{gap:14px;align-items:center}
+    .topbar .action-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+    .topbar .back-btn{white-space:nowrap}
+    @media (max-width:980px){.page-grid{grid-template-columns:1fr}.topbar{align-items:flex-start}.topbar .action-row{width:100%;justify-content:flex-start}.topbar .back-btn{flex:1 1 auto;text-align:center}}
+  </style>
+  <script src="./shared/access-bridge.js"></script>
+  <script>
+    (function(){
+      if(window.Play3DAccess && window.Play3DAccess.requireTier('entry',{redirect:true})) return;
+    })();
+  </script>
 </head>
-<body class="cinematic-vault-room entry-album-room">
-  <div class="vault-smoke" aria-hidden="true"></div>
-  <main class="vault-page">
-    <header class="vault-topbar">
-      <a class="vault-logo-mark" href="./index.html">ENTRY</a>
-      <nav class="vault-nav" aria-label="Entry room navigation">
-        <a class="back-btn" href="./scan.html">Back To Entry</a>
+<body>
+  <div class="cinematic-overlay" aria-hidden="true">
+    <div class="cinematic-fog-back"></div>
+    <div class="cinematic-glow"></div>
+    <div class="cinematic-particles"></div>
+    <div class="cinematic-fog-front"></div>
+    <div class="cinematic-vignette"></div>
+  </div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="page-wrap">
+    <header class="topbar">
+      <a class="logo-link" href="./index.html"><img class="logo" src="./assets/vault_stamp_gold.png" alt="Vault Seal"></a>
+      <div class="action-row">
+        <a class="back-btn" href="./scan.html">Back To Vault</a>
+        <a class="back-btn" href="../index.html">Main Site</a>
         <a class="back-btn" href="./game-vault/index.html">Game Vault</a>
-        <a class="back-btn" href="./index.html">Back To Vault</a>
-      </nav>
+      </div>
     </header>
-
-    <section class="vault-hero">
-      <p class="vault-kicker">Entry Monthly Access</p>
-      <h1>Entry Album Room</h1>
-      <p class="vault-lede">Monthly Entry access includes the album room free for a limited time, plus music, video, and PLAY 3D access.</p>
-      <div class="vault-actions">
-        <a class="vault-btn gold" href="./rooms/gold-album/">Open Album Chamber</a>
-        <a class="vault-btn ghost" href="./game-vault/index.html">PLAY 3D</a>
+    <section class="page-card">
+      <div class="eyebrow">Private Chamber</div>
+      <h1>Entry Chamber</h1>
+      <p>The first vault chamber for early access music and visual discovery.</p>
+      <div class="action-row" style="margin-top:16px"><a class="btn gold" href="https://youtube.com/@iiidtv">Watch Channel</a></div>
+    </section>
+    <section class="page-grid">
+      <div class="page-card">
+        <h3>Music</h3>
+        <div class="embed-frame"><iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/4R7uJYf4ts6pthecl9IVBF?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+      </div>
+      <div class="page-card">
+        <h3>Video</h3>
+        <div class="video-card"><iframe src="https://www.youtube.com/embed/sroTF0qw92k" title="3D THE CAPO video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>
       </div>
     </section>
-
-    <section class="vault-grid two">
-      <article class="vault-card">
-        <h2>Album Access</h2>
-        <div class="vault-visual">Limited-Time Album Pass</div>
-        <p>Your active monthly Entry pass includes access to the album chamber during the promotional access period.</p>
-        <a class="vault-btn gold" href="./rooms/gold-album/">Enter Album Chamber</a>
-      </article>
-
-      <article class="vault-card">
-        <h2>Entry Benefits</h2>
-        <ul class="vault-track-list">
-          <li><span>Album Room</span><span>Limited Time</span></li>
-          <li><span>Music Access</span><span>Included</span></li>
-          <li><span>Video Access</span><span>Included</span></li>
-          <li><span>PLAY 3D Floor</span><span>Included</span></li>
-        </ul>
-      </article>
-    </section>
-
-    <section class="vault-grid">
-      <article class="vault-card">
-        <strong>Listen</strong>
-        <p>Open the album chamber for the current release presentation, track list, and listening routes.</p>
-        <a class="vault-btn ghost" href="./rooms/gold-album/">Listen Now</a>
-      </article>
-
-      <article class="vault-card">
-        <strong>Watch</strong>
-        <p>Watch official videos, visualizers, studio clips, and campaign footage.</p>
-        <a class="vault-btn ghost" href="https://youtube.com/@iiidtv">Watch Channel</a>
-      </article>
-
-      <article class="vault-card">
-        <strong>Play</strong>
-        <p>Continue to the PLAY 3D game floor while your monthly access pass remains active.</p>
-        <a class="vault-btn gold" href="./game-vault/index.html">Open Game Vault</a>
-      </article>
-    </section>
-  </main>
-  <script src="./cinematic-room-transitions.js"></script>
+  </div>
 </body>
 </html>
