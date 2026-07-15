@@ -24,30 +24,26 @@
 
     <section class="card">
       <div class="hero">
-        <div class="hero-title">Vault Access</div>
-        <div class="hero-sub">ENTER CODE</div>
+        <div class="hero-title">Code Router</div>
+        <div class="hero-sub">ENTER OR OPEN A CODE LINK</div>
       </div>
 
       <div class="input-wrap">
         <label for="codeInput">Redeem Code</label>
-        <input id="codeInput" placeholder="ENTRY001 / GOLD001 / ELITE001">
+        <input id="codeInput" placeholder="ENTRY / GOLD / ELITE / BOOST / MEMBER / VIP">
         <button id="redeemBtn" type="button">Redeem</button>
       </div>
 
       <div class="status">
         <div class="status-kicker">Status</div>
         <div class="status-text ok" id="statusText">READY</div>
-        <div class="status-sub" id="statusSub">Enter a valid code to unlock your vault route.</div>
+        <div class="status-sub" id="statusSub">Access codes open the vault. Credit codes open the credit claim flow.</div>
       </div>
 
       <div class="pass-box" id="passBox" style="display:none">
         <div class="status-kicker">Pass Saved</div>
         <div class="pass-row"><span>Tier</span><strong id="passTier">-</strong></div>
         <div class="pass-row"><span>Expires</span><strong id="passExpiry">-</strong></div>
-      </div>
-
-      <div class="small">
-        Valid codes now create a vault pass on this device with an expiry timer.
       </div>
     </section>
   </main>
@@ -64,18 +60,44 @@
     const passTier = document.getElementById("passTier");
     const passExpiry = document.getElementById("passExpiry");
 
+    function normalizeCode(value){
+      return String(value || "").trim().toUpperCase();
+    }
+
+    function isCreditCode(code){
+      return /^(BOOST|MEMBER|VIP)-\d+-[A-Z0-9]+$/.test(code);
+    }
+
+    function routeCreditCode(code){
+      statusText.textContent = "CREDIT CODE FOUND";
+      statusText.className = "status-text ok";
+      statusSub.textContent = "Opening the credit claim flow...";
+      window.location.replace("/nfc/game-vault/claim/index.html?code=" + encodeURIComponent(code) + "&auto=1");
+    }
+
     const existing = window.Play3DPassSession && Play3DPassSession.current();
     if(existing){
       passBox.style.display = "block";
       passTier.textContent = existing.tier;
       passExpiry.textContent = Play3DPassSession.formatExpiry(existing);
-      statusText.textContent = "PASS ACTIVE";
-      statusSub.textContent = "You already have active vault access on this device.";
     }
 
     async function handleRedeem(){
-      const code = codeInput.value;
-      statusText.textContent = "CHECKING CODE";
+      const code = normalizeCode(codeInput.value);
+      if(!code){
+        statusText.textContent = "NO CODE ENTERED";
+        statusText.className = "status-text bad";
+        statusSub.textContent = "Enter a code to continue.";
+        return;
+      }
+
+      if(isCreditCode(code)){
+        routeCreditCode(code);
+        return;
+      }
+
+      statusText.textContent = "CHECKING ACCESS CODE";
+      statusText.className = "status-text ok";
       statusSub.textContent = "Validating and securing access...";
       try{
         const result = await Play3DSecureRedeem.redeemCode(code);
@@ -88,17 +110,17 @@
         }
         statusText.textContent = "ACCESS GRANTED";
         statusText.className = "status-text ok";
-        statusSub.textContent = "Pass saved. Routing you now...";
+        statusSub.textContent = "Pass saved. Opening the cinematic...";
         if(result.pass){
           passBox.style.display = "block";
           passTier.textContent = result.pass.tier;
           passExpiry.textContent = Play3DPassSession.formatExpiry(result.pass);
         }
-        setTimeout(() => { window.location.href = result.route || ("/nfc/index.html?code=" + encodeURIComponent(codeInput.value.trim())); }, 900);
+        window.location.replace("/nfc/index.html?code=" + encodeURIComponent(code) + "&play=1");
       }catch(e){
         statusText.textContent = "SYSTEM ERROR";
         statusText.className = "status-text bad";
-        statusSub.textContent = "Check your Supabase config and try again.";
+        statusSub.textContent = "Check your Supabase connection and try again.";
       }
     }
 
@@ -106,6 +128,12 @@
     codeInput.addEventListener("keydown", e => {
       if(e.key === "Enter") handleRedeem();
     });
+
+    const suppliedCode = normalizeCode(new URLSearchParams(window.location.search).get("code"));
+    if(suppliedCode){
+      codeInput.value = suppliedCode;
+      setTimeout(handleRedeem, 80);
+    }
   </script>
 </body>
 </html>
