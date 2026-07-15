@@ -2,6 +2,7 @@
   'use strict';
 
   var BANK_KEY = 'play3d_game_bank_v1';
+  var BOOST_KEY = 'play3d_boost_v3';
   var JACKPOT_KEY = 'play3d_jackpot_v1';
   var STARTER = 1000;
   var JACKPOT_START = 5000;
@@ -22,7 +23,17 @@
     return next;
   }
 
+  function applyQueuedBoost(){
+    var boost = readNumber(BOOST_KEY, 0);
+    if(boost <= 0) return 0;
+    var current = readNumber(BANK_KEY, STARTER);
+    writeNumber(BANK_KEY, current + boost);
+    writeNumber(BOOST_KEY, 0);
+    return boost;
+  }
+
   function getCredits(){
+    applyQueuedBoost();
     return readNumber(BANK_KEY, STARTER);
   }
 
@@ -73,6 +84,9 @@
     payout:payout,
     getJackpot:getJackpot,
     addJackpot:addJackpot,
-    claimJackpot:claimJackpot
+    claimJackpot:claimJackpot,
+    applyQueuedBoost:applyQueuedBoost
   };
+
+  applyQueuedBoost();
 })();
