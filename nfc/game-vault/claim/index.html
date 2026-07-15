@@ -32,5 +32,19 @@
   <script src="../rewards/bankroll.js"></script>
   <script src="../member-system.js"></script>
   <script src="./claim.js"></script>
+  <script>
+    (function(){
+      const params = new URLSearchParams(window.location.search);
+      const code = String(params.get('code') || '').trim().toUpperCase();
+      const auto = params.get('auto') === '1';
+      if(!code) return;
+      const input = document.getElementById('claimCodeInput');
+      const button = document.getElementById('claimBtn');
+      if(input) input.value = code;
+      if(auto && button){
+        setTimeout(function(){ button.click(); }, 120);
+      }
+    })();
+  </script>
 </body>
 </html>
