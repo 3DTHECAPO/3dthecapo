@@ -7,359 +7,137 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --gold:#caa24a;
-      --gold2:#f2d27b;
-      --ink:#050505;
-      --panel:rgba(9,9,9,.82);
-      --line:rgba(242,210,123,.34);
-      --text:#f5efe3;
-      --muted:rgba(245,239,227,.68);
-      --red:#ff5c5c;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      min-height:100vh;
-      color:var(--text);
-      font-family:"Oswald",Arial,sans-serif;
-      letter-spacing:.02em;
-      background:
-        radial-gradient(circle at 50% 0%,rgba(242,210,123,.18),transparent 38%),
-        linear-gradient(180deg,rgba(0,0,0,.38),rgba(0,0,0,.88)),
-        url("../../assets/master_control_bg.png") center/cover fixed no-repeat,
-        #050505;
-    }
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      background:
-        linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px),
-        linear-gradient(180deg,rgba(255,255,255,.025) 1px,transparent 1px);
-      background-size:54px 54px;
-      mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent);
-    }
-    a{color:inherit}
-    .wrap{width:min(1180px,94vw);margin:0 auto;padding:24px 0 64px}
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:18px;
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      text-decoration:none;
-      text-transform:uppercase;
-      color:var(--gold2);
-      font-weight:900;
-      letter-spacing:.12em;
-    }
-    .brand img{width:54px;height:54px;object-fit:contain;filter:drop-shadow(0 0 18px rgba(242,210,123,.45))}
-    .top-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-    .btn,.route-btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-height:42px;
-      padding:10px 15px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      color:var(--text);
-      background:rgba(0,0,0,.52);
-      text-decoration:none;
-      text-transform:uppercase;
-      font-weight:900;
-      letter-spacing:.08em;
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.03),0 12px 30px rgba(0,0,0,.28);
-    }
-    .btn.gold,.route-btn.gold{
-      color:#120e05;
-      border-color:#ffe799;
-      background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#8b641e);
-    }
-    .hero,.panel{
-      border:1px solid var(--line);
-      background:linear-gradient(180deg,rgba(10,10,10,.88),rgba(0,0,0,.74));
-      border-radius:24px;
-      box-shadow:0 24px 70px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.04);
-      backdrop-filter:blur(10px);
-    }
-    .hero{padding:26px;margin-bottom:18px}
-    .eyebrow{
-      margin:0 0 8px;
-      color:var(--gold2);
-      text-transform:uppercase;
-      font-size:12px;
-      letter-spacing:.24em;
-      font-weight:900;
-    }
-    h1,h2,h3{
-      font-family:"Black Ops One","Oswald",Arial,sans-serif;
-      color:var(--gold2);
-      text-transform:uppercase;
-      line-height:.95;
-      margin:0;
-      text-shadow:0 0 22px rgba(202,162,74,.25);
-    }
-    h1{font-size:clamp(44px,7vw,86px)}
-    h2{font-size:28px;margin-bottom:10px}
-    h3{font-size:20px}
-    .lede{max-width:850px;color:var(--muted);font-size:18px;line-height:1.55;margin:14px 0 0}
-    .status-grid{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:12px;
-      margin-top:20px;
-    }
-    .status-card{
-      border:1px solid rgba(242,210,123,.22);
-      border-radius:18px;
-      background:rgba(0,0,0,.42);
-      padding:14px;
-      min-width:0;
-    }
-    .status-card span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.14em}
-    .status-card b{display:block;margin-top:5px;color:var(--gold2);overflow-wrap:anywhere}
-    .panel{padding:20px;margin-top:16px}
-    .route-grid{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:12px;
-    }
-    .route-card{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      min-height:172px;
-      border:1px solid rgba(242,210,123,.24);
-      border-radius:18px;
-      padding:16px;
-      background:rgba(0,0,0,.50);
-    }
-    .route-card p{margin:0;color:var(--muted);line-height:1.35}
-    .route-card small{display:block;color:rgba(245,239,227,.52);overflow-wrap:anywhere}
-    .route-card .route-btn{margin-top:auto;width:100%}
-    .route-card.missing{border-color:rgba(255,92,92,.38)}
-    .missing-label{
-      margin-top:auto;
-      display:inline-flex;
-      justify-content:center;
-      align-items:center;
-      min-height:42px;
-      border-radius:999px;
-      border:1px solid rgba(255,92,92,.45);
-      color:#ffc2c2;
-      text-transform:uppercase;
-      font-weight:900;
-      letter-spacing:.08em;
-      background:rgba(120,0,0,.18);
-    }
-    .route-meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin:14px 0 0;
-    }
-    .chip{
-      border:1px solid rgba(242,210,123,.24);
-      border-radius:999px;
-      padding:7px 10px;
-      color:var(--muted);
-      background:rgba(0,0,0,.36);
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.1em;
-      font-weight:900;
-    }
-    .locked{display:none;min-height:100vh;place-items:center;text-align:center;padding:24px}
-    .locked .panel{max-width:620px}
-    @media (max-width:900px){
-      .topbar{align-items:flex-start;flex-direction:column}
-      .status-grid,.route-grid{grid-template-columns:1fr}
-    }
-  </style>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <style>
+    :root{--gold:#caa24a;--gold2:#f2d27b;--text:#f5efe3;--muted:rgba(245,239,227,.68);--line:rgba(242,210,123,.34);--red:#ff5c5c}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;color:var(--text);font-family:"Oswald",Arial,sans-serif;letter-spacing:.02em;background:radial-gradient(circle at 50% 0%,rgba(242,210,123,.18),transparent 38%),linear-gradient(180deg,rgba(0,0,0,.38),rgba(0,0,0,.88)),url("../../assets/master_control_bg.png") center/cover fixed no-repeat,#050505}
+    body::before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(180deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:54px 54px;mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent)}
+    a{color:inherit}.wrap{position:relative;width:min(1180px,94vw);margin:0 auto;padding:24px 0 64px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:14px;text-decoration:none;text-transform:uppercase;color:var(--gold2);font-weight:900;letter-spacing:.12em}.brand img{width:54px;height:54px;object-fit:contain;filter:drop-shadow(0 0 18px rgba(242,210,123,.45))}.top-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .btn,.route-btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 15px;border:1px solid var(--line);border-radius:999px;color:var(--text);background:rgba(0,0,0,.52);text-decoration:none;text-transform:uppercase;font-weight:900;letter-spacing:.08em;box-shadow:inset 0 0 0 1px rgba(255,255,255,.03),0 12px 30px rgba(0,0,0,.28)}
+    .btn.gold,.route-btn.gold{color:#120e05;border-color:#ffe799;background:linear-gradient(180deg,#f2d27b,#caa24a 58%,#8b641e)}
+    .hero,.panel{border:1px solid var(--line);background:linear-gradient(180deg,rgba(10,10,10,.88),rgba(0,0,0,.74));border-radius:24px;box-shadow:0 24px 70px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.04);backdrop-filter:blur(10px)}
+    .hero{padding:26px;margin-bottom:18px}.panel{padding:20px;margin-top:16px}.eyebrow{margin:0 0 8px;color:var(--gold2);text-transform:uppercase;font-size:12px;letter-spacing:.24em;font-weight:900}
+    h1,h2,h3{font-family:"Black Ops One","Oswald",Arial,sans-serif;color:var(--gold2);text-transform:uppercase;line-height:.95;margin:0;text-shadow:0 0 22px rgba(202,162,74,.25)}h1{font-size:clamp(44px,7vw,86px)}h2{font-size:28px;margin-bottom:10px}h3{font-size:20px}.lede{max-width:850px;color:var(--muted);font-size:18px;line-height:1.55;margin:14px 0 0}
+    .status-grid,.route-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.status-grid{margin-top:20px}.status-card,.route-card{border:1px solid rgba(242,210,123,.22);border-radius:18px;background:rgba(0,0,0,.46);padding:14px;min-width:0}.status-card span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.14em}.status-card b{display:block;margin-top:5px;color:var(--gold2);overflow-wrap:anywhere}
+    .route-card{display:flex;flex-direction:column;gap:10px;min-height:172px;padding:16px}.route-card p{margin:0;color:var(--muted);line-height:1.35}.route-card small{display:block;color:rgba(245,239,227,.52);overflow-wrap:anywhere}.route-card .route-btn{margin-top:auto;width:100%}.route-card.missing{border-color:rgba(255,92,92,.38)}.missing-label{margin-top:auto;display:inline-flex;justify-content:center;align-items:center;min-height:42px;border-radius:999px;border:1px solid rgba(255,92,92,.45);color:#ffc2c2;text-transform:uppercase;font-weight:900;letter-spacing:.08em;background:rgba(120,0,0,.18)}
+    .route-meta{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}.chip{border:1px solid rgba(242,210,123,.24);border-radius:999px;padding:7px 10px;color:var(--muted);background:rgba(0,0,0,.36);font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-weight:900}.locked{display:none;min-height:100vh;place-items:center;text-align:center;padding:24px}.locked .panel{max-width:620px}
+    @media(max-width:900px){.topbar{align-items:flex-start;flex-direction:column}.status-grid,.route-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
   <main class="wrap" id="masterPanel" hidden>
     <header class="topbar">
-      <a class="brand" href="../../scan.html">
-        <img src="../../assets/vault_stamp_gold.png" alt="Vault Seal">
-        <span>PLAY 3D Master Pass</span>
-      </a>
-      <nav class="top-actions" aria-label="Master actions">
-        <a class="btn" href="../../scan.html">Return To Scan</a>
-        <a class="btn gold" href="../../../index.html">Main Site</a>
-      </nav>
+      <a class="brand" href="../../scan.html"><img src="../../assets/vault_stamp_gold.png" alt="Vault Seal"><span>PLAY 3D Master Pass</span></a>
+      <nav class="top-actions" aria-label="Master actions"><a class="btn" href="../../scan.html">Return To Scan</a><a class="btn gold" href="../../../index.html">Main Site</a></nav>
     </header>
 
     <section class="hero">
       <p class="eyebrow">Private Owner Testing Panel</p>
       <h1>Master Pass Control</h1>
-      <p class="lede">Direct route-testing access for the live website system. This panel opens only through the master code or an existing master session. It does not edit databases, issue passes, bypass customer room logic, or touch protected records.</p>
+      <p class="lede">Direct route-testing access for the live website system. This panel opens only through the master code or an existing master session. Each live destination appears once and points to its canonical route.</p>
       <div class="status-grid">
         <div class="status-card"><span>Master Session</span><b id="sessionStatus">Checking...</b></div>
         <div class="status-card"><span>URL Code</span><b id="urlCode">--</b></div>
         <div class="status-card"><span>Mode</span><b>Route Tester Only</b></div>
       </div>
-      <div class="route-meta">
-        <span class="chip">No Supabase admin keys</span>
-        <span class="chip">No vault writes</span>
-        <span class="chip">No customer access rewrite</span>
-      </div>
+      <div class="route-meta"><span class="chip">No Supabase admin keys</span><span class="chip">No vault writes</span><span class="chip">No customer access rewrite</span></div>
     </section>
 
     <section class="panel" data-group="access">
-      <p class="eyebrow">Access Testing</p>
-      <h2>Access Routes</h2>
+      <p class="eyebrow">Access Control</p><h2>Primary Access Routes</h2>
       <div class="route-grid">
-        <article class="route-card"><h3>Scan Page</h3><p>Normal scan/login entry.</p><small>../../scan.html</small><a class="route-btn gold" href="../../scan.html">Open Route</a></article>
-        <article class="route-card"><h3>Entry Access Route</h3><p>Entry access landing route.</p><small>../../entry-backdrop.html</small><a class="route-btn" href="../../entry-backdrop.html">Open Route</a></article>
-        <article class="route-card"><h3>Gold Access Route</h3><p>Gold music / album chamber route.</p><small>../../album-chamber.html</small><a class="route-btn" href="../../album-chamber.html">Open Route</a></article>
-        <article class="route-card"><h3>Elite Access Route</h3><p>Elite merch drop room route.</p><small>../../merch-drop-room.html</small><a class="route-btn" href="../../merch-drop-room.html">Open Route</a></article>
-        <article class="route-card"><h3>Master Pass Route</h3><p>This dedicated private control panel.</p><small>./index.html</small><a class="route-btn" href="./index.html?code=CAPO-MASTER-999">Open Route</a></article>
-        <article class="route-card"><h3>Vault Directory</h3><p>Gold+ vault directory route.</p><small>../../vault-interface.html</small><a class="route-btn" href="../../vault-interface.html">Open Route</a></article>
-      </div>
-    </section>
-
-    <section class="panel" data-group="members">
-      <p class="eyebrow">Members / Purchases</p>
-      <h2>Purchase + Member Routes</h2>
-      <div class="route-grid">
-        <article class="route-card"><h3>Main Site</h3><p>Public homepage.</p><small>../../../index.html</small><a class="route-btn gold" href="../../../index.html">Open Route</a></article>
-        <article class="route-card"><h3>Join / Member Signup</h3><p>Free member-number signup page.</p><small>../../../join.html</small><a class="route-btn" href="../../../join.html">Open Route</a></article>
-        <article class="route-card"><h3>Buy Page</h3><p>Purchases only: merch, access, rewards.</p><small>../../../buy.html</small><a class="route-btn" href="../../../buy.html">Open Route</a></article>
-        <article class="route-card"><h3>Access Purchases</h3><p>Buy page access section.</p><small>../../../buy.html#access</small><a class="route-btn" href="../../../buy.html#access">Open Route</a></article>
-        <article class="route-card"><h3>Rewards Purchases</h3><p>Buy page rewards section.</p><small>../../../buy.html#rewards</small><a class="route-btn" href="../../../buy.html#rewards">Open Route</a></article>
+        <article class="route-card"><h3>Scan Page</h3><p>Normal NFC, email-link, and manual-code entry.</p><small>../../scan.html</small><a class="route-btn gold" href="../../scan.html">Open Route</a></article>
+        <article class="route-card"><h3>Master Pass Control</h3><p>This private owner route tester.</p><small>./index.html</small><a class="route-btn" href="./index.html?code=CAPO-MASTER-999">Open Route</a></article>
+        <article class="route-card"><h3>Vault Directory</h3><p>Gold+ vault directory.</p><small>../../vault-interface.html</small><a class="route-btn" href="../../vault-interface.html">Open Route</a></article>
       </div>
     </section>
 
     <section class="panel" data-group="rooms">
-      <p class="eyebrow">Vault Rooms</p>
-      <h2>Room Routes</h2>
+      <p class="eyebrow">Vault Rooms</p><h2>Canonical Room Routes</h2>
       <div class="route-grid">
-        <article class="route-card"><h3>Entry Room</h3><p>Main vault hall / entry room.</p><small>../../entry-backdrop.html</small><a class="route-btn" href="../../entry-backdrop.html">Open Route</a></article>
-        <article class="route-card"><h3>Gold / Album Chamber</h3><p>Gold music lounge route.</p><small>../../album-chamber.html</small><a class="route-btn" href="../../album-chamber.html">Open Route</a></article>
-        <article class="route-card"><h3>Elite Merch Room</h3><p>Elite drop lounge route.</p><small>../../merch-drop-room.html</small><a class="route-btn" href="../../merch-drop-room.html">Open Route</a></article>
-        <article class="route-card"><h3>Exclusive Merch Vault</h3><p>Elite exclusive merch route.</p><small>../../exclusive-merch-vault.html</small><a class="route-btn" href="../../exclusive-merch-vault.html">Open Route</a></article>
-        <article class="route-card"><h3>Secret Room</h3><p>Hidden room route.</p><small>../../secret-page.html</small><a class="route-btn" href="../../secret-page.html">Open Route</a></article>
-        <article class="route-card"><h3>Museum</h3><p>Vault Museum / Photo Album.</p><small>../../museum/index.html</small><a class="route-btn" href="../../museum/index.html">Open Route</a></article>
+        <article class="route-card"><h3>Entry Room</h3><p>Main ENTRY destination.</p><small>../entry/</small><a class="route-btn gold" href="../entry/">Open Route</a></article>
+        <article class="route-card"><h3>Gold Album Room</h3><p>Main GOLD destination.</p><small>../gold-album/</small><a class="route-btn gold" href="../gold-album/">Open Route</a></article>
+        <article class="route-card"><h3>Elite Vault</h3><p>Main ELITE destination.</p><small>../elite-vault/</small><a class="route-btn gold" href="../elite-vault/">Open Route</a></article>
+        <article class="route-card"><h3>Secret Room</h3><p>Elite unreleased-track and early-listen room.</p><small>../../secret-page.html</small><a class="route-btn" href="../../secret-page.html">Open Route</a></article>
+        <article class="route-card"><h3>Merch Drop</h3><p>Elite merch drop experience.</p><small>../../merch-drop-room.html</small><a class="route-btn" href="../../merch-drop-room.html">Open Route</a></article>
+        <article class="route-card"><h3>Exclusive Merch Vault</h3><p>Elite exclusive merchandise route.</p><small>../../exclusive-merch-vault.html</small><a class="route-btn" href="../../exclusive-merch-vault.html">Open Route</a></article>
+        <article class="route-card"><h3>Museum</h3><p>Vault Museum and photo album.</p><small>../../museum/</small><a class="route-btn" href="../../museum/">Open Route</a></article>
         <article class="route-card"><h3>Time Machine</h3><p>Cinematic memories route.</p><small>../../time-machine.html</small><a class="route-btn" href="../../time-machine.html">Open Route</a></article>
-        <article class="route-card"><h3>Gold Album Detail</h3><p>Nested Gold album room.</p><small>../gold-album/index.html</small><a class="route-btn" href="../gold-album/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Elite Vault Detail</h3><p>Nested Elite vault room.</p><small>../elite-vault/index.html</small><a class="route-btn" href="../elite-vault/index.html">Open Route</a></article>
+      </div>
+    </section>
+
+    <section class="panel" data-group="members">
+      <p class="eyebrow">Members / Purchases</p><h2>Purchase + Member Routes</h2>
+      <div class="route-grid">
+        <article class="route-card"><h3>Main Site</h3><p>Public homepage.</p><small>../../../index.html</small><a class="route-btn gold" href="../../../index.html">Open Route</a></article>
+        <article class="route-card"><h3>Join</h3><p>Free member-number signup.</p><small>../../../join.html</small><a class="route-btn" href="../../../join.html">Open Route</a></article>
+        <article class="route-card"><h3>Buy Page</h3><p>Merch, access, and rewards purchases.</p><small>../../../buy.html</small><a class="route-btn" href="../../../buy.html">Open Route</a></article>
+        <article class="route-card"><h3>Access Purchases</h3><p>Access-pass section.</p><small>../../../buy.html#access</small><a class="route-btn" href="../../../buy.html#access">Open Route</a></article>
+        <article class="route-card"><h3>Rewards Purchases</h3><p>Reward-pack section.</p><small>../../../buy.html#rewards</small><a class="route-btn" href="../../../buy.html#rewards">Open Route</a></article>
       </div>
     </section>
 
     <section class="panel" data-group="play3d">
-      <p class="eyebrow">PLAY 3D</p>
-      <h2>Game + Reward Routes</h2>
+      <p class="eyebrow">PLAY 3D</p><h2>Game + Reward Routes</h2>
       <div class="route-grid">
-        <article class="route-card"><h3>Game Vault</h3><p>PLAY 3D game floor.</p><small>../../game-vault/index.html</small><a class="route-btn gold" href="../../game-vault/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Rewards Page</h3><p>Player rewards view.</p><small>../../game-vault/rewards/index.html</small><a class="route-btn" href="../../game-vault/rewards/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Claim Page</h3><p>Claim-code route.</p><small>../../game-vault/claim/index.html</small><a class="route-btn" href="../../game-vault/claim/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Collectors Wing</h3><p>Collector route.</p><small>../../game-vault/collectors-wing/index.html</small><a class="route-btn" href="../../game-vault/collectors-wing/index.html">Open Route</a></article>
-        <article class="route-card"><h3>3D Defender</h3><p>Existing game route.</p><small>../../game-vault/games/3d-defender/index.html</small><a class="route-btn" href="../../game-vault/games/3d-defender/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Blackjack</h3><p>Existing game route.</p><small>../../game-vault/games/blackjack/index.html</small><a class="route-btn" href="../../game-vault/games/blackjack/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Chess</h3><p>Existing game route.</p><small>../../game-vault/games/chess/index.html</small><a class="route-btn" href="../../game-vault/games/chess/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Dominoes</h3><p>Existing game route.</p><small>../../game-vault/games/dominoes/index.html</small><a class="route-btn" href="../../game-vault/games/dominoes/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Hood Monopoly</h3><p>Existing game route.</p><small>../../game-vault/games/hood-monopoly/index.html</small><a class="route-btn" href="../../game-vault/games/hood-monopoly/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Pinochle</h3><p>Existing game route.</p><small>../../game-vault/games/pinochle/index.html</small><a class="route-btn" href="../../game-vault/games/pinochle/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Poker</h3><p>Existing game route.</p><small>../../game-vault/games/poker/index.html</small><a class="route-btn" href="../../game-vault/games/poker/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Rummy</h3><p>Existing game route.</p><small>../../game-vault/games/rummy/index.html</small><a class="route-btn" href="../../game-vault/games/rummy/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Slots</h3><p>Existing game route.</p><small>../../game-vault/games/slot-machine-custom/index.html</small><a class="route-btn" href="../../game-vault/games/slot-machine-custom/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Spades</h3><p>Existing game route.</p><small>../../game-vault/games/spades/index.html</small><a class="route-btn" href="../../game-vault/games/spades/index.html">Open Route</a></article>
+        <article class="route-card"><h3>Game Vault</h3><p>PLAY 3D game floor.</p><small>../../game-vault/</small><a class="route-btn gold" href="../../game-vault/">Open Route</a></article>
+        <article class="route-card"><h3>Rewards</h3><p>Player rewards view.</p><small>../../game-vault/rewards/</small><a class="route-btn" href="../../game-vault/rewards/">Open Route</a></article>
+        <article class="route-card"><h3>Claim</h3><p>Claim-code route.</p><small>../../game-vault/claim/</small><a class="route-btn" href="../../game-vault/claim/">Open Route</a></article>
+        <article class="route-card"><h3>Collectors Wing</h3><p>Collector route.</p><small>../../game-vault/collectors-wing/</small><a class="route-btn" href="../../game-vault/collectors-wing/">Open Route</a></article>
+        <article class="route-card"><h3>3D Defender</h3><p>Game route.</p><small>../../game-vault/games/3d-defender/</small><a class="route-btn" href="../../game-vault/games/3d-defender/">Open Route</a></article>
+        <article class="route-card"><h3>Blackjack</h3><p>Game route.</p><small>../../game-vault/games/blackjack/</small><a class="route-btn" href="../../game-vault/games/blackjack/">Open Route</a></article>
+        <article class="route-card"><h3>Chess</h3><p>Game route.</p><small>../../game-vault/games/chess/</small><a class="route-btn" href="../../game-vault/games/chess/">Open Route</a></article>
+        <article class="route-card"><h3>Dominoes</h3><p>Game route.</p><small>../../game-vault/games/dominoes/</small><a class="route-btn" href="../../game-vault/games/dominoes/">Open Route</a></article>
+        <article class="route-card"><h3>Hood Monopoly</h3><p>Game route.</p><small>../../game-vault/games/hood-monopoly/</small><a class="route-btn" href="../../game-vault/games/hood-monopoly/">Open Route</a></article>
+        <article class="route-card"><h3>Pinochle</h3><p>Game route.</p><small>../../game-vault/games/pinochle/</small><a class="route-btn" href="../../game-vault/games/pinochle/">Open Route</a></article>
+        <article class="route-card"><h3>Poker</h3><p>Game route.</p><small>../../game-vault/games/poker/</small><a class="route-btn" href="../../game-vault/games/poker/">Open Route</a></article>
+        <article class="route-card"><h3>Rummy</h3><p>Game route.</p><small>../../game-vault/games/rummy/</small><a class="route-btn" href="../../game-vault/games/rummy/">Open Route</a></article>
+        <article class="route-card"><h3>Slots</h3><p>Game route.</p><small>../../game-vault/games/slot-machine-custom/</small><a class="route-btn" href="../../game-vault/games/slot-machine-custom/">Open Route</a></article>
+        <article class="route-card"><h3>Spades</h3><p>Game route.</p><small>../../game-vault/games/spades/</small><a class="route-btn" href="../../game-vault/games/spades/">Open Route</a></article>
       </div>
     </section>
 
     <section class="panel" data-group="admin">
-      <p class="eyebrow">Admin / Test Information</p>
-      <h2>Confirmed + Missing Routes</h2>
+      <p class="eyebrow">Admin / Test Information</p><h2>Confirmed + Missing Routes</h2>
       <div class="route-grid">
-        <article class="route-card"><h3>Public Redeem</h3><p>Existing public redeem route.</p><small>../../../public/redeem/index.html</small><a class="route-btn" href="../../../public/redeem/index.html">Open Route</a></article>
-        <article class="route-card"><h3>Public Vault Redirect</h3><p>Existing redirect route. Use for testing only.</p><small>../../../public/vault/index.html</small><a class="route-btn" href="../../../public/vault/index.html">Open Route</a></article>
-        <article class="route-card missing"><h3>Generator</h3><p>No website HTML generator route exists in this repository tree.</p><small>Missing route</small><span class="missing-label">Missing</span></article>
-        <article class="route-card missing"><h3>Admin Panel</h3><p>No website HTML admin panel route exists in this repository tree.</p><small>Missing route</small><span class="missing-label">Missing</span></article>
-        <article class="route-card missing"><h3>Analytics</h3><p>No website HTML analytics route exists in this repository tree.</p><small>Missing route</small><span class="missing-label">Missing</span></article>
+        <article class="route-card"><h3>Public Redeem</h3><p>Existing public redeem route.</p><small>../../../public/redeem/</small><a class="route-btn" href="../../../public/redeem/">Open Route</a></article>
+        <article class="route-card"><h3>Public Vault Redirect</h3><p>Compatibility redirect for testing only.</p><small>../../../public/vault/</small><a class="route-btn" href="../../../public/vault/">Open Route</a></article>
+        <article class="route-card missing"><h3>Generator</h3><p>No website HTML generator route exists in this repository.</p><small>Desktop tool only</small><span class="missing-label">Not In Website Repo</span></article>
+        <article class="route-card missing"><h3>Admin Panel</h3><p>No website HTML admin panel route exists in this repository.</p><small>Missing route</small><span class="missing-label">Missing</span></article>
+        <article class="route-card missing"><h3>Analytics</h3><p>No website HTML analytics route exists in this repository.</p><small>Missing route</small><span class="missing-label">Missing</span></article>
       </div>
     </section>
   </main>
 
-  <section class="locked" id="lockedPanel">
-    <div class="panel">
-      <p class="eyebrow">Access Required</p>
-      <h1>Master Pass Only</h1>
-      <p class="lede">This private route tester only opens with CAPO-MASTER-999 or an existing master session.</p>
-      <p><a class="btn gold" href="../../scan.html">Return To Scan</a></p>
-    </div>
-  </section>
+  <section class="locked" id="lockedPanel"><div class="panel"><p class="eyebrow">Access Required</p><h1>Master Pass Only</h1><p class="lede">This private route tester only opens with the master code or an existing master session.</p><p><a class="btn gold" href="../../scan.html">Return To Scan</a></p></div></section>
 
   <script>
     (function(){
-      var MASTER_CODE = 'CAPO-MASTER-999';
-      var MASTER_KEY = 'CAPO_MASTER_SESSION';
-      var params = new URLSearchParams(window.location.search);
-      var code = String(params.get('code') || '').trim().toUpperCase();
-      var panel = document.getElementById('masterPanel');
-      var locked = document.getElementById('lockedPanel');
-      var sessionStatus = document.getElementById('sessionStatus');
-      var urlCode = document.getElementById('urlCode');
-
-      function readSession(){
-        try{
-          return JSON.parse(localStorage.getItem(MASTER_KEY) || 'null');
-        }catch(e){
-          return null;
-        }
-      }
-
-      function hasValidSession(){
-        var session = readSession();
-        if(!session || session.active !== true) return false;
-        var expires = Number(session.expires_at || 0);
-        if(expires && Date.now() > expires){
-          try{ localStorage.removeItem(MASTER_KEY); }catch(e){}
-          return false;
-        }
-        return true;
-      }
-
-      function setSession(){
-        try{
-          localStorage.setItem(MASTER_KEY, JSON.stringify({
-            active:true,
-            code:MASTER_CODE,
-            started_at:Date.now(),
-            expires_at:Date.now() + (1000 * 60 * 60 * 12),
-            route:'nfc/rooms/master/index.html'
-          }));
-        }catch(e){}
-      }
-
-      if(code === MASTER_CODE){
-        setSession();
-      }
-
-      if(code === MASTER_CODE || hasValidSession()){
-        if(panel) panel.hidden = false;
-        if(locked) locked.style.display = 'none';
-        if(sessionStatus) sessionStatus.textContent = 'Active';
-        if(urlCode) urlCode.textContent = code || 'Session';
+      var MASTER_CODE='CAPO-MASTER-999';
+      var MASTER_KEY='CAPO_MASTER_SESSION';
+      var params=new URLSearchParams(window.location.search);
+      var code=String(params.get('code')||'').trim().toUpperCase();
+      var panel=document.getElementById('masterPanel');
+      var locked=document.getElementById('lockedPanel');
+      var sessionStatus=document.getElementById('sessionStatus');
+      var urlCode=document.getElementById('urlCode');
+      function readSession(){try{return JSON.parse(localStorage.getItem(MASTER_KEY)||'null')}catch(e){return null}}
+      function hasValidSession(){var session=readSession();if(!session||session.active!==true)return false;var expires=Number(session.expires_at||0);if(expires&&Date.now()>expires){try{localStorage.removeItem(MASTER_KEY)}catch(e){}return false}return true}
+      function setSession(){try{localStorage.setItem(MASTER_KEY,JSON.stringify({active:true,code:MASTER_CODE,started_at:Date.now(),expires_at:Date.now()+(1000*60*60*12),route:'nfc/rooms/master/index.html'}))}catch(e){}}
+      if(code===MASTER_CODE)setSession();
+      if(code===MASTER_CODE||hasValidSession()){
+        if(panel)panel.hidden=false;
+        if(locked)locked.style.display='none';
+        if(sessionStatus)sessionStatus.textContent='Active';
+        if(urlCode)urlCode.textContent=code||'Session';
         document.documentElement.classList.add('master-ok');
         return;
       }
-
-      if(panel) panel.hidden = true;
-      if(locked) locked.style.display = 'grid';
-      setTimeout(function(){
-        window.location.replace('../../scan.html');
-      }, 900);
+      if(panel)panel.hidden=true;
+      if(locked)locked.style.display='grid';
+      setTimeout(function(){window.location.replace('../../scan.html')},900);
     })();
   </script>
 </body>
