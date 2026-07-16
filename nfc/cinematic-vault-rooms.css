@@ -113,10 +113,11 @@ body.cinematic-vault-room.master-room .vault-page{
 .vault-card,
 .vault-panel,
 .vault-product-card{
-  border:1px solid rgba(255,255,255,.14);
+  border:1px solid rgba(210,167,79,.34);
   border-radius:22px;
-  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));
-  box-shadow:0 24px 80px rgba(0,0,0,.58);
+  background:linear-gradient(180deg,rgba(8,6,3,.90),rgba(0,0,0,.76));
+  box-shadow:0 24px 80px rgba(0,0,0,.76),inset 0 1px 0 rgba(255,255,255,.06);
+  backdrop-filter:blur(10px);
 }
 
 .vault-hero{
