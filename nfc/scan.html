@@ -188,6 +188,31 @@
   })();
   </script>
   <script src="./nfc.js?v=target-master-pipeline-v2"></script>
+  <script>
+    (function(){
+      var destinations = {
+        ENTRY: './rooms/entry/',
+        GOLD: './rooms/gold-album/',
+        ELITE: './rooms/elite-vault/',
+        DROP: './rooms/elite-vault/',
+        MERCH: './rooms/elite-vault/'
+      };
+      var redirectScheduled = false;
+      var watcher = setInterval(function(){
+        if(redirectScheduled) return;
+        try{
+          var pass = JSON.parse(localStorage.getItem('play3d_vault_pass_v1') || 'null');
+          var tier = String(pass && (pass.tier || pass.code_type) || '').toUpperCase();
+          var destination = destinations[tier];
+          if(!destination || !pass || pass.active !== true || !document.body.classList.contains('vault-open')) return;
+          redirectScheduled = true;
+          clearInterval(watcher);
+          setTimeout(function(){ window.location.replace(destination); }, 4400);
+        }catch(e){}
+      }, 100);
+      setTimeout(function(){ clearInterval(watcher); }, 15000);
+    })();
+  </script>
   <script src="./vault-conversion.js"></script>
 </body>
 </html>
