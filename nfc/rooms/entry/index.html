@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entry Room</title>
+  <link rel="stylesheet" href="/nfc/nfc.css">
+  <link rel="stylesheet" href="/nfc/cinematic-vault-rooms.css">
+  <style>
+    body.cinematic-vault-room.entry-room{
+      background:
+        linear-gradient(180deg,rgba(0,0,0,.46),rgba(0,0,0,.88)),
+        url("/nfc/assets/entry_backdrop.jpg") center/cover fixed no-repeat,
+        #050403;
+    }
+  </style>
+  <script src="/nfc/shared/access-bridge.js"></script>
+  <script>
+    (function(){
+      if(window.Play3DAccess && window.Play3DAccess.requireTier('entry',{redirect:true})) return;
+    })();
+  </script>
+</head>
+<body class="cinematic-vault-room entry-room">
+  <div class="vault-smoke" aria-hidden="true"></div>
+  <main class="vault-page">
+    <header class="vault-topbar">
+      <a class="vault-logo-mark" href="/nfc/index.html">ENTRY</a>
+      <nav class="vault-nav" aria-label="Entry room navigation">
+        <a class="back-btn" href="/nfc/scan.html">Back To Vault</a>
+        <a class="back-btn" href="/index.html">Main Site</a>
+        <a class="back-btn" href="/nfc/game-vault/index.html">Game Vault</a>
+      </nav>
+    </header>
+
+    <section class="vault-hero">
+      <p class="vault-kicker">Private Chamber</p>
+      <h1>Entry Room</h1>
+      <p class="vault-lede">Your first private layer inside PLAY 3D—monthly updates, fan missions, limited unlocks, and member-only access.</p>
+      <div class="vault-actions">
+        <a class="vault-btn gold" href="#monthly-drop">See This Month</a>
+        <a class="vault-btn ghost" href="/nfc/game-vault/index.html">Game Vault</a>
+      </div>
+    </section>
+
+    <section class="vault-grid two" id="monthly-drop">
+      <article class="vault-card">
+        <p class="vault-kicker">This Month Inside The Vault</p>
+        <h2>Member Update</h2>
+        <div class="vault-visual">Current Drop Briefing</div>
+        <p>Check this space for the current member announcement, the next unlock date, and the featured drop moving through the vault.</p>
+        <a class="vault-btn ghost" href="/nfc/game-vault/rewards/index.html">View Member Rewards</a>
+      </article>
+
+      <article class="vault-card">
+        <p class="vault-kicker">Entry Mission</p>
+        <h2>Fan Mission</h2>
+        <div class="vault-visual">Complete • Claim • Advance</div>
+        <p>Complete the active fan mission, then continue to the rewards area to check available credits, claims, and member bonuses.</p>
+        <a class="vault-btn gold" href="/nfc/game-vault/rewards/index.html">Open Mission Lane</a>
+      </article>
+    </section>
+
+    <section class="vault-grid" id="paidAlbumAccess" hidden>
+      <article class="vault-card">
+        <strong>Album Access</strong>
+        <p>Included for active paid monthly members for a limited time.</p>
+        <a class="vault-btn gold" href="/nfc/rooms/gold-album/">Open Album Chamber</a>
+      </article>
+    </section>
+
+    <section class="vault-grid">
+      <article class="vault-card">
+        <strong>Upcoming Unlocks</strong>
+        <p>Preview the next album update, private visual drop, merch reveal, and new PLAY 3D experience before they move into the higher vault tiers.</p>
+        <a class="vault-btn ghost" href="/nfc/vault-interface.html">Preview The Vault</a>
+      </article>
+
+      <article class="vault-card">
+        <strong>Gold Preview</strong>
+        <p>Gold members move deeper into album presentation, vault navigation, and expanded private content.</p>
+        <a class="vault-btn ghost" href="/buy.html">View Access Options</a>
+      </article>
+
+      <article class="vault-card">
+        <strong>Elite Preview</strong>
+        <p>Elite opens hidden drops, exclusive merch routes, secret rooms, and the deepest private vault experiences.</p>
+        <a class="vault-btn ghost" href="/buy.html">See Elite Access</a>
+      </article>
+    </section>
+  </main>
+  <script>
+    (function(){
+      try{
+        var pass = JSON.parse(localStorage.getItem('play3d_vault_pass_v1') || 'null');
+        var paidMonthly = pass && pass.active === true && String(pass.duration || '').toLowerCase() === '30d';
+        if(paidMonthly){
+          var album = document.getElementById('paidAlbumAccess');
+          if(album) album.hidden = false;
+        }
+      }catch(e){}
+    })();
+  </script>
+  <script src="/nfc/cinematic-room-transitions.js"></script>
+</body>
+</html>
