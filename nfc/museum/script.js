@@ -183,6 +183,16 @@
     return `style="background-image:radial-gradient(circle at 50% 32%,rgba(242,210,123,.28),transparent 32%),linear-gradient(145deg,${tone},#050403)"`;
   }
 
+  function exhibitButtonLabel(item){
+    const section = String(item.section || '').toLowerCase();
+    const type = String(item.type || '').toLowerCase();
+    if(section === 'timeline' || type === 'timeline') return 'Open Timeline';
+    if(section === 'fan' || type.indexOf('fan') !== -1) return 'Open Fan Moment';
+    if(section === 'video' || type === 'video') return 'Open Video';
+    if(type.indexOf('photo') !== -1) return 'Open Photo';
+    return 'Open Exhibit';
+  }
+
   function cardMarkup(item, index, open, room, className='exhibit-card'){
     const locked = !open;
     return `
@@ -194,7 +204,7 @@
         <div class="exhibit-body">
           <div class="exhibit-type">${item.year || ''} ${item.type || ''}</div>
           <div class="exhibit-title">${item.title}</div>
-          <button class="enter-btn" type="button" data-exhibit-index="${index}" ${locked ? 'disabled' : ''}>${locked ? 'Locked' : 'Expand'}</button>
+          <button class="enter-btn" type="button" data-exhibit-index="${index}" ${locked ? 'disabled' : ''}>${locked ? 'Locked' : exhibitButtonLabel(item)}</button>
         </div>
       </article>
     `;
@@ -232,7 +242,7 @@
     wall.innerHTML = videos.map(item => {
       const open = canOpenTier(item.unlockTier,tier);
       const idx = museumExhibits.indexOf(item);
-      const embed = item.video && open ? `<iframe src="${item.video}" title="${item.title}" loading="lazy" allowfullscreen></iframe>` : `<button class="video-placeholder" data-exhibit-index="${idx}" ${open ? '' : 'disabled'}>${open ? 'Open Video Exhibit' : 'Locked Video Exhibit'}</button>`;
+      const embed = item.video && open ? `<iframe src="${item.video}" title="${item.title}" loading="lazy" allowfullscreen></iframe>` : `<button class="video-placeholder" data-exhibit-index="${idx}" ${open ? '' : 'disabled'}>${open ? 'Open Video' : 'Locked Video'}</button>`;
       return `<article class="video-card ${open ? '' : 'is-locked'}">${embed}<h4>${item.title}</h4><p>${item.description}</p></article>`;
     }).join('') || '<div class="empty-museum-slot">Awaiting video uploads. Add YouTube, MP4, trailers, interviews, or music videos in script.js.</div>';
   }
