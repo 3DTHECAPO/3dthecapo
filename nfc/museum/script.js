@@ -183,14 +183,30 @@
     return `style="background-image:radial-gradient(circle at 50% 32%,rgba(242,210,123,.28),transparent 32%),linear-gradient(145deg,${tone},#050403)"`;
   }
 
-  function exhibitButtonLabel(item){
+  function exhibitKind(item){
     const section = String(item.section || '').toLowerCase();
     const type = String(item.type || '').toLowerCase();
-    if(section === 'timeline' || type === 'timeline') return 'Open Timeline';
-    if(section === 'fan' || type.indexOf('fan') !== -1) return 'Open Fan Moment';
-    if(section === 'video' || type === 'video') return 'Open Video';
-    if(type.indexOf('photo') !== -1) return 'Open Photo';
-    return 'Open Exhibit';
+    if(section === 'timeline' || type === 'timeline') return 'Timeline';
+    if(section === 'fan' || type.indexOf('fan') !== -1) return 'Fan Moment';
+    if(section === 'video' || type === 'video') return 'Video';
+    if(type.indexOf('photo') !== -1) return 'Memory';
+    return 'Exhibit';
+  }
+
+  function exhibitMetaLabel(item){
+    const year = item.year || 'Vault';
+    const kind = exhibitKind(item);
+    if(kind === 'Memory') return `${year} Vault Memory`;
+    return `${year} ${kind}`;
+  }
+
+  function exhibitButtonLabel(item){
+    const kind = exhibitKind(item);
+    if(kind === 'Timeline') return 'View Timeline';
+    if(kind === 'Fan Moment') return 'View Fan Moment';
+    if(kind === 'Video') return 'View Video';
+    if(kind === 'Memory') return 'View Memory';
+    return 'View Exhibit';
   }
 
   function cardMarkup(item, index, open, room, className='exhibit-card'){
@@ -198,11 +214,11 @@
     return `
       <article class="${className}${locked ? ' is-locked' : ''}">
         <button class="image-frame" type="button" data-exhibit-index="${index}" ${locked ? 'disabled' : ''} ${frameStyle(item, room)}>
-          <span class="frame-tag">${locked ? 'LOCKED' : item.tag || item.type || '3D'}</span>
-          <span class="frame-type">${item.type || 'Exhibit'}</span>
+          <span class="frame-tag">${locked ? 'LOCKED' : item.tag || exhibitKind(item)}</span>
+          <span class="frame-type">${exhibitKind(item)}</span>
         </button>
         <div class="exhibit-body">
-          <div class="exhibit-type">${item.year || ''} ${item.type || ''}</div>
+          <div class="exhibit-type">${exhibitMetaLabel(item)}</div>
           <div class="exhibit-title">${item.title}</div>
           <button class="enter-btn" type="button" data-exhibit-index="${index}" ${locked ? 'disabled' : ''}>${locked ? 'Locked' : exhibitButtonLabel(item)}</button>
         </div>
@@ -242,7 +258,7 @@
     wall.innerHTML = videos.map(item => {
       const open = canOpenTier(item.unlockTier,tier);
       const idx = museumExhibits.indexOf(item);
-      const embed = item.video && open ? `<iframe src="${item.video}" title="${item.title}" loading="lazy" allowfullscreen></iframe>` : `<button class="video-placeholder" data-exhibit-index="${idx}" ${open ? '' : 'disabled'}>${open ? 'Open Video' : 'Locked Video'}</button>`;
+      const embed = item.video && open ? `<iframe src="${item.video}" title="${item.title}" loading="lazy" allowfullscreen></iframe>` : `<button class="video-placeholder" data-exhibit-index="${idx}" ${open ? '' : 'disabled'}>${open ? 'View Video' : 'Locked Video'}</button>`;
       return `<article class="video-card ${open ? '' : 'is-locked'}">${embed}<h4>${item.title}</h4><p>${item.description}</p></article>`;
     }).join('') || '<div class="empty-museum-slot">Awaiting video uploads. Add YouTube, MP4, trailers, interviews, or music videos in script.js.</div>';
   }
@@ -295,7 +311,7 @@
       art.setAttribute('style', item.image ? `background-image:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.58)),url('${item.image}')` : frameStyle(item, item.unlockTier).replace(/^style="|"$/g,''));
       art.textContent = item.image ? '' : (item.tag || '3D');
     }
-    if(type) type.textContent = item.type || 'Exhibit';
+    if(type) type.textContent = exhibitKind(item);
     if(title) title.textContent = item.title;
     if(meta) meta.textContent = [item.year, item.tag, String(item.unlockTier || 'entry').toUpperCase()].filter(Boolean).join(' / ');
     if(text) text.textContent = item.description || '';
