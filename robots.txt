@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /nfc/
+Disallow: /public/
+
+Sitemap: https://3dthecapo.com/sitemap.xml

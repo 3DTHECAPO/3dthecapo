@@ -12,9 +12,14 @@
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   const countdownTargets = [byId('countdown')].filter(Boolean);
-  const DROP_DATE = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  // Set the real release date here to start the countdown, e.g. new Date('2026-12-01T00:00:00-08:00')
+  const DROP_DATE = null;
 
   function tick(){
+    if (!DROP_DATE){
+      countdownTargets.forEach(el => el.textContent = 'Coming soon');
+      return;
+    }
     const now = new Date();
     const ms = DROP_DATE - now;
 
