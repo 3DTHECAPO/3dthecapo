@@ -5,6 +5,9 @@
   const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
   const REWARD_EVENTS_TABLE = 'reward_events';
   const REWARD_CLAIMS_TABLE = 'reward_claims';
+  // 2026-11-11: history, points and claims come from the server (my_rewards), which checks the fan's vault code
+  // and e-mail. The browser no longer reads reward_events / reward_claims itself.
+  const BACKEND_URL = `${SUPABASE_URL}/functions/v1/dynamic-endpoint`;
 
   const els = {
     refresh: document.getElementById('refreshBtn'),
@@ -151,7 +154,7 @@
   }
 
   function claimLabel(row){
-    return row.reward_label || row.reward_key || row.claim_type || row.reward_name || 'Reward Claim';
+    return row.reward_label || row.reward_key || row.claim_type || row.reward_name || row.prize_name || 'Reward Claim';
   }
 
   function identityFilters(){
@@ -162,21 +165,31 @@
     return { email, memberId, memberNumber };
   }
 
-  async function loadLiveRewardEvents(){
-    const id = identityFilters();
-    const queries = [];
-    if(id.email) queries.push(`email=eq.${encodeURIComponent(id.email)}&select=*&order=created_at.desc&limit=50`);
-    if(id.memberId) queries.push(`member_id=eq.${encodeURIComponent(id.memberId)}&select=*&order=created_at.desc&limit=50`);
-    return await loadMemberRows(REWARD_EVENTS_TABLE, queries);
-  }
-
-  async function loadLiveClaims(){
-    const id = identityFilters();
-    const queries = [];
-    if(id.email) queries.push(`email=eq.${encodeURIComponent(id.email)}&select=*&order=created_at.desc&limit=100`);
-    if(id.memberNumber) queries.push(`member_number=eq.${encodeURIComponent(id.memberNumber)}&select=*&order=created_at.desc&limit=100`);
-    if(id.memberId) queries.push(`member_id=eq.${encodeURIComponent(id.memberId)}&select=*&order=created_at.desc&limit=100`);
-    return await loadMemberRows(REWARD_CLAIMS_TABLE, queries);
+  async function loadMyRewards(){
+    const id = identity();
+    const email = normalizeEmail(id.email);
+    const pass = readJSON('play3d_vault_pass_v1', {}) || {};
+    const code = String(id.code || pass.code || '').trim().toUpperCase();
+    if(!email || !code) throw new Error('open the Game Vault with your vault code to see live rewards');
+    const res = await fetch(BACKEND_URL, {
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':`Bearer ${SUPABASE_ANON}`,
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({ source:'my_rewards', email, code })
+    });
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok || !data.success){
+      throw new Error(data.status === 'not_verified' ? 'your vault code could not be checked'
+        : data.status === 'member_not_found' ? 'no member record for this e-mail yet' : 'please try again later');
+    }
+    return {
+      events: Array.isArray(data.events) ? data.events : [],
+      claims: Array.isArray(data.claims) ? data.claims : [],
+      points: Number(data.points)
+    };
   }
 
   async function loadMemberRows(table, queries){
@@ -245,8 +258,11 @@
     if(els.pendingCredits) els.pendingCredits.textContent = '0';
 
     try{
-      const [events, claims] = await Promise.all([loadLiveRewardEvents(), loadLiveClaims()]);
-      const points = progressionTotal(events, localPoints);
+      const live = await loadMyRewards();
+      const events = live.events;
+      const claims = live.claims;
+      // The server's count is the one prize claims use.
+      const points = Number.isFinite(live.points) ? live.points : progressionTotal(events, localPoints);
       const totalCredits = events.filter(eventIsSpendable).reduce((sum,row)=>sum + eventCredits(row), 0);
       const pendingCredits = events.reduce((sum,row)=>sum + pendingCreditValue(row), 0);
       if(els.points) els.points.textContent = points.toLocaleString();

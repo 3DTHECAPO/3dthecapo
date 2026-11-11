@@ -2,6 +2,9 @@
   const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
   const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
   const MEMBERS_TABLE = 'members';
+  // 2026-11-11: the member row comes from the server (member_sync), which needs the fan's vault code and the
+  // e-mail it was sent to. The browser no longer reads or updates the members table itself.
+  const BACKEND_URL = `${SUPABASE_URL}/functions/v1/dynamic-endpoint`;
 
   const MEMBER_KEY = 'play3d_member_v1';
   const PAID_MEMBER_KEY = 'play3d_paid_member_v1';
@@ -120,59 +123,41 @@
     return clean.replace(/_/g, '\\_');
   }
 
-  async function fetchMemberByEmail(email){
-    const clean = emailPattern(email);
-    if(!clean) return null;
-
-    const tries = [
-      `${SUPABASE_URL}/rest/v1/${MEMBERS_TABLE}?email=ilike.${encodeURIComponent(clean)}&select=*&limit=1`,
-      `${SUPABASE_URL}/rest/v1/${MEMBERS_TABLE}?EMAIL=ilike.${encodeURIComponent(clean)}&select=*&limit=1`
-    ];
-
-    for(const url of tries){
-      try{
-        const res = await fetch(url, {
-          headers:{
-            'apikey':SUPABASE_ANON,
-            'Authorization':`Bearer ${SUPABASE_ANON}`
-          }
-        });
-        if(!res.ok) continue;
-        const rows = await res.json().catch(()=>[]);
-        if(Array.isArray(rows) && rows[0]) return normalizeMemberRow(rows[0]);
-      }catch(e){}
-    }
-
-    return null;
+  function passCode(){
+    const pass = readVaultPass() || {};
+    return String(pass.code || '').trim().toUpperCase();
   }
 
-  async function updateLastSeen(email){
+  // Returns {status:'found', member} | {status:'not_found'} | {status:'not_verified'} (no code, wrong code, or offline).
+  async function lookupMember(email, code){
     const clean = emailPattern(email);
-    if(!clean) return false;
-    const now = new Date().toISOString();
+    const cleanCode = String(code || passCode()).trim().toUpperCase();
+    if(!clean || !cleanCode) return { status:'not_verified' };
+    try{
+      const res = await fetch(BACKEND_URL, {
+        method:'POST',
+        headers:{
+          'apikey':SUPABASE_ANON,
+          'Authorization':`Bearer ${SUPABASE_ANON}`,
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({ source:'member_sync', email:normalizeEmail(email), code:cleanCode })
+      });
+      const data = await res.json().catch(()=>({}));
+      if(res.ok && data && data.member) return { status:'found', member:normalizeMemberRow(data.member) };
+      if(res.status === 404 && data && data.status === 'member_not_found') return { status:'not_found' };
+    }catch(e){}
+    return { status:'not_verified' };
+  }
 
-    const attempts = [
-      { filter:'email', body:{ last_seen_at: now } },
-      { filter:'EMAIL', body:{ LAST_SEEN_AT: now } }
-    ];
+  async function fetchMemberByEmail(email, code){
+    const result = await lookupMember(email, code);
+    return result.status === 'found' ? result.member : null;
+  }
 
-    for(const attempt of attempts){
-      try{
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/${MEMBERS_TABLE}?${attempt.filter}=ilike.${encodeURIComponent(clean)}`, {
-          method:'PATCH',
-          headers:{
-            'apikey':SUPABASE_ANON,
-            'Authorization':`Bearer ${SUPABASE_ANON}`,
-            'Content-Type':'application/json',
-            'Prefer':'return=minimal'
-          },
-          body:JSON.stringify(attempt.body)
-        });
-        if(res.ok) return true;
-      }catch(e){}
-    }
-
-    return false;
+  async function updateLastSeen(){
+    // The server updates last_seen_at when it answers member_sync or records a win.
+    return true;
   }
 
   function makeMemberId(){
@@ -250,7 +235,12 @@
     const clean = normalizeEmail(email || localStorage.getItem(MEMBER_EMAIL_KEY) || (readVaultPass() || {}).email || (readVaultPass() || {}).recipient_email || '');
     if(!clean) return { ok:false, reason:'missing_email' };
 
-    const row = await fetchMemberByEmail(clean);
+    const lookup = await lookupMember(clean);
+    if(lookup.status === 'not_verified'){
+      // No vault code on this device, a code for another e-mail, or offline: leave things as they are.
+      return { ok:false, reason:'not_verified' };
+    }
+    const row = lookup.status === 'found' ? lookup.member : null;
     if(!row) {
       deactivateMember();
       return { ok:false, reason:'not_found' };
@@ -282,7 +272,6 @@
       paid_registration:true
     });
 
-    updateLastSeen(row.email).catch(()=>{});
     return { ok:true, member:row };
   }
 

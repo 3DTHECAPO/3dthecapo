@@ -19,6 +19,9 @@
   var SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
   var SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
   var REWARD_EVENTS_TABLE = 'reward_events';
+  // 2026-11-11: points are recorded by the server (game_win), which checks the fan's vault code and e-mail
+  // and applies the per-game and daily limits. The browser no longer writes reward_events itself.
+  var BACKEND_URL = SUPABASE_URL + '/functions/v1/dynamic-endpoint';
   var THRESHOLD = 100000;
   var TODAY = new Date().toISOString().slice(0, 10);
   var DAILY_REWARD_CAP = 2500;
@@ -350,15 +353,7 @@
     if(localLog[payload.reward_code]) return false;
     localLog[payload.reward_code] = {at:new Date().toISOString(), milestone:milestone.id};
     writeJSON(MILESTONE_LOG_KEY, localLog);
-    Promise.resolve()
-      .then(function(){ return rewardEventExists(payload.reward_code); })
-      .then(function(exists){
-        if(exists) return false;
-        return postRewardEvent(payload);
-      })
-      .catch(function(error){
-        console.warn('PLAY 3D milestone reward_events logging failed', {payload:payload, error:error});
-      });
+    // Milestone badges carry no points, so they stay on this device (no server write).
     return true;
   }
 
@@ -550,10 +545,40 @@
     return false;
   }
 
+  async function callBackend(source, body){
+    var response = await fetch(BACKEND_URL, {
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':'Bearer ' + SUPABASE_ANON,
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify(Object.assign({source:source}, body))
+    });
+    var data = await response.json().catch(function(){ return {}; });
+    return {ok:response.ok, status:response.status, body:data || {}};
+  }
+
   function logRewardEvent(points, game, reason, total){
     if(!isMember()) return;
-    postRewardEvent(buildRewardEvent(points, game, reason, total)).catch(function(error){
-      console.warn('PLAY 3D reward_events logging failed', error);
+    var identity = rewardIdentity();
+    if(!identity.email || !identity.code) return;
+    var clientId = [String(game || 'game'), String(Date.now()), Math.random().toString(36).slice(2, 10)].join('-');
+    callBackend('game_win', {
+      email:identity.email,
+      code:identity.code,
+      game:String(game || 'game'),
+      points:points,
+      reason:reason || 'valid_win',
+      client_event_id:clientId
+    }).then(function(result){
+      if(result.ok && result.body.success){
+        try{ window.dispatchEvent(new CustomEvent('play3d:serverpoints', {detail:result.body})); }catch(e){}
+      }else{
+        console.warn('PLAY 3D win not recorded by the server', result.status, result.body.status || result.body.error || '');
+      }
+    }).catch(function(error){
+      console.warn('PLAY 3D game_win request failed', error);
     });
   }
 
