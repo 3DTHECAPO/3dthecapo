@@ -10,7 +10,7 @@ function normalizeCode(value){
 }
 
 function buildVaultUrl(code){
-  return './index.html?code=' + encodeURIComponent(normalizeCode(code));
+  return '/nfc/scan.html?code=' + encodeURIComponent(normalizeCode(code));
 }
 
 function playTapAnimation(){

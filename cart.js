@@ -66,7 +66,7 @@
       price: 5,
       image: './my-resume-cover.png?v=mini2',
       variant: 'Mini CD',
-      stripe_url: 'https://buy.stripe.com/fZuaEX6gEbFk9uAelu4ZG08',
+      stripe_url: '' /* was a $30 tee link; add the $5 Payment Link */,
       cashapp_url: 'https://cash.app/$3dcashin/5',
       requires_size: false
     },
@@ -76,7 +76,7 @@
       price: 5,
       image: './my-resume-cover.png?v=mini2',
       variant: 'Mini Vinyl',
-      stripe_url: 'https://buy.stripe.com/5kQ4gzdJ6bFk9uA1yI4ZG09',
+      stripe_url: '' /* was a $30 tee link; add the $5 Payment Link */,
       cashapp_url: 'https://cash.app/$3dcashin/5',
       requires_size: false
     },
