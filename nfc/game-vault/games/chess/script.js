@@ -118,16 +118,22 @@
     try{ return game.moves().length; }catch(e){ return 0; }
   }
   function playablePosition(){
-    return !verifiedCheckmate() && !game.isStalemate() && legalMoveCount() > 0;
+    return !verifiedCheckmate() && !verifiedDraw() && legalMoveCount() > 0;
   }
   function verifiedDraw(){
-    return !verifiedCheckmate() && legalMoveCount() === 0 && game.isDraw();
+    return !verifiedCheckmate() && (game.isStalemate() || game.isDraw());
+  }
+  function drawReason(){
+    if(game.isStalemate()) return 'STALEMATE';
+    if(game.isThreefoldRepetition()) return 'DRAW - REPETITION';
+    if(game.isInsufficientMaterial()) return 'DRAW - NOT ENOUGH PIECES';
+    if(game.isDrawByFiftyMoves()) return 'DRAW - 50 MOVE RULE';
+    return 'DRAW';
   }
 
   function statusText(label){
     if(verifiedCheckmate()) return 'CHECKMATE';
-    if(game.isStalemate()) return 'STALEMATE';
-    if(verifiedDraw()) return 'DRAW';
+    if(verifiedDraw()) return drawReason();
     if(verifiedCheck()) return 'CHECK';
     return label || (mode === 'fan' ? 'FAN ROOM' : 'READY');
   }
@@ -180,10 +186,34 @@
     stateText.textContent = statusText(label);
   }
 
-  function movePiece(from, to){
+  function askPromotion(from, to){
+    const old = document.getElementById('promoChooser');
+    if(old) old.remove();
+    const box = document.createElement('div');
+    box.id = 'promoChooser';
+    box.setAttribute('role','dialog');
+    box.setAttribute('aria-label','Choose promotion piece');
+    box.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:9999;display:flex;gap:8px;padding:14px;border-radius:14px;background:#120e08;border:1px solid #caa24a;box-shadow:0 10px 40px rgba(0,0,0,.6)';
+    const color = game.turn();
+    ['q','r','b','n'].forEach(type=>{
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = pieceGlyph[color + type];
+      b.setAttribute('aria-label', {q:'Queen',r:'Rook',b:'Bishop',n:'Knight'}[type]);
+      b.style.cssText = 'font-size:38px;width:56px;height:56px;border-radius:10px;cursor:pointer';
+      b.onclick = () => { box.remove(); movePiece(from, to, type); };
+      box.appendChild(b);
+    });
+    document.body.appendChild(box);
+    render('CHOOSE PROMOTION');
+  }
+
+  function movePiece(from, to, promotion){
     const piece = game.get(from);
     const promote = piece && piece.type === 'p' && ((piece.color === 'w' && to[1] === '8') || (piece.color === 'b' && to[1] === '1'));
-    const move = game.move({from, to, promotion: promote ? 'q' : undefined});
+    if(promote && !promotion && legalTargets(from).includes(to)){ askPromotion(from, to); return; }
+    let move = null;
+    try{ move = game.move({from, to, promotion: promote ? (promotion || 'q') : undefined}); }catch(e){ move = null; }
     selected = null;
     if(!move){ render('ILLEGAL'); return; }
     render(move.san);
@@ -459,8 +489,11 @@
     // Fan mode uses the same legal chess move flow, then broadcasts the new FEN.
     if(mode === 'cpu' && game.turn() === 'b') return;
     const piece = game.get(square);
+    if(document.getElementById('promoChooser')) return;
+    if(!playablePosition()) { render(); return; }
     if(selected){
       if(selected === square){ selected = null; render(); return; }
+      if(piece && piece.color === game.turn() && !legalTargets(selected).includes(square)){ selected = square; render('SELECTED'); return; }
       movePiece(selected, square);
       return;
     }

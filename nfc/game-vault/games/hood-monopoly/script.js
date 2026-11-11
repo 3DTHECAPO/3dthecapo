@@ -201,6 +201,11 @@
     const isHuman = cur && !cur.isAI && state.turnPhase !== 'gameOver';
     $('#btn-roll').disabled = !isHuman || state.turnPhase !== 'awaitingRoll' || rolling;
     $('#btn-end-turn').classList.toggle('hidden', !(isHuman && state.turnPhase === 'rolled'));
+    $('#btn-end-turn').textContent = state.rerollAllowed && cur && !cur.inJail ? 'Doubles - Roll Again →' : 'End Turn →';
+    $('#btn-roll').textContent = state.doubleStreak > 0 && state.turnPhase === 'awaitingRoll' && cur && !cur.inJail ? 'Roll Again' : 'Roll Dice';
+    const jailChoice = isHuman && cur.inJail && state.turnPhase === 'awaitingRoll' && !rolling;
+    if ($('#btn-jail-card')) $('#btn-jail-card').classList.toggle('hidden', !(jailChoice && cur.getOutCards > 0));
+    if ($('#btn-pay-bail')) $('#btn-pay-bail').classList.toggle('hidden', !(jailChoice && cur.cash >= 50));
 
     // Modals
     const propModal = $('#modal-property'), cardModal = $('#modal-card');
@@ -311,7 +316,9 @@
     }, 90);
   }
   $('#btn-roll').addEventListener('click', doRoll);
-  $('#btn-end-turn').addEventListener('click', () => { state = HM.nextTurn(state); renderAll(); maybeAITurn(); });
+  $('#btn-end-turn').addEventListener('click', () => { state = HM.finishTurn(state); renderAll(); maybeAITurn(); });
+  if ($('#btn-jail-card')) $('#btn-jail-card').addEventListener('click', () => { HM.audio.click(); state = HM.useJailCard(state); renderAll(); });
+  if ($('#btn-pay-bail')) $('#btn-pay-bail').addEventListener('click', () => { HM.audio.click(); state = HM.payBail(state); renderAll(); });
   $('#btn-buy').addEventListener('click', () => { HM.audio.buy(); state = HM.buyTile(state, HM.currentPlayer(state).id, state.activeTile); renderAll(); });
   $('#btn-pass').addEventListener('click', () => { HM.audio.click(); state = HM.declineBuy(state); renderAll(); });
   $('#btn-card-continue').addEventListener('click', () => { HM.audio.click(); state = HM.applyCardEffect(state, state.activeCard); renderAll(); });
@@ -325,7 +332,11 @@
     const cur = HM.currentPlayer(state);
     if (!cur || !cur.isAI || state.turnPhase === 'gameOver') return;
     aiTimer = setTimeout(() => {
-      if (state.turnPhase === 'awaitingRoll') doRoll();
+      if (state.turnPhase === 'awaitingRoll'){
+        if (cur.inJail && cur.getOutCards > 0) state = HM.useJailCard(state);
+        else if (cur.inJail && cur.cash >= 400) state = HM.payBail(state);
+        doRoll();
+      }
       else if (state.turnPhase === 'propertyOpen'){
         if (HM.aiShouldBuy(state, cur, state.activeTile, cur.difficulty)){ HM.audio.buy(); state = HM.buyTile(state, cur.id, state.activeTile); }
         else state = HM.declineBuy(state);
@@ -333,7 +344,7 @@
       } else if (state.turnPhase === 'cardOpen'){
         HM.audio.card(); state = HM.applyCardEffect(state, state.activeCard); renderAll(); maybeAITurn();
       } else if (state.turnPhase === 'rolled'){
-        state = HM.nextTurn(state); renderAll(); maybeAITurn();
+        state = HM.finishTurn(state); renderAll(); maybeAITurn();
       }
     }, 800);
   }

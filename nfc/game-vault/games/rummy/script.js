@@ -21,7 +21,7 @@
   const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
   const order = Object.fromEntries(ranks.map((r,i)=>[r,i + 1]));
   const suitIcon = {S:'\u2660', H:'\u2665', D:'\u2666', C:'\u2663'};
-  const state = { deck:[], stock:[], discard:[], hands:[], playerMelds:[], cpuMelds:[], selected:new Set(), phase:'idle', score:0, turn:0, playerCount:2 };
+  const state = { deck:[], stock:[], discard:[], hands:[], playerMelds:[], cpuMelds:[], selected:new Set(), phase:'idle', score:0, turn:0, playerCount:2, takenFromDiscard:null, result:'' };
   const FAN_PARAMS = new URLSearchParams(location.search);
   const FAN_MODE = FAN_PARAMS.get('mode') === 'fan' && !!FAN_PARAMS.get('room');
   let fanPlayers = [];
@@ -87,7 +87,9 @@
       phase:state.phase,
       score:state.score,
       turn:state.turn,
-      playerCount:state.playerCount
+      playerCount:state.playerCount,
+      takenFromDiscard:state.takenFromDiscard,
+      result:state.result
     };
   }
 
@@ -218,10 +220,13 @@
     els.opponent.innerHTML = back(opponentCards) + '<div class="count-card">' + opponentLabel + '<br>' + opponentCards + ' Cards</div>';
     const topDiscard = state.discard[state.discard.length - 1];
     els.table.innerHTML = '<div class="count-card">Stock<br>' + state.stock.length + '</div>' + (topDiscard ? card(topDiscard, -1) : '<div class="count-card">Discard<br>Empty</div>');
-    els.melds.innerHTML = myMelds().map(m => '<div class="meld-set">' + m.map(c => card(c, -2)).join('') + '</div>').join('') || '<div class="count-card">No melds yet</div>';
+    const mine = myMelds().map(m => '<div class="meld-set">' + m.map(c => card(c, -2)).join('') + '</div>').join('');
+    const theirs = opponentMelds().map(m => '<div class="meld-set opponent-meld">' + m.map(c => card(c, -2)).join('') + '</div>').join('');
+    els.melds.innerHTML = (mine || '<div class="count-card">No melds yet</div>') + (theirs ? '<div class="count-card">' + opponentLabel + ' melds</div>' + theirs : '');
     els.player.innerHTML = player.map(card).join('');
     els.score.textContent = state.score;
-    if(els.text.textContent !== 'OPPONENT THINKING...') els.text.textContent = state.phase.toUpperCase();
+    if(state.phase === 'over' && state.result) els.text.textContent = state.result;
+    else if(els.text.textContent !== 'OPPONENT THINKING...') els.text.textContent = state.phase.toUpperCase();
   }
 
   function deal(){
@@ -242,6 +247,8 @@
     state.selected.clear();
     state.score = 0;
     state.turn = 0;
+    state.takenFromDiscard = null;
+    state.result = '';
     state.phase = 'draw';
     render();
     broadcastFanState('deal');
@@ -253,6 +260,7 @@
     if(!state.stock.length) recycleDiscard();
     const drawn = state.stock.pop();
     if(drawn){ playCard(); state.hands[mySeat].push(drawn); }
+    state.takenFromDiscard = null;
     state.phase = 'meld';
     render();
     broadcastFanState('draw_stock');
@@ -262,6 +270,7 @@
     if(state.phase !== 'draw' || state.turn !== mySeat) return;
     const drawn = state.discard.pop();
     if(drawn){ playCard(); state.hands[mySeat].push(drawn); }
+    state.takenFromDiscard = drawn ? drawn.r + drawn.s : null;
     state.phase = 'meld';
     render();
     broadcastFanState('draw_discard');
@@ -293,8 +302,9 @@
     const index = indexes[0];
     const cardToAdd = state.hands[mySeat][index];
     if(!cardToAdd){ els.text.textContent = 'SELECT ONE CARD TO ADD'; return; }
-    const meldList = mySeat === 0 ? state.playerMelds : state.cpuMelds;
-    for(let i = 0; i < meldList.length; i++){
+    // Standard rummy: a card may be laid off on any meld on the table (yours or your opponent's).
+    const meldLists = mySeat === 0 ? [state.playerMelds, state.cpuMelds] : [state.cpuMelds, state.playerMelds];
+    for(const meldList of meldLists) for(let i = 0; i < meldList.length; i++){
       const nextMeld = extendedMeld(meldList[i], cardToAdd);
       if(nextMeld){
         removeIndexes(state.hands[mySeat], [index]);
@@ -319,7 +329,13 @@
     if(indexes.length !== 1){ els.text.textContent = 'SELECT ONE DISCARD'; return; }
     const mySeat = FAN_MODE ? fanMySeat : 0;
     if(state.turn !== mySeat) return;
+    const chosen = state.hands[mySeat][indexes[0]];
+    if(chosen && state.takenFromDiscard === chosen.r + chosen.s && state.hands[mySeat].length > 1){
+      els.text.textContent = 'YOU CANNOT DISCARD THE CARD YOU JUST PICKED UP';
+      return;
+    }
     const [discarded] = removeIndexes(state.hands[mySeat], indexes);
+    state.takenFromDiscard = null;
     playCard();
     state.discard.push(discarded);
     state.selected.clear();
@@ -351,6 +367,17 @@
     if(drawn){ playCard(); hand.push(drawn); }
     const meld = findMeldIndexes(hand);
     if(meld){ playCard(); state.cpuMelds.push(removeIndexes(hand, meld)); }
+    for(let i = hand.length - 1; i >= 0 && hand.length > 1; i--){
+      const lists = [state.cpuMelds, state.playerMelds];
+      let placed = false;
+      for(const list of lists){
+        for(let m = 0; m < list.length && !placed; m++){
+          const next = extendedMeld(list[m], hand[i]);
+          if(next){ list[m] = next; hand.splice(i, 1); placed = true; }
+        }
+        if(placed) break;
+      }
+    }
     if(hand.length){ hand.sort((a,b)=>cardValue(b) - cardValue(a)); playCard(); state.discard.push(hand.shift()); }
     checkRound();
     if(state.phase !== 'over'){
@@ -364,18 +391,18 @@
     const player = state.hands[0] || [];
     const opponents = state.hands.slice(1);
     if(!player.length || opponents.some(hand => !hand.length)){
+      // Whoever empties their hand first wins the round and scores the other hand's deadwood.
       const playerNet = opponents.reduce((sum, hand)=>sum + deadwood(hand), 0);
-      const cpuNet = deadwood(player);
-      if(!player.length || playerNet <= cpuNet){
+      if(!player.length){
         state.score += playerNet;
         if(window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(50, playerNet), 'round_win');
         state.phase = 'over';
         play3dAnnounce('ROUND_END','success');
-        els.text.textContent = 'PLAYER WINS';
+        state.result = 'PLAYER WINS';
       } else {
         state.phase = 'over';
         play3dAnnounce('ROUND_END','warning');
-        els.text.textContent = 'CPU WINS';
+        state.result = 'CPU WINS';
       }
     }
   }

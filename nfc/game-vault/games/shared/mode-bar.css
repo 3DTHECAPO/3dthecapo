@@ -51,3 +51,10 @@
     width:100%;
   }
 }
+
+/* Phones: keep the mode bar compact so the game table shows sooner. */
+@media (max-width:760px){
+  .play3d-mode-bar{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px;margin:0 0 10px}
+  .play3d-mode-bar button,.play3d-mode-bar a{min-height:36px;padding:6px 8px;font-size:11px;text-align:center;display:flex;align-items:center;justify-content:center}
+  .play3d-mode-status{grid-column:1 / -1;min-height:0;font-size:11px}
+}

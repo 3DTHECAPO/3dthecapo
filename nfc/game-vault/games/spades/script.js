@@ -24,6 +24,10 @@
   const team = { south:'NS', north:'NS', west:'EW', east:'EW' };
   const power = rank => 14 - ranks.indexOf(rank);
   const suitIcon = {S:'\u2660', H:'\u2665', D:'\u2666', C:'\u2663'};
+  const WIN_SCORE = 500;
+  const LOSE_SCORE = -200;
+  const TRICK_HOLD_MS = 1300;
+  let trickTimer = null;
   const state = {
     hands:{}, turn:'south', dealer:'east', trick:[], spadesBroken:false, phase:'idle',
     score:{ NS:0, EW:0 }, bags:{ NS:0, EW:0 }, bids:{}, taken:{}
@@ -45,12 +49,15 @@
   function sortCards(a,b){ return suits.indexOf(a.s) - suits.indexOf(b.s) || ranks.indexOf(a.r) - ranks.indexOf(b.r); }
 
   function deal(){
+    if(trickTimer){ clearTimeout(trickTimer); trickTimer = null; }
+    if(state.phase === 'gameover'){ state.score = { NS:0, EW:0 }; state.bags = { NS:0, EW:0 }; }
+    state.dealer = seats[(seats.indexOf(state.dealer) + 1) % 4];
     playShuffle();
     const deck = buildDeck();
     state.hands = { south:[], west:[], north:[], east:[] };
     for(let i = 0; i < 52; i++) state.hands[seats[i % 4]].push(deck[i]);
     for(const seat of seats) state.hands[seat].sort(sortCards);
-    state.turn = 'south';
+    state.turn = leaderSeat();
     state.trick = [];
     state.spadesBroken = false;
     state.phase = 'bid';
@@ -59,6 +66,9 @@
     log(mode === 'fan' ? 'Fan room opened with guarded table state.' : 'New 52-card spades hand dealt. Bid first.');
     render();
   }
+
+  // The player to the dealer's left leads the first trick.
+  function leaderSeat(){ return seats[(seats.indexOf(state.dealer) + 1) % 4]; }
 
   function estimateBid(seat){
     const hand = state.hands[seat] || [];
@@ -77,8 +87,8 @@
     }
     if(seats.every(s => state.bids[s] !== null)){
       state.phase = 'play';
-      state.turn = 'south';
-      log('Contracts set. North/South ' + teamBid('NS') + ', East/West ' + teamBid('EW') + '.');
+      state.turn = leaderSeat();
+      log('Contracts set. North/South ' + teamBid('NS') + ', East/West ' + teamBid('EW') + '. ' + seatName(state.turn) + ' leads.');
       if(mode === 'cpu' && state.turn !== 'south') scheduleBot();
     }
     render();
@@ -102,14 +112,20 @@
   }
 
   function play(seat, card){
-    if(state.phase !== 'play' || seat !== state.turn || !card) return;
+    if(state.phase !== 'play' || seat !== state.turn || !card || state.trick.length === 4) return;
     const legal = legalCards(seat);
     if(!legal.some(item => item.id === card.id)){ log('Follow suit if you can.'); return; }
     playCard();
     state.hands[seat] = state.hands[seat].filter(item => item.id !== card.id);
     state.trick.push({ seat, card });
     if(card.s === 'S') state.spadesBroken = true;
-    if(state.trick.length === 4){ finishTrick(); return; }
+    if(state.trick.length === 4){
+      const winner = trickWinnerCard().seat;
+      render();
+      turnText.textContent = winner === 'south' ? 'YOU TAKE THE TRICK' : seatName(winner).toUpperCase() + ' TAKES THE TRICK';
+      trickTimer = setTimeout(()=>{ trickTimer = null; finishTrick(); }, TRICK_HOLD_MS);
+      return;
+    }
     state.turn = seats[(seats.indexOf(state.turn) + 1) % 4];
     render();
     if(mode === 'cpu' && state.turn !== 'south') scheduleBot();
@@ -121,7 +137,7 @@
   }
 
   function botTurn(){
-    if(mode !== 'cpu' || state.phase !== 'play') return;
+    if(mode !== 'cpu' || state.phase !== 'play' || state.trick.length === 4 || state.turn === 'south') return;
     const legal = legalCards(state.turn);
     const leadSuit = state.trick[0] ? state.trick[0].card.s : null;
     const currentWin = state.trick.length ? trickWinnerCard() : null;
@@ -168,7 +184,15 @@
     state.phase = 'over';
     if(window.Play3DPoints && state.score.NS >= state.score.EW) window.Play3DPoints.award('spades', 175, 'contract_hand');
     log('Hand scored. Bags: NS ' + state.bags.NS + ', EW ' + state.bags.EW + '.');
-    play3dAnnounce('WIN','success');
+    const ns = state.score.NS, ew = state.score.EW;
+    const someoneWon = ns >= WIN_SCORE || ew >= WIN_SCORE || ns <= LOSE_SCORE || ew <= LOSE_SCORE;
+    if(someoneWon){
+      state.phase = 'gameover';
+      let winner = ns === ew ? null : (ns > ew ? 'NS' : 'EW');
+      state.winner = winner;
+      log(winner ? (winner === 'NS' ? 'You and North win the game ' : 'East and West win the game ') + ns + ' - ' + ew + '. Press New Hand to start over.' : 'Game tied ' + ns + ' - ' + ew + '. Press New Hand to start over.');
+    }
+    play3dAnnounce(state.phase === 'gameover' && state.winner !== 'NS' ? 'ROUND_END' : 'WIN', state.phase === 'gameover' && state.winner !== 'NS' ? 'warning' : 'success');
     render();
   }
 
@@ -228,7 +252,7 @@
     renderTrick();
     renderSeats();
     scoreText.textContent = state.score.NS + ' - ' + state.score.EW;
-    const label = state.phase === 'bid' ? 'BID PHASE' : state.phase === 'over' ? 'HAND OVER' : (mode === 'local' ? seatName(state.turn).toUpperCase() + ' TURN' : (state.turn === 'south' ? 'YOUR TURN' : seatName(state.turn).toUpperCase() + ' TURN'));
+    const label = state.phase === 'bid' ? 'BID PHASE' : state.phase === 'gameover' ? (state.winner === 'NS' ? 'YOU WIN THE GAME' : state.winner === 'EW' ? 'EAST / WEST WIN THE GAME' : 'GAME TIED') : state.phase === 'over' ? 'HAND OVER' : (mode === 'local' ? seatName(state.turn).toUpperCase() + ' TURN' : (state.turn === 'south' ? 'YOUR TURN' : seatName(state.turn).toUpperCase() + ' TURN'));
     turnText.textContent = label + (state.spadesBroken ? ' / SPADES BROKEN' : '');
   }
 
