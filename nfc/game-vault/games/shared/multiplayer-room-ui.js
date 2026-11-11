@@ -10,7 +10,8 @@ Does not change game logic.
 
   const params = new URLSearchParams(location.search);
   const mode = params.get('mode');
-  const room = params.get('room');
+  // Room codes are letters, numbers and dashes only (never HTML).
+  const room = String(params.get('room') || '').toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 24);
 
   if(mode !== 'fan' || !room) return;
 

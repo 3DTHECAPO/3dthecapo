@@ -2,7 +2,9 @@
 (function(){
   const params = new URLSearchParams(location.search);
   const gameName = (document.title || 'PLAY 3D Game').replace(/^PLAY 3D\s*[—-]\s*/,'');
-  const existingRoom = params.get('room') || '';
+  // Room codes are letters, numbers and dashes only (never HTML).
+  function cleanRoom(v){ return String(v || '').toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 24); }
+  const existingRoom = cleanRoom(params.get('room'));
   const mode = params.get('mode') || '';
 
   function makeRoom(){
@@ -29,7 +31,7 @@
 
   function joinRoom(){
     const input = document.querySelector('#p3dJoinCode');
-    const code = (input?.value || '').trim().toUpperCase();
+    const code = cleanRoom(input?.value);
     if(!code){
       input?.focus();
       return;

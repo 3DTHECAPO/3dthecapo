@@ -179,10 +179,14 @@
   }
 
   function finishHand(){
+    const nsBefore = state.score.NS, ewBefore = state.score.EW;
     scoreTeam('NS');
     scoreTeam('EW');
     state.phase = 'over';
-    if(window.Play3DPoints && state.score.NS >= state.score.EW) window.Play3DPoints.award('spades', 175, 'contract_hand');
+    // Points only when your team wins this hand: made its bid and outscored East/West this hand.
+    const nsHand = state.score.NS - nsBefore, ewHand = state.score.EW - ewBefore;
+    const madeBid = teamTaken('NS') >= teamBid('NS');
+    if(window.Play3DPoints && madeBid && nsHand > ewHand) window.Play3DPoints.award('spades', 175, 'contract_hand');
     log('Hand scored. Bags: NS ' + state.bags.NS + ', EW ' + state.bags.EW + '.');
     const ns = state.score.NS, ew = state.score.EW;
     const someoneWon = ns >= WIN_SCORE || ew >= WIN_SCORE || ns <= LOSE_SCORE || ew <= LOSE_SCORE;

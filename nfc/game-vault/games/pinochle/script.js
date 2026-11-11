@@ -309,9 +309,7 @@ function showMeld(){
     state.handScores=[state.meldScores[0],state.meldScores[1]];
     state.meldShown=true;
     announce('MELD','elite','MELD IS ON THE TABLE.');
-    if(window.Play3DPoints&&state.meldScores[0]>0){
-      window.Play3DPoints.award('pinochle',Math.min(75,Math.max(25,state.meldScores[0]*2)),'meld_score');
-    }
+    // Meld points are paid at the end of the hand, and only if Team A's meld counts (not set).
     render('MELD: TEAM A '+state.meldScores[0]+' / TEAM B '+state.meldScores[1]+' - PRESS START PLAY');
     return;
   }
@@ -520,6 +518,10 @@ function finishHand(){
   state.trickScores[lastTeam]+=2;
   state.handScores[lastTeam]+=2;
   const made=state.handScores[state.bidTeam]>=state.bid;
+  const teamAMeldCounts=made||state.bidTeam!==0;
+  if(window.Play3DPoints&&teamAMeldCounts&&state.meldScores[0]>0){
+    window.Play3DPoints.award('pinochle',Math.min(75,Math.max(25,state.meldScores[0]*2)),'meld_score');
+  }
 
   if(made){
     state.scores[0]+=state.handScores[0];

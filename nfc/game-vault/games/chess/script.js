@@ -33,6 +33,16 @@
 
   let selected = null;
   let flipped = false;
+  // Fan rooms: first player in the room is White, second is Black, anyone else watches.
+  let fanColor = null;
+  let fanPlayerCount = 0;
+  function fanRoomLive(){ const s = play3dSync(); return mode === 'fan' && !!(s && s.enabled); }
+  function fanSeatLabel(){
+    if(!fanRoomLive()) return '';
+    if(fanColor === 'w') return fanPlayerCount < 2 ? 'YOU ARE WHITE - WAITING FOR OPPONENT' : 'YOU ARE WHITE';
+    if(fanColor === 'b') return 'YOU ARE BLACK';
+    return fanPlayerCount > 2 ? 'ROOM FULL - WATCHING' : 'JOINING ROOM...';
+  }
   let mode = window.Play3DModeBar ? window.Play3DModeBar.getMode() : 'cpu';
 
   const boardEl = document.getElementById('board');
@@ -135,7 +145,7 @@
     if(verifiedCheckmate()) return 'CHECKMATE';
     if(verifiedDraw()) return drawReason();
     if(verifiedCheck()) return 'CHECK';
-    return label || (mode === 'fan' ? 'FAN ROOM' : 'READY');
+    return label || (mode === 'fan' ? (fanSeatLabel() || 'FAN ROOM') : 'READY');
   }
   function legalTargets(square){
     return game.moves({square, verbose:true}).map(move => move.to);
@@ -491,6 +501,12 @@
     const piece = game.get(square);
     if(document.getElementById('promoChooser')) return;
     if(!playablePosition()) { render(); return; }
+    if(fanRoomLive()){
+      if(!fanColor || fanPlayerCount < 2){ render(fanSeatLabel()); return; }
+      if(game.turn() !== fanColor){ render('OPPONENT TURN'); return; }
+      const own = game.get(square);
+      if(!selected && own && own.color !== fanColor) return;
+    }
     if(selected){
       if(selected === square){ selected = null; render(); return; }
       if(piece && piece.color === game.turn() && !legalTargets(selected).includes(square)){ selected = square; render('SELECTED'); return; }
@@ -503,9 +519,12 @@
   }
 
   function reset(){
+    if(fanRoomLive() && fanColor !== 'w'){ render('ONLY THE ROOM HOST (WHITE) CAN RESET'); return; }
     game.reset();
     selected = null;
     render('READY');
+    const s = play3dSync();
+    if(fanRoomLive() && s && typeof s.sendMove === 'function') s.sendMove({game:'chess', san:'RESET', fen:game.fen(), turn:game.turn()});
   }
 
   document.getElementById('resetBtn').onclick = reset;
@@ -526,6 +545,24 @@
     const sync = play3dSync();
     if(!sync || typeof sync.onMove !== 'function') return;
     fanSyncAttached = true;
+    if(typeof sync.onPresence === 'function'){
+      sync.onPresence(list=>{
+        const ordered = (list || []).filter(p=>p && p.playerId)
+          .sort((a,b)=>String(a.joinedAt || '').localeCompare(String(b.joinedAt || '')) || String(a.playerId).localeCompare(String(b.playerId)));
+        const before = fanColor;
+        const hadOpponent = fanPlayerCount >= 2;
+        fanPlayerCount = ordered.length;
+        const idx = ordered.findIndex(p=>p.playerId === sync.playerId);
+        fanColor = idx === 0 ? 'w' : idx === 1 ? 'b' : null;
+        if(fanColor !== before) flipped = fanColor === 'b';
+        // Host sends the current position when an opponent arrives, so a late joiner is in sync.
+        if(fanColor === 'w' && fanPlayerCount >= 2 && !hadOpponent && typeof sync.sendMove === 'function'){
+          sync.sendMove({game:'chess', san:'SYNC', fen:game.fen(), turn:game.turn()});
+        }
+        selected = null;
+        render(fanSeatLabel());
+      });
+    }
     sync.onMove(msg=>{
       const payload = (msg && msg.payload) ? msg.payload : msg;
       if(!payload || payload.game !== 'chess' || !payload.fen) return;
