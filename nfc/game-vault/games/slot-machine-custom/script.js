@@ -97,22 +97,26 @@
     'capo_pass_session',
     'CAPO_PASS_SESSION'
   ];
+  // Reel weights, tuned 2026-11-11 for about 95% payback at the minimum bet
+  // (about 93% at the maximum bet). Vault (jackpot) symbol is rare: 3 on a line about 1 spin in 8,000.
   const PLAY3D_SYMBOL_WEIGHT = 0.001;
   const VAULT_PASS_SYMBOL_WEIGHT = 0.018;
+  const VAULT_SYMBOL_WEIGHT = 0.025;
   const play3dSymbol = {id:'play-3d', src:'./assets/play-3d.png', pay:44};
   const regularSymbols = [
-    {id:'cash', src:'./assets/cash.png', pay:10},
-    {id:'chain', src:'./assets/chain.png', pay:12},
-    {id:'crown', src:'./assets/crown.png', pay:18},
-    {id:'hoodie', src:'./assets/hoodie.png', pay:14},
-    {id:'key', src:'./assets/key.png', pay:15},
-    {id:'lock', src:'./assets/lock.png', pay:15},
-    {id:'mic', src:'./assets/mic.png', pay:16},
-    {id:'speaker', src:'./assets/speaker.png', pay:13},
-    {id:'vault', src:'./assets/vault.png', pay:24},
+    {id:'cash', src:'./assets/cash.png', pay:6},
+    {id:'chain', src:'./assets/chain.png', pay:7},
+    {id:'crown', src:'./assets/crown.png', pay:10},
+    {id:'hoodie', src:'./assets/hoodie.png', pay:7},
+    {id:'key', src:'./assets/key.png', pay:8},
+    {id:'lock', src:'./assets/lock.png', pay:8},
+    {id:'mic', src:'./assets/mic.png', pay:8},
+    {id:'speaker', src:'./assets/speaker.png', pay:7},
+    {id:'vault', src:'./assets/vault.png', pay:50},
     play3dSymbol
   ];
-  const ordinaryReelSymbols = regularSymbols.filter(symbol => symbol.id !== 'play-3d');
+  const vaultSymbol = regularSymbols.find(symbol => symbol.id === 'vault');
+  const ordinaryReelSymbols = regularSymbols.filter(symbol => symbol.id !== 'play-3d' && symbol.id !== 'vault');
   const vaultPassSymbols = [
     {id:'vault-pass-100x3', src:'./assets/cover-100x3.png'},
     {id:'vault-pass-grammy', src:'./assets/cover-fuck-a-grammy.png'},
@@ -150,6 +154,7 @@
     const roll = Math.random();
     if(roll < PLAY3D_SYMBOL_WEIGHT) return play3dSymbol;
     if(roll < PLAY3D_SYMBOL_WEIGHT + VAULT_PASS_SYMBOL_WEIGHT) return vaultPassSymbols[Math.floor(Math.random() * vaultPassSymbols.length)];
+    if(roll < PLAY3D_SYMBOL_WEIGHT + VAULT_PASS_SYMBOL_WEIGHT + VAULT_SYMBOL_WEIGHT) return vaultSymbol;
     return ordinaryReelSymbols[Math.floor(Math.random() * ordinaryReelSymbols.length)];
   }
 
