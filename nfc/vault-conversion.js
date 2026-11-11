@@ -5,6 +5,9 @@ const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
 const TABLE = 'vault_codes';
 const PASS_KEY = 'play3d_vault_pass_v1';
+// 2026-11-11: the "Connect My Vault Access" e-mail is saved by the server (vault_member_capture), which needs a
+// redeemed vault code, sends no e-mail, and never changes an existing member's status.
+const BACKEND_URL = `${SUPABASE_URL}/functions/v1/dynamic-endpoint`;
 const NFC_ROUTES = new Set([
   'index.html',
   'entry-backdrop.html',
@@ -137,9 +140,24 @@ async function logVaultSidecars(email, codeValue, tier){
     last_seen_at:now
   };
 
-  const emailOk = await writeSidecar('email_signups', emailPayload, 'email_signups');
-  const memberOk = await writeSidecar('members', memberPayload, 'members');
-  return {email:emailOk, member:memberOk};
+  void emailPayload; void memberPayload;
+  try{
+    const res = await fetch(BACKEND_URL, {
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':'Bearer '+SUPABASE_ANON,
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({source:'vault_member_capture', email:cleanEmail, code:String(codeValue || '').toUpperCase().trim(), tier:cleanTier, page:window.location.pathname})
+    });
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok) console.error('[PLAY3D SIDECAR] vault_member_capture failed', {status:res.status, error:data.status || data.error || ''});
+    return {email:data.email === true, member:data.member === true};
+  }catch(e){
+    console.error('[PLAY3D SIDECAR] vault_member_capture failed', {error:e});
+    return {email:false, member:false};
+  }
 }
 
 function renderVaultConversionScreen(codeValue, tier){

@@ -11,11 +11,67 @@ const USED_KEY = 'used_codes_v1';
 // against a list the 3D team issues, the page no longer adds credits or files claims by itself.
 const CLAIM_CODES_SELF_SERVE = false;
 const SUPPORT_EMAIL = 'support@3dthecapo.com';
+// 2026-11-11: the 100,000-point prize is requested from the server (points_claim_request). The server checks the
+// fan's vault code and e-mail, counts the points it recorded, and files one claim for the 3D team to review.
+const BACKEND_URL = `${SUPABASE_URL}/functions/v1/dynamic-endpoint`;
+
+async function requestPointsPrize(button){
+  const id = identity();
+  const pass = (()=>{ try{ return JSON.parse(localStorage.getItem('play3d_vault_pass_v1') || '{}') || {}; }catch(e){ return {}; } })();
+  const email = String(id.email || '').trim().toLowerCase();
+  const code = String(id.code || pass.code || '').trim().toUpperCase();
+  if(!email || !code){
+    statusBox.textContent = 'OPEN THE GAME VAULT WITH YOUR VAULT CODE FIRST, then come back to request your prize.';
+    return;
+  }
+  button.disabled = true;
+  statusBox.textContent = 'CHECKING YOUR POINTS...';
+  try{
+    const res = await fetch(BACKEND_URL, {
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':`Bearer ${SUPABASE_ANON}`,
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({ source:'points_claim_request', email, code })
+    });
+    const data = await res.json().catch(()=>({}));
+    if(res.ok && data.claim_id){
+      statusBox.textContent = data.duplicate
+        ? 'YOUR PRIZE CLAIM IS ALREADY WITH THE 3D TEAM (' + String(data.claim_status || 'pending_review').toUpperCase() + ').'
+        : 'PRIZE CLAIM SENT. The 3D team reviews every claim and will contact you.';
+      return;
+    }
+    if(data.status === 'not_enough_points'){
+      statusBox.textContent = 'NOT YET: ' + Number(data.credits || 0).toLocaleString() + ' OF ' + Number(data.points_required || 100000).toLocaleString() + ' POINTS RECORDED.';
+    }else if(data.status === 'paid_access_required'){
+      statusBox.textContent = 'PAID MEMBERSHIP REQUIRED';
+    }else if(data.status === 'not_verified'){
+      statusBox.textContent = 'YOUR VAULT CODE COULD NOT BE CHECKED. Email ' + SUPPORT_EMAIL + ' with your member number.';
+    }else{
+      statusBox.textContent = 'CLAIM ERROR. Email ' + SUPPORT_EMAIL + ' with your member number.';
+    }
+  }catch(e){
+    statusBox.textContent = 'CLAIM ERROR. Email ' + SUPPORT_EMAIL + ' with your member number.';
+  }finally{
+    button.disabled = false;
+  }
+}
+
 (function(){
   try{
     const p = new URLSearchParams(window.location.search);
     if(p.get('source') === 'game-points' && statusBox){
-      statusBox.textContent = 'REACHED 100,000 POINTS? Email ' + SUPPORT_EMAIL + ' with your member number. Prize claims are reviewed by the 3D team.';
+      statusBox.textContent = 'REACHED 100,000 POINTS? Request your prize below. Prize claims are reviewed by the 3D team.';
+      const prizeBtn = document.createElement('button');
+      prizeBtn.id = 'prizeBtn';
+      prizeBtn.type = 'button';
+      prizeBtn.className = btn ? btn.className : 'btn gold';
+      prizeBtn.style.marginTop = '10px';
+      prizeBtn.textContent = 'Request My 100,000-Point Prize';
+      prizeBtn.onclick = () => requestPointsPrize(prizeBtn);
+      statusBox.parentNode.insertBefore(prizeBtn, statusBox);
     }
   }catch(e){}
 })();
