@@ -709,6 +709,28 @@
     }
   }
 
+  // On phones, show the game table first: move the profile and points panels to the end of the page.
+  var SMALL_SCREEN = window.matchMedia ? window.matchMedia('(max-width: 760px)') : null;
+  function placePanelsForScreen(){
+    var main = document.querySelector('main');
+    if(!main) return;
+    var profile = document.querySelector('.play3d-profile-panel');
+    var points = document.querySelector('.play3d-points-panel');
+    if(SMALL_SCREEN && SMALL_SCREEN.matches){
+      if(profile) main.appendChild(profile);
+      if(points) main.appendChild(points);
+      return;
+    }
+    var anchor = document.querySelector('.play3d-mode-bar');
+    var ref = anchor ? anchor.nextSibling : main.firstChild;
+    if(profile) { main.insertBefore(profile, ref); ref = profile.nextSibling; }
+    if(points) main.insertBefore(points, ref);
+  }
+  if(SMALL_SCREEN){
+    if(SMALL_SCREEN.addEventListener) SMALL_SCREEN.addEventListener('change', placePanelsForScreen);
+    else if(SMALL_SCREEN.addListener) SMALL_SCREEN.addListener(placePanelsForScreen);
+  }
+
   function renderPanel(){
     var main = document.querySelector('main');
     if(!main || document.querySelector('.play3d-points-panel')) return;
@@ -727,6 +749,7 @@
       else panel.querySelector('[data-p3d-prize-status]').textContent = status.member ? 'Keep playing to reach 100,000 points.' : 'Member access required for prize claims.';
     });
     updatePanel();
+    placePanelsForScreen();
   }
 
   function updatePanel(){

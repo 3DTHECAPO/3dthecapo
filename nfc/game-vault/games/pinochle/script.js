@@ -91,7 +91,11 @@ function buildDeck(){
       for(const rank of RANKS)deck.push({rank,suit,id:rank+suit+copy});
     }
   }
-  return deck.sort(()=>Math.random()-.5);
+  for(let i=deck.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [deck[i],deck[j]]=[deck[j],deck[i]];
+  }
+  return deck;
 }
 
 function cardHTML(card,index,enabled=true){
@@ -319,6 +323,11 @@ function showMeld(){
 
 function setTrump(suit){
   if(!SUITS.includes(suit))return;
+  // Only the bid winner names trump, and only before meld is scored.
+  if(state.phase!=='meld'||state.bidder!==0||state.meldShown){
+    render(state.phase==='meld'&&state.bidder!==0?seatName(state.bidder)+' NAMED TRUMP':'TRUMP IS SET BY THE BID WINNER BEFORE MELD');
+    return;
+  }
   state.trump=suit;
   if(state.phase==='meld'&&state.bidder!==null){
     state.trumpMarriageValid=hasMarriage(state.hands[state.bidder]||[],state.trump);

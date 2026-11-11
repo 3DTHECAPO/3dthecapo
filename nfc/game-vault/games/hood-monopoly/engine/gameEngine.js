@@ -12,7 +12,7 @@ window.HM = window.HM || {};
   function createInitialState({ players }){
     return {
       players, currentPlayerIndex:0, turnPhase:'awaitingRoll',
-      dice:[1,1], doubleStreak:0, owners:{}, houses:{},
+      dice:[1,1], doubleStreak:0, rerollAllowed:false, owners:{}, houses:{},
       hoodDeck: HM.shuffle(HM.HOOD_CARDS).map(c=>c.id),
       streetDeck: HM.shuffle(HM.STREET_CARDS).map(c=>c.id),
       activeCard:null, activeTile:null,
@@ -177,7 +177,7 @@ window.HM = window.HM || {};
   function applyRoll(state, dice){
     const p = currentPlayer(state);
     const doubles = dice[0] === dice[1];
-    let s = { ...state, dice, doubleStreak: doubles ? state.doubleStreak+1 : 0 };
+    let s = { ...state, dice, doubleStreak: doubles ? state.doubleStreak+1 : 0, rerollAllowed:false };
     if (p.inJail){
       if (doubles){
         s = pushLog(s, `${p.name} rolled doubles and walked out of jail.`);
@@ -199,10 +199,11 @@ window.HM = window.HM || {};
       s = pushLog(s, `${p.name} stayed locked up (turn ${nj}/${MAX_JAIL_TURNS}).`);
       return { ...s, turnPhase:'rolled' };
     }
-    if (doubles && s.doubleStreak >= 3){ s = sendToJail(s, p.id); return { ...s, turnPhase:'rolled' }; }
+    if (doubles && s.doubleStreak >= 3){ s = pushLog(s, `${p.name} rolled doubles 3 times in a row.`); s = sendToJail(s, p.id); return { ...s, turnPhase:'rolled' }; }
     s = movePlayer(s, p.id, dice[0]+dice[1]);
     const res = resolveLanding(s);
-    return { ...res.state, turnPhase: res.action ? res.state.turnPhase : 'rolled' };
+    // Doubles earn another roll (unless the landing sent the player to jail).
+    return { ...res.state, rerollAllowed: doubles, turnPhase: res.action ? res.state.turnPhase : 'rolled' };
   }
 
   function nextTurn(state){
@@ -219,7 +220,32 @@ window.HM = window.HM || {};
       for (let n=0; n<players.length; n++){ j = (j+1) % players.length; if (!players[j].bankrupt) break; }
       i = j;
     }
-    return pushLog({ ...state, players, currentPlayerIndex:i, turnPhase:'awaitingRoll', doubleStreak:0, activeCard:null, activeTile:null }, `${players[i].name}'s turn.`);
+    return pushLog({ ...state, players, currentPlayerIndex:i, turnPhase:'awaitingRoll', doubleStreak:0, rerollAllowed:false, activeCard:null, activeTile:null }, `${players[i].name}'s turn.`);
+  }
+
+  // End of a player's move: rolled doubles (and not in jail) = roll again, otherwise next player.
+  function finishTurn(state){
+    const p = currentPlayer(state);
+    if (state.turnPhase === 'gameOver') return state;
+    if (state.rerollAllowed && p && !p.inJail && !p.bankrupt){
+      return pushLog({ ...state, rerollAllowed:false, turnPhase:'awaitingRoll', activeCard:null, activeTile:null }, `${p.name} rolled doubles - roll again.`);
+    }
+    return nextTurn(state);
+  }
+
+  function useJailCard(state){
+    const p = currentPlayer(state);
+    if (!p || !p.inJail || p.getOutCards < 1 || state.turnPhase !== 'awaitingRoll') return state;
+    const players = state.players.map(pl => pl.id===p.id ? { ...pl, inJail:false, jailTurns:0, getOutCards:pl.getOutCards-1 } : pl);
+    return pushLog({ ...state, players }, `${p.name} used a Get Out Of Jail Free card.`);
+  }
+
+  function payBail(state){
+    const p = currentPlayer(state);
+    if (!p || !p.inJail || p.cash < JAIL_FINE || state.turnPhase !== 'awaitingRoll') return state;
+    let s = transfer(state, p.id, null, JAIL_FINE);
+    s = { ...s, players:s.players.map(pl => pl.id===p.id ? { ...pl, inJail:false, jailTurns:0 } : pl) };
+    return pushLog(s, `${p.name} paid $${JAIL_FINE} bail.`);
   }
 
   function checkBankruptcy(state){
@@ -230,6 +256,7 @@ window.HM = window.HM || {};
           ...s,
           players: s.players.map(pl => pl.id===p.id ? { ...pl, bankrupt:true, properties:[] } : pl),
           owners: Object.fromEntries(Object.entries(s.owners).filter(([,v]) => v !== p.id)),
+          houses: Object.fromEntries(Object.entries(s.houses || {}).filter(([idx]) => s.owners[idx] !== p.id)),
         };
         s = pushLog(s, `${p.name} went bankrupt.`);
       }
@@ -241,5 +268,5 @@ window.HM = window.HM || {};
 
   Object.assign(HM, { createPlayer, createInitialState, pushLog, currentPlayer, rentForTile,
     rollDice, movePlayer, moveToTile, sendToJail, resolveLanding, applyCardEffect,
-    buyTile, declineBuy, applyRoll, nextTurn, checkBankruptcy });
+    buyTile, declineBuy, applyRoll, nextTurn, finishTurn, useJailCard, payBail, checkBankruptcy });
 })();

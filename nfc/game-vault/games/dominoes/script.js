@@ -129,7 +129,10 @@ function buildStock(){
   for(let a=0;a<=6;a++){
     for(let b=a;b<=6;b++) state.stock.push([a,b]);
   }
-  state.stock.sort(()=>Math.random() - 0.5);
+  for(let i = state.stock.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [state.stock[i], state.stock[j]] = [state.stock[j], state.stock[i]];
+  }
 }
 
 function removeTile(hand,tile){
@@ -866,11 +869,14 @@ function cpuTurn(){
   if(player === 0 || activeLocal() || state.handOver || state.gameOver) return;
   const hand = state.hands[player];
   let move = chooseCpuMove(hand);
-  if(!move && state.stock.length){
+  let drew = 0;
+  // Same rule as the player: draw until a domino can be played or the boneyard is empty.
+  while(!move && state.stock.length){
     hand.push(state.stock.pop());
-    log(seatName(player)+' drew one bone.');
+    drew++;
     move = chooseCpuMove(hand);
   }
+  if(drew) log(seatName(player)+' drew '+drew+' bone'+(drew === 1 ? '' : 's')+'.');
   if(move){
     const opening = !hasBoardTiles();
     commitPlay(player,move.tile,move.arm);
@@ -916,7 +922,14 @@ function passTurn(){
 }
 
 function washDishes(){
-  if(state.gameOver){ newGame(state.players); return; }
+  if(state.gameOver){
+    // A finished game starts over from 0 - 0.
+    state.scores = [];
+    state.gotIn = [];
+    state.nextLeader = null;
+    newGame(state.players);
+    return;
+  }
   newGame(state.players);
 }
 

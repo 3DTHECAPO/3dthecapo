@@ -38,7 +38,10 @@
     for(const s of suits){
       for(const r of ranks) deck.push({r,s});
     }
-    deck.sort(()=>Math.random() - 0.5);
+    for(let i = deck.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
   }
 
   function value(hand){
@@ -111,7 +114,11 @@
     live = true;
     saveBank();
     setResult('Hand started');
-    if(value(player) === 21) finish('Blackjack', Math.floor(currentBet * 2.5));
+    const playerNatural = value(player) === 21;
+    const dealerNatural = value(dealer) === 21;
+    if(playerNatural && dealerNatural) finish('Push - both blackjack', currentBet);
+    else if(dealerNatural) finish('Dealer blackjack', 0);
+    else if(playerNatural) finish('Blackjack', Math.floor(currentBet * 2.5));
     else render(false);
   }
 
