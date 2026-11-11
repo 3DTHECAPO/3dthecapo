@@ -6,6 +6,19 @@ const playBtn = document.getElementById('playBtn');
 const SUPABASE_URL = 'https://fupoedrovfloudefyzna.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
 const USED_KEY = 'used_codes_v1';
+// 2026-11-11: BOOST / MEMBER / VIP codes were only checked for their shape, so anyone could
+// invent one (BOOST-500000-X added 500,000 credits). Until codes are checked on the server
+// against a list the 3D team issues, the page no longer adds credits or files claims by itself.
+const CLAIM_CODES_SELF_SERVE = false;
+const SUPPORT_EMAIL = 'support@3dthecapo.com';
+(function(){
+  try{
+    const p = new URLSearchParams(window.location.search);
+    if(p.get('source') === 'game-points' && statusBox){
+      statusBox.textContent = 'REACHED 100,000 POINTS? Email ' + SUPPORT_EMAIL + ' with your member number. Prize claims are reviewed by the 3D team.';
+    }
+  }catch(e){}
+})();
 
 function getUsed(){
   try{
@@ -223,6 +236,11 @@ btn.onclick = async () => {
 
   if(used(p.raw)){
     statusBox.textContent = 'USED';
+    return;
+  }
+
+  if(!CLAIM_CODES_SELF_SERVE){
+    statusBox.textContent = 'CODE RECEIVED - email ' + SUPPORT_EMAIL + ' with this code and your member number. The 3D team checks every claim code.';
     return;
   }
 

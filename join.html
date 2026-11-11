@@ -130,6 +130,19 @@
             return;
           }
           const memberNumber = data.member_number || (data.member && data.member.member_number) || "Member Pending";
+          // Remember this fan on this device so their games and rewards link to their member record.
+          try{
+            localStorage.setItem("play3d_member_email_v1", payload.email);
+            const prev = JSON.parse(localStorage.getItem("play3d_member_profile_v1") || "{}") || {};
+            localStorage.setItem("play3d_member_profile_v1", JSON.stringify(Object.assign({}, prev, {
+              email: payload.email,
+              name: payload.name || prev.name || "",
+              member_number: /^MEM-\d{6,}$/i.test(String(memberNumber)) ? String(memberNumber).toUpperCase() : (prev.member_number || ""),
+              member_status: prev.paid_registration ? prev.member_status : "PENDING",
+              source: prev.source || "member_signup",
+              updated_at: new Date().toISOString()
+            })));
+          }catch(_e){}
           show(
             "<h2 style='margin:0 0 8px;color:#f2d27b;font-family:Black Ops One,system-ui,sans-serif;'>WELCOME TO PLAY 3D</h2>" +
             "<p style='margin:0 0 8px;'>Member Status: <b>Pending</b></p>" +

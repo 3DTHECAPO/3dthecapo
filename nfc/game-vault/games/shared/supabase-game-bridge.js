@@ -25,7 +25,7 @@ API:
   const SUPABASE_JS_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
   const params = new URLSearchParams(location.search);
   const mode = params.get('mode');
-  const room = params.get('room');
+  const room = String(params.get('room') || '').toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 24);
 
   const inactive = {
     enabled:false,

@@ -51,7 +51,8 @@
     fanSeatMap = {};
     fanPlayers.forEach((player, index) => { fanSeatMap[player.playerId] = index; });
     const mine = fanPlayerId();
-    if(Object.prototype.hasOwnProperty.call(fanSeatMap, mine)) fanMySeat = fanSeatMap[mine];
+    // Only the first 2 players get a seat; anyone else watches (seat -1 cannot act).
+    fanMySeat = Object.prototype.hasOwnProperty.call(fanSeatMap, mine) ? fanSeatMap[mine] : -1;
   }
 
   function isFanSeat(seat){

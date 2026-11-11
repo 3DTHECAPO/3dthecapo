@@ -101,8 +101,15 @@
     };
   }
 
-  async function fetchMemberByEmail(email){
+  // Exact, case-insensitive email match. Wildcards (% * _) must not match other members.
+  function emailPattern(email){
     const clean = normalizeEmail(email);
+    if(!clean || /[%*\s]/.test(clean) || !/^[^@]+@[^@]+\.[^@]+$/.test(clean)) return null;
+    return clean.replace(/_/g, '\\_');
+  }
+
+  async function fetchMemberByEmail(email){
+    const clean = emailPattern(email);
     if(!clean) return null;
 
     const tries = [
@@ -128,7 +135,7 @@
   }
 
   async function updateLastSeen(email){
-    const clean = normalizeEmail(email);
+    const clean = emailPattern(email);
     if(!clean) return false;
     const now = new Date().toISOString();
 

@@ -25,9 +25,23 @@ let mobileFire = false;
 let audioCtx = null;
 let awardedDefenderMilestones = {};
 
+// Each milestone pays once per day (a page refresh no longer resets it).
+const DEFENDER_MILESTONE_KEY = 'play3d_defender_milestones_v1';
+function defenderMilestonesToday() {
+  const today = new Date().toISOString().slice(0, 10);
+  try {
+    const saved = JSON.parse(localStorage.getItem(DEFENDER_MILESTONE_KEY) || '{}');
+    return saved && saved.date === today ? saved : { date: today, keys: {} };
+  } catch (e) { return { date: today, keys: {} }; }
+}
 function awardDefenderPoints(key, points) {
   if (awardedDefenderMilestones[key]) return;
   awardedDefenderMilestones[key] = true;
+  const day = defenderMilestonesToday();
+  day.keys = day.keys || {};
+  if (day.keys[key]) return;
+  day.keys[key] = true;
+  try { localStorage.setItem(DEFENDER_MILESTONE_KEY, JSON.stringify(day)); } catch (e) {}
   if (!window.Play3DPoints || typeof window.Play3DPoints.award !== "function") return;
   window.Play3DPoints.award("3d-defender", points, key);
 }
