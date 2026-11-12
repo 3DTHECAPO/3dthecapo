@@ -63,27 +63,56 @@
     state.phase = 'bid';
     state.bids = { south:null, west:null, north:null, east:null };
     state.taken = { south:0, west:0, north:0, east:0 };
-    log(mode === 'fan' ? 'Fan room opened with guarded table state.' : 'New 52-card spades hand dealt. Bid first.');
+    log(mode === 'fan' ? 'Fan room opened with guarded table state.' : 'New 52-card spades hand dealt. ' + seatName(leaderSeat()) + ' bids first.');
+    cpuBidsBefore();
     render();
   }
 
   // The player to the dealer's left leads the first trick.
   function leaderSeat(){ return seats[(seats.indexOf(state.dealer) + 1) % 4]; }
 
+  // Trick estimate: spade honours and long spades, side aces, and side kings with cover. 0 can mean nil.
   function estimateBid(seat){
     const hand = state.hands[seat] || [];
-    let bid = hand.filter(c => power(c.r) >= 12).length;
-    bid += Math.floor(hand.filter(c => c.s === 'S' && power(c.r) >= 9).length / 2);
-    return Math.max(1, Math.min(5, bid));
+    const spades = hand.filter(c => c.s === 'S');
+    const honours = spades.filter(c => power(c.r) >= 12).length;
+    let tricks = honours + Math.max(0, spades.length - Math.max(3, honours));
+    for(const s of ['H','D','C']){
+      const cards = hand.filter(c => c.s === s);
+      if(cards.some(c => c.r === 'A')) tricks += 1;
+      if(cards.some(c => c.r === 'K') && cards.length >= 2) tricks += cards.some(c => c.r === 'A') ? 0.5 : 0.75;
+    }
+    const safeNil = spades.every(c => power(c.r) <= 9) && spades.length <= 3 && !hand.some(c => power(c.r) >= 13);
+    if(tricks < 1.5 && safeNil) return 0;
+    return Math.max(1, Math.min(13, Math.round(tricks)));
+  }
+
+  // Seats bid in order, starting left of the dealer; the computer seats before you bid first so you see them.
+  function bidOrder(){
+    const start = seats.indexOf(leaderSeat());
+    return [0,1,2,3].map(i => seats[(start + i) % 4]);
+  }
+
+  function cpuBidsBefore(){
+    for(const seat of bidOrder()){
+      if(seat === 'south') break;
+      state.bids[seat] = estimateBid(seat);
+      log(seatName(seat) + ' bid ' + (state.bids[seat] === 0 ? 'nil' : state.bids[seat]) + '.');
+    }
   }
 
   function placeBid(seat, bid){
     if(state.phase !== 'bid' || state.bids[seat] !== null) return;
-    state.bids[seat] = Number(bid);
+    bid = Math.floor(Number(bid));
+    if(!(bid >= 0 && bid <= 13)) return;
+    state.bids[seat] = bid;
     log(seatName(seat) + ' bid ' + (Number(bid) === 0 ? 'nil' : bid) + '.');
     play3dAnnounce(Number(bid) === 0 ? 'NIL' : 'BID', 'casino');
-    for(const cpu of seats.filter(s => s !== 'south')){
-      if(state.bids[cpu] === null) state.bids[cpu] = estimateBid(cpu);
+    for(const cpu of bidOrder()){
+      if(cpu !== 'south' && state.bids[cpu] === null){
+        state.bids[cpu] = estimateBid(cpu);
+        log(seatName(cpu) + ' bid ' + (state.bids[cpu] === 0 ? 'nil' : state.bids[cpu]) + '.');
+      }
     }
     if(seats.every(s => state.bids[s] !== null)){
       state.phase = 'play';

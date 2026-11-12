@@ -57,4 +57,6 @@ body{overflow:auto}.app{width:min(1800px,98vw);min-height:100vh;display:flex;fle
 .hero .status{align-self:center!important;min-width:180px!important;max-width:260px!important;overflow-wrap:anywhere!important;}
 .spades-layout{height:calc(100vh - 138px)!important;}
 .controls button,.controls .bidBtn{min-height:40px!important;font-size:13px!important;}
-
+/* 2026-11-12: bid Nil or 1-13 */
+.controls .bid-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;width:100%}
+.controls .bid-grid .bidBtn{min-height:32px!important;padding:5px 0!important;font-size:12px!important;width:100%}

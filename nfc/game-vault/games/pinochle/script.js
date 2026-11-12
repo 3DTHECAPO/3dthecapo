@@ -248,7 +248,7 @@ function passBid(player){
 function cpuBid(player){
   if(state.phase!=='bidding'||player!==state.currentBidder)return;
   const estimate=estimateHand(player);
-  if(estimate.bestTrump)state.trump=estimate.bestTrump;
+  // Trump is named after the bidding, so the CPU's choice is not shown while bidding.
   const target=state.bid>0?state.bid+5:estimate.openingBid;
   if(estimate.bestTrump&&target<=estimate.ceiling)placeBid(player,target);
   else passBid(player);
@@ -271,6 +271,8 @@ function deal(){
   clearCpuTimer();
   clearTrickTimer();
   state.handToken++;
+  // A finished game (300+) starts the next one at 0 - 0.
+  if(state.phase==='gameover')state.scores=[0,0];
   state.dealer=(state.dealer+1)%4;
   const deck=buildDeck();
   state.hands=Array.from({length:4},()=>deck.splice(0,20));

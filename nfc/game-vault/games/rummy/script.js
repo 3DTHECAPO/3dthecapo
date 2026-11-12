@@ -21,7 +21,9 @@
   const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
   const order = Object.fromEntries(ranks.map((r,i)=>[r,i + 1]));
   const suitIcon = {S:'\u2660', H:'\u2665', D:'\u2666', C:'\u2663'};
-  const state = { deck:[], stock:[], discard:[], hands:[], playerMelds:[], cpuMelds:[], selected:new Set(), phase:'idle', score:0, turn:0, playerCount:2, takenFromDiscard:null, result:'' };
+  // 2026-11-12: scores[seat] for both sides (seat 0 = you / host, seat 1 = CPU or fan opponent); game to RUMMY_TARGET.
+  const RUMMY_TARGET = 500;
+  const state = { deck:[], stock:[], discard:[], hands:[], playerMelds:[], cpuMelds:[], selected:new Set(), phase:'idle', score:0, scores:[0,0], winnerSeat:null, gameOver:false, turn:0, playerCount:2, takenFromDiscard:null, result:'' };
   const FAN_PARAMS = new URLSearchParams(location.search);
   const FAN_MODE = FAN_PARAMS.get('mode') === 'fan' && !!FAN_PARAMS.get('room');
   let fanPlayers = [];
@@ -87,6 +89,9 @@
       cpuMelds:state.cpuMelds,
       phase:state.phase,
       score:state.score,
+      scores:state.scores,
+      winnerSeat:state.winnerSeat,
+      gameOver:state.gameOver,
       turn:state.turn,
       playerCount:state.playerCount,
       takenFromDiscard:state.takenFromDiscard,
@@ -225,8 +230,14 @@
     const theirs = opponentMelds().map(m => '<div class="meld-set opponent-meld">' + m.map(c => card(c, -2)).join('') + '</div>').join('');
     els.melds.innerHTML = (mine || '<div class="count-card">No melds yet</div>') + (theirs ? '<div class="count-card">' + opponentLabel + ' melds</div>' + theirs : '');
     els.player.innerHTML = player.map(card).join('');
-    els.score.textContent = state.score;
-    if(state.phase === 'over' && state.result) els.text.textContent = state.result;
+    const scores = state.scores || [0,0];
+    els.score.textContent = (scores[mySeat] || 0) + ' - ' + (scores[opponentSeat] || 0);
+    if(state.phase === 'over' && state.winnerSeat !== null && state.winnerSeat !== undefined){
+      const mine = state.winnerSeat === mySeat;
+      const who = FAN_MODE ? (mine ? 'YOU WIN' : 'OPPONENT WINS') : (mine ? 'PLAYER WINS' : 'CPU WINS');
+      els.text.textContent = who + (state.gameOver ? ' THE GAME ' + (scores[mySeat] || 0) + ' - ' + (scores[opponentSeat] || 0) : ' THE ROUND');
+    }
+    else if(state.phase === 'over' && state.result) els.text.textContent = state.result;
     else if(els.text.textContent !== 'OPPONENT THINKING...') els.text.textContent = state.phase.toUpperCase();
   }
 
@@ -247,6 +258,10 @@
     state.cpuMelds = [];
     state.selected.clear();
     state.score = 0;
+    // Scores carry over from round to round until someone reaches the target.
+    if(state.gameOver || !Array.isArray(state.scores)) state.scores = [0,0];
+    state.gameOver = false;
+    state.winnerSeat = null;
     state.turn = 0;
     state.takenFromDiscard = null;
     state.result = '';
@@ -287,6 +302,7 @@
     playCard();
     (mySeat === 0 ? state.playerMelds : state.cpuMelds).push(picked);
     state.score += scoreMeld(picked);
+    state.scores[mySeat] += scoreMeld(picked);
     play3dAnnounce('MELD','success');
     state.selected.clear();
     if(window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(10, scoreMeld(picked)), 'meld');
@@ -312,6 +328,7 @@
         playCard();
         meldList[i] = nextMeld;
         state.score += cardValue(cardToAdd);
+        state.scores[mySeat] += cardValue(cardToAdd);
         state.selected.clear();
         if(window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(5, cardValue(cardToAdd)), 'layoff');
         checkRound();
@@ -367,14 +384,14 @@
     const drawn = drawDiscard ? state.discard.pop() : (state.stock.pop() || (recycleDiscard(), state.stock.pop()));
     if(drawn){ playCard(); hand.push(drawn); }
     const meld = findMeldIndexes(hand);
-    if(meld){ playCard(); state.cpuMelds.push(removeIndexes(hand, meld)); }
+    if(meld){ playCard(); const laid = removeIndexes(hand, meld); state.cpuMelds.push(laid); state.scores[state.turn] += scoreMeld(laid); }
     for(let i = hand.length - 1; i >= 0 && hand.length > 1; i--){
       const lists = [state.cpuMelds, state.playerMelds];
       let placed = false;
       for(const list of lists){
         for(let m = 0; m < list.length && !placed; m++){
           const next = extendedMeld(list[m], hand[i]);
-          if(next){ list[m] = next; hand.splice(i, 1); placed = true; }
+          if(next){ list[m] = next; state.scores[state.turn] += cardValue(hand[i]); hand.splice(i, 1); placed = true; }
         }
         if(placed) break;
       }
@@ -389,23 +406,19 @@
     broadcastFanState('cpu_turn');
   }
   function checkRound(){
-    const player = state.hands[0] || [];
-    const opponents = state.hands.slice(1);
-    if(!player.length || opponents.some(hand => !hand.length)){
-      // Whoever empties their hand first wins the round and scores the other hand's deadwood.
-      const playerNet = opponents.reduce((sum, hand)=>sum + deadwood(hand), 0);
-      if(!player.length){
-        state.score += playerNet;
-        if(window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(50, playerNet), 'round_win');
-        state.phase = 'over';
-        play3dAnnounce('ROUND_END','success');
-        state.result = 'PLAYER WINS';
-      } else {
-        state.phase = 'over';
-        play3dAnnounce('ROUND_END','warning');
-        state.result = 'CPU WINS';
-      }
-    }
+    const winner = state.hands.findIndex(hand => hand && hand.length === 0);
+    if(winner < 0) return;
+    // Whoever empties their hand first wins the round and scores the other hand's deadwood.
+    const net = state.hands.reduce((sum, hand, seat)=>seat === winner ? sum : sum + deadwood(hand), 0);
+    state.scores[winner] += net;
+    if(winner === 0) state.score += net;
+    state.winnerSeat = winner;
+    state.phase = 'over';
+    state.gameOver = state.scores.some(total => total >= RUMMY_TARGET);
+    const mine = isMySeat(winner);
+    state.result = winner === 0 ? 'PLAYER WINS' : 'CPU WINS';
+    if(mine && window.Play3DPoints) window.Play3DPoints.award('rummy', Math.max(50, net), 'round_win');
+    play3dAnnounce('ROUND_END', mine ? 'success' : 'warning');
   }
   els.player.addEventListener('click', e => {
     const btn = e.target.closest('[data-index]');
