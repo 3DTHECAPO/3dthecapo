@@ -27,6 +27,7 @@
   let betAmount = 50;
   let currentBet = 50;
   let live = false;
+  let dealerTurn = false;  // set by Stand / Double: the dealer's card is shown, so the player can't act any more
 
   const suits = ['S','H','D','C'];
   const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -76,9 +77,9 @@
     bet.textContent = betAmount;
     if(stateText.textContent !== 'OPPONENT THINKING...') stateText.textContent = live ? 'LIVE' : 'READY';
     dealBtn.disabled = live || credits < betAmount;
-    hitBtn.disabled = !live;
-    standBtn.disabled = !live;
-    doubleBtn.disabled = !live || player.length !== 2 || credits < currentBet;
+    hitBtn.disabled = !live || dealerTurn;
+    standBtn.disabled = !live || dealerTurn;
+    doubleBtn.disabled = !live || dealerTurn || player.length !== 2 || credits < currentBet;
     playAgainBtn.disabled = live || credits < betAmount;
   }
 
@@ -95,6 +96,7 @@
     credits += Math.max(0, pay || 0);
     if(window.Play3DPoints && pay > currentBet) window.Play3DPoints.award('blackjack', Math.min(180, Math.floor(pay / 4)), 'blackjack_win');
     live = false;
+    dealerTurn = false;
     saveBank();
     setResult(text + (pay ? ' +' + pay : ''));
     render(true);
@@ -107,6 +109,7 @@
     playShuffle();
     makeDeck();
     currentBet = betAmount;
+    dealerTurn = false;
     credits -= currentBet;
     player = [deck.pop(), deck.pop()];
     dealer = [deck.pop(), deck.pop()];
@@ -123,7 +126,7 @@
   }
 
   function hit(){
-    if(!live) return;
+    if(!live || dealerTurn) return;
     playFlip();
     player.push(deck.pop());
     if(value(player) > 21) finish('Bust', 0);
@@ -155,14 +158,15 @@
   }
 
   function stand(){
-    if(!live) return;
+    if(!live || dealerTurn) return;
+    dealerTurn = true;
     stateText.textContent = 'OPPONENT THINKING...';
     render(true);
     window.setTimeout(dealerStep, thinkDelay());
   }
 
   function doubleDown(){
-    if(!live || player.length !== 2) return;
+    if(!live || dealerTurn || player.length !== 2) return;
     if(credits < currentBet){ setResult('Not enough credits'); render(false); return; }
     credits -= currentBet;
     currentBet *= 2;
