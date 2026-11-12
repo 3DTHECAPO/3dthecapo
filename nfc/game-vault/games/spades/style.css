@@ -60,3 +60,5 @@ body{overflow:auto}.app{width:min(1800px,98vw);min-height:100vh;display:flex;fle
 /* 2026-11-12: bid Nil or 2-13 */
 .controls .bid-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;width:100%}
 .controls .bid-grid .bidBtn{min-height:32px!important;padding:5px 0!important;font-size:12px!important;width:100%}
+/* 2026-11-12: on phones the controls panel was squeezed to ~35px and the hand covered its buttons */
+@media(max-width:980px){.spades-layout{height:auto!important;min-height:0!important}.spades-rail,.spades-rail .panel,.controls.panel{height:auto!important}}
