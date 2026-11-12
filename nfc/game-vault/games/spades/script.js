@@ -26,6 +26,7 @@
   const suitIcon = {S:'\u2660', H:'\u2665', D:'\u2666', C:'\u2663'};
   const WIN_SCORE = 500;
   const LOSE_SCORE = -200;
+  const MIN_BID = 2;  // house rule: Nil or 2 and up
   const TRICK_HOLD_MS = 1300;
   let trickTimer = null;
   const state = {
@@ -71,7 +72,8 @@
   // The player to the dealer's left leads the first trick.
   function leaderSeat(){ return seats[(seats.indexOf(state.dealer) + 1) % 4]; }
 
-  // Trick estimate: spade honours and long spades, side aces, and side kings with cover. 0 can mean nil.
+  // Trick estimate: spade honours and long spades, side aces, and side kings with cover.
+  // House rule: a bid is Nil or 2 and up (no bid of 1).
   function estimateBid(seat){
     const hand = state.hands[seat] || [];
     const spades = hand.filter(c => c.s === 'S');
@@ -84,7 +86,7 @@
     }
     const safeNil = spades.every(c => power(c.r) <= 9) && spades.length <= 3 && !hand.some(c => power(c.r) >= 13);
     if(tricks < 1.5 && safeNil) return 0;
-    return Math.max(1, Math.min(13, Math.round(tricks)));
+    return Math.max(MIN_BID, Math.min(13, Math.round(tricks)));
   }
 
   // Seats bid in order, starting left of the dealer; the computer seats before you bid first so you see them.
@@ -104,7 +106,7 @@
   function placeBid(seat, bid){
     if(state.phase !== 'bid' || state.bids[seat] !== null) return;
     bid = Math.floor(Number(bid));
-    if(!(bid >= 0 && bid <= 13)) return;
+    if(!(bid === 0 || (bid >= MIN_BID && bid <= 13))) return;
     state.bids[seat] = bid;
     log(seatName(seat) + ' bid ' + (Number(bid) === 0 ? 'nil' : bid) + '.');
     play3dAnnounce(Number(bid) === 0 ? 'NIL' : 'BID', 'casino');
