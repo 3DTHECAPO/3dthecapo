@@ -9,7 +9,7 @@
  * When pre-orders end, edit those descriptions in Stripe too.
  */
 window.CAPO_PREORDER = {
-  enabled: true,
+  enabled: false,  // 2026-11-13: off until there is a pre-order date. Set true + a real shipNote to start pre-orders.
   shipNote: 'Pre-order. Ships when the drop releases.'
 };
 
