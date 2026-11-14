@@ -1,8 +1,11 @@
 /*
- * Shop closed switch (buy.html).
+ * Shop closed switch (buy.html and the home page).
  *
- * closed: true  -> the shop page is covered with caution tape and "COMING SOON"; every checkout link on it is switched off.
- * closed: false -> the shop page works as normal. Use this when you are ready to sell again.
+ * closed: true  -> buy.html is covered with caution tape and "COMING SOON".
+ *                  On the home page the merch cards say COMING SOON, and View / Buy, Add To Cart, the cart's
+ *                  Pay With Stripe and Buy Mini CD / Mini Vinyl are switched off.
+ *                  No Stripe checkout link on these pages can be opened.
+ * closed: false -> everything works as normal. Use this when you are ready to sell again.
  */
 window.CAPO_SHOP = {
   closed: true,
@@ -14,7 +17,22 @@ window.CAPO_SHOP = {
   var cfg = window.CAPO_SHOP || {};
   if (!cfg.closed) return;
 
-  document.documentElement.classList.add('capo-shop-closed');
+  var onShopPage = /\/buy(\.html)?$/i.test(location.pathname);
+  var STRIPE = 'a[href*="buy.stripe.com"]';
+  var BLOCKED = STRIPE + ',[data-closed-href],.merch-options-btn,.capo-cart-add-button,[data-capo-index-add],.capo-cart-pay-link,#cartButton,.capo-closed-buy';
+
+  // Switch off a checkout link: keep it on the page, but it no longer goes anywhere.
+  function disarm(a) {
+    if (!a.hasAttribute('href')) return;
+    a.setAttribute('data-closed-href', a.getAttribute('href'));
+    a.removeAttribute('href');
+    a.removeAttribute('target');
+    a.setAttribute('aria-disabled', 'true');
+  }
+  function disarmAll(root) {
+    (root || document).querySelectorAll(STRIPE).forEach(disarm);
+  }
+
   var css = document.createElement('style');
   css.textContent =
     'html.capo-shop-closed,html.capo-shop-closed body{overflow:hidden!important}' +
@@ -30,8 +48,48 @@ window.CAPO_SHOP = {
     '#capoShopClosed .capo-closed-card p{margin:8px 0 18px;font-size:17px;color:rgba(244,241,234,.8)}' +
     '#capoShopClosed .capo-closed-card a{display:inline-block;padding:12px 22px;border-radius:999px;background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);' +
     'color:#100c05;font-weight:800;letter-spacing:1px;text-transform:uppercase;text-decoration:none}' +
-    '@media(max-width:600px){#capoShopClosed .tape{height:48px}#capoShopClosed .tape span{font-size:19px}}';
+    '@media(max-width:600px){#capoShopClosed .tape{height:48px}#capoShopClosed .tape span{font-size:19px}}' +
+    // Home page: closed buttons look switched off; the cart button is hidden.
+    '.capo-closed-buy{opacity:.55!important;cursor:not-allowed!important;filter:grayscale(.35)}' +
+    'html.capo-store-closed #cartButton{display:none!important}' +
+    '#capoClosedToast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:2147483001;padding:12px 18px;border-radius:999px;' +
+    'background:#111;border:2px solid #f5c400;color:#f5c400;font:700 15px/1.2 Oswald,Arial,sans-serif;letter-spacing:1px;text-transform:uppercase;' +
+    'box-shadow:0 12px 40px rgba(0,0,0,.6);max-width:calc(100vw - 32px);text-align:center}';
   document.head.appendChild(css);
+
+  function toast() {
+    var t = document.getElementById('capoClosedToast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'capoClosedToast';
+      t.setAttribute('role', 'status');
+      document.body.appendChild(t);
+    }
+    t.textContent = 'Coming soon - ' + (cfg.message || 'the shop is closed for now.');
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 3200);
+  }
+
+  // Any click on a buying control is stopped before the site's own handlers (cart, product popup) see it.
+  window.addEventListener('click', function (event) {
+    var hit = event.target && event.target.closest && event.target.closest(BLOCKED);
+    if (!hit) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!onShopPage) toast();
+  }, true);
+
+  // Links the site adds later (the product popup's Buy Now, the cart's Pay With Stripe) are switched off as they appear.
+  new MutationObserver(function (records) {
+    records.forEach(function (r) {
+      if (r.type === 'attributes' && r.target.matches && r.target.matches(STRIPE)) disarm(r.target);
+      (r.addedNodes || []).forEach(function (n) {
+        if (n.nodeType !== 1) return;
+        if (n.matches(STRIPE)) disarm(n);
+        disarmAll(n);
+      });
+    });
+  }).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['href'] });
 
   function tape(cls) {
     var band = document.createElement('div');
@@ -45,15 +103,10 @@ window.CAPO_SHOP = {
     return band;
   }
 
-  function close() {
+  function closeShopPage() {
     if (document.getElementById('capoShopClosed')) return;
-    // Switch off every checkout link so nothing can be bought from this page while it is closed.
-    document.querySelectorAll('a[href*="buy.stripe.com"]').forEach(function (a) {
-      a.setAttribute('data-closed-href', a.getAttribute('href'));
-      a.removeAttribute('href');
-      a.setAttribute('aria-disabled', 'true');
-      a.style.pointerEvents = 'none';
-    });
+    document.documentElement.classList.add('capo-shop-closed');
+    disarmAll();
     var box = document.createElement('div');
     box.id = 'capoShopClosed';
     box.setAttribute('role', 'dialog');
@@ -78,6 +131,33 @@ window.CAPO_SHOP = {
     back.focus();
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', close);
-  else close();
+  function closeStorefront() {
+    document.documentElement.classList.add('capo-store-closed');
+    disarmAll();
+    // Merch cards: IN STOCK -> COMING SOON, and the View / Buy buttons are switched off.
+    document.querySelectorAll('.merch-grid article.product').forEach(function (card) {
+      var badge = card.querySelector('.overlay-badge');
+      if (badge && /in stock/i.test(badge.textContent)) badge.textContent = 'COMING SOON';
+      card.querySelectorAll('.merch-options-btn').forEach(function (b) {
+        b.textContent = 'Coming Soon';
+        b.classList.add('capo-closed-buy');
+        b.setAttribute('aria-disabled', 'true');
+      });
+      // Buy Mini CD / Buy Mini Vinyl (they lead to the closed shop page).
+      card.querySelectorAll('a[href*="buy.html"]').forEach(function (a) {
+        if (!/^\s*buy\b/i.test(a.textContent)) return;
+        a.textContent = 'Coming Soon';
+        a.classList.add('capo-closed-buy');
+        a.setAttribute('aria-disabled', 'true');
+      });
+    });
+  }
+
+  function run() {
+    if (onShopPage) closeShopPage();
+    else closeStorefront();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
 })();
