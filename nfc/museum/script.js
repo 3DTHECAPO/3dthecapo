@@ -9,7 +9,7 @@
     {
       title:'Day One Photo Slot',
       image:'',
-      description:'Placeholder for the first official vault photo, launch-night image, or early supporter memory.',
+      description:'Coming soon: the first official vault photo, launch-night image, or early supporter memory.',
       type:'photo chapter',
       year:'2026',
       tag:'DAY 1',
@@ -19,7 +19,7 @@
     {
       title:'Behind The Scenes Slot',
       image:'',
-      description:'Placeholder for studio, rehearsal, filming, or street campaign photos.',
+      description:'Coming soon: studio, rehearsal, filming, or street campaign photos.',
       type:'photo chapter',
       year:'2026',
       tag:'BTS',
@@ -29,7 +29,7 @@
     {
       title:'Release Memory Slot',
       image:'',
-      description:'Placeholder for cover art, release-night screenshots, listening party photos, or drop-day moments.',
+      description:'Coming soon: cover art, release-night screenshots, listening party photos, or drop-day moments.',
       type:'photo chapter',
       year:'2026',
       tag:'DROP',
@@ -39,7 +39,7 @@
     {
       title:'Fan Moment Slot',
       image:'',
-      description:'Placeholder for a fan photo, tagged moment, repost, or community highlight.',
+      description:'Coming soon: a fan photo, tagged moment, repost, or community highlight.',
       type:'photo chapter',
       year:'2026',
       tag:'FAN',
@@ -49,7 +49,7 @@
     {
       title:'Gold Lounge Photo Slot',
       image:'',
-      description:'Placeholder for premium listening-room photos, album support moments, or Gold-tier visuals.',
+      description:'Coming soon: premium listening-room photos, album support moments, or Gold-tier visuals.',
       type:'photo chapter',
       year:'2026',
       tag:'GOLD',
@@ -59,7 +59,7 @@
     {
       title:'Studio Session Slot',
       image:'',
-      description:'Placeholder for studio photos, behind-the-scenes visuals, and session moments.',
+      description:'Coming soon: studio photos, behind-the-scenes visuals, and session moments.',
       type:'photo chapter',
       year:'2026',
       tag:'STUDIO',
@@ -69,7 +69,7 @@
     {
       title:'Visual Shoot Slot',
       image:'',
-      description:'Placeholder for video shoot stills, trailer frames, interviews, or rollout visuals.',
+      description:'Coming soon: video shoot stills, trailer frames, interviews, or rollout visuals.',
       type:'photo chapter',
       year:'2026',
       tag:'VISUAL',
@@ -79,7 +79,7 @@
     {
       title:'Elite Drop Photo Slot',
       image:'',
-      description:'Placeholder for VIP merch previews, private drops, and Elite-only photo moments.',
+      description:'Coming soon: VIP merch previews, private drops, and Elite-only photo moments.',
       type:'photo chapter',
       year:'2026',
       tag:'ELITE',
@@ -89,7 +89,7 @@
     {
       title:'Hidden Room Memory Slot',
       image:'',
-      description:'Placeholder for secret-room clues, hidden drops, private reveals, or vault-only memories.',
+      description:'Coming soon: secret-room clues, hidden drops, private reveals, or vault-only memories.',
       type:'photo chapter',
       year:'2026',
       tag:'SECRET',

@@ -259,7 +259,7 @@
       state.playerName = nameInput.value || 'Host';
       const code = await createRoom(game);
       roomInput.value = code;
-      setStatus('Room: <span class="p3d-mp-room">' + code + '</span> ' + (state.online ? 'ONLINE' : 'LOCAL TEST MODE'));
+      setStatus('Room: <span class="p3d-mp-room">' + code + '</span> ' + (state.online ? 'ONLINE' : 'SAME DEVICE'));
     };
 
     panel.querySelector('#p3dMpJoin').onclick = async ()=>{
@@ -267,7 +267,7 @@
       const code = roomInput.value;
       if(!code){ setStatus('Enter a room code.'); return; }
       await joinRoom(code, game);
-      setStatus('Joined: <span class="p3d-mp-room">' + state.roomCode + '</span> ' + (state.online ? 'ONLINE' : 'LOCAL TEST MODE'));
+      setStatus('Joined: <span class="p3d-mp-room">' + state.roomCode + '</span> ' + (state.online ? 'ONLINE' : 'SAME DEVICE'));
     };
 
     panel.querySelector('#p3dMpCopy').onclick = async ()=>{
