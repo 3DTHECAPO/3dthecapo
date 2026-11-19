@@ -238,7 +238,8 @@
       els.text.textContent = who + (state.gameOver ? ' THE GAME ' + (scores[mySeat] || 0) + ' - ' + (scores[opponentSeat] || 0) : ' THE ROUND');
     }
     else if(state.phase === 'over' && state.result) els.text.textContent = state.result;
-    else if(els.text.textContent !== 'OPPONENT THINKING...') els.text.textContent = state.phase.toUpperCase();
+    // Keep "OPPONENT THINKING..." only during the computer's turn; on your turn show your phase.
+    else if(!(state.phase === 'cpu' && els.text.textContent === 'OPPONENT THINKING...')) els.text.textContent = state.phase.toUpperCase();
   }
 
   function deal(){

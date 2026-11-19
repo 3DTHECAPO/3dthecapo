@@ -28,7 +28,8 @@ let awardedDefenderMilestones = {};
 // Each milestone pays once per day (a page refresh no longer resets it).
 const DEFENDER_MILESTONE_KEY = 'play3d_defender_milestones_v1';
 function defenderMilestonesToday() {
-  const today = new Date().toISOString().slice(0, 10);
+  const now = new Date(); // local day, so the daily milestones reset at the player's midnight
+  const today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
   try {
     const saved = JSON.parse(localStorage.getItem(DEFENDER_MILESTONE_KEY) || '{}');
     return saved && saved.date === today ? saved : { date: today, keys: {} };

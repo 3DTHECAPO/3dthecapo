@@ -563,6 +563,12 @@ function render(label){
   if(bidBtn)bidBtn.disabled=state.phase!=='bidding'||state.currentBidder!==0;
   if(passBidBtn)passBidBtn.disabled=state.phase!=='bidding'||state.currentBidder!==0;
   if(bidInput)bidInput.disabled=state.phase!=='bidding'||state.currentBidder!==0;
+  // Start the bid box at the lowest legal bid on your turn, so pressing Bid works.
+  if(bidInput&&state.phase==='bidding'&&state.currentBidder===0){
+    const minimum=state.bid>0?state.bid+5:50;
+    bidInput.min=String(minimum);
+    if((Number(bidInput.value)||0)<minimum)bidInput.value=String(minimum);
+  }
 
   if(opponentHand){
     opponentHand.innerHTML=backs((state.hands[1]||[]).length)+'<div class="count-card">PARTNER '+(state.hands[2]||[]).length+'<br>RIGHT '+(state.hands[3]||[]).length+'</div>';
