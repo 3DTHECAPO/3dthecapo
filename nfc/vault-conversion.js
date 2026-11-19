@@ -312,7 +312,18 @@ function autoRenderVaultConversion(){
 
   const path = window.location.pathname.replace(/\/+$/,'');
   if(path === '/nfc' || path === '/nfc/index.html') return;
-  renderVaultConversionScreen(codeValue);
+
+  // 2026-11-18: only welcome the fan once the code check has opened the vault (nfc.js removes
+  // body.locked on a valid code). An invalid, expired or unchecked code keeps the page locked.
+  const unlocked = ()=>!document.body.classList.contains('locked');
+  if(unlocked()){ renderVaultConversionScreen(codeValue); return; }
+  const watcher = new MutationObserver(()=>{
+    if(!unlocked()) return;
+    watcher.disconnect();
+    renderVaultConversionScreen(codeValue);
+  });
+  watcher.observe(document.body,{attributes:true,attributeFilter:['class']});
+  setTimeout(()=>watcher.disconnect(),60000);
 }
 
 window.Play3DVaultConversion = {

@@ -284,7 +284,58 @@ function makeBranchPlacement(rawTile,arm,match){
   return makeFlowingPlacement(rawTile,arm,match,anchor,arm);
 }
 
+// 2026-11-18: never refuse a legal domino because the table looks full. If no spot fits, try a bigger
+// table step by step (renderBoard shrinks the view to fit); a tile only overlaps as a last resort.
+const BOARD_GROW_STEPS = [1,1.5,2.25,3.5];
+let boardLimitGrow = 1;
 function makeFlowingPlacement(rawTile,arm,match,anchor,defaultFlow){
+  let fallback = null;
+  for(const grow of BOARD_GROW_STEPS){
+    boardLimitGrow = grow;
+    try{
+      const found = flowingPlacementWithinTable(rawTile,arm,match,anchor,defaultFlow);
+      if(found.placement) return found.placement;
+      fallback = found.leastBad || fallback; // the biggest table's pick avoids overlaps best
+    }finally{
+      boardLimitGrow = 1;
+    }
+  }
+  return fallback;
+}
+
+// When an arm has curled in on itself and the next tile would sit on top of another, lay that arm out
+// again on a bigger table so it runs straighter. Only positions change: every tile keeps the same
+// numbers showing, or the old layout is kept.
+function relayoutArmWith(arm,tile,match){
+  const old = state.board.spinnerArms[arm];
+  const raws = old.map(item=>(item.raw || placementTile(item)).slice()).concat([tile.slice()]);
+  const oldExposed = old.map(item=>exposedPipFromPlacement(item));
+  for(const grow of [2.25,3.5,6]){
+    const fresh = [];
+    state.board.spinnerArms[arm] = fresh;
+    refreshPlacements();
+    let ok = true;
+    boardLimitGrow = grow;
+    try{
+      for(let i=0;i<raws.length && ok;i++){
+        const anchor = fresh.length ? fresh[fresh.length-1] : state.board.spinnerTile;
+        const pip = fresh.length ? exposedPipFromPlacement(anchor) : state.board.spinnerTile.exposedPip;
+        const found = flowingPlacementWithinTable(raws[i],arm,pip,anchor,arm);
+        if(!found.placement || (i < oldExposed.length && exposedPipFromPlacement(found.placement) !== oldExposed[i])){ ok = false; break; }
+        fresh.push(found.placement);
+        refreshPlacements();
+      }
+    }finally{
+      boardLimitGrow = 1;
+    }
+    if(ok && fresh.length === raws.length && fresh[fresh.length-1].matchPip === match) return true;
+  }
+  state.board.spinnerArms[arm] = old;
+  refreshPlacements();
+  return false;
+}
+
+function flowingPlacementWithinTable(rawTile,arm,match,anchor,defaultFlow){
   const flowSide = (anchor.flowSide || anchor.exposedSide) === 'all'
     ? arm
     : (anchor.flowSide || anchor.exposedSide || defaultFlow || arm);
@@ -294,22 +345,26 @@ function makeFlowingPlacement(rawTile,arm,match,anchor,defaultFlow){
     .filter((side,index,list)=>list.indexOf(side)===index)
     .map(side=>buildBranchPlacement(rawTile,arm,match,anchor,side));
   const straight = candidates.find(item=>item.flowSide === flowSide);
-  if(straight && !placementOutsideTable(straight) && !placementCollides(straight,anchor)){
-    return straight;
+  // A spot that sits on the tile it attaches to (folding straight back) is never a fit.
+  const onAnchor = item=>!!anchor && (state.board.placements || []).includes(anchor) && placementsOverlap(item,anchor);
+  if(straight && !placementOutsideTable(straight) && !placementCollides(straight,anchor) && !onAnchor(straight)){
+    return {placement:straight};
   }
-  return candidates
-    .filter(item=>!placementOutsideTable(item) && !placementCollides(item,anchor))
-    .sort((a,b)=>placementPenalty(a,anchor,flowSide,arm)-placementPenalty(b,anchor,flowSide,arm))[0] || null;
+  const byPenalty = (a,b)=>placementPenalty(a,anchor,flowSide,arm)-placementPenalty(b,anchor,flowSide,arm);
+  const fits = candidates.filter(item=>!placementOutsideTable(item) && !placementCollides(item,anchor) && !onAnchor(item));
+  if(fits.length) return {placement:fits.sort(byPenalty)[0]};
+  return {placement:null, leastBad:candidates.slice().sort(byPenalty)[0] || null};
 }
 
 function currentBoardLimits(){
   const tableCenter = document.querySelector('.table-center');
-  if(!tableCenter) return BOARD_LIMITS;
+  const grow = boardLimitGrow;
+  if(!tableCenter) return {x:BOARD_LIMITS.x * grow,y:BOARD_LIMITS.y * grow};
   const rect = tableCenter.getBoundingClientRect();
-  if(!rect.width || !rect.height) return BOARD_LIMITS;
+  if(!rect.width || !rect.height) return {x:BOARD_LIMITS.x * grow,y:BOARD_LIMITS.y * grow};
   return {
-    x:Math.max(180,rect.width / 2),
-    y:Math.max(180,rect.height / 2)
+    x:Math.max(180,rect.width / 2) * grow,
+    y:Math.max(180,rect.height / 2) * grow
   };
 }
 
@@ -402,6 +457,7 @@ function rebranchPlacement(item,branch){
 function promoteFirstDoubleToSpinner(placement,arm,existingLine){
   state.board.spinnerTile = Object.assign({}, placement, {
     branch:'spinner',
+    flowSide:'all', // each arm grows its own way from the spinner, like a spinner placed first
     connectedSide:null,
     exposedSide:'all',
     exposedPip:placement.tile[0],
@@ -620,8 +676,22 @@ function placeOnArm(tile,arm){
     const existingLine = line.slice();
     const previous = arm === 'left' ? line[0] : line[line.length-1];
     const anchor = previous || {x:0,y:0,orientation:'horizontal',flowSide:arm,exposedSide:arm};
-    const placement = makeFlowingPlacement(tile,arm,end.value,anchor,arm);
+    // The opening tile is marked as flowing right; a play on the line's left end must grow left,
+    // not back into the line (that is what froze the game on 2-3 tile boards).
+    const fromOpening = !!previous && previous.connectedSide === null && !previous.spinner;
+    const openingFlow = fromOpening ? previous.flowSide : null;
+    if(fromOpening) previous.flowSide = arm;
+    let placement;
+    try{
+      placement = makeFlowingPlacement(tile,arm,end.value,anchor,arm);
+    }finally{
+      if(fromOpening) previous.flowSide = openingFlow;
+    }
     if(!placement) return false;
+    // A line end reads its open number from tile[0] (left end) or tile[1] (right end), so the matched
+    // number must face inward whichever way the tile bends.
+    const inward = arm === 'left' ? 1 : 0;
+    if(placement.tile[inward] !== end.value) placement.tile = [placement.tile[1],placement.tile[0]];
     if(isDouble(placement.tile)){
       promoteFirstDoubleToSpinner(placement,arm,existingLine);
     }else if(arm === 'left') line.unshift(placement);
@@ -629,7 +699,11 @@ function placeOnArm(tile,arm){
   }else{
     const placement = makeBranchPlacement(tile,arm,end.value);
     if(!placement) return false;
-    state.board.spinnerArms[arm].push(placement);
+    const branch = state.board.spinnerArms[arm];
+    const tip = branch.length ? branch[branch.length-1] : state.board.spinnerTile;
+    if(!placementCollides(placement,tip) || !relayoutArmWith(arm,tile,end.value)){
+      state.board.spinnerArms[arm].push(placement);
+    }
   }
 
   refreshOpenEnds();
@@ -1530,7 +1604,8 @@ function render(){
   if(scoreTextEl){
     scoreTextEl.textContent = state.scores.slice(0,scoreBucketCount()).map((score,i)=>scoreBucketName(i)+': '+score+(state.gotIn[i]?'':' (need 10)')).join(' / ');
   }
-  if(turnTextEl && turnTextEl.textContent !== 'OPPONENT THINKING...'){
+  // Keep "OPPONENT THINKING..." only while a computer turn is actually waiting to run.
+  if(turnTextEl && !(cpuTimer && turnTextEl.textContent === 'OPPONENT THINKING...')){
     turnTextEl.textContent = state.handOver ? 'HAND OVER — WASH THE DISHES' : seatName(state.currentPlayerIndex)+' TURN | COUNT '+boardCount();
   }
 
