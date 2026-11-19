@@ -40,6 +40,52 @@ function getVaultTier(fallback){
   return String(fallback || (pass && pass.tier) || 'ENTRY').toLowerCase();
 }
 
+// 2026-11-19: the scan page moves on to the fan's room as soon as the vault doors open, so the box also
+// shows at the top of the rooms until the fan connects an e-mail for that code (or taps "Maybe later").
+const CONNECTED_KEY = 'play3d_vault_connected_v1';
+const DISMISSED_KEY = 'play3d_vault_connect_later_v1';
+
+function isRoomPage(){
+  return /^\/nfc\/rooms\/(entry|gold-album|elite-vault)\/?(index\.html)?$/.test(window.location.pathname);
+}
+
+function readConnected(){
+  try{
+    const list = JSON.parse(localStorage.getItem(CONNECTED_KEY) || '[]');
+    return Array.isArray(list) ? list : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function isVaultConnected(codeValue){
+  const pass = readStoredPass();
+  if(pass && String(pass.code || '').toUpperCase().trim() === codeValue && (pass.recipient_email || pass.email)) return true;
+  return readConnected().includes(codeValue);
+}
+
+function markVaultConnected(codeValue){
+  try{
+    const list = readConnected().filter(item=>item !== codeValue);
+    list.push(codeValue);
+    localStorage.setItem(CONNECTED_KEY, JSON.stringify(list.slice(-20)));
+  }catch(e){}
+}
+
+function dismissedForNow(codeValue){
+  try{ return sessionStorage.getItem(DISMISSED_KEY) === codeValue; }catch(e){ return false; }
+}
+
+function roomPassIsActive(){
+  const pass = readStoredPass();
+  if(!pass || pass.active !== true || !pass.code) return false;
+  if(pass.expires_at){
+    const expiry = new Date(pass.expires_at).getTime();
+    if(Number.isFinite(expiry) && Date.now() > expiry) return false;
+  }
+  return true;
+}
+
 function isNfcRoute(pathname){
   const file = pathname.split('/').pop() || 'index.html';
   return NFC_ROUTES.has(file);
@@ -164,9 +210,10 @@ function renderVaultConversionScreen(codeValue, tier){
   const vaultCode = String(codeValue || getVaultCode()).toUpperCase().trim();
   if(!vaultCode) return;
   if(document.getElementById('vaultConversionScreen')) return;
+  if(isVaultConnected(vaultCode) || dismissedForNow(vaultCode)) return;
 
   const displayTier = getVaultTier(tier);
-  patchNfcLinks(vaultCode);
+  if(!isRoomPage()) patchNfcLinks(vaultCode);
 
   const box=document.createElement('section');
   box.id='vaultConversionScreen';
@@ -263,10 +310,28 @@ function renderVaultConversionScreen(codeValue, tier){
     ">Connect My Vault Access</button>
 
     <div id="vaultEmailStatus" style="margin-top:12px;color:rgba(244,241,234,.68);font-size:13px;"></div>
+
+    <button id="vaultEmailLater" type="button" style="
+      margin-top:10px;
+      border:0;
+      background:none;
+      color:rgba(244,241,234,.6);
+      font-family:Oswald,Arial,sans-serif;
+      font-size:13px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      text-decoration:underline;
+      cursor:pointer;
+    ">Maybe later</button>
   `;
 
   const target=document.getElementById('connect')||document.querySelector('main')||document.body;
   target.parentNode.insertBefore(box,target);
+
+  document.getElementById('vaultEmailLater').onclick=()=>{
+    try{ sessionStorage.setItem(DISMISSED_KEY, vaultCode); }catch(e){}
+    box.remove();
+  };
 
   document.getElementById('vaultEmailBtn').onclick=async()=>{
     const email=document.getElementById('vaultEmailInput').value.trim().toLowerCase();
@@ -287,6 +352,7 @@ function renderVaultConversionScreen(codeValue, tier){
         console.error('[PLAY3D SIDECAR] optional logging failed', sidecarError);
       }
       const sidecarOk = sidecar.email && sidecar.member;
+      if(sidecar.email || sidecar.member) markVaultConnected(vaultCode);
       if(!sidecarOk){
         console.error('[PLAY3D SIDECAR] optional logging incomplete', sidecar);
       }
@@ -308,6 +374,12 @@ function renderVaultConversionScreen(codeValue, tier){
 function autoRenderVaultConversion(){
   const codeValue = getVaultCode();
   if(!codeValue) return;
+
+  // Rooms: show the box for the fan's own active pass only; room links are left as they are.
+  if(isRoomPage()){
+    if(roomPassIsActive()) renderVaultConversionScreen(codeValue);
+    return;
+  }
   patchNfcLinks(codeValue);
 
   const path = window.location.pathname.replace(/\/+$/,'');
