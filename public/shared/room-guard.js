@@ -3,8 +3,7 @@
   Full replacement for: public/shared/room-guard.js
 
   Fixes:
-  - CAPO-MASTER-999 never gets blocked when opened with ?code=CAPO-MASTER-999
-  - ?master=1 and ?from=master still work
+  - Master access is checked by the server (2026-11-20); links and codes in the address do not open rooms
   - Recognizes the actual current pass key: play3d_vault_pass_v1
   - Keeps normal valid 1-hour/pass access working
   - Does NOT write vault_codes, vault_logs, used, used_at, expires_at, duration, sent_at, or email flow
@@ -13,7 +12,12 @@
   'use strict';
 
   const MASTER_KEY = 'CAPO_MASTER_SESSION';
-  const MASTER_CODES = new Set(['CAPO-MASTER-999','MASTER','CAPO-MASTER']);
+  // 2026-11-20: no master code lives in this file and no link opens anything by itself. A master session
+  // only counts when it holds the server's signed token (from master_unlock on the scan page), and each page
+  // confirms that token with the server (master_verify); a refused token is removed and the page sent back.
+  const MASTER_BACKEND = 'https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint';
+  const MASTER_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
+  let masterVerifyStarted = false;
 
   const PASS_KEYS = [
     'play3d_vault_pass_v1',
@@ -41,32 +45,45 @@
   }
 
   function hasMasterQuery(){
-    const params = getParams();
-    const code = getCodeParam();
-    return (
-      params.get('master') === '1' ||
-      params.get('from') === 'master' ||
-      params.get('from') === 'controller' ||
-      MASTER_CODES.has(code)
-    );
+    return false;
   }
 
-  function setMasterSession(code){
-    writeJSON(MASTER_KEY, {
-      active:true,
-      code: code || getCodeParam() || 'CAPO-MASTER-999',
-      started_at:now(),
-      expires_at:now() + (1000 * 60 * 60 * 12)
-    });
+  function setMasterSession(){
+    // Kept for older callers: a master session can only be created from the server's token.
+    return false;
+  }
+
+  function verifyMasterLater(session){
+    if(masterVerifyStarted) return;
+    masterVerifyStarted = true;
+    fetch(MASTER_BACKEND, {
+      method:'POST',
+      headers:{'apikey':MASTER_ANON,'Authorization':'Bearer ' + MASTER_ANON,'Content-Type':'application/json'},
+      body:JSON.stringify({source:'master_verify', token:session.token})
+    }).then(function(res){
+      return res.json().catch(function(){ return {}; }).then(function(data){
+        if(!res.ok || !data || data.success !== true) denyMaster();
+      });
+    }).catch(denyMaster);
+  }
+
+  // Anything but a clear yes from the server ends the master session.
+  function denyMaster(){
+    try{ localStorage.removeItem(MASTER_KEY); }catch(e){}
+    window.location.replace(buildLockedRedirect());
   }
 
   function hasMasterSession(){
     const session = readJSON(MASTER_KEY);
-    if(!session || session.active !== true) return false;
-    if(session.expires_at && now() > Number(session.expires_at)){
+    if(!session || session.active !== true || typeof session.token !== 'string' || session.token.indexOf('.') < 1){
+      if(session){ try{ localStorage.removeItem(MASTER_KEY); }catch(e){} }
+      return false;
+    }
+    if(!session.expires_at || now() > Number(session.expires_at)){
       try{ localStorage.removeItem(MASTER_KEY); }catch(e){}
       return false;
     }
+    verifyMasterLater(session);
     return true;
   }
 
@@ -96,10 +113,6 @@
   }
 
   function isAllowed(){
-    if(hasMasterQuery()){
-      setMasterSession();
-      return true;
-    }
     if(hasMasterSession()) return true;
     if(hasPassSession()) return true;
     return false;
@@ -117,20 +130,14 @@
   }
 
   function requireMaster(){
-    if(hasMasterQuery()){
-      setMasterSession();
-      return true;
-    }
     if(hasMasterSession()) return true;
-    window.location.replace('/nfc/index.html?code=CAPO-MASTER-999&master=1');
+    window.location.replace('/nfc/scan.html');
     return false;
   }
 
   function clearMasterSession(){
     try{ localStorage.removeItem(MASTER_KEY); }catch(e){}
   }
-
-  if(hasMasterQuery()) setMasterSession();
 
   window.Play3DRoomGuard = {
     isAllowed,

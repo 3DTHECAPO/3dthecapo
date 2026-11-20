@@ -87,34 +87,40 @@
 
   <script>
   (function(){
-    var MASTER_CODE = 'CAPO-MASTER-999';
+    // 2026-11-20: the owner's master code is checked by the server (master_unlock), never in this page.
     var MASTER_ROUTE = './rooms/master/index.html';
+    var BACKEND = 'https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint';
+    var ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
+    var busy = false;
     function normalizeCode(value){ return (value || '').trim().toUpperCase(); }
-    function routeMasterCode(code){
-      try{
-        localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify({
-          active:true,
-          code:MASTER_CODE,
-          started_at:Date.now(),
-          expires_at:Date.now() + (1000 * 60 * 60 * 12)
-        }));
-      }catch(e){}
-      window.location.replace(MASTER_ROUTE + '?code=' + encodeURIComponent(code || MASTER_CODE) + '&master=1');
-    }
+    function goToCode(code){ window.location.href = './scan.html?code=' + encodeURIComponent(code); }
     function enterCode(){
       var input = document.getElementById('vaultCode');
       var code = normalizeCode(input ? input.value : '');
       if(!code){ alert('Enter a valid code.'); return; }
-      if(code === MASTER_CODE){
-        routeMasterCode(code);
-        return;
-      }
-      window.location.href = './scan.html?code=' + encodeURIComponent(code);
-    }
-    var initialCode = normalizeCode(new URLSearchParams(window.location.search).get('code'));
-    if(initialCode === MASTER_CODE){
-      routeMasterCode(initialCode);
-      return;
+      if(busy) return;
+      busy = true;
+      fetch(BACKEND, {
+        method:'POST',
+        headers:{'apikey':ANON,'Authorization':'Bearer ' + ANON,'Content-Type':'application/json'},
+        body:JSON.stringify({source:'master_unlock', code:code})
+      }).then(function(res){ return res.json().then(function(data){ return {ok:res.ok, data:data || {}}; }); })
+        .then(function(result){
+          if(result.ok && result.data.success && result.data.token){
+            try{
+              localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify({
+                active:true,
+                token:String(result.data.token),
+                started_at:Date.now(),
+                expires_at:Number(result.data.expires_at)
+              }));
+            }catch(e){}
+            window.location.replace(MASTER_ROUTE);
+            return;
+          }
+          goToCode(code);
+        })
+        .catch(function(){ goToCode(code); });
     }
     document.addEventListener('DOMContentLoaded', function(){
       var btn = document.getElementById('enterVault');
@@ -126,7 +132,7 @@
     });
   })();
   </script>
-  <script src="./nfc.js?v=target-master-pipeline-v2"></script>
+  <script src="./nfc.js?v=master-server-check-1"></script>
   <script>
     (function(){
       var destinations = {

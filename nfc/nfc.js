@@ -155,14 +155,30 @@ function unlockUI(rawTier){
   playAccessSequence();
 }
 
-function unlockMasterUI(){
+// 2026-11-20: the owner's master code is checked by the server (master_unlock); it is not in this file.
+// A match returns a signed 12-hour token that the vault pages confirm with the server.
+async function masterUnlock(codeValue){
   try{
-    localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify({
-      active:true,
-      code:'CAPO-MASTER-999',
-      started_at:Date.now(),
-      expires_at:Date.now() + (1000 * 60 * 60 * 12)
-    }));
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/dynamic-endpoint`,{
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_ANON,
+        'Authorization':`Bearer ${SUPABASE_ANON}`,
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({ source:'master_unlock', code:codeValue })
+    });
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok || !data.success || !data.token) return null;
+    return { active:true, token:String(data.token), started_at:Date.now(), expires_at:Number(data.expires_at) };
+  }catch(e){
+    return null;
+  }
+}
+
+function unlockMasterUI(session){
+  try{
+    if(session) localStorage.setItem('CAPO_MASTER_SESSION', JSON.stringify(session));
   }catch(e){}
 
   document.body.classList.remove('locked');
@@ -278,15 +294,15 @@ async function init(){
     return;
   }
 
-  if(code === 'CAPO-MASTER-999'){
-    unlockMasterUI();
-    return;
-  }
-
   try{
     const record = await getCode(code);
 
     if(!record){
+      const master = await masterUnlock(code);
+      if(master){
+        unlockMasterUI(master);
+        return;
+      }
       await logEvent(code, '', 'invalid');
       showLocked('Invalid code');
       return;
