@@ -40,7 +40,7 @@ async function requestPointsPrize(button){
     if(res.ok && data.claim_id){
       statusBox.textContent = data.duplicate
         ? 'YOUR PRIZE CLAIM IS ALREADY WITH THE 3D TEAM (' + String(data.claim_status || 'pending_review').toUpperCase() + ').'
-        : 'PRIZE CLAIM SENT. The 3D team reviews every claim and will contact you.';
+        : 'PRIZE CLAIM SENT. The 3D team reviews every claim and will send your unreleased song to your email.';
       return;
     }
     if(data.status === 'not_enough_points'){
@@ -63,13 +63,13 @@ async function requestPointsPrize(button){
   try{
     const p = new URLSearchParams(window.location.search);
     if(p.get('source') === 'game-points' && statusBox){
-      statusBox.textContent = 'REACHED 100,000 POINTS? Request your prize below. Prize claims are reviewed by the 3D team.';
+      statusBox.textContent = 'REACHED 100,000 POINTS? Your prize is an unreleased 3D THE CAPO song. Request it below. Prize claims are reviewed by the 3D team.';
       const prizeBtn = document.createElement('button');
       prizeBtn.id = 'prizeBtn';
       prizeBtn.type = 'button';
       prizeBtn.className = btn ? btn.className : 'btn gold';
       prizeBtn.style.marginTop = '10px';
-      prizeBtn.textContent = 'Request My 100,000-Point Prize';
+      prizeBtn.textContent = 'Request My Unreleased Song';
       prizeBtn.onclick = () => requestPointsPrize(prizeBtn);
       statusBox.parentNode.insertBefore(prizeBtn, statusBox);
     }
