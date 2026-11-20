@@ -633,9 +633,177 @@
     return getStatus(total);
   }
 
+  // 2026-11-20: prize points shown to the fan are the server's count (my_rewards), which is the one prize
+  // claims use. The browser's own count is only shown until the server answers (or for free play).
+  var SERVER_POINTS_KEY = 'play3d_server_points_v1';
+  var PRIZE_SEEN_KEY = 'play3d_prize_popups_seen_v1';
+  var PRIZE_LATER_KEY = 'play3d_prize_popup_later_v1';
+  var PRIZE_NAME = 'an unreleased 3D THE CAPO song';
+  var PROGRESS_MILESTONES = [25000, 50000, 75000];
+  var OPEN_CLAIM_STATUSES = ['pending', 'pending_review', 'open', 'requested', 'new', 'approved', 'ready', 'processing'];
+  var serverRefreshTimer = null;
+
+  function serverState(){
+    var saved = readJSON(SERVER_POINTS_KEY, null);
+    var email = String(rewardIdentity().email || '').trim().toLowerCase();
+    if(!saved || !email || saved.email !== email || typeof saved.points !== 'number') return null;
+    return saved;
+  }
+
   function getStatus(total){
-    var points = typeof total === 'number' ? total : getPoints();
-    return {points:points, threshold:THRESHOLD, remaining:Math.max(0, THRESHOLD - points), member:isMember(), eligible:isMember() && points >= THRESHOLD};
+    var server = isMember() ? serverState() : null;
+    var points = server ? server.points : (typeof total === 'number' ? total : getPoints());
+    var claimOpen = !!(server && server.claimOpen);
+    return {
+      points:points,
+      threshold:THRESHOLD,
+      remaining:Math.max(0, THRESHOLD - points),
+      member:isMember(),
+      server:!!server,
+      claimOpen:claimOpen,
+      claimStatus:server ? server.claimStatus || '' : '',
+      eligible:isMember() && points >= THRESHOLD && !claimOpen
+    };
+  }
+
+  function refreshServerPoints(){
+    if(!isMember()) return Promise.resolve(null);
+    var identity = rewardIdentity();
+    var email = String(identity.email || '').trim().toLowerCase();
+    if(!email || !identity.code) return Promise.resolve(null);
+    return callBackend('my_rewards', {email:email, code:identity.code}).then(function(result){
+      if(!result.ok || !result.body.success) return null;
+      var claims = Array.isArray(result.body.claims) ? result.body.claims : [];
+      var open = claims.filter(function(row){ return OPEN_CLAIM_STATUSES.indexOf(String(row.claim_status || '').toLowerCase()) !== -1; })[0];
+      var saved = {email:email, points:Math.max(0, Math.floor(Number(result.body.points) || 0)), claimOpen:!!open, claimStatus:open ? String(open.claim_status) : '', at:Date.now()};
+      writeJSON(SERVER_POINTS_KEY, saved);
+      window.dispatchEvent(new CustomEvent('play3d:pointschange', {detail:getStatus()}));
+      checkPrizePopups();
+      return saved;
+    }).catch(function(){ return null; });
+  }
+
+  function scheduleServerRefresh(){
+    if(serverRefreshTimer) clearTimeout(serverRefreshTimer);
+    serverRefreshTimer = setTimeout(function(){ serverRefreshTimer = null; refreshServerPoints(); }, 1500);
+  }
+
+  function closePrizeModal(){
+    var old = document.getElementById('play3dPrizeModal');
+    if(old) old.remove();
+  }
+
+  function prizeModal(html){
+    closePrizeModal();
+    var wrap = document.createElement('div');
+    wrap.id = 'play3dPrizeModal';
+    wrap.setAttribute('role', 'dialog');
+    wrap.setAttribute('aria-modal', 'true');
+    wrap.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.78);';
+    wrap.innerHTML = '<div style="width:min(520px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:26px 22px;border:1px solid rgba(202,162,74,.5);border-radius:24px;background:linear-gradient(180deg,rgba(18,14,8,.98),rgba(0,0,0,.96));box-shadow:0 28px 80px rgba(0,0,0,.8),0 0 60px rgba(202,162,74,.18);color:#f4f1ea;text-align:center;font-family:Oswald,Arial,sans-serif;">' + html + '</div>';
+    wrap.addEventListener('click', function(event){ if(event.target === wrap) closePrizeModal(); });
+    document.body.appendChild(wrap);
+    return wrap;
+  }
+
+  var PRIZE_BUTTON = 'border:0;border-radius:999px;background:linear-gradient(180deg,#f2d27b,#caa24a 56%,#8b641e);color:#100c05;padding:13px 24px;font-weight:900;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:Oswald,Arial,sans-serif;font-size:15px;';
+  var PRIZE_LINK = 'margin-top:12px;border:0;background:none;color:rgba(244,241,234,.6);font-family:Oswald,Arial,sans-serif;font-size:13px;letter-spacing:1px;text-transform:uppercase;text-decoration:underline;cursor:pointer;';
+  var PRIZE_TITLE = 'font-family:\'Black Ops One\',system-ui,sans-serif;color:#f2d27b;font-size:28px;letter-spacing:1px;text-transform:uppercase;margin:6px 0 10px;';
+
+  function showPrizeUnlocked(){
+    var status = getStatus();
+    var modal = prizeModal(
+      '<div style="font-size:44px;line-height:1;">🏆</div>' +
+      '<div style="' + PRIZE_TITLE + '">Prize Unlocked</div>' +
+      '<p style="margin:0 0 6px;font-size:17px;">You reached <b style="color:#f2d27b;">' + status.points.toLocaleString() + '</b> prize points.</p>' +
+      '<p style="margin:0 0 18px;color:rgba(244,241,234,.75);">Your prize: <b style="color:#f2d27b;">' + PRIZE_NAME + '</b>. The 3D team reviews every claim and sends it to your email.</p>' +
+      '<button type="button" data-prize-claim style="' + PRIZE_BUTTON + '">Claim My Unreleased Song</button>' +
+      '<div data-prize-status style="margin-top:12px;min-height:18px;font-size:14px;color:rgba(244,241,234,.8);"></div>' +
+      '<button type="button" data-prize-later style="' + PRIZE_LINK + '">Maybe later</button>'
+    );
+    modal.querySelector('[data-prize-later]').onclick = function(){
+      try{ sessionStorage.setItem(PRIZE_LATER_KEY, '1'); }catch(e){}
+      closePrizeModal();
+    };
+    modal.querySelector('[data-prize-claim]').onclick = function(){ requestPrize(modal); };
+  }
+
+  function requestPrize(modal){
+    var identity = rewardIdentity();
+    var email = String(identity.email || '').trim().toLowerCase();
+    var statusNode = modal.querySelector('[data-prize-status]');
+    var button = modal.querySelector('[data-prize-claim]');
+    if(!email || !identity.code){
+      statusNode.textContent = 'Open the Game Vault with your vault code first, then try again.';
+      return;
+    }
+    button.disabled = true;
+    statusNode.textContent = 'Sending your claim...';
+    callBackend('points_claim_request', {email:email, code:identity.code}).then(function(result){
+      var data = result.body || {};
+      if(result.ok && data.success){
+        var saved = serverState() || {email:email, points:Number(data.credits) || 0};
+        saved.claimOpen = true;
+        saved.claimStatus = String(data.claim_status || 'pending_review');
+        if(typeof data.credits === 'number') saved.points = data.credits;
+        writeJSON(SERVER_POINTS_KEY, saved);
+        window.dispatchEvent(new CustomEvent('play3d:pointschange', {detail:getStatus()}));
+        modal.querySelector('div').innerHTML =
+          '<div style="font-size:44px;line-height:1;">🎵</div>' +
+          '<div style="' + PRIZE_TITLE + '">Claim Sent</div>' +
+          '<p style="margin:0 0 18px;color:rgba(244,241,234,.8);">' + (data.duplicate ? 'Your prize claim is already with the 3D team.' : 'The 3D team will review your claim and send your unreleased song to your email.') + '</p>' +
+          '<button type="button" data-prize-close style="' + PRIZE_BUTTON + '">Back to the game</button>';
+        modal.querySelector('[data-prize-close]').onclick = closePrizeModal;
+        return;
+      }
+      button.disabled = false;
+      if(data.status === 'not_enough_points'){
+        statusNode.textContent = 'Not yet: ' + Number(data.credits || 0).toLocaleString() + ' of ' + Number(data.points_required || THRESHOLD).toLocaleString() + ' points recorded.';
+        scheduleServerRefresh();
+      }else if(data.status === 'paid_access_required'){
+        statusNode.textContent = 'Paid membership is required to claim prizes.';
+      }else if(data.status === 'not_verified'){
+        statusNode.textContent = 'Your vault code could not be checked. Open the vault with your code and try again.';
+      }else{
+        statusNode.textContent = 'Claim error. Please try again in a moment.';
+      }
+    }).catch(function(){
+      button.disabled = false;
+      statusNode.textContent = 'Claim error. Please try again in a moment.';
+    });
+  }
+
+  function showProgressPopup(milestone, points){
+    var left = Math.max(0, THRESHOLD - points);
+    var label = milestone === 50000 ? 'Halfway There' : milestone === 75000 ? 'Almost There' : 'Quarter Way There';
+    var modal = prizeModal(
+      '<div style="font-size:40px;line-height:1;">🎧</div>' +
+      '<div style="' + PRIZE_TITLE + '">' + label + '</div>' +
+      '<p style="margin:0 0 6px;font-size:17px;"><b style="color:#f2d27b;">' + points.toLocaleString() + '</b> / ' + THRESHOLD.toLocaleString() + ' prize points</p>' +
+      '<p style="margin:0 0 18px;color:rgba(244,241,234,.75);">' + left.toLocaleString() + ' more to unlock ' + PRIZE_NAME + '.</p>' +
+      '<button type="button" data-prize-close style="' + PRIZE_BUTTON + '">Keep Playing</button>'
+    );
+    modal.querySelector('[data-prize-close]').onclick = closePrizeModal;
+  }
+
+  function checkPrizePopups(){
+    if(document.getElementById('play3dPrizeModal')) return;
+    var server = serverState();
+    if(!server || !isMember()) return;
+    if(server.points >= THRESHOLD){
+      var later = false;
+      try{ later = sessionStorage.getItem(PRIZE_LATER_KEY) === '1'; }catch(e){}
+      if(!server.claimOpen && !later) showPrizeUnlocked();
+      return;
+    }
+    var seenAll = readJSON(PRIZE_SEEN_KEY, {});
+    var seen = Array.isArray(seenAll[server.email]) ? seenAll[server.email] : [];
+    var reached = PROGRESS_MILESTONES.filter(function(m){ return server.points >= m && seen.indexOf(m) === -1; });
+    if(!reached.length) return;
+    var top = reached[reached.length - 1];
+    seenAll[server.email] = seen.concat(reached);
+    writeJSON(PRIZE_SEEN_KEY, seenAll);
+    showProgressPopup(top, server.points);
   }
 
   function claimHref(){
@@ -770,8 +938,9 @@
     else main.insertBefore(panel, main.firstChild);
     panel.querySelector('[data-p3d-claim]').addEventListener('click', function(){
       var status = getStatus();
-      if(status.eligible) location.href = claimHref();
-      else panel.querySelector('[data-p3d-prize-status]').textContent = status.member ? 'Keep playing to reach 100,000 points.' : 'Member access required for prize claims.';
+      if(status.eligible && status.server) showPrizeUnlocked();
+      else if(status.eligible) location.href = claimHref();
+      else panel.querySelector('[data-p3d-prize-status]').textContent = status.claimOpen ? 'Your prize claim is with the 3D team.' : status.member ? 'Keep playing to reach 100,000 points.' : 'Member access required for prize claims.';
     });
     updatePanel();
     placePanelsForScreen();
@@ -784,11 +953,14 @@
     var claimBtn = document.querySelector('[data-p3d-claim]');
     if(pointsNode) pointsNode.textContent = status.points.toLocaleString() + ' / ' + THRESHOLD.toLocaleString();
     if(statusNode){
-      statusNode.textContent = status.eligible ? 'Member prize claim unlocked.' : status.member ? status.remaining.toLocaleString() + ' points to member prize play.' : 'Free play: points track locally, prizes require member access.';
+      statusNode.textContent = status.claimOpen ? 'Prize claim in review - the 3D team will send your unreleased song.'
+        : status.eligible ? 'Prize unlocked: an unreleased 3D THE CAPO song.'
+        : status.member ? status.remaining.toLocaleString() + ' points to unlock an unreleased song.'
+        : 'Free play: points track locally, prizes require member access.';
     }
     if(claimBtn){
       claimBtn.disabled = !status.eligible;
-      claimBtn.textContent = status.eligible ? 'Claim Prize' : (status.member ? '100,000 Points Required' : 'Member Prize Play');
+      claimBtn.textContent = status.claimOpen ? 'Claim In Review' : status.eligible ? 'Claim Prize' : (status.member ? '100,000 Points Required' : 'Member Prize Play');
     }
   }
 
@@ -797,8 +969,10 @@
     renderProfilePanel();
     renderPanel();
     markGameOpened((location.pathname.match(/games\/([^\/]+)/) || [])[1]);
+    refreshServerPoints();
   }
 
+  window.addEventListener('play3d:serverpoints', scheduleServerRefresh);
   window.addEventListener('play3d:pointschange', function(){ updatePanel(); updateProfilePanel(); });
   window.addEventListener('play3d:profilechange', updateProfilePanel);
   window.addEventListener('play3d:member-sync', updateProfilePanel);
@@ -829,6 +1003,8 @@
     getStatus:getStatus,
     claimHref:claimHref,
     renderPanel:renderPanel,
-    updatePanel:updatePanel
+    updatePanel:updatePanel,
+    refreshServer:refreshServerPoints,
+    showPrize:showPrizeUnlocked
   };
 })();
