@@ -31,8 +31,9 @@
   let trickTimer = null;
   const state = {
     hands:{}, turn:'south', dealer:'east', trick:[], spadesBroken:false, phase:'idle',
-    score:{ NS:0, EW:0 }, bags:{ NS:0, EW:0 }, bids:{}, taken:{}
+    score:{ NS:0, EW:0 }, bags:{ NS:0, EW:0 }, bids:{}, taken:{}, sets:{ NS:0, EW:0 }
   };
+  const SETS_TO_LOSE = 2;  // house rule: a team that gets set twice loses the game
   let mode = window.Play3DModeBar ? window.Play3DModeBar.getMode() : 'cpu';
   function thinkDelay(){ return 400 + Math.floor(Math.random() * 1000); }
 
@@ -51,7 +52,7 @@
 
   function deal(){
     if(trickTimer){ clearTimeout(trickTimer); trickTimer = null; }
-    if(state.phase === 'gameover'){ state.score = { NS:0, EW:0 }; state.bags = { NS:0, EW:0 }; }
+    if(state.phase === 'gameover'){ state.score = { NS:0, EW:0 }; state.bags = { NS:0, EW:0 }; state.sets = { NS:0, EW:0 }; state.setOut = null; }
     state.dealer = seats[(seats.indexOf(state.dealer) + 1) % 4];
     playShuffle();
     const deck = buildDeck();
@@ -219,8 +220,23 @@
     const madeBid = teamTaken('NS') >= teamBid('NS');
     if(window.Play3DPoints && madeBid && nsHand > ewHand) window.Play3DPoints.award('spades', 175, 'contract_hand');
     log('Hand scored. Bags: NS ' + state.bags.NS + ', EW ' + state.bags.EW + '.');
+    // House rule: getting set (missing your bid) twice loses the game.
+    const setThisHand = { NS:teamWasSet('NS'), EW:teamWasSet('EW') };
+    for(const t of ['NS','EW']){
+      if(setThisHand[t]){
+        state.sets[t] += 1;
+        log((t === 'NS' ? 'You and North' : 'East and West') + ' got set (' + Math.min(state.sets[t], SETS_TO_LOSE) + ' of ' + SETS_TO_LOSE + ').');
+      }
+    }
+    const nsOut = state.sets.NS >= SETS_TO_LOSE, ewOut = state.sets.EW >= SETS_TO_LOSE;
     const ns = state.score.NS, ew = state.score.EW;
-    const someoneWon = ns >= WIN_SCORE || ew >= WIN_SCORE || ns <= LOSE_SCORE || ew <= LOSE_SCORE;
+    if(nsOut !== ewOut){
+      state.phase = 'gameover';
+      state.winner = nsOut ? 'EW' : 'NS';
+      state.setOut = nsOut ? 'NS' : 'EW';
+      log((nsOut ? 'You and North were set twice. East and West win the game ' : 'East and West were set twice. You and North win the game ') + ns + ' - ' + ew + '. Press New Hand to start over.');
+    }
+    const someoneWon = state.phase !== 'gameover' && (nsOut || ns >= WIN_SCORE || ew >= WIN_SCORE || ns <= LOSE_SCORE || ew <= LOSE_SCORE);
     if(someoneWon){
       state.phase = 'gameover';
       let winner = ns === ew ? null : (ns > ew ? 'NS' : 'EW');
@@ -229,6 +245,14 @@
     }
     play3dAnnounce(state.phase === 'gameover' && state.winner !== 'NS' ? 'ROUND_END' : 'WIN', state.phase === 'gameover' && state.winner !== 'NS' ? 'warning' : 'success');
     render();
+  }
+
+  // A team is set when it takes fewer tricks than its combined (non-Nil) bid. A failed Nil is not a set.
+  function teamWasSet(t){
+    const bidSeats = seats.filter(s => team[s] === t && Number(state.bids[s]) > 0);
+    const bid = bidSeats.reduce((sum,s)=>sum + Number(state.bids[s]), 0);
+    const taken = bidSeats.reduce((sum,s)=>sum + (state.taken[s] || 0), 0);
+    return bid > 0 && taken < bid;
   }
 
   function scoreTeam(t){
@@ -287,7 +311,8 @@
     renderTrick();
     renderSeats();
     scoreText.textContent = state.score.NS + ' - ' + state.score.EW;
-    const label = state.phase === 'bid' ? 'BID PHASE' : state.phase === 'gameover' ? (state.winner === 'NS' ? 'YOU WIN THE GAME' : state.winner === 'EW' ? 'EAST / WEST WIN THE GAME' : 'GAME TIED') : state.phase === 'over' ? 'HAND OVER' : (mode === 'local' ? seatName(state.turn).toUpperCase() + ' TURN' : (state.turn === 'south' ? 'YOUR TURN' : seatName(state.turn).toUpperCase() + ' TURN'));
+    const setOutNote = state.setOut === 'NS' ? ' - YOU WERE SET TWICE' : state.setOut === 'EW' ? ' - EAST / WEST SET TWICE' : '';
+    const label = state.phase === 'bid' ? 'BID PHASE' : state.phase === 'gameover' ? (state.winner === 'NS' ? 'YOU WIN THE GAME' : state.winner === 'EW' ? 'EAST / WEST WIN THE GAME' : 'GAME TIED') + setOutNote : state.phase === 'over' ? 'HAND OVER' : (mode === 'local' ? seatName(state.turn).toUpperCase() + ' TURN' : (state.turn === 'south' ? 'YOUR TURN' : seatName(state.turn).toUpperCase() + ' TURN'));
     turnText.textContent = label + (state.spadesBroken ? ' / SPADES BROKEN' : '');
   }
 
