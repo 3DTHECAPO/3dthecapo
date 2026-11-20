@@ -48,7 +48,7 @@
       <p class="eyebrow">Access Control</p><h2>Primary Access Routes</h2>
       <div class="route-grid">
         <article class="route-card"><h3>Scan Page</h3><p>Normal NFC, email-link, and manual-code entry.</p><small>../../scan.html</small><a class="route-btn gold" href="../../scan.html">Open Route</a></article>
-        <article class="route-card"><h3>Master Pass Control</h3><p>This private owner route tester.</p><small>./index.html</small><a class="route-btn" href="./index.html?code=CAPO-MASTER-999">Open Route</a></article>
+        <article class="route-card"><h3>Master Pass Control</h3><p>This private owner route tester.</p><small>./index.html</small><a class="route-btn" href="./index.html">Open Route</a></article>
         <article class="route-card"><h3>Vault Directory</h3><p>Gold+ vault directory.</p><small>../../vault-interface.html</small><a class="route-btn" href="../../vault-interface.html">Open Route</a></article>
       </div>
     </section>
@@ -104,29 +104,35 @@
 
   <script>
     (function(){
-      var MASTER_CODE='CAPO-MASTER-999';
+      // 2026-11-20: the room opens only after the server confirms the master pass (master_verify).
+      // The master code itself is entered on the scan page and checked by the server, never here.
       var MASTER_KEY='CAPO_MASTER_SESSION';
-      var params=new URLSearchParams(window.location.search);
-      var code=String(params.get('code')||'').trim().toUpperCase();
+      var BACKEND='https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint';
+      var ANON='sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
       var panel=document.getElementById('masterPanel');
       var locked=document.getElementById('lockedPanel');
       var sessionStatus=document.getElementById('sessionStatus');
       var urlCode=document.getElementById('urlCode');
       function readSession(){try{return JSON.parse(localStorage.getItem(MASTER_KEY)||'null')}catch(e){return null}}
-      function hasValidSession(){var session=readSession();if(!session||session.active!==true)return false;var expires=Number(session.expires_at||0);if(expires&&Date.now()>expires){try{localStorage.removeItem(MASTER_KEY)}catch(e){}return false}return true}
-      function setSession(){try{localStorage.setItem(MASTER_KEY,JSON.stringify({active:true,code:MASTER_CODE,started_at:Date.now(),expires_at:Date.now()+(1000*60*60*12),route:'nfc/rooms/master/index.html'}))}catch(e){}}
-      if(code===MASTER_CODE)setSession();
-      if(code===MASTER_CODE||hasValidSession()){
-        if(panel)panel.hidden=false;
-        if(locked)locked.style.display='none';
-        if(sessionStatus)sessionStatus.textContent='Active';
-        if(urlCode)urlCode.textContent=code||'Session';
-        document.documentElement.classList.add('master-ok');
-        return;
+      function deny(){
+        try{localStorage.removeItem(MASTER_KEY)}catch(e){}
+        if(panel)panel.hidden=true;
+        if(locked)locked.style.display='grid';
+        setTimeout(function(){window.location.replace('../../scan.html')},900);
       }
-      if(panel)panel.hidden=true;
-      if(locked)locked.style.display='grid';
-      setTimeout(function(){window.location.replace('../../scan.html')},900);
+      var session=readSession();
+      if(!session||session.active!==true||typeof session.token!=='string'||!session.expires_at||Date.now()>Number(session.expires_at)){deny();return;}
+      fetch(BACKEND,{method:'POST',headers:{'apikey':ANON,'Authorization':'Bearer '+ANON,'Content-Type':'application/json'},body:JSON.stringify({source:'master_verify',token:session.token})})
+        .then(function(res){return res.json().then(function(data){return {ok:res.ok,data:data||{}}})})
+        .then(function(result){
+          if(!result.ok||!result.data.success){deny();return;}
+          if(panel)panel.hidden=false;
+          if(locked)locked.style.display='none';
+          if(sessionStatus)sessionStatus.textContent='Active';
+          if(urlCode)urlCode.textContent='Server checked';
+          document.documentElement.classList.add('master-ok');
+        })
+        .catch(deny);
     })();
   </script>
 </body>

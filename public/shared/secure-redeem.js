@@ -85,28 +85,25 @@
     const code = normalizeCode(rawCode);
     if(!code) return {ok:false, reason:"empty"};
 
-    if(code === "CAPO-MASTER-999"){
-      const startedAt = Date.now();
-      const expiresAt = startedAt + (1000 * 60 * 60 * 12);
-      try{
-        localStorage.setItem("CAPO_MASTER_SESSION", JSON.stringify({
-          active:true,
-          code,
-          started_at:startedAt,
-          expires_at:expiresAt
-        }));
-      }catch(e){}
-      return {
-        ok:true,
-        route:"/nfc/rooms/master/index.html?code=CAPO-MASTER-999&master=1&from=master",
-        row:{code, code_type:"master"},
-        pass:{tier:"master", code, expires_at:new Date(expiresAt).toISOString(), active:true, valid:true}
-      };
-    }
-
     const row = await fetchCodeRecord(code);
 
     if(!row){
+      // 2026-11-20: the owner's master code is checked by the server (master_unlock), not in this file.
+      try{
+        const res = await fetch("https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint", {
+          method:"POST",
+          headers:{"apikey":"sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1","Authorization":"Bearer sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1","Content-Type":"application/json"},
+          body:JSON.stringify({source:"master_unlock", code})
+        });
+        const data = await res.json().catch(()=>({}));
+        if(res.ok && data.success && data.token){
+          const expiresAt = Number(data.expires_at);
+          try{
+            localStorage.setItem("CAPO_MASTER_SESSION", JSON.stringify({active:true, token:String(data.token), started_at:Date.now(), expires_at:expiresAt}));
+          }catch(e){}
+          return {ok:true, route:"/nfc/rooms/master/index.html", row:{code:"MASTER", code_type:"master"}, pass:null};
+        }
+      }catch(e){}
       logVaultEvent({code, code_type:''}, 'invalid');
       return {ok:false, reason:"invalid"};
     }

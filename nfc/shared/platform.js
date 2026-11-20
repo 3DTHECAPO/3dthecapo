@@ -12,22 +12,19 @@
   function writeJSON(key,value){
     try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
   }
+  // 2026-11-20: master sessions come only from the server's signed token (see nfc/shared/access-bridge.js).
   function hasFreshMasterSession(){
     const s = readJSON(MASTER_KEY);
-    if(!s || s.active !== true) return false;
-    if(s.expires_at && now() > Number(s.expires_at)){
+    if(!s || s.active !== true || typeof s.token !== 'string' || s.token.indexOf('.') < 1) return false;
+    if(!s.expires_at || now() > Number(s.expires_at)){
       try{ localStorage.removeItem(MASTER_KEY); }catch(e){}
       return false;
     }
     return true;
   }
   function setMasterSession(){
-    writeJSON(MASTER_KEY,{
-      active:true,
-      code:'CAPO-MASTER-999',
-      started_at:now(),
-      expires_at:now() + (1000 * 60 * 60 * 12)
-    });
+    // Kept for older callers: a link can no longer create a master session.
+    return false;
   }
   function isFromController(){
     return params.get('from') === 'controller' || params.get('from') === 'master';
@@ -42,7 +39,6 @@
   }
   function buildAccessUrl(target){
     const u = new URL(sitePath('nfc/index.html'), window.location.origin);
-    u.searchParams.set('code','CAPO-MASTER-999');
     if(target) u.searchParams.set('target', target);
     return u.toString();
   }
@@ -84,7 +80,6 @@
     main.insertBefore(nav, main.firstChild);
   }
   function boot(){
-    if(params.get('master') === '1' || params.get('from') === 'master') setMasterSession();
     installControllerBack();
     if(document.body.dataset.p3dNav === 'auto') addConsumerNav();
   }

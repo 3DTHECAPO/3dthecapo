@@ -57,29 +57,53 @@
     }catch(e){}
   }
 
+  // 2026-11-20: the master code is checked by the server (master_unlock), never on this page. A master
+  // session only counts when it holds the server's signed token, and every page confirms that token with
+  // the server (master_verify) in the background; a refused token is removed and the page sent back.
+  const MASTER_BACKEND = 'https://fupoedrovfloudefyzna.supabase.co/functions/v1/dynamic-endpoint';
+  const MASTER_ANON = 'sb_publishable_smhu3oxA7tgS1nqZMau3Iw_58e7XzL1';
+  let masterVerifyStarted = false;
+
   function setMasterSession(){
-    writeJSON(MASTER_KEY,{
-      active:true,
-      code:'CAPO-MASTER-999',
-      started_at:now(),
-      expires_at:now() + (1000 * 60 * 60 * 12)
-    });
+    // Kept for older callers: a master session can only be created from the server's token.
+    return false;
+  }
+
+  function verifyMasterLater(session){
+    if(masterVerifyStarted) return;
+    masterVerifyStarted = true;
+    fetch(MASTER_BACKEND, {
+      method:'POST',
+      headers:{'apikey':MASTER_ANON,'Authorization':'Bearer ' + MASTER_ANON,'Content-Type':'application/json'},
+      body:JSON.stringify({source:'master_verify', token:session.token})
+    }).then(function(res){
+      return res.json().catch(function(){ return {}; }).then(function(data){
+        if(!res.ok || !data || data.success !== true) denyMaster();
+      });
+    }).catch(denyMaster);
+  }
+
+  // Anything but a clear yes from the server ends the master session.
+  function denyMaster(){
+    removeKey(MASTER_KEY);
+    window.location.replace(buildUnlockUrl());
   }
 
   function hasMasterSession(){
     const session = readJSON(MASTER_KEY);
 
-    if(!session || session.active !== true){
+    if(!session || session.active !== true || typeof session.token !== 'string' || session.token.indexOf('.') < 1){
+      if(session) removeKey(MASTER_KEY);
       return false;
     }
 
-    if(session.expires_at && now() > Number(session.expires_at)){
+    if(!session.expires_at || now() > Number(session.expires_at)){
       removeKey(MASTER_KEY);
       console.log('[PLAY3D ACCESS]', 'SESSION EXPIRED');
       return false;
     }
 
-    console.log('[PLAY3D ACCESS]', 'MASTER SESSION ACTIVE');
+    verifyMasterLater(session);
     return true;
   }
 
@@ -114,20 +138,12 @@
     return !!currentPassSession();
   }
 
+  // A link flag like ?master=1 no longer opens anything by itself.
   function hasMasterFlag(){
-    return (
-      params.get('master') === '1' ||
-      params.get('from') === 'master' ||
-      params.get('from') === 'controller'
-    );
+    return false;
   }
 
   function isAllowed(){
-    if(hasMasterFlag()){
-      setMasterSession();
-      return true;
-    }
-
     if(hasMasterSession()){
       return true;
     }
@@ -149,7 +165,6 @@
   function buildMasterUrl(){
     const current = window.location.pathname + window.location.search;
     const u = new URL(sitePath('nfc/index.html'), window.location.origin);
-    u.searchParams.set('code','CAPO-MASTER-999');
     u.searchParams.set('target', current);
     return u.toString();
   }
@@ -174,12 +189,6 @@
 
   function requireMaster(options){
     const opts = options || {};
-
-    if(hasMasterFlag()){
-      setMasterSession();
-      document.documentElement.classList.add('p3d-master-ok');
-      return true;
-    }
 
     if(hasMasterSession()){
       document.documentElement.classList.add('p3d-master-ok');
@@ -215,12 +224,6 @@ function requireTier(tier, options){
   const opts = options || {};
   const needed = String(tier || 'entry').toLowerCase();
 
-  if(hasMasterFlag()){
-    setMasterSession();
-    document.documentElement.classList.add('p3d-access-ok','p3d-master-ok');
-    return true;
-  }
-
   if(hasMasterSession()){
     document.documentElement.classList.add('p3d-access-ok','p3d-master-ok');
     return true;
@@ -255,9 +258,5 @@ function requireTier(tier, options){
     buildUnlockUrl,
     buildMasterUrl
   };
-
-  if(hasMasterFlag()){
-    setMasterSession();
-  }
 })();
 
