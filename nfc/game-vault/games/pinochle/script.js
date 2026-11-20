@@ -13,6 +13,8 @@ const state={
   captured:[[],[]],
   trick:[],
   scores:[0,0],
+  sets:[0,0], // house rule: a team set twice loses the game
+  setOutTeam:null,
   handScores:[0,0],
   meldScores:[0,0],
   trickScores:[0,0],
@@ -272,7 +274,7 @@ function deal(){
   clearTrickTimer();
   state.handToken++;
   // A finished game (300+) starts the next one at 0 - 0.
-  if(state.phase==='gameover')state.scores=[0,0];
+  if(state.phase==='gameover'){state.scores=[0,0];state.sets=[0,0];state.setOutTeam=null;}
   state.dealer=(state.dealer+1)%4;
   const deck=buildDeck();
   state.hands=Array.from({length:4},()=>deck.splice(0,20));
@@ -533,11 +535,18 @@ function finishHand(){
     state.scores[1-state.bidTeam]+=state.handScores[1-state.bidTeam];
   }
 
-  const winner=state.scores[0]>=300||state.scores[1]>=300?(state.scores[0]>=state.scores[1]?0:1):null;
+  // House rule: the bidding team that gets set for the second time loses the game.
+  const SETS_TO_LOSE=2;
+  if(!made)state.sets[state.bidTeam]=(state.sets[state.bidTeam]||0)+1;
+  const setOut=!made&&state.sets[state.bidTeam]>=SETS_TO_LOSE;
+  const winner=setOut?1-state.bidTeam:(state.scores[0]>=300||state.scores[1]>=300?(state.scores[0]>=state.scores[1]?0:1):null);
+  state.setOutTeam=setOut?state.bidTeam:null;
   state.phase=winner===null?'over':'gameover';
   if(window.Play3DPoints&&winner===0)window.Play3DPoints.award('pinochle',175,'round_win');
-  announce('WIN','success',winner===null?(made?'BID MADE':'BID SET'):teamName(winner)+' WINS GAME');
-  render(winner===null?(made?'BID MADE':'SET - LOSE BID'):teamName(winner)+' WINS GAME');
+  const setNote=made?'':' ('+teamName(state.bidTeam)+' SET '+Math.min(state.sets[state.bidTeam],SETS_TO_LOSE)+' OF '+SETS_TO_LOSE+')';
+  const gameLine=winner===null?'':(setOut?teamName(state.bidTeam)+' SET TWICE - '+teamName(winner)+' WINS GAME':teamName(winner)+' WINS GAME');
+  announce('WIN','success',winner===null?(made?'BID MADE':'BID SET'+setNote):gameLine);
+  render(winner===null?(made?'BID MADE':'SET - LOSE BID'+setNote):gameLine);
 }
 
 function trickCardHTML(play,index){
